@@ -30,6 +30,7 @@ import sys
 import json
 import inspect
 import argparse
+from multiprocessing import Process, Queue
 from multiprocessing.dummy import Pool
 from pyaws.utils import export_json_object
 from pyaws.script_utils import import_file_object, read_local_config
