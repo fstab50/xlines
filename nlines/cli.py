@@ -314,10 +314,10 @@ def init_cli():
                     inc = linecount(path)
                     count += inc
                     tab = '\t'.expandtabs(width - len(path.split('/')[-1]))
-                    print('{}{}{:>6}'.format(path.split('/')[-1], tab, inc))
+                    print('{}{}{:>6}'.format(path.split('/')[-1], tab, '{:,}'.format(inc)))
                 except Exception:
                     continue
-            print('Total count is {}'.format(count))
+            print('Total count is {}'.format('{:,}'.format(count)))
 
 
             # --- run with concurrency ---
