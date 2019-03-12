@@ -241,6 +241,18 @@ def option_configure(debug=False, path=None):
     return r
 
 
+def line_orchestrator(path):
+    io_fail = []
+    container = {}
+    try:
+        inc = linecount(path)
+        fname = path.split('/')[-1]
+        container[fname] = inc
+    except Exception:
+        io_fail.append(path)
+    return container, io_fail
+
+
 def options(parser, help_menu=False):
     """
     Summary:
@@ -330,10 +342,11 @@ def init_cli():
             pool_args = [(x,) for x in locate_fileobjects('.')]
 
             # run instance of main with each item set in separate thread
-            # Future: Needs a return status from pool object for each process
+            # pool function:  return dict with {file: linecount} which can then be printed
+            # out to cli
             with Pool(processes=8) as pool:
                 try:
-                    pool.starmap(linecount, pool_args)
+                    pool.starmap(line_orchestrator, pool_args)
                 except Exception:
                     pass
 
