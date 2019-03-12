@@ -1,11 +1,28 @@
 #!/usr/bin/env python3
 """
-Summary:
-    Project gitsane
-        - gitsane manages and updates all the repositories on your local maachine
-        - reproduce
 
-Module Args:
+#
+# nlines, GPL v3 License
+#
+# Copyright (c) 2018-2019 Blake Huber
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the 'Software'), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 
 """
 import os
@@ -15,15 +32,16 @@ import inspect
 import argparse
 import platform
 import subprocess
-from gitsane.statics import PACKAGE, CONFIG_SCRIPT, local_config
-from gitsane.help_menu import menu_body
-from gitsane.script_utils import export_json_object, import_file_object, read_local_config
-from gitsane.script_utils import stdout_message, bool_assignment, debug_mode, os_parityPath
-from gitsane.colors import Colors
-from gitsane import about, logd, __version__
+from pyaws.utils import export_json_object
+from pyaws.script_utils import import_file_object, read_local_config
+from pyaws.utils import stdout_message
+from pyaws.colors import Colors
+#from nlines.statics import PACKAGE, CONFIG_SCRIPT, local_config
+from nlines.help_menu import menu_body
+from nlines import about, __version__
 
 try:
-    from gitsane.oscodes_unix import exit_codes
+    from pyaws.oscodes_unix import exit_codes
     os_type = 'Linux'
     user_home = os.getenv('HOME')
     splitchar = '/'                             # character for splitting paths (linux)
@@ -43,7 +61,6 @@ except Exception:
 # globals
 logger = logd.getLogger(__version__)
 container = []
-BRANCHES = ('develop', 'master')
 
 
 def build_index(root):
@@ -128,6 +145,14 @@ def help_menu():
     return
 
 
+def dedup(duplicates):
+    uniq = []
+    for i in duplicates:
+        if i not in uniq:
+            uniq.append(i)
+    return uniq
+
+
 def locate_repositories(origin):
     """
     Summary:
@@ -135,23 +160,26 @@ def locate_repositories(origin):
     Returns:
         paths, TYPE: list
     """
-    repositories = []
+    fobjects = []
     for root, dirs, files in os.walk(origin):
         for path in dirs:
-            try:
-                if path.endswith('.git'):
-                    repositories.append(
-                        '/'.join(
+            for file in files:
+                try:
+                    full_path = '/'.join(
                             os.path.abspath(os.path.join(root, path)).split('/')[:-1]
-                        )
+                        ) + '/' + file
+
+                    if '.git' in full_path:
+                        continue
+                    else:
+                        fobjects.append(full_path)
+                except OSError:
+                    logger.exception(
+                        '%s: Read error while examining local filesystem path (%s)' %
+                        (inspect.stack()[0][3], path)
                     )
-            except OSError as e:
-                logger.exception(
-                    '%s: Read error while examining local filesystem path (%s)' %
-                    (inspect.stack()[0][3], path)
-                )
-                continue
-    return repositories
+                    continue
+    return dedup(fobjects)
 
 
 def source_url(path):
