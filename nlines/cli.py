@@ -307,13 +307,26 @@ def init_cli():
             count = 0
             path_list = locate_fileobjects('.')
 
+            width = 43
+            count = 0
+            for path in path_list:
+                try:
+                    inc = linecount(path)
+                    count += inc
+                    tab = '\t'.expandtabs(width - len(path.split('/')[-1]))
+                    print('{}{} {}'.format(path.split('/')[-1], tab, inc))
+                except Exception:
+                    continue
+            print('Total count is {}'.format(count))
+
+
             # --- run with concurrency ---
 
             pool_args = []
 
             # prepare args
             for path in path_list:
-                count = count + linecount(path)
+                #count = count + linecount(path)
                 pool_args.append((path))
 
                 # run instance of main with each item set in separate thread
