@@ -1,6 +1,6 @@
 """
 Summary:
-    gitsane Project-level Defaults and Settings
+    nlines Project-level Defaults and Settings
 
 Module Attributes:
     - user_home (TYPE str):
@@ -10,14 +10,14 @@ Module Attributes:
     - config_path (TYPE str):
         default for stsaval config files, includes config_dir (~/.stsaval)
     - key_deprecation (TYPE str):
-        Deprecation logic that gitsane uses when 2 keys exist for a user.
+        Deprecation logic that nlines uses when 2 keys exist for a user.
 """
 
 import os
 import inspect
 import logging
-from gitsane.script_utils import read_local_config, get_os, os_parityPath
-from gitsane import __version__
+from pyaws.script_utils import read_local_config, get_os, os_parityPath
+from nlines._version import __version__
 
 logger = logging.getLogger(__version__)
 logger.setLevel(logging.INFO)
@@ -42,25 +42,24 @@ else:
     # section with appropriate pathnames
 
     # project
-    PACKAGE = 'gitsane'
+    PACKAGE = 'nlines'
     LICENSE = 'GPL v3'
     LICENSE_DESC = 'General Public License v3'
     version = __version__
 
     # config parameters
-    CONFIG_SCRIPT = 'gitconfig'         # console script to access config file
     config_dir = '.config'
     config_subdir = PACKAGE
-    config_filename = 'config.json'
+    config_filename = 'nlinesconf.json'
     config_path = user_home + '/' + config_dir + '/' + config_subdir + '/' + config_filename
 
     # exception file
-    ex_filename = 'gitsane.exceptions'
+    ex_filename = 'nlines.exceptions'
 
     # logging parameters
     enable_logging = False
     log_mode = 'FILE'
-    log_filename = 'gitsane.log'
+    log_filename = 'nlines.log'
     log_dir = user_home + '/' + 'logs'
     log_path = log_dir + '/' + log_filename
 

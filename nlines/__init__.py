@@ -1,14 +1,16 @@
-from core._version import __version__ as version
 from pyaws import logd
+from nlines._version import __version__ as version
+from nlines.statics import local_config
 
 __author__ = 'Blake Huber'
 __version__ = version
-__email__ = "blake.huber@atos.net"
+__email__ = "blakeca00@gmail.com"
 
-PACKAGE = 'core'
+"""
+PACKAGE = 'nlines'
 enable_logging = True
-log_mode = 'STREAM'          # log to cloudwatch logs
-log_filename = ''
+log_mode = 'FILE'          # log to cloudwatch logs
+log_filename = 'nlines.log'
 log_dir = '/tmp'
 log_path = log_dir + '/' + log_filename
 
@@ -27,7 +29,7 @@ log_config = {
         "SYSLOG_FILE": False
     }
 }
-
+"""
 # global logger
-logd.local_config = log_config
+logd.local_config = local_config
 logger = logd.getLogger(__version__)
