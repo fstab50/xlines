@@ -100,15 +100,8 @@ def build_index(root):
     return index
 
 
-def write_index(display=False):
-    stdout_message('Generating index...')
-    index_list = build_index(os.path.join(user_home, 'git'))
-    output_file = 'repository.json'
-    output_path = os.path.join(user_home, 'Backup/usr/' + output_file)
-    if display:
-        export_json_object(dict_obj=index_list)
-        summary(index_list)
-    return export_json_object(dict_obj=index_list, filename=output_path)
+def linecount(path):
+    return len(open(path).readlines())
 
 
 def filter_args(kwarg_dict, *args):
@@ -200,54 +193,6 @@ def locate_fileobjects(origin):
     return dedup(fobjects)
 
 
-def source_url(path):
-    """
-    Returns:
-        git repository source url, TYPE: str
-    """
-    cmd = 'git remote -v | head -n 1'
-    os.chdir(path)
-
-    try:
-        url = subprocess.getoutput(cmd).split('\t')[1].split(' ')[0]
-    except IndexError:
-        logger.exception(
-                '%s: problem retrieving git source url for %s' %
-                (inspect.stack()[0][3], path)
-            )
-        # NOTE: >> add repo to exception list here <<
-        return ''
-    return url
-
-
-def current_branch(path):
-    """
-    Returns:
-        git repository source url, TYPE: str
-    """
-    cmd = 'git branch'
-    os.chdir(path)
-
-    try:
-        if '.git' in os.listdir('.'):
-
-            branch = subprocess.getoutput('git branch').split('*')[1].split('\n')[0][1:]
-
-        else:
-            ex = Exception(
-                '%s: Unable to identify current branch - path not a git repository: %s' %
-                (inspect.stack()[0][3], path))
-            raise ex
-    except IndexError:
-        logger.exception(
-                '%s: problem retrieving git branch for %s' %
-                (inspect.stack()[0][3], path)
-            )
-        # NOTE: >> add repo to exception list here <<
-        return ''
-    return branch
-
-
 def summary(repository_list):
     """ Prints summary stats """
     count = len(repository_list)
@@ -265,12 +210,6 @@ def main(**kwargs):
         update = kwargs.get('update', False)
         remediate = kwargs.get('remediate', False)
         debug = kwargs.get('debug', False)
-    else:
-        return False
-
-    exception_list = update_repos(root, remediate, debug)
-    if not exception_list:
-        return True
     return False
 
 
@@ -338,47 +277,8 @@ def precheck():
     return True
 
 
-def recent(file_path):
-    pass
-
-
-def update_repos(root_node, fix, debug):
-    """
-    Summary:
-        Update git repositories from local fs discovery
-    Args:
-        :root_node (str):
-        :fix (bool): if True, take action to update failed git pull; False do nothing
-        :debug (bool): if True, verbose output
-    Return:
-        Success | Failure, TYPE: bool
-    """
-
-    cmd = 'git pull  > /dev/null 2>&1; echo $?'
-    exceptions = []
-    original = current_branch('.')
-    branches = [original]
-
-    for repo in build_index(root_node):
-        repository = repo['location'].split('/')[-1]
-        os.chdir(repo['location'])
-        branches.extend(BRANCHES)
-        for branch in branches:
-            stdout_message(f'Updating repository {repository} branch {branch}')
-            stdout_message(subprocess.getoutput('git checkout %s' % branch))
-            stdout_message(subprocess.getoutput('git pull'))
-            if int(subprocess.getoutput(cmd)) == 1:
-                exceptions.append(repository)
-        # reset to original branch
-        stdout_message(subprocess.getoutput('git checkout %s' % original))
-    return exceptions
-
-    # check date of local file; if exists
-    # if recent file, skip index; else run index
-
-
 def init_cli():
-    # parser = argparse.ArgumentParser(add_help=False, usage=help_menu())
+
     parser = argparse.ArgumentParser(add_help=False)
 
     try:
@@ -404,14 +304,12 @@ def init_cli():
         return r
 
     else:
-        if precheck() and args.index:              # if prereqs set, run
-            sys.exit(write_index(display=True))
-
-        elif precheck():
-            # execute keyset operation
-            if main(**args):
-                logger.info('repository operation complete')
-                sys.exit(exit_codes['EX_OK']['Code'])
+        if precheck():
+            count = 0
+            path_list = locate_fileobjects('.')
+            for path in path_list:
+                count = count + linecount(path)
+            sys.exit(exit_codes['EX_OK']['Code'])
         else:
             stdout_message(
                 'Dependency check fail %s' % json.dumps(args, indent=4),
