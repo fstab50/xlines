@@ -304,21 +304,23 @@ def init_cli():
 
     else:
         if precheck():
+            io_fail = []
             count = 0
-            path_list = locate_fileobjects('.')
-
             width = 43
-            count = 0
-            for path in path_list:
+            for path in locate_fileobjects('.'):
                 try:
                     inc = linecount(path)
                     count += inc
-                    tab = '\t'.expandtabs(width - len(path.split('/')[-1]))
-                    print('{}{}{:>6}'.format(path.split('/')[-1], tab, '{:,}'.format(inc)))
+                    fname = path.split('/')[-1][:40]
+                    tab = '\t'.expandtabs(width - len(fname))
+                    print('{}{}{:>6}'.format(fname, tab, '{:,}'.format(inc)))
                 except Exception:
+                    io_fail.append(path)
                     continue
             print('Total count is {}'.format('{:,}'.format(count)))
-
+            print('Skipped file objects:')
+            for file in io_fail:
+                print('\t{}'.format(file))   # Write this out to a file in /tmp for later viewing
 
             # --- run with concurrency ---
 
