@@ -314,7 +314,7 @@ def init_cli():
                     inc = linecount(path)
                     count += inc
                     tab = '\t'.expandtabs(width - len(path.split('/')[-1]))
-                    print('{}{} {}'.format(path.split('/')[-1], tab, inc))
+                    print('{}{}{:>6}'.format(path.split('/')[-1], tab, inc))
                 except Exception:
                     continue
             print('Total count is {}'.format(count))
