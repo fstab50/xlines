@@ -30,13 +30,12 @@ import sys
 import json
 import inspect
 import argparse
-import platform
-import subprocess
+from multiprocessing.dummy import Pool
 from pyaws.utils import export_json_object
 from pyaws.script_utils import import_file_object, read_local_config
 from pyaws.utils import stdout_message
 from pyaws.colors import Colors
-#from nlines.statics import PACKAGE, CONFIG_SCRIPT, local_config
+from nlines.statics import PACKAGE, CONFIG_SCRIPT, local_config
 from nlines.help_menu import menu_body
 from nlines import about, __version__
 
@@ -307,8 +306,23 @@ def init_cli():
         if precheck():
             count = 0
             path_list = locate_fileobjects('.')
+
+            # --- run with concurrency ---
+
+            pool_args = []
+
+            # prepare args
             for path in path_list:
                 count = count + linecount(path)
+                pool_args.append((path))
+
+                # run instance of main with each item set in separate thread
+                # Future: Needs a return status from pool object for each process
+            with Pool(processes=8) as pool:
+                pool.starmap(linecount, pool_args)
+
+
+
             sys.exit(exit_codes['EX_OK']['Code'])
         else:
             stdout_message(
