@@ -324,21 +324,21 @@ def init_cli():
 
             # --- run with concurrency ---
 
-            pool_args = []
+            #path_list = locate_fileobjects('.')
 
-            # prepare args
-            for path in path_list:
-                #count = count + linecount(path)
-                pool_args.append((path))
+            # prepare args with tuples
+            pool_args = [(x,) for x in locate_fileobjects('.')]
 
-                # run instance of main with each item set in separate thread
-                # Future: Needs a return status from pool object for each process
+            # run instance of main with each item set in separate thread
+            # Future: Needs a return status from pool object for each process
             with Pool(processes=8) as pool:
-                pool.starmap(linecount, pool_args)
-
-
+                try:
+                    pool.starmap(linecount, pool_args)
+                except Exception:
+                    pass
 
             sys.exit(exit_codes['EX_OK']['Code'])
+
         else:
             stdout_message(
                 'Dependency check fail %s' % json.dumps(args, indent=4),
