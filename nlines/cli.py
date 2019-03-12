@@ -61,6 +61,8 @@ except Exception:
 # globals
 logger = logd.getLogger(__version__)
 container = []
+excluded_dirs = ['.git', 'venv', 'p3_venv']
+excluded_filetypes = ['.docx', '.png', '.tiff', '.pptx', '.xlsx', '.jpg']
 
 
 def build_index(root):
@@ -153,7 +155,21 @@ def dedup(duplicates):
     return uniq
 
 
-def locate_repositories(origin):
+class ExcludedTypes():
+    def __init__(self, ex_container=[]):
+        self.ex_container = ex_container
+        if not self.ex_container:
+            self.ex_container.extend(excluded_dirs)
+            self.ex_container.extend(excluded_filetypes)
+
+    def excluded(self, path):
+        for i in self.ex_container:
+            if i in path:
+                return True
+        return False
+
+
+def locate_fileobjects(origin):
     """
     Summary:
         Walks local fs directories identifying all git repositories
@@ -161,6 +177,8 @@ def locate_repositories(origin):
         paths, TYPE: list
     """
     fobjects = []
+    ex = ExcludedTypes()
+
     for root, dirs, files in os.walk(origin):
         for path in dirs:
             for file in files:
@@ -169,7 +187,7 @@ def locate_repositories(origin):
                             os.path.abspath(os.path.join(root, path)).split('/')[:-1]
                         ) + '/' + file
 
-                    if '.git' in full_path:
+                    if ex.excluded(full_path):
                         continue
                     else:
                         fobjects.append(full_path)
