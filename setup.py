@@ -1,6 +1,6 @@
 """
 
-nlines :  Copyright 2017-2018, Blake Huber
+nlines :  Copyright 2018-2019, Blake Huber
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -38,6 +38,8 @@ requires = [
 ]
 
 
+_project = 'nlines'
+_ex_fname = 'exclusions.list'
 _root = os.path.abspath(os.path.dirname(__file__))
 _comp_fname = 'nlines-completion.bash'
 
@@ -167,30 +169,30 @@ def user_home():
             return 'C:\\Users\\' + username
 
         elif platform.system() == 'Java':
-            print(f'Unsupported of {os_type}')
+            print('Unsupported os type')
             sys.exit(1)
     except OSError as e:
         raise e
 
 
 setup(
-    name='nlines',
+    name=_project,
     version=nlines.__version__,
     description='Count the number of lines of code in a project',
     long_description=read('DESCRIPTION.rst'),
-    url='',
+    url='https://github.com/fstab50/nlines',
     author=nlines.__author__,
     author_email=nlines.__email__,
     license='GPL-3.0',
     classifiers=[
-        'Topic :: Security',
-        'Development Status :: 5 - Production/Stable',
+        'Topic :: Software Development :: Build Tools',
+        'Development Status :: 3 - Alpha',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
         'Operating System :: POSIX :: Linux',
     ],
-    keywords='Amazon Web Services iam credentials AWS access key secret key',
+    keywords='code development tools',
     packages=find_packages(exclude=['assets', 'docs', 'reports', 'scripts', 'tests']),
     include_package_data=True,
     install_requires=requires,
@@ -199,7 +201,8 @@ setup(
         'install': PostInstall
     },
     data_files=[
-        (user_home() + '/' + '.bash_completion.d', ['bash/' + _comp_fname])
+        (user_home() + '/' + '.bash_completion.d', ['bash/' + _comp_fname]),
+        (user_home() + '/' + '.config' + '/' + _project, ['config/' + _ex_fname])
     ],
     entry_points={
         'console_scripts': [
