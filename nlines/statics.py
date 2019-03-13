@@ -51,7 +51,11 @@ else:
     config_dir = '.config'
     config_subdir = PACKAGE
     config_filename = 'nlinesconf.json'
+    config_dirpath = user_home + '/' + config_dir
     config_path = user_home + '/' + config_dir + '/' + config_subdir + '/' + config_filename
+
+    # exclusions
+    exclusions = 'exclusions.list'
 
     # exception file
     ex_filename = 'nlines.exceptions'
@@ -78,6 +82,11 @@ else:
             "CONFIG_SUBDIR": config_subdir,
             "CONFIG_PATH": config_path,
             "EXCEPTION_FILENAME": ex_filename
+        },
+        "EXCLUSIONS": {
+            "EX_DIR": config_dir,
+            "EX_FNAME": exclusions,
+            "EX_PATH": config_dirpath
         },
         "LOGGING": {
             "ENABLE_LOGGING": enable_logging,
