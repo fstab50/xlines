@@ -1,7 +1,7 @@
 # include
 include README.rst
 include DESCRIPTION.rst
-include LICENSE.txt
+include LICENSE
 include bash/nlines-completion.bash
 include config/exclusions.list
 
