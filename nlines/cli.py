@@ -36,9 +36,9 @@ from pyaws.utils import export_json_object
 from pyaws.script_utils import import_file_object, read_local_config
 from pyaws.utils import stdout_message
 from pyaws.colors import Colors
-from nlines.statics import PACKAGE, CONFIG_SCRIPT, local_config
+from nlines.statics import PACKAGE, local_config
 from nlines.help_menu import menu_body
-from nlines import about, __version__
+from nlines import about, logger, __version__
 
 try:
     from pyaws.oscodes_unix import exit_codes
@@ -59,45 +59,8 @@ except Exception:
 
 
 # globals
-logger = logd.getLogger(__version__)
 container = []
-excluded_dirs = ['.git', 'venv', 'p3_venv']
-excluded_filetypes = ['.docx', '.png', '.tiff', '.pptx', '.xlsx', '.jpg']
-
-
-def build_index(root):
-    """
-    Summary:
-        - Operation to index local git repositories
-        - Create index in the form of json configuration file
-        - Returns object containing list of dictionaries, 1 per
-          git repository
-    Args:
-    Returns:
-        - index, TYPE: list
-        - Format:
-
-         .. code-block:: json
-
-                [
-                    {
-                        "location": fullpath-including-repository,
-                        "path":  path-to-repository (not incl repo),
-                        "repository": repository git remote string
-                    }
-                ]
-
-    """
-    index = []
-    for path in locate_repositories(root):
-        index.append(
-            {
-                "location": path,
-                "path": '/'.join(path.split('/')[:-1]),
-                "repository": source_url(path)
-            }
-        )
-    return index
+config_dir = local_config['PROJECT']['CONFIG_PATH']
 
 
 def linecount(path):
@@ -149,11 +112,10 @@ def dedup(duplicates):
 
 
 class ExcludedTypes():
-    def __init__(self, ex_container=[]):
+    def __init__(self, ex_path, ex_container=[]):
         self.ex_container = ex_container
         if not self.ex_container:
-            self.ex_container.extend(excluded_dirs)
-            self.ex_container.extend(excluded_filetypes)
+            self.ex_container.extend(self.parse_exclusions(config_path))
 
     def excluded(self, path):
         for i in self.ex_container:
@@ -161,13 +123,41 @@ class ExcludedTypes():
                 return True
         return False
 
+    def parse_exclusions(self, path):
+        """
+        Parse persistent fs location store for file extensions to exclude
+        """
+        try:
+            return [x.strip() for x in open(path).readlines()]
+        except OSError:
+            return []
+
 
 def locate_fileobjects(origin):
     """
-    Summary:
-        Walks local fs directories identifying all git repositories
+    Summary.
+
+        - Walks local fs directories identifying all git repositories
+
+    Args:
+        - origin (str): filesystem directory location
+
     Returns:
-        paths, TYPE: list
+        - paths, TYPE: list
+        - Format:
+
+         .. code-block:: json
+
+                [
+                    '/cloud-custodian/tools/c7n_mailer/c7n_mailer/utils_email.py',
+                    '/cloud-custodian/tools/c7n_mailer/c7n_mailer/slack_delivery.py',
+                    '/cloud-custodian/tools/c7n_mailer/c7n_mailer/datadog_delivery.py',
+                    '/cloud-custodian/tools/c7n_sentry/setup.py',
+                    '/cloud-custodian/tools/c7n_sentry/test_sentry.py',
+                    '/cloud-custodian/tools/c7n_kube/setup.py',
+                    '...
+                ]
+
     """
     fobjects = []
     ex = ExcludedTypes()
