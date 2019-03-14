@@ -17,3 +17,6 @@
 .PNM
 .svg
 .SVG
+pycache
+_env
+venv
