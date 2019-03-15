@@ -86,7 +86,7 @@ else:
         "EXCLUSIONS": {
             "EX_DIR": config_dir,
             "EX_FNAME": exclusions,
-            "EX_PATH": config_dirpath
+            "EX_PATH": config_dirpath + '/' + ex_filename
         },
         "LOGGING": {
             "ENABLE_LOGGING": enable_logging,

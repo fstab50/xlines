@@ -30,6 +30,7 @@ import sys
 import json
 import inspect
 import argparse
+from functools import reduce
 from multiprocessing import Process, Queue
 from multiprocessing.dummy import Pool
 from pyaws.utils import export_json_object
@@ -61,6 +62,7 @@ except Exception:
 # globals
 container = []
 config_dir = local_config['PROJECT']['CONFIG_PATH']
+exclusions = local_config['EXCLUSIONS']['EX_PATH']
 
 
 def linecount(path):
@@ -104,18 +106,14 @@ def help_menu():
 
 
 def dedup(duplicates):
-    uniq = []
-    for i in duplicates:
-        if i not in uniq:
-            uniq.append(i)
-    return uniq
+    return list(reduce(lambda r, x: r + [x] if x not in r else r, duplicates, []))
 
 
 class ExcludedTypes():
     def __init__(self, ex_path, ex_container=[]):
         self.ex_container = ex_container
         if not self.ex_container:
-            self.ex_container.extend(self.parse_exclusions(config_path))
+            self.ex_container.extend(self.parse_exclusions(ex_path))
 
     def excluded(self, path):
         for i in self.ex_container:
@@ -133,7 +131,7 @@ class ExcludedTypes():
             return []
 
 
-def locate_fileobjects(origin):
+def locate_fileobjects(origin, path=exclusions):
     """
     Summary.
 
@@ -160,7 +158,7 @@ def locate_fileobjects(origin):
 
     """
     fobjects = []
-    ex = ExcludedTypes()
+    ex = ExcludedTypes(path)
 
     for root, dirs, files in os.walk(origin):
         for path in dirs:
