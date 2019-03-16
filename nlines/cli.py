@@ -109,7 +109,8 @@ def remove_duplicates(duplicates):
     """
     Summary.
 
-        Generator for removing duplicates from large scale lists
+        Module function utilsing a generator to remove duplicates
+        from large scale lists with minimal resource use
 
     Args:
         duplicates (list): contains repeated elements
@@ -127,14 +128,25 @@ def remove_duplicates(duplicates):
     return [x for x in dedup(duplicates)]
 
 
+def remove_illegal(d, illegal):
+    """Removes excluded file types"""
+    bad = []
+
+    for path in d:
+        for t in illegal:
+            if t in path:
+                bad.append(path)
+    return list(filter(lambda x: x not in bad, d))
+
+
 class ExcludedTypes():
     def __init__(self, ex_path, ex_container=[]):
-        self.ex_container = ex_container
-        if not self.ex_container:
-            self.ex_container.extend(self.parse_exclusions(ex_path))
+        self.types = ex_container
+        if not self.types:
+            self.types.extend(self.parse_exclusions(ex_path))
 
     def excluded(self, path):
-        for i in self.ex_container:
+        for i in self.types:
             if i in path:
                 return True
         return False
@@ -179,23 +191,20 @@ def locate_fileobjects(origin, path=expath):
     ex = ExcludedTypes(path)
 
     for root, dirs, files in os.walk(origin):
-        for path in dirs:
-            for file in files:
-                try:
-                    full_path = '/'.join(
-                            os.path.abspath(os.path.join(root, path)).split('/')[:-1]
-                        ) + '/' + file
+        for file in [f for f in files if '.git' not in root]:
+            try:
 
-                    if ex.excluded(full_path):
-                        continue
-                    else:
-                        fobjects.append(full_path)
-                except OSError:
-                    logger.exception(
-                        '%s: Read error while examining local filesystem path (%s)' %
-                        (inspect.stack()[0][3], path)
-                    )
-                    continue
+                full_path = os.path.abspath(os.path.join(root, file))
+
+                #if not ex.excluded(full_path):
+                fobjects.append(full_path)
+
+            except OSError:
+                logger.exception(
+                    '%s: Read error while examining local filesystem path (%s)' %
+                    (inspect.stack()[0][3], path)
+                )
+                continue
     return remove_duplicates(fobjects)
 
 
@@ -256,6 +265,14 @@ def package_version():
     sys.exit(exit_codes['EX_OK']['Code'])
 
 
+def path_width(words):
+    max_len = 0
+    for word in words:
+        if len(str(word)) > max_len:
+            max_len = len(str(word))
+    return 100 if max_len > 100 else max_len
+
+
 def precheck():
     """
     Pre-execution Dependency Check
@@ -290,18 +307,25 @@ def init_cli():
 
     elif args.sum:
 
+        ex = ExcludedTypes(ex_path='/home/blake/.config/nlines/exclusions.list')
+
         if precheck():
             container = []
 
             io_fail = []
             count = 0
-            width = 63
-            for path in locate_fileobjects('.'):
+
+            d = locate_fileobjects('.')
+            good = remove_illegal(d, ex.types)
+            width = path_width(good)
+
+            for path in good:
                 try:
                     inc = linecount(path)
                     count += inc
-                    fname = path.split('/')[-1][:50]
-                    lpath = path[:50]
+                    count_len = len(str(inc)) + 2
+                    fname = path.split('/')[-1][:(width - count_len)]
+                    lpath = path[:(width - count_len)]
                     tab = '\t'.expandtabs(width - len(lpath))
                     print('{}{}{:>6}'.format(lpath, tab, '{:,}'.format(inc)))
                 except Exception:
@@ -319,14 +343,17 @@ def init_cli():
 
             # --- run with concurrency ---
 
-            #path_list = locate_fileobjects('.')
+            pool_args = []
 
-            if len(sys.argv) > 1:
-                for i in sys.argv[1:]:
-                    container.append(i)
+            if '*' in sys.argv:
+                container.append('.')
+
+            elif len(sys.argv) > 1:
+                container.extend(sys.argv[1:])
 
             # prepare args with tuples
-            pool_args = [(x,) for x in locate_fileobjects('.')]
+            for element in container:
+                pool_args.extend([(x,) for x in locate_fileobjects(element)])
 
             # run instance of main with each item set in separate thread
             # pool function:  return dict with {file: linecount} which can then be printed
