@@ -6,7 +6,7 @@ Help Menu
 
 """
 
-from nlines.statics import PACKAGE, CONFIG_SCRIPT
+from nlines.statics import PACKAGE
 from nlines.colors import Colors
 
 
@@ -73,7 +73,7 @@ menu_body = Colors.BOLD + """
 
                Configure runtime options:   |   Display local config file:
                                             |
-                  $ """ + PKG_ACCENT + PACKAGE + PARAM_ACCENT + ' --configure' + Colors.RESET + """     |       $ """ + PKG_ACCENT + CONFIG_SCRIPT + PARAM_ACCENT + """
+                  $ """ + PKG_ACCENT + PACKAGE + PARAM_ACCENT + ' --configure' + Colors.RESET + """     |       $ """ + PKG_ACCENT + 'WTF' + PARAM_ACCENT + """
     """ + Colors.BOLD + """
         -d, --debug""" + Colors.RESET + """ : when True, do not write to the local awscli configuration
             file(s). Instead, write to a temporary location for testing the int-

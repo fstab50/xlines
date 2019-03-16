@@ -219,35 +219,6 @@ def main(**kwargs):
     return False
 
 
-def option_configure(debug=False, path=None):
-    """
-    Summary:
-        Initiate configuration menu to customize keyup runtime options.
-        Console script ```keyconfig``` invokes this option_configure directly
-        in debug mode to display the contents of the local config file (if exists)
-    Args:
-        :path (str): full path to default local configuration file location
-        :debug (bool): debug flag, when True prints out contents of local
-         config file
-    Returns:
-        TYPE (bool):  Configuration Success | Failure
-    """
-    if CONFIG_SCRIPT in sys.argv[0]:
-        debug = True    # set debug mode if invoked from CONFIG_SCRIPT
-    if path is None:
-        path = local_config['PROJECT']['CONFIG_PATH']
-    if debug:
-        if os.path.isfile(path):
-            debug_mode('local_config file: ', local_config, debug, halt=True)
-        else:
-            msg = """  Local config file does not yet exist. Run:
-
-            $ keyup --configure """
-            debug_mode(msg, {'CONFIG_PATH': path}, debug, halt=True)
-    r = configuration.init(debug, path)
-    return r
-
-
 def line_orchestrator(path):
     io_fail = []
     container = {}
@@ -316,10 +287,6 @@ def init_cli():
 
     elif args.version:
         package_version()
-
-    elif args.configure:
-        r = option_configure(args.debug, local_config['PROJECT']['CONFIG_PATH'])
-        return r
 
     else:
         if precheck():
