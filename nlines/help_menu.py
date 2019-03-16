@@ -7,7 +7,7 @@ Help Menu
 """
 
 from nlines.statics import PACKAGE
-from nlines.colors import Colors
+from nlines import Colors
 
 
 PKG_ACCENT = Colors.ORANGE

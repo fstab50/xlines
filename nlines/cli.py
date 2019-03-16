@@ -39,10 +39,10 @@ from pyaws.utils import stdout_message
 from pyaws.colors import Colors
 from nlines.statics import PACKAGE, local_config
 from nlines.help_menu import menu_body
-from nlines import about, logger, __version__
+from nlines import about, logger, Colors
 
 try:
-    from pyaws.oscodes_unix import exit_codes
+    from pyaws.core.oscodes_unix import exit_codes
     os_type = 'Linux'
     user_home = os.getenv('HOME')
     splitchar = '/'                             # character for splitting paths (linux)
@@ -50,7 +50,7 @@ try:
     TEXT = Colors.LT2GRAY
     TITLE = Colors.WHITE + Colors.BOLD
 except Exception:
-    from nlines.oscodes_win import exit_codes    # non-specific os-safe codes
+    from pyaws.core.oscodes_win import exit_codes    # non-specific os-safe codes
     os_type = 'Windows'
     user_home = os.getenv('username')
     splitchar = '\\'                            # character for splitting paths (windows)
@@ -242,7 +242,7 @@ def options(parser, help_menu=False):
     parser.add_argument("-C", "--configure", dest='configure', action='store_true', required=False)
     parser.add_argument("-d", "--debug", dest='debug', action='store_true', required=False)
     parser.add_argument("-h", "--help", dest='help', action='store_true', required=False)
-    parser.add_argument("-r", "--create-repos", dest='create', type=str, required=False)
+    parser.add_argument("-s", "--sum", dest='sum', nargs='?', default='.', required=False)
     parser.add_argument("-u", "--update", dest='update', type=str, default='all', required=False)
     parser.add_argument("-V", "--version", dest='version', action='store_true', required=False)
     return parser.parse_args()
@@ -288,24 +288,29 @@ def init_cli():
     elif args.version:
         package_version()
 
-    else:
+    elif args.sum:
+
         if precheck():
             container = []
 
             io_fail = []
             count = 0
-            width = 43
+            width = 63
             for path in locate_fileobjects('.'):
                 try:
                     inc = linecount(path)
                     count += inc
-                    fname = path.split('/')[-1][:40]
-                    tab = '\t'.expandtabs(width - len(fname))
-                    print('{}{}{:>6}'.format(fname, tab, '{:,}'.format(inc)))
+                    fname = path.split('/')[-1][:50]
+                    lpath = path[:50]
+                    tab = '\t'.expandtabs(width - len(lpath))
+                    print('{}{}{:>6}'.format(lpath, tab, '{:,}'.format(inc)))
                 except Exception:
                     io_fail.append(path)
                     continue
-            print('Total count is {}'.format('{:,}'.format(count)))
+            msg = 'Total count is:'
+            tab = '\t'.expandtabs(width - len(msg))
+            print('{}{}{:>6}'.format(msg, tab, '{:,}'.format(count)))
+            #print('Total count is {}'.format('{:,}'.format(count)))
             sys.exit(exit_codes['E_DEPENDENCY']['Code'])
 
             print('Skipped file objects:')

@@ -12,7 +12,7 @@ Returns:
 import sys
 import datetime
 from nlines.statics import PACKAGE, LICENSE
-from nlines.colors import Colors
+from nlines import Colors
 from nlines import __version__
 
 

@@ -1,4 +1,4 @@
-from pyaws import logd
+from pyaws import logd, Colors
 from nlines._version import __version__ as version
 from nlines.statics import local_config
 
