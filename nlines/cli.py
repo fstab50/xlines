@@ -59,11 +59,26 @@ except Exception:
     TEXT = Colors.LT2GRAY
     TITLE = Colors.WHITE + Colors.BOLD
 
+# universal colors
+rd = Colors.RED + Colors.BOLD
+yl = Colors.YELLOW + Colors.BOLD
+fs = Colors.GOLD3
+bd = Colors.BOLD
+gn = Colors.BRIGHTGREEN
+frame = gn + bd
+btext = TEXT + Colors.BOLD
+bdwt = Colors.BOLD + Colors.BRIGHTWHITE
+ub = Colors.UNBOLD
+rst = Colors.RESET
 
 # globals
 container = []
 config_dir = local_config['PROJECT']['CONFIG_PATH']
 expath = local_config['EXCLUSIONS']['EX_PATH']
+
+div = frame + ' | ' + rst
+div_len = 2
+horiz = frame + '_' + rst
 
 
 def linecount(path):
@@ -71,14 +86,19 @@ def linecount(path):
 
 
 def mp_linecount(path, exclusions):
-    if os.path.isfile(path):
-        q.put({os.path.abspath(path): linecount(path)})
+    p = path
+    try:
+        if os.path.isfile(path):
+            q.put({os.path.abspath(path): linecount(path)})
 
-    elif os.path.isdir(path):
-        d = locate_fileobjects(path)
-        valid_paths = remove_illegal(d, exclusions)
-        for p in valid_paths:
-            q.put({p: linecount(p)})
+        elif os.path.isdir(path):
+            d = locate_fileobjects(path)
+            valid_paths = remove_illegal(d, exclusions)
+            for p in valid_paths:
+                q.put({p: linecount(p)})
+    except UnicodeError or UnicodeDecodeError:
+        q.put({p: None})
+        return
 
 
 def filter_args(kwarg_dict, *args):
@@ -299,6 +319,16 @@ def precheck():
     return True
 
 
+def print_footer(total, w):
+    msg = 'Total count:'
+    tab = '\t'.expandtabs((w if w < 100 else 100) - len(msg) - len(str(total)) - div_len - 4)
+    tab2 = '\t'.expandtabs(2)
+    tab3 = '\t'.expandtabs(3)
+    print(tab3 + (horiz * (w if w < 100 else 100)) + '\n')
+    print(f'{tab2}{div}{msg}{tab}{"{:,}".format(total):>6}{div}')  # msg, tab, '{:,}'.format(total))
+    print(tab3 + (horiz * (w if w < 100 else 100))  + '\n')
+
+
 def init_cli():
 
     parser = argparse.ArgumentParser(add_help=False)
@@ -387,33 +417,36 @@ def init_cli():
         elif not args.multiprocess:
 
             io_fail = []
-            count = 0
+            tcount = 0
 
             d = locate_fileobjects('.')
             good = remove_illegal(d, ex.types)
             width = path_width(good)
+            fname_max = 25
 
             for path in good:
                 try:
                     inc = linecount(path)
-                    count += inc
+                    tcount += inc    # total count
                     count_len = len(str(inc)) + 2
-                    fname = path.split('/')[-1][:(width - count_len)]
+                    fname = path.split('/')[-1][:fname_max - 1]
                     lpath = path[:(width - count_len)]
                     tab = '\t'.expandtabs(width - len(lpath))
-                    print('{}{}{:>6}'.format(lpath, tab, '{:,}'.format(inc)))
+                    tab2 = '\t'.expandtabs(2)
+                    tabName = ' \t'.expandtabs(fname_max - len(fname))
+                    output_str = f'{tab2}{div}{fname}{tabName}{div}{lpath}{tab}{div}{inc:>6}{div}'
+                    print(output_str)
                 except Exception:
                     io_fail.append(path)
                     continue
-            msg = 'Total count is:'
-            tab = '\t'.expandtabs(width - len(msg))
-            print('{}{}{:>6}'.format(msg, tab, '{:,}'.format(count)))
-            #print('Total count is {}'.format('{:,}'.format(count)))
-            sys.exit(exit_codes['E_DEPENDENCY']['Code'])
 
-            print('Skipped file objects:')
-            for file in io_fail:
-                print('\t{}'.format(file))   # Write this out to a file in /tmp for later viewing
+            print_footer(tcount, len(output_str))
+
+            if args.debug:
+                print('Skipped file objects:')
+                for file in io_fail:
+                    print('\t{}'.format(file))   # Write this out to a file in /tmp for later viewing
+            sys.exit(exit_codes['E_DEPENDENCY']['Code'])
 
     else:
         stdout_message(
