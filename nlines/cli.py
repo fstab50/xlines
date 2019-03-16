@@ -31,7 +31,8 @@ import json
 import inspect
 import argparse
 from functools import reduce
-from multiprocessing import Process, Queue
+import multiprocessing
+from multiprocessing import Queue
 from multiprocessing.dummy import Pool
 from pyaws.utils import export_json_object
 from pyaws.script_utils import import_file_object, read_local_config
@@ -67,6 +68,17 @@ expath = local_config['EXCLUSIONS']['EX_PATH']
 
 def linecount(path):
     return len(open(path).readlines())
+
+
+def mp_linecount(path, exclusions):
+    if os.path.isfile(path):
+        q.put({path: len(open(path).readlines())})
+
+    elif os.path.isdir(path):
+        d = locate_fileobjects(path)
+        valid_paths = remove_illegal(d, exclusions)
+        for p in valid_paths:
+            q.put({p: len(open(p).readlines())})
 
 
 def filter_args(kwarg_dict, *args):
@@ -190,6 +202,9 @@ def locate_fileobjects(origin, path=expath):
     fobjects = []
     ex = ExcludedTypes(path)
 
+    if os.path.isfile(origin):
+        return [origin]
+
     for root, dirs, files in os.walk(origin):
         for file in [f for f in files if '.git' not in root]:
             try:
@@ -251,7 +266,8 @@ def options(parser, help_menu=False):
     parser.add_argument("-C", "--configure", dest='configure', action='store_true', required=False)
     parser.add_argument("-d", "--debug", dest='debug', action='store_true', required=False)
     parser.add_argument("-h", "--help", dest='help', action='store_true', required=False)
-    parser.add_argument("-s", "--sum", dest='sum', nargs='?', default='.', required=False)
+    parser.add_argument("-m", "--multiprocess", dest='multiprocess', default=False, action='store_true', required=False)
+    parser.add_argument("-s", "--sum", dest='sum', nargs='*', default='.', required=False)
     parser.add_argument("-u", "--update", dest='update', type=str, default='all', required=False)
     parser.add_argument("-V", "--version", dest='version', action='store_true', required=False)
     return parser.parse_args()
@@ -305,12 +321,71 @@ def init_cli():
     elif args.version:
         package_version()
 
-    elif args.sum:
+    elif args.sum and precheck():
 
         ex = ExcludedTypes(ex_path='/home/blake/.config/nlines/exclusions.list')
+        container = []
 
-        if precheck():
-            container = []
+        if args.debug:
+            print('args.sum:')
+            print(args.sum)
+            print('sys.argv contents:')
+            print(sys.argv)
+
+        if args.multiprocess:
+            # --- run with concurrency --
+
+            global q
+            q = Queue()
+
+            if len(sys.argv) > 2:
+                container.extend(sys.argv[1:])
+            elif '.' in sys.argv:
+                container.append('.')
+
+            processes = []
+            for i in container:
+                t = multiprocessing.Process(target=mp_linecount, args=(i,ex.types))
+                processes.append(t)
+                t.start()
+
+            for one_process in processes:
+                one_process.join()
+
+            mylist = []
+            while not q.empty():
+                mylist.append(q.get())
+
+            print("Done!")
+            print(len(mylist))
+            print(mylist)
+            return 0
+
+            pool_args = []
+            # Pool multiprocess module
+            # prepare args with tuples
+            for element in container:
+                pool_args.extend([(x,) for x in locate_fileobjects(element)])
+
+            # run instance of main with each item set in separate thread
+            # pool function:  return dict with {file: linecount} which can then be printed
+            # out to cli
+            with Pool(processes=8) as pool:
+                try:
+                    pool.starmap(line_orchestrator, pool_args)
+                except Exception:
+                    pass
+            sys.exit(exit_codes['EX_OK']['Code'])
+
+        elif not args.multiprocess:
+
+            if len(sys.argv) > 2:
+                container.extend(sys.argv[1:])
+            elif '.' in sys.argv:
+                container.append('.')
+
+            for element in container:
+                pool_args.extend([(x,) for x in locate_fileobjects(element)])
 
             io_fail = []
             count = 0
@@ -341,38 +416,13 @@ def init_cli():
             for file in io_fail:
                 print('\t{}'.format(file))   # Write this out to a file in /tmp for later viewing
 
-            # --- run with concurrency ---
-
-            pool_args = []
-
-            if '*' in sys.argv:
-                container.append('.')
-
-            elif len(sys.argv) > 1:
-                container.extend(sys.argv[1:])
-
-            # prepare args with tuples
-            for element in container:
-                pool_args.extend([(x,) for x in locate_fileobjects(element)])
-
-            # run instance of main with each item set in separate thread
-            # pool function:  return dict with {file: linecount} which can then be printed
-            # out to cli
-            with Pool(processes=8) as pool:
-                try:
-                    pool.starmap(line_orchestrator, pool_args)
-                except Exception:
-                    pass
-
-            sys.exit(exit_codes['EX_OK']['Code'])
-
-        else:
-            stdout_message(
-                'Dependency check fail %s' % json.dumps(args, indent=4),
-                prefix='AUTH',
-                severity='WARNING'
-                )
-            sys.exit(exit_codes['E_DEPENDENCY']['Code'])
+    else:
+        stdout_message(
+            'Dependency check fail %s' % json.dumps(args, indent=4),
+            prefix='AUTH',
+            severity='WARNING'
+            )
+        sys.exit(exit_codes['E_DEPENDENCY']['Code'])
 
     failure = """ : Check of runtime parameters failed for unknown reason.
     Please ensure you have both read and write access to local filesystem. """
