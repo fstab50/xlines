@@ -17,8 +17,8 @@ import os
 import inspect
 import logging
 from pyaws.script_utils import read_local_config, get_os, os_parityPath
-from nlines._version import __version__
-
+#from nlines._version import __version__
+__version__ = '1.0'
 logger = logging.getLogger(__version__)
 logger.setLevel(logging.INFO)
 

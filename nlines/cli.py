@@ -50,7 +50,7 @@ try:
     TEXT = Colors.LT2GRAY
     TITLE = Colors.WHITE + Colors.BOLD
 except Exception:
-    from gitsane.oscodes_win import exit_codes    # non-specific os-safe codes
+    from nlines.oscodes_win import exit_codes    # non-specific os-safe codes
     os_type = 'Windows'
     user_home = os.getenv('username')
     splitchar = '\\'                            # character for splitting paths (windows)
@@ -62,7 +62,7 @@ except Exception:
 # globals
 container = []
 config_dir = local_config['PROJECT']['CONFIG_PATH']
-exclusions = local_config['EXCLUSIONS']['EX_PATH']
+expath = local_config['EXCLUSIONS']['EX_PATH']
 
 
 def linecount(path):
@@ -105,8 +105,26 @@ def help_menu():
     return
 
 
-def dedup(duplicates):
-    return list(reduce(lambda r, x: r + [x] if x not in r else r, duplicates, []))
+def remove_duplicates(duplicates):
+    """
+    Summary.
+
+        Generator for removing duplicates from large scale lists
+
+    Args:
+        duplicates (list): contains repeated elements
+
+    Returns:
+        generator object (iter)
+    """
+    uniq = []
+
+    def dedup(d):
+        for element in duplicates:
+            if element not in uniq:
+                uniq.append(element)
+                yield element
+    return [x for x in dedup(duplicates)]
 
 
 class ExcludedTypes():
@@ -131,7 +149,7 @@ class ExcludedTypes():
             return []
 
 
-def locate_fileobjects(origin, path=exclusions):
+def locate_fileobjects(origin, path=expath):
     """
     Summary.
 
@@ -178,7 +196,7 @@ def locate_fileobjects(origin, path=exclusions):
                         (inspect.stack()[0][3], path)
                     )
                     continue
-    return dedup(fobjects)
+    return remove_duplicates(fobjects)
 
 
 def summary(repository_list):
@@ -305,6 +323,8 @@ def init_cli():
 
     else:
         if precheck():
+            container = []
+
             io_fail = []
             count = 0
             width = 43
@@ -319,6 +339,8 @@ def init_cli():
                     io_fail.append(path)
                     continue
             print('Total count is {}'.format('{:,}'.format(count)))
+            sys.exit(exit_codes['E_DEPENDENCY']['Code'])
+
             print('Skipped file objects:')
             for file in io_fail:
                 print('\t{}'.format(file))   # Write this out to a file in /tmp for later viewing
@@ -326,6 +348,10 @@ def init_cli():
             # --- run with concurrency ---
 
             #path_list = locate_fileobjects('.')
+
+            if len(sys.argv) > 1:
+                for i in sys.argv[1:]:
+                    container.append(i)
 
             # prepare args with tuples
             pool_args = [(x,) for x in locate_fileobjects('.')]

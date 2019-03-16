@@ -6,8 +6,8 @@ Help Menu
 
 """
 
-from gitsane.statics import PACKAGE, CONFIG_SCRIPT
-from gitsane.colors import Colors
+from nlines.statics import PACKAGE, CONFIG_SCRIPT
+from nlines.colors import Colors
 
 
 PKG_ACCENT = Colors.ORANGE
@@ -20,8 +20,8 @@ synopsis_cmd = (
     PARAM_ACCENT + '--operation ' + Colors.RESET + '[OPERATION]'
     )
 
-url_doc = Colors.URL + 'http://gitsane.readthedocs.io' + Colors.RESET
-url_sc = Colors.URL + 'https://github.com/fstab50/gitsane' + Colors.RESET
+url_doc = Colors.URL + 'http://nlines.readthedocs.io' + Colors.RESET
+url_sc = Colors.URL + 'https://github.com/fstab50/nlines' + Colors.RESET
 
 menu_body = Colors.BOLD + """
   DESCRIPTION""" + Colors.RESET + """
