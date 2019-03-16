@@ -36,7 +36,7 @@ from multiprocessing import Queue
 from multiprocessing.dummy import Pool
 from pyaws.utils import export_json_object
 from pyaws.script_utils import import_file_object, read_local_config
-from pyaws.utils import stdout_message
+from pyaws.utils import stdout_message, export_json_object
 from pyaws.colors import Colors
 from nlines.statics import PACKAGE, local_config
 from nlines.help_menu import menu_body
@@ -72,13 +72,13 @@ def linecount(path):
 
 def mp_linecount(path, exclusions):
     if os.path.isfile(path):
-        q.put({path: len(open(path).readlines())})
+        q.put({os.path.abspath(path): linecount(path)})
 
     elif os.path.isdir(path):
         d = locate_fileobjects(path)
         valid_paths = remove_illegal(d, exclusions)
         for p in valid_paths:
-            q.put({p: len(open(p).readlines())})
+            q.put({p: linecount(p)})
 
 
 def filter_args(kwarg_dict, *args):
@@ -356,12 +356,19 @@ def init_cli():
             while not q.empty():
                 mylist.append(q.get())
 
-            print("Done!")
-            print(len(mylist))
-            print(mylist)
+            stdout_message(message='Length of resultset: {}'.format(len(mylist)))
+            export_json_object(mylist)
+            stdout_message(message='Done')
             return 0
 
             pool_args = []
+            if len(sys.argv) > 2:
+                container.extend(sys.argv[1:])
+            elif '.' in sys.argv:
+                container.append('.')
+
+                for element in container:
+                    pool_args.extend([(x,) for x in locate_fileobjects(element)])
             # Pool multiprocess module
             # prepare args with tuples
             for element in container:
@@ -378,14 +385,6 @@ def init_cli():
             sys.exit(exit_codes['EX_OK']['Code'])
 
         elif not args.multiprocess:
-
-            if len(sys.argv) > 2:
-                container.extend(sys.argv[1:])
-            elif '.' in sys.argv:
-                container.append('.')
-
-            for element in container:
-                pool_args.extend([(x,) for x in locate_fileobjects(element)])
 
             io_fail = []
             count = 0
