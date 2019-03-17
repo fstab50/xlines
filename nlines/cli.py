@@ -78,14 +78,33 @@ expath = local_config['EXCLUSIONS']['EX_PATH']
 
 div = frame + ' | ' + rst
 div_len = 2
-horiz = frame + '_' + rst
+horiz = frame + '-' + rst
 
 
 def linecount(path):
     return len(open(path).readlines())
 
 
+def sp_linecount(path, exclusions):
+    """Single process line count"""
+    p = path
+    try:
+        if os.path.isfile(path):
+            return remove_illegal([path], exclusions)
+            #print_reportline({os.path.abspath(path): linecount(path)})
+
+        elif os.path.isdir(path):
+            d = locate_fileobjects(path)
+            valid_paths = remove_illegal(d, exclusions)
+            return valid_paths
+            #for p in valid_paths:
+            #    print_reportline({p: linecount(p)})
+    except UnicodeDecodeError:
+        pass
+
+
 def mp_linecount(path, exclusions):
+    """Multiprocessing line count"""
     p = path
     try:
         if os.path.isfile(path):
@@ -322,11 +341,11 @@ def precheck():
 def print_footer(total, w):
     msg = 'Total count:'
     tab = '\t'.expandtabs((w if w < 100 else 100) - len(msg) - len(str(total)) - div_len - 4)
-    tab2 = '\t'.expandtabs(2)
+    tab4 = '\t'.expandtabs(5)
     tab3 = '\t'.expandtabs(3)
     print(tab3 + (horiz * (w if w < 100 else 100)) + '\n')
-    print(f'{tab2}{div}{msg}{tab}{"{:,}".format(total):>6}{div}')  # msg, tab, '{:,}'.format(total))
-    print(tab3 + (horiz * (w if w < 100 else 100))  + '\n')
+    print(f'{tab4}{msg}{tab}{"{:,}".format(total):>6}\n')  # msg, tab, '{:,}'.format(total))
+    #print(tab3 + (horiz * (w if w < 100 else 100))  + '\n')
 
 
 def init_cli():
@@ -355,6 +374,7 @@ def init_cli():
 
         ex = ExcludedTypes(ex_path='/home/blake/.config/nlines/exclusions.list')
         container = []
+        container.extend(args.sum)
 
         if args.debug:
             print('\nargs.sum:')
@@ -369,11 +389,9 @@ def init_cli():
             global q
             q = Queue()
 
-            container.extend(args.sum)
-
             processes = []
             for i in container:
-                t = multiprocessing.Process(target=mp_linecount, args=(i,ex.types))
+                t = multiprocessing.Process(target=mp_linecount, args=(i, ex.types))
                 processes.append(t)
                 t.start()
 
@@ -417,26 +435,27 @@ def init_cli():
             io_fail = []
             tcount = 0
 
-            d = locate_fileobjects('.')
-            good = remove_illegal(d, ex.types)
-            width = path_width(good)
-            fname_max = 25
+            for i in container:
+                good = sp_linecount(i, ex.types)
+                #width = path_width(good)
+                width = 59
+                fname_max = 30
 
-            for path in good:
-                try:
-                    inc = linecount(path)
-                    tcount += inc    # total count
-                    count_len = len(str(inc)) + 2
-                    fname = path.split('/')[-1][:fname_max - 1]
-                    lpath = path[:(width - count_len)]
-                    tab = '\t'.expandtabs(width - len(lpath))
-                    tab2 = '\t'.expandtabs(2)
-                    tabName = ' \t'.expandtabs(fname_max - len(fname))
-                    output_str = f'{tab2}{div}{fname}{tabName}{div}{lpath}{tab}{div}{inc:>6}{div}'
-                    print(output_str)
-                except Exception:
-                    io_fail.append(path)
-                    continue
+                for path in good:
+                    try:
+                        inc = linecount(path)
+                        tcount += inc    # total count
+                        count_len = len(str(inc)) + 2
+                        fname = path.split('/')[-1][:fname_max - 2]
+                        lpath = '/'.join(path.split('/')[:-1])[:(width - count_len)] + '/'
+                        tab = '\t'.expandtabs(width - len(lpath))
+                        tab2 = '\t'.expandtabs(2)
+                        tabName = ' \t'.expandtabs(fname_max - len(fname))
+                        output_str = f'{tab2}{div}{fname}{tabName}{div}{lpath}{tab}{div}{inc:>6}{div}'
+                        print(output_str)
+                    except Exception:
+                        io_fail.append(path)
+                        continue
 
             print_footer(tcount, len(output_str))
 
