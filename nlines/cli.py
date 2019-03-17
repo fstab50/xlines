@@ -96,7 +96,7 @@ def mp_linecount(path, exclusions):
             valid_paths = remove_illegal(d, exclusions)
             for p in valid_paths:
                 q.put({p: linecount(p)})
-    except UnicodeError or UnicodeDecodeError:
+    except UnicodeDecodeError:
         q.put({p: None})
         return
 
@@ -357,10 +357,11 @@ def init_cli():
         container = []
 
         if args.debug:
-            print('args.sum:')
+            print('\nargs.sum:')
             print(args.sum)
-            print('sys.argv contents:')
+            print('\nsys.argv contents:')
             print(sys.argv)
+            sys.exit(0)
 
         if args.multiprocess:
             # --- run with concurrency --
@@ -368,10 +369,7 @@ def init_cli():
             global q
             q = Queue()
 
-            if len(sys.argv) > 2:
-                container.extend(sys.argv[1:])
-            elif '.' in sys.argv:
-                container.append('.')
+            container.extend(args.sum)
 
             processes = []
             for i in container:
