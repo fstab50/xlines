@@ -438,7 +438,7 @@ def init_cli():
             for i in container:
                 good = sp_linecount(i, ex.types)
                 #width = path_width(good)
-                width = 59
+                width = 55
                 fname_max = 30
 
                 for path in good:
