@@ -65,6 +65,8 @@ yl = Colors.YELLOW + Colors.BOLD
 fs = Colors.GOLD3
 bd = Colors.BOLD
 gn = Colors.BRIGHTGREEN
+title = Colors.BRIGHTWHITE + Colors.BOLD
+bbc = bd + Colors.BRIGHTCYAN
 frame = gn + bd
 btext = TEXT + Colors.BOLD
 bdwt = Colors.BOLD + Colors.BRIGHTWHITE
@@ -339,13 +341,14 @@ def precheck():
 
 
 def print_footer(total, w):
+    solid_div = frame + '_' + rst
     msg = 'Total count:'
-    tab = '\t'.expandtabs((w if w < 100 else 100) - len(msg) - len(str(total)) - div_len - 4)
+    tab = '\t'.expandtabs((w if w < 100 else 100) - len(msg) - len(str(total)) - div_len - 3)
     tab4 = '\t'.expandtabs(5)
     tab3 = '\t'.expandtabs(3)
-    print(tab3 + (horiz * (w if w < 100 else 100)) + '\n')
-    print(f'{tab4}{msg}{tab}{"{:,}".format(total):>6}\n')  # msg, tab, '{:,}'.format(total))
-    #print(tab3 + (horiz * (w if w < 100 else 100))  + '\n')
+    print(tab3 + (horiz * (w if w < 100 else 100)))
+    print(f'{tab4}{msg}{tab}{bd + "{:,}".format(total) + rst:>6}' + '\n')
+    #print(tab3 + (solid_div * (w if w < 100 else 100))  + '\n')
 
 
 def init_cli():
@@ -438,7 +441,7 @@ def init_cli():
             for i in container:
                 good = sp_linecount(i, ex.types)
                 #width = path_width(good)
-                width = 55
+                width = 53
                 fname_max = 30
 
                 for path in good:
@@ -451,7 +454,7 @@ def init_cli():
                         tab = '\t'.expandtabs(width - len(lpath))
                         tab2 = '\t'.expandtabs(2)
                         tabName = ' \t'.expandtabs(fname_max - len(fname))
-                        output_str = f'{tab2}{div}{fname}{tabName}{div}{lpath}{tab}{div}{inc:>6}{div}'
+                        output_str = f'{tab2}{div}{fname}{tabName}{div}{lpath}{tab}{div}{"{:,}".format(inc):>7}{div}'
                         print(output_str)
                     except Exception:
                         io_fail.append(path)
