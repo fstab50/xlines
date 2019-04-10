@@ -30,17 +30,15 @@ import sys
 import json
 import inspect
 import argparse
-from functools import reduce
 import multiprocessing
 from multiprocessing import Queue
 from multiprocessing.dummy import Pool
 from pyaws.utils import export_json_object
-from pyaws.script_utils import import_file_object, read_local_config
-from pyaws.utils import stdout_message, export_json_object
+from pyaws.utils import stdout_message
 from pyaws.colors import Colors
 from nlines.statics import PACKAGE, local_config
 from nlines.help_menu import menu_body
-from nlines import about, logger, Colors
+from nlines import about, logger
 
 try:
     from pyaws.core.oscodes_unix import exit_codes
@@ -64,12 +62,12 @@ rd = Colors.RED + Colors.BOLD
 yl = Colors.YELLOW + Colors.BOLD
 fs = Colors.GOLD3
 bd = Colors.BOLD
-gn = Colors.BRIGHTGREEN
-title = Colors.BRIGHTWHITE + Colors.BOLD
-bbc = bd + Colors.BRIGHTCYAN
+gn = Colors.BRIGHT_GREEN
+title = Colors.BRIGHT_WHITE + Colors.BOLD
+bbc = bd + Colors.BRIGHT_CYAN
 frame = gn + bd
 btext = TEXT + Colors.BOLD
-bdwt = Colors.BOLD + Colors.BRIGHTWHITE
+bdwt = Colors.BOLD + Colors.BRIGHT_WHITE
 ub = Colors.UNBOLD
 rst = Colors.RESET
 
