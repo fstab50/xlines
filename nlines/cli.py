@@ -172,7 +172,7 @@ def remove_duplicates(duplicates):
     uniq = []
 
     def dedup(d):
-        for element in duplicates:
+        for element in d:
             if element not in uniq:
                 uniq.append(element)
                 yield element

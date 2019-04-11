@@ -206,7 +206,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'nlines=nlines.cli:init_cli'
+            'linecount=nlines.cli:init_cli'
         ]
     },
     zip_safe=False
