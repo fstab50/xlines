@@ -9,6 +9,7 @@
 .bmp
 .BMP
 .GIF
+.gif
 .pdf
 .PDF
 .PPM
@@ -17,7 +18,9 @@
 .PNM
 .svg
 .SVG
-.git
 pycache
 _env
 venv
+.html
+.xml
+.eggs
