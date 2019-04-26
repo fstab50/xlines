@@ -1,6 +1,6 @@
 """
 
-nlines :  Copyright 2018-2019, Blake Huber
+xlines :  Copyright 2018-2019, Blake Huber
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ from setuptools import setup, find_packages
 from setuptools.command.develop import develop
 from setuptools.command.install import install
 from codecs import open
-import nlines
+import xlines
 
 
 requires = [
@@ -38,10 +38,10 @@ requires = [
 ]
 
 
-_project = 'nlines'
+_project = 'xlines'
 _ex_fname = 'exclusions.list'
 _root = os.path.abspath(os.path.dirname(__file__))
-_comp_fname = 'nlines-completion.bash'
+_comp_fname = 'xlines-completion.bash'
 
 
 def _root_user():
@@ -120,7 +120,7 @@ class PostInstall(install):
 
             completion_file = user_home() + '/.bash_completion'
             completion_dir = user_home() + '/.bash_completion.d'
-            config_dir = user_home() + '/.config/nlines'
+            config_dir = user_home() + '/.config/xlines'
 
             if not os.path.exists(os_parityPath(completion_file)):
                 create_artifact(os_parityPath(completion_file), 'file')
@@ -177,12 +177,12 @@ def user_home():
 
 setup(
     name=_project,
-    version=nlines.__version__,
+    version=xlines.__version__,
     description='Count the number of lines of code in a project',
     long_description=read('DESCRIPTION.rst'),
-    url='https://github.com/fstab50/nlines',
-    author=nlines.__author__,
-    author_email=nlines.__email__,
+    url='https://github.com/fstab50/xlines',
+    author=xlines.__author__,
+    author_email=xlines.__email__,
     license='GPL-3.0',
     classifiers=[
         'Topic :: Software Development :: Build Tools',
