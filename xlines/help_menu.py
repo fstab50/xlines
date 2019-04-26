@@ -6,8 +6,8 @@ Help Menu
 
 """
 
-from nlines.statics import PACKAGE
-from nlines import Colors
+from xlines.statics import PACKAGE
+from xlines import Colors
 
 
 PKG_ACCENT = Colors.ORANGE
@@ -20,8 +20,8 @@ synopsis_cmd = (
     PARAM_ACCENT + '--operation ' + Colors.RESET + '[OPERATION]'
     )
 
-url_doc = Colors.URL + 'http://nlines.readthedocs.io' + Colors.RESET
-url_sc = Colors.URL + 'https://github.com/fstab50/nlines' + Colors.RESET
+url_doc = Colors.URL + 'http://xlines.readthedocs.io' + Colors.RESET
+url_sc = Colors.URL + 'https://github.com/fstab50/xlines' + Colors.RESET
 
 menu_body = Colors.BOLD + """
   DESCRIPTION""" + Colors.RESET + """

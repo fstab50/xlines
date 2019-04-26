@@ -1,6 +1,6 @@
 """
 Summary:
-    nlines Project-level Defaults and Settings
+    xlines Project-level Defaults and Settings
 
 Module Attributes:
     - user_home (TYPE str):
@@ -10,14 +10,14 @@ Module Attributes:
     - config_path (TYPE str):
         default for stsaval config files, includes config_dir (~/.stsaval)
     - key_deprecation (TYPE str):
-        Deprecation logic that nlines uses when 2 keys exist for a user.
+        Deprecation logic that xlines uses when 2 keys exist for a user.
 """
 
 import os
 import inspect
 import logging
 from pyaws.script_utils import read_local_config, get_os, os_parityPath
-#from nlines._version import __version__
+#from xlines._version import __version__
 __version__ = '1.0'
 logger = logging.getLogger(__version__)
 logger.setLevel(logging.INFO)
@@ -42,7 +42,7 @@ else:
     # section with appropriate pathnames
 
     # project
-    PACKAGE = 'nlines'
+    PACKAGE = 'xlines'
     LICENSE = 'GPL v3'
     LICENSE_DESC = 'General Public License v3'
     version = __version__
@@ -50,7 +50,7 @@ else:
     # config parameters
     config_dir = '.config'
     config_subdir = PACKAGE
-    config_filename = 'nlinesconf.json'
+    config_filename = 'xlinesconf.json'
     config_dirpath = user_home + '/' + config_dir
     config_path = user_home + '/' + config_dir + '/' + config_subdir + '/' + config_filename
 
@@ -58,12 +58,12 @@ else:
     exclusions = 'exclusions.list'
 
     # exception file
-    ex_filename = 'nlines.exceptions'
+    ex_filename = 'xlines.exceptions'
 
     # logging parameters
     enable_logging = False
     log_mode = 'FILE'
-    log_filename = 'nlines.log'
+    log_filename = 'xlines.log'
     log_dir = user_home + '/' + 'logs'
     log_path = log_dir + '/' + log_filename
 

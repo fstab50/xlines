@@ -2,7 +2,7 @@
 """
 
 #
-# nlines, GPL v3 License
+# xlines, GPL v3 License
 #
 # Copyright (c) 2018-2019 Blake Huber
 #
@@ -36,9 +36,9 @@ from multiprocessing.dummy import Pool
 from pyaws.utils import export_json_object
 from pyaws.utils import stdout_message
 from pyaws.colors import Colors
-from nlines.statics import PACKAGE, local_config
-from nlines.help_menu import menu_body
-from nlines import about, logger
+from xlines.statics import PACKAGE, local_config
+from xlines.help_menu import menu_body
+from xlines import about, logger
 
 try:
     from pyaws.core.oscodes_unix import exit_codes
@@ -373,7 +373,7 @@ def init_cli():
 
     elif args.sum and precheck():
 
-        ex = ExcludedTypes(ex_path='/home/blake/.config/nlines/exclusions.list')
+        ex = ExcludedTypes(ex_path='/home/blake/.config/xlines/exclusions.list')
         container = []
         container.extend(args.sum)
 
