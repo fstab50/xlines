@@ -308,11 +308,12 @@ class MaxPath():
         self.max_width = 0
 
     def calc_maxpath(self, path_list):
+        if self.max_width != 0:
+            return self.max_width if self.max_width < self.term_width else self.term_width
         for path in path_list:
             if len(path) > self.max_width:
                 self.max_width = len(path)
         return self.max_width if self.max_width < self.term_width else self.term_width
-
 
 
 def options(parser, help_menu=False):
@@ -360,14 +361,14 @@ def precheck():
 
 
 def print_footer(total, w):
+    total_width = w + local_config['PROJECT']['LINECOUNT_COLUMN_WIDTH']
     solid_div = frame + '_' + rst
-    msg = 'Total count:'
-    tab = '\t'.expandtabs((w if w < 100 else 100) - len(msg) - len(str(total)) - div_len - 3)
-    tab4 = '\t'.expandtabs(5)
-    tab3 = '\t'.expandtabs(3)
-    print(tab3 + (horiz * (w if w < 100 else 100)))
+    msg = 'Total lines:'
+    tab = '\t'.expandtabs(total_width - len(msg) - len(str(total)) - 1)
+    tab5 = '\t'.expandtabs(5)
+    tab4 = '\t'.expandtabs(4)
+    print(tab4 + (horiz * (total_width)))
     print(f'{tab4}{msg}{tab}{bd + "{:,}".format(total) + rst:>6}' + '\n')
-    #print(tab3 + (solid_div * (w if w < 100 else 100))  + '\n')
 
 
 def init_cli():
@@ -425,7 +426,7 @@ def init_cli():
                 mylist.append(q.get())
 
             stdout_message(message='Length of resultset: {}'.format(len(mylist)))
-            export_json_object(mylist)
+            export_json_object(mylist, logging=False)
             stdout_message(message='Done')
             return 0
 
@@ -462,7 +463,7 @@ def init_cli():
             for i in container:
                 good = sp_linecount(i, ex.types)
                 width = mp.calc_maxpath(good)
-                max_width = 90
+                max_width = width - 10
                 fname_max = 30
 
                 for path in good:
@@ -472,17 +473,16 @@ def init_cli():
                         tcount += inc    # total line count
                         count_len = len(str(inc)) + 2
                         fname = highlight + path.split('/')[-1][:fname_max] + rst
-                        lpath = text + '/'.join(path.split('/')[:-1])[:(max_width)] + rst
+                        lpath = text + os.path.split(path)[0][:(max_width)] + rst
                         tab = '\t'.expandtabs(width - len(path))
-                        tab2 = '\t'.expandtabs(2)
-                        tabName = ' \t'.expandtabs(fname_max - len(fname))
-                        output_str = f'{tab2}{lpath}{div}{fname}{tab}{"{:,}".format(inc):>7}'
+                        tab4 = '\t'.expandtabs(4)
+                        output_str = f'{tab4}{lpath}{div}{fname}{tab}{"{:,}".format(inc):>7}'
                         print(output_str)
                     except Exception:
                         io_fail.append(path)
                         continue
 
-            print_footer(tcount, len(output_str))
+            print_footer(tcount, width)
 
             if args.debug:
                 print('Skipped file objects:')

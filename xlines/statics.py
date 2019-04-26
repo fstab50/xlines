@@ -54,6 +54,9 @@ else:
     config_dirpath = user_home + '/' + config_dir
     config_path = user_home + '/' + config_dir + '/' + config_subdir + '/' + config_filename
 
+    # output format
+    linecount_width = 7
+
     # exclusions
     exclusions = 'exclusions.list'
 
@@ -81,7 +84,8 @@ else:
             "CONFIG_DIR": config_dir,
             "CONFIG_SUBDIR": config_subdir,
             "CONFIG_PATH": config_path,
-            "EXCEPTION_FILENAME": ex_filename
+            "EXCEPTION_FILENAME": ex_filename,
+            "LINECOUNT_COLUMN_WIDTH": linecount_width
         },
         "EXCLUSIONS": {
             "EX_DIR": config_dir,
