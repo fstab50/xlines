@@ -301,7 +301,7 @@ def calc_maxpath(path_list):
         if len(path) > length:
             length = len(path)
     return length
-    
+
 
 def options(parser, help_menu=False):
     """
@@ -448,7 +448,7 @@ def init_cli():
             for i in container:
                 good = sp_linecount(i, ex.types)
                 #width = path_width(good)
-                width = 100
+                width = calc_maxpath(good)
                 max_width = 90
                 fname_max = 30
 
