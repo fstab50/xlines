@@ -76,8 +76,7 @@ rst = Colors.RESET
 container = []
 config_dir = local_config['PROJECT']['CONFIG_PATH']
 expath = local_config['EXCLUSIONS']['EX_PATH']
-
-div = frame + ' | ' + rst
+div = text + '/' + rst
 div_len = 2
 horiz = frame + '-' + rst
 
@@ -303,6 +302,19 @@ def calc_maxpath(path_list):
     return length
 
 
+class MaxPath():
+    def __init__(self):
+        self.term_width = os.get_terminal_size().columns
+        self.max_width = 0
+
+    def calc_maxpath(self, path_list):
+        for path in path_list:
+            if len(path) > self.max_width:
+                self.max_width = len(path)
+        return self.max_width if self.max_width < self.term_width else self.term_width
+
+
+
 def options(parser, help_menu=False):
     """
     Summary:
@@ -447,8 +459,8 @@ def init_cli():
 
             for i in container:
                 good = sp_linecount(i, ex.types)
-                #width = path_width(good)
-                width = calc_maxpath(good)
+                mp = MaxPath()
+                width = mp.calc_maxpath(good)
                 max_width = 90
                 fname_max = 30
 
@@ -463,7 +475,7 @@ def init_cli():
                         tab = '\t'.expandtabs(width - len(path))
                         tab2 = '\t'.expandtabs(2)
                         tabName = ' \t'.expandtabs(fname_max - len(fname))
-                        output_str = f'{tab2}{div}{lpath}/{fname}{tab}{div}{"{:,}".format(inc):>7}{div}'
+                        output_str = f'{tab2}{lpath}{div}{fname}{tab}{"{:,}".format(inc):>7}'
                         print(output_str)
                     except Exception:
                         io_fail.append(path)
