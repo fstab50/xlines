@@ -456,10 +456,11 @@ def init_cli():
 
             io_fail = []
             tcount = 0
+            #paths = list(filter(lambda x: sp_linecount(x, ex.types), container))
+            mp = MaxPath()
 
             for i in container:
                 good = sp_linecount(i, ex.types)
-                mp = MaxPath()
                 width = mp.calc_maxpath(good)
                 max_width = 90
                 fname_max = 30
