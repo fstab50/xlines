@@ -45,16 +45,16 @@ try:
     os_type = 'Linux'
     user_home = os.getenv('HOME')
     splitchar = '/'                             # character for splitting paths (linux)
-    ACCENT = Colors.ORANGE
-    TEXT = Colors.LT2GRAY
+    acct = Colors.ORANGE
+    text = Colors.BRIGHT_PURPLE
     TITLE = Colors.WHITE + Colors.BOLD
 except Exception:
     from pyaws.core.oscodes_win import exit_codes    # non-specific os-safe codes
     os_type = 'Windows'
     user_home = os.getenv('username')
     splitchar = '\\'                            # character for splitting paths (windows)
-    ACCENT = Colors.CYAN
-    TEXT = Colors.LT2GRAY
+    acct = Colors.CYAN
+    text = Colors.LT2GRAY
     TITLE = Colors.WHITE + Colors.BOLD
 
 # universal colors
@@ -66,7 +66,8 @@ gn = Colors.BRIGHT_GREEN
 title = Colors.BRIGHT_WHITE + Colors.BOLD
 bbc = bd + Colors.BRIGHT_CYAN
 frame = gn + bd
-btext = TEXT + Colors.BOLD
+btext = text + Colors.BOLD
+bwt = Colors.BRIGHT_WHITE
 bdwt = Colors.BOLD + Colors.BRIGHT_WHITE
 ub = Colors.UNBOLD
 rst = Colors.RESET
@@ -294,6 +295,14 @@ def line_orchestrator(path):
     return container, io_fail
 
 
+def calc_maxpath(path_list):
+    length = 0
+    for path in path_list:
+        if len(path) > length:
+            length = len(path)
+    return length
+    
+
 def options(parser, help_menu=False):
     """
     Summary:
@@ -439,20 +448,22 @@ def init_cli():
             for i in container:
                 good = sp_linecount(i, ex.types)
                 #width = path_width(good)
-                width = 53
+                width = 100
+                max_width = 90
                 fname_max = 30
 
                 for path in good:
                     try:
                         inc = linecount(path)
-                        tcount += inc    # total count
+                        highlight = acct if inc > 1000 else Colors.AQUA
+                        tcount += inc    # total line count
                         count_len = len(str(inc)) + 2
-                        fname = path.split('/')[-1][:fname_max - 2]
-                        lpath = '/'.join(path.split('/')[:-1])[:(width - count_len)] + '/'
-                        tab = '\t'.expandtabs(width - len(lpath))
+                        fname = highlight + path.split('/')[-1][:fname_max] + rst
+                        lpath = text + '/'.join(path.split('/')[:-1])[:(max_width)] + rst
+                        tab = '\t'.expandtabs(width - len(path))
                         tab2 = '\t'.expandtabs(2)
                         tabName = ' \t'.expandtabs(fname_max - len(fname))
-                        output_str = f'{tab2}{div}{fname}{tabName}{div}{lpath}{tab}{div}{"{:,}".format(inc):>7}{div}'
+                        output_str = f'{tab2}{div}{lpath}/{fname}{tab}{div}{"{:,}".format(inc):>7}{div}'
                         print(output_str)
                     except Exception:
                         io_fail.append(path)
