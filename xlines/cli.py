@@ -78,7 +78,7 @@ config_dir = local_config['CONFIG']['CONFIG_PATH']
 expath = local_config['EXCLUSIONS']['EX_PATH']
 div = text + '/' + rst
 div_len = 2
-horiz = frame + '-' + rst
+horiz = text + '-' + rst
 
 
 def linecount(path):
@@ -360,11 +360,21 @@ def precheck():
     return True
 
 
+def print_header(w):
+    total_width = w + local_config['PROJECT']['COUNT_COLUMN_WIDTH']
+    header_lhs = 'object'
+    header_rhs = 'line count'
+    tab = '\t'.expandtabs(total_width - len(header_lhs) - len(header_rhs))
+    tab4 = '\t'.expandtabs(4)
+    print(tab4 + (horiz * (total_width)))
+    print(f'{tab4}{header_lhs}{tab}{header_rhs}')
+    print(tab4 + (horiz * (total_width)))
+
+
 def print_footer(total, object_count, w):
     total_width = w + local_config['PROJECT']['COUNT_COLUMN_WIDTH']
     msg = 'Total Lines ({} filesystem objects):'.format(object_count)
     tab = '\t'.expandtabs(total_width - len(msg) - len(str(total)) - 1)
-    tab5 = '\t'.expandtabs(5)
     tab4 = '\t'.expandtabs(4)
     print(tab4 + (horiz * (total_width)))
     print(f'{tab4}{msg}{tab}{bd + "{:,}".format(total) + rst:>6}' + '\n')
@@ -462,6 +472,7 @@ def init_cli():
             for i in container:
                 good = sp_linecount(i, ex.types)
                 width = mp.calc_maxpath(good)
+                print_header(width)
                 max_width = width - 10
                 fname_max = 50
                 hicount_threshold = local_config['PROJECT']['COUNT_THRESHOLD']
