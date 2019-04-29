@@ -308,8 +308,8 @@ class MaxWidth():
         self.max_width = 0
 
     def calc_maxpath(self, path_list):
-        if self.max_width != 0:
-            return self.max_width if self.max_width < self.term_width else self.term_width
+        #if self.max_width != 0:
+        #    return self.max_width if self.max_width < self.term_width else self.term_width
         for path in path_list:
             if len(path) > self.max_width:
                 self.max_width = len(path)
@@ -473,14 +473,23 @@ def init_cli():
             mp = MaxWidth()
 
             for i in container:
-                good = sp_linecount(i, ex.types)
-                width = mp.calc_maxpath(good)
-                print_header(width)
-                max_width = width - 10
-                cutoff = 0
-                hicount_threshold = local_config['PROJECT']['COUNT_THRESHOLD']
+                try:
+                    paths = sp_linecount(i, ex.types)
+                    width = mp.calc_maxpath(paths)
+                except TypeError:
+                    stdout_message(message='Provided path appears to be invalid', prefix='WARN')
+                    sys.exit(0)
 
-                for path in good:
+            print_header(width)
+            max_width = width - 10
+            cutoff = 0
+            hicount_threshold = local_config['PROJECT']['COUNT_THRESHOLD']
+
+            for i in container:
+
+                paths = sp_linecount(i, ex.types)
+
+                for path in paths:
                     try:
                         inc = linecount(path)
                         highlight = acct if inc > hicount_threshold else Colors.AQUA
