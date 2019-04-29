@@ -55,6 +55,7 @@ else:
 
     # output format
     count_column_width = 7
+    count_threshold = 1000
 
     # exclusions
     exclusions = 'exclusions.list'
@@ -76,18 +77,18 @@ else:
     seed_config = {
         "PROJECT": {
             "PACKAGE": PACKAGE,
-            "CONFIG_VERSION": version,
-            "CONFIG_DATE": "",
+            "PACKAGE_VERSION": version,
             "HOME": user_home,
-            "CONFIG_FILENAME": config_filename,
-            "CONFIG_DIR": config_dir,
-            "CONFIG_SUBDIR": config_subdir,
-            "CONFIG_PATH": config_path,
+            "COUNT_COLUMN_WIDTH": count_column_width,
+            "COUNT_THRESHOLD": count_threshold,
             "EXCEPTION_FILENAME": ex_filename
         },
         "CONFIG": {
-            ""
-            "COUNT_COLUMN_WIDTH": count_column_width
+            "CONFIG_DATE": "",
+            "CONFIG_FILENAME": config_filename,
+            "CONFIG_DIR": config_dir,
+            "CONFIG_SUBDIR": config_subdir,
+            "CONFIG_PATH": config_path
         },
         "EXCLUSIONS": {
             "EX_DIR": config_dir,

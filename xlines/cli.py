@@ -74,7 +74,7 @@ rst = Colors.RESET
 
 # globals
 container = []
-config_dir = local_config['PROJECT']['CONFIG_PATH']
+config_dir = local_config['CONFIG']['CONFIG_PATH']
 expath = local_config['EXCLUSIONS']['EX_PATH']
 div = text + '/' + rst
 div_len = 2
@@ -360,10 +360,9 @@ def precheck():
     return True
 
 
-def print_footer(total, w):
-    total_width = w + local_config['CONFIG']['COUNT_COLUMN_WIDTH']
-    solid_div = frame + '_' + rst
-    msg = 'Total lines:'
+def print_footer(total, object_count, w):
+    total_width = w + local_config['PROJECT']['COUNT_COLUMN_WIDTH']
+    msg = 'Total Lines ({} filesystem objects):'.format(object_count)
     tab = '\t'.expandtabs(total_width - len(msg) - len(str(total)) - 1)
     tab5 = '\t'.expandtabs(5)
     tab4 = '\t'.expandtabs(4)
@@ -456,7 +455,7 @@ def init_cli():
         elif not args.multiprocess:
 
             io_fail = []
-            tcount = 0
+            tcount, tobjects = 0, 0
             #paths = list(filter(lambda x: sp_linecount(x, ex.types), container))
             mp = MaxWidth()
 
@@ -464,20 +463,22 @@ def init_cli():
                 good = sp_linecount(i, ex.types)
                 width = mp.calc_maxpath(good)
                 max_width = width - 10
-                fname_max = 30
+                fname_max = 50
+                hicount_threshold = local_config['PROJECT']['COUNT_THRESHOLD']
 
                 for path in good:
                     try:
                         inc = linecount(path)
-                        highlight = acct if inc > 1000 else Colors.AQUA
+                        highlight = acct if inc > hicount_threshold else Colors.AQUA
                         tcount += inc    # total line count
+                        tobjects += 1    # increment total number of objects
                         fname = highlight + os.path.split(path)[1][:fname_max] + rst
                         lpath = text + os.path.split(path)[0][:(max_width)] + rst
                         tab = '\t'.expandtabs(width - len(path))
                         tab4 = '\t'.expandtabs(4)
 
                         # incremental count formatting
-                        ct_format = acct if inc > 1000 else bwt
+                        ct_format = acct if inc > hicount_threshold else bwt
 
                         output_str = f'{tab4}{lpath}{div}{fname}{tab}{ct_format}{"{:,}".format(inc):>7}{rst}'
                         print(output_str)
@@ -485,7 +486,7 @@ def init_cli():
                         io_fail.append(path)
                         continue
 
-            print_footer(tcount, width)
+            print_footer(tcount, tobjects, width)
 
             if args.debug:
                 print('Skipped file objects:')
