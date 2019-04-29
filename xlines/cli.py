@@ -302,7 +302,7 @@ def calc_maxpath(path_list):
     return length
 
 
-class MaxPath():
+class MaxWidth():
     def __init__(self):
         self.term_width = os.get_terminal_size().columns
         self.max_width = 0
@@ -458,7 +458,7 @@ def init_cli():
             io_fail = []
             tcount = 0
             #paths = list(filter(lambda x: sp_linecount(x, ex.types), container))
-            mp = MaxPath()
+            mp = MaxWidth()
 
             for i in container:
                 good = sp_linecount(i, ex.types)
