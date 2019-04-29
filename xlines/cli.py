@@ -375,6 +375,8 @@ def print_footer(total, object_count, w):
     total_width = w + local_config['PROJECT']['COUNT_COLUMN_WIDTH']
     msg = 'Total ({} objects):'.format(str(object_count))
     tab = '\t'.expandtabs(total_width - len(msg) - len(str(total)) - 1)
+
+    # redefine with color codes added
     msg = 'Total ({} objects):'.format(title + str(object_count) + rst)
     tab4 = '\t'.expandtabs(4)
     print(tab4 + (horiz * (total_width)))
@@ -475,7 +477,6 @@ def init_cli():
                 width = mp.calc_maxpath(good)
                 print_header(width)
                 max_width = width - 10
-                fname_max = 50
                 cutoff = 0
                 hicount_threshold = local_config['PROJECT']['COUNT_THRESHOLD']
 
@@ -485,12 +486,16 @@ def init_cli():
                         highlight = acct if inc > hicount_threshold else Colors.AQUA
                         tcount += inc    # total line count
                         tobjects += 1    # increment total number of objects
-                        fname = highlight + os.path.split(path)[1][:fname_max] + rst
+                        fname = highlight + os.path.split(path)[1] + rst
 
-                        lpath = text + os.path.split(path)[0] + rst
+                        # truncation
+                        #lpath = os.path.split(path)[0]
                         #if len(path) > max_width:
                         #    cutoff = len(path) + len('..') - max_width
                         #    lpath = text + '..' + os.path.split(path)[0][cutoff:] + rst
+                        #else:
+                        #    lpath = text + os.path.split(path)[0] + rst
+                        lpath = text + os.path.split(path)[0] + rst
 
                         tab = '\t'.expandtabs(width - len(path))
                         tab4 = '\t'.expandtabs(4)
