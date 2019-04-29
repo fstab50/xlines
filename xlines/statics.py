@@ -17,8 +17,7 @@ import os
 import inspect
 import logging
 from pyaws.script_utils import read_local_config, get_os, os_parityPath
-#from xlines._version import __version__
-__version__ = '1.0'
+from xlines._version import __version__
 logger = logging.getLogger(__version__)
 logger.setLevel(logging.INFO)
 
@@ -55,7 +54,7 @@ else:
     config_path = user_home + '/' + config_dir + '/' + config_subdir + '/' + config_filename
 
     # output format
-    linecount_width = 7
+    count_column_width = 7
 
     # exclusions
     exclusions = 'exclusions.list'
@@ -84,8 +83,11 @@ else:
             "CONFIG_DIR": config_dir,
             "CONFIG_SUBDIR": config_subdir,
             "CONFIG_PATH": config_path,
-            "EXCEPTION_FILENAME": ex_filename,
-            "LINECOUNT_COLUMN_WIDTH": linecount_width
+            "EXCEPTION_FILENAME": ex_filename
+        },
+        "CONFIG": {
+            ""
+            "COUNT_COLUMN_WIDTH": count_column_width
         },
         "EXCLUSIONS": {
             "EX_DIR": config_dir,

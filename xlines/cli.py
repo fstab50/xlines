@@ -361,7 +361,7 @@ def precheck():
 
 
 def print_footer(total, w):
-    total_width = w + local_config['PROJECT']['LINECOUNT_COLUMN_WIDTH']
+    total_width = w + local_config['CONFIG']['COUNT_COLUMN_WIDTH']
     solid_div = frame + '_' + rst
     msg = 'Total lines:'
     tab = '\t'.expandtabs(total_width - len(msg) - len(str(total)) - 1)
@@ -471,12 +471,15 @@ def init_cli():
                         inc = linecount(path)
                         highlight = acct if inc > 1000 else Colors.AQUA
                         tcount += inc    # total line count
-                        count_len = len(str(inc)) + 2
-                        fname = highlight + path.split('/')[-1][:fname_max] + rst
+                        fname = highlight + os.path.split(path)[1][:fname_max] + rst
                         lpath = text + os.path.split(path)[0][:(max_width)] + rst
                         tab = '\t'.expandtabs(width - len(path))
                         tab4 = '\t'.expandtabs(4)
-                        output_str = f'{tab4}{lpath}{div}{fname}{tab}{"{:,}".format(inc):>7}'
+
+                        # incremental count formatting
+                        ct_format = acct if inc > 1000 else bwt
+
+                        output_str = f'{tab4}{lpath}{div}{fname}{tab}{ct_format}{"{:,}".format(inc):>7}{rst}'
                         print(output_str)
                     except Exception:
                         io_fail.append(path)
