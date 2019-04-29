@@ -373,7 +373,7 @@ def print_header(w):
 
 def print_footer(total, object_count, w):
     total_width = w + local_config['PROJECT']['COUNT_COLUMN_WIDTH']
-    msg = 'Total Lines ({} filesystem objects):'.format(object_count)
+    msg = 'Total ({} filesystem objects):'.format(object_count)
     tab = '\t'.expandtabs(total_width - len(msg) - len(str(total)) - 1)
     tab4 = '\t'.expandtabs(4)
     print(tab4 + (horiz * (total_width)))
