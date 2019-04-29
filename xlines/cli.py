@@ -373,8 +373,9 @@ def print_header(w):
 
 def print_footer(total, object_count, w):
     total_width = w + local_config['PROJECT']['COUNT_COLUMN_WIDTH']
-    msg = 'Total ({} filesystem objects):'.format(object_count)
+    msg = 'Total ({} objects):'.format(str(object_count))
     tab = '\t'.expandtabs(total_width - len(msg) - len(str(total)) - 1)
+    msg = 'Total ({} objects):'.format(title + str(object_count) + rst)
     tab4 = '\t'.expandtabs(4)
     print(tab4 + (horiz * (total_width)))
     print(f'{tab4}{msg}{tab}{bd + "{:,}".format(total) + rst:>6}' + '\n')
@@ -475,6 +476,7 @@ def init_cli():
                 print_header(width)
                 max_width = width - 10
                 fname_max = 50
+                cutoff = 0
                 hicount_threshold = local_config['PROJECT']['COUNT_THRESHOLD']
 
                 for path in good:
@@ -484,7 +486,12 @@ def init_cli():
                         tcount += inc    # total line count
                         tobjects += 1    # increment total number of objects
                         fname = highlight + os.path.split(path)[1][:fname_max] + rst
-                        lpath = text + os.path.split(path)[0][:(max_width)] + rst
+
+                        lpath = text + os.path.split(path)[0] + rst
+                        #if len(path) > max_width:
+                        #    cutoff = len(path) + len('..') - max_width
+                        #    lpath = text + '..' + os.path.split(path)[0][cutoff:] + rst
+
                         tab = '\t'.expandtabs(width - len(path))
                         tab4 = '\t'.expandtabs(4)
 
