@@ -302,6 +302,26 @@ def calc_maxpath(path_list):
     return length
 
 
+def longest_path(parameters, exclusions):
+    """
+        Traces all subdirectories of provided commandline paths
+        
+    Returns:
+        width (integer), number of characters in longest path
+    """
+    # calc max path object
+    mp = MaxWidth()
+
+    for i in parameters:
+        try:
+            paths = sp_linecount(i, exclusions.types)
+            width = mp.calc_maxpath(paths)
+        except TypeError:
+            stdout_message(message='Provided path appears to be invalid', prefix='WARN')
+            sys.exit(0)
+    return width
+
+
 class MaxWidth():
     def __init__(self):
         self.term_width = os.get_terminal_size().columns
@@ -469,16 +489,7 @@ def init_cli():
 
             io_fail = []
             tcount, tobjects = 0, 0
-            #paths = list(filter(lambda x: sp_linecount(x, ex.types), container))
-            mp = MaxWidth()
-
-            for i in container:
-                try:
-                    paths = sp_linecount(i, ex.types)
-                    width = mp.calc_maxpath(paths)
-                except TypeError:
-                    stdout_message(message='Provided path appears to be invalid', prefix='WARN')
-                    sys.exit(0)
+            width = longest_path(container, ex)
 
             print_header(width)
             max_width = width - 10
