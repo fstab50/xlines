@@ -294,23 +294,19 @@ def line_orchestrator(path):
     return container, io_fail
 
 
-def calc_maxpath(path_list):
-    length = 0
-    for path in path_list:
-        if len(path) > length:
-            length = len(path)
-    return length
-
-
 def longest_path(parameters, exclusions):
     """
         Traces all subdirectories of provided commandline paths
+        using MaxWidth object
+
+    Args:
+        :parameters (list): list of all sys.argv parameters supplied with --sum
+        :exclusions (ExcludedTypes object): types to exclude
 
     Returns:
         width (integer), number of characters in longest path
     """
-    # calc max path object
-    mp = MaxWidth()
+    mp = MaxWidth()     # max path object
 
     for i in parameters:
         try:
