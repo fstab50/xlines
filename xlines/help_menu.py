@@ -25,62 +25,32 @@ url_sc = Colors.URL + 'https://github.com/fstab50/xlines' + Colors.RESET
 
 menu_body = Colors.BOLD + """
   DESCRIPTION""" + Colors.RESET + """
-            Manage local git repositories en mass
+            Count the lines in a code project
 
-            Documentation:  """ + url_doc + """
             Source Code:  """ + url_sc + """
     """ + Colors.BOLD + """
   SYNOPSIS""" + Colors.RESET + """
                 """ + synopsis_cmd + """
 
-                    -u, --update <value>
-                    -c, --create <value>
-                   [-i, --index    <value> ]
-                   [-q, --quiet     ]
-                   [-c, --configure]
+                    -s, --sum <value1>...
+                   [-e, --exclusions ]
+                   [-c, --configure  ]
                    [-V, --version  ]
                    [-d, --debug    ]
                    [-h, --help     ]
     """ + Colors.BOLD + """
   OPTIONS
-        -i, --index""" + Colors.RESET + """ (string) : Discover local git repos and
-        exit. Does not update any repositories
-        -u, --update""" + Colors.RESET + """ (string) : Discover and update all local
-        git repositories
-        -c, --create <value>""" + Colors.RESET + """ (string) : Duplicates the repositories
-        and filesystem structure described in configuration file provided as a
-        parameter.
+        -s, --sum""" + Colors.RESET + """ (string): Sum the counts of all lines contained
+            in filesystem objects referenced in the sum parameter
     """ + Colors.BOLD + """
-        -o, --operation""" + Colors.RESET + """ (string) : Operation to be conducted on the access key
-            of the IAM user noted by the PROFILE value. There are 2 operations:
-
-                Valid Operations: {list, update}
-
-                    - list       : List keys and key metadata
-                    - up         : Rotate keys by creating new keys, install
-                                   keys, then delete deprecated keyset
-
-                    Default: """ + Colors.BOLD + 'list' + Colors.RESET + """
+        -c, --configuration""" + Colors.RESET + """: Configure runtime parameter via the
+            cli menu. Change display format, color scheme, toggle
+            human-readable line count figures
     """ + Colors.BOLD + """
-        -q, --quiet""" + Colors.RESET + """ : Suppress output to stdout when """ + PACKAGE + """ triggered via a
-            scheduler such as cron or other automated means to update git repo-
-            sitories in the background
+        -d, --debug""" + Colors.RESET + """: Output additional debug information
     """ + Colors.BOLD + """
-        -c, --configure""" + Colors.RESET + """ :  Configure parameters to custom values.  If the local
-            config file does not exist, option writes a new local configuration
-            file to disk.  If file exists, overwrites existing config with up-
-            dated values.
-
-               Configure runtime options:   |   Display local config file:
-                                            |
-                  $ """ + PKG_ACCENT + PACKAGE + PARAM_ACCENT + ' --configure' + Colors.RESET + """     |       $ """ + PKG_ACCENT + 'WTF' + PARAM_ACCENT + """
+        -V, --version""" + Colors.RESET + """: Print package version
     """ + Colors.BOLD + """
-        -d, --debug""" + Colors.RESET + """ : when True, do not write to the local awscli configuration
-            file(s). Instead, write to a temporary location for testing the int-
-            grity of the credentials file format that is written to disk.
-    """ + Colors.BOLD + """
-        -V, --version""" + Colors.RESET + """ : Print package version
-    """ + Colors.BOLD + """
-        -h, --help""" + Colors.RESET + """ : Show this help message and exit
+        -h, --help""" + Colors.RESET + """: Show this help message and exit
 
     """
