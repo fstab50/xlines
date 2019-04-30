@@ -305,7 +305,7 @@ def calc_maxpath(path_list):
 def longest_path(parameters, exclusions):
     """
         Traces all subdirectories of provided commandline paths
-        
+
     Returns:
         width (integer), number of characters in longest path
     """
@@ -328,8 +328,6 @@ class MaxWidth():
         self.max_width = 0
 
     def calc_maxpath(self, path_list):
-        #if self.max_width != 0:
-        #    return self.max_width if self.max_width < self.term_width else self.term_width
         for path in path_list:
             if len(path) > self.max_width:
                 self.max_width = len(path)
