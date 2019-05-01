@@ -1,6 +1,2 @@
-pandoc
-pkginfo
 pyaws
-twine
-prompt-toolkit
 veryprettytable
