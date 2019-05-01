@@ -491,7 +491,6 @@ def init_cli():
             width = longest_path(container, ex)
 
             print_header(width)
-            max_width = width - 10
             count_width = local_config['PROJECT']['COUNT_COLUMN_WIDTH']
             hicount_threshold = local_config['PROJECT']['COUNT_THRESHOLD']
 
@@ -519,11 +518,12 @@ def init_cli():
                         tab4 = '\t'.expandtabs(4)
 
                         # with color codes added
-                        fname = highlight + fname + rst
                         if cutoff == 0:
                             lpath = text + lpath + rst
                         else:
                             lpath = os.path.split(path)[0][:cutoff] + arrow
+
+                        fname = highlight + fname + rst
 
                         # incremental count formatting
                         ct_format = acct if inc > hicount_threshold else bwt
@@ -535,11 +535,6 @@ def init_cli():
                         continue
 
             print_footer(tcount, tobjects, width)
-
-
-            print('width: {}'.format(width))
-            print('os.get_terminal_size: {}'.format(os.get_terminal_size().columns))
-
 
             if args.debug:
                 print('Skipped file objects:')
