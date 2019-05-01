@@ -79,7 +79,8 @@ expath = local_config['EXCLUSIONS']['EX_PATH']
 div = text + '/' + rst
 div_len = 2
 horiz = text + '-' + rst
-
+arrow = bwt + '-> ' + rst
+BUFFER = 6
 
 def linecount(path):
     return len(open(path).readlines())
@@ -320,13 +321,16 @@ def longest_path(parameters, exclusions):
 
 class MaxWidth():
     def __init__(self):
-        self.term_width = os.get_terminal_size().columns
+        self.buffer = local_config['PROJECT']['COUNT_COLUMN_WIDTH'] + BUFFER
+        self.term_width = os.get_terminal_size().columns - self.buffer
         self.max_width = 0
 
     def calc_maxpath(self, path_list):
         for path in path_list:
             if len(path) > self.max_width:
                 self.max_width = len(path)
+            if len(path) > self.term_width:
+                break
         return self.max_width if self.max_width < self.term_width else self.term_width
 
 
@@ -487,7 +491,7 @@ def init_cli():
 
             print_header(width)
             max_width = width - 10
-            cutoff = 0
+            count_width = local_config['PROJECT']['COUNT_COLUMN_WIDTH']
             hicount_threshold = local_config['PROJECT']['COUNT_THRESHOLD']
 
             for i in container:
@@ -500,19 +504,25 @@ def init_cli():
                         highlight = acct if inc > hicount_threshold else Colors.AQUA
                         tcount += inc    # total line count
                         tobjects += 1    # increment total number of objects
-                        fname = highlight + os.path.split(path)[1] + rst
 
                         # truncation
-                        #lpath = os.path.split(path)[0]
-                        #if len(path) > max_width:
-                        #    cutoff = len(path) + len('..') - max_width
-                        #    lpath = text + '..' + os.path.split(path)[0][cutoff:] + rst
-                        #else:
-                        #    lpath = text + os.path.split(path)[0] + rst
-                        lpath = text + os.path.split(path)[0] + rst
+                        lpath = os.path.split(path)[0]
+                        fname = os.path.split(path)[1]
 
-                        tab = '\t'.expandtabs(width - len(path))
+                        if width < (len(lpath) + len(fname)):
+                            cutoff = (len(lpath) + len(fname)) - width
+                        else:
+                            cutoff = 0
+
+                        tab = '\t'.expandtabs(width - len(lpath) - len(fname) - count_width + BUFFER)
                         tab4 = '\t'.expandtabs(4)
+
+                        # with color codes added
+                        fname = highlight + fname + rst
+                        if cutoff == 0:
+                            lpath = text + lpath + rst
+                        else:
+                            lpath = os.path.split(path)[0][:cutoff] + arrow
 
                         # incremental count formatting
                         ct_format = acct if inc > hicount_threshold else bwt
@@ -524,6 +534,11 @@ def init_cli():
                         continue
 
             print_footer(tcount, tobjects, width)
+
+
+            print('width: {}'.format(width))
+            print('os.get_terminal_size: {}'.format(os.get_terminal_size().columns))
+
 
             if args.debug:
                 print('Skipped file objects:')
