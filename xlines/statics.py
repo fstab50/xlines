@@ -55,6 +55,7 @@ else:
 
     # output format
     count_column_width = 7
+    min_buffer_chars = 6
     count_threshold = 1000
 
     # exclusions
@@ -81,6 +82,7 @@ else:
             "HOME": user_home,
             "COUNT_COLUMN_WIDTH": count_column_width,
             "COUNT_THRESHOLD": count_threshold,
+            "BUFFER":  min_buffer_chars,
             "EXCEPTION_FILENAME": ex_filename
         },
         "CONFIG": {

@@ -80,7 +80,8 @@ div = text + '/' + rst
 div_len = 2
 horiz = text + '-' + rst
 arrow = bwt + '-> ' + rst
-BUFFER = 6
+BUFFER = local_config['PROJECT']['BUFFER']
+
 
 def linecount(path):
     return len(open(path).readlines())
