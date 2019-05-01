@@ -83,8 +83,10 @@ arrow = bwt + '-> ' + rst
 BUFFER = local_config['PROJECT']['BUFFER']
 
 
-def linecount(path):
-    return len(open(path).readlines())
+def linecount(path, whitespace=True):
+    if whitespace:
+        return len(open(path).readlines())
+    return len(list(filter(lambda x: x != '\n', open(path).readlines())))
 
 
 def sp_linecount(path, exclusions):
@@ -349,6 +351,7 @@ def options(parser, help_menu=False):
     parser.add_argument("-m", "--multiprocess", dest='multiprocess', default=False, action='store_true', required=False)
     parser.add_argument("-s", "--sum", dest='sum', nargs='*', default='.', required=False)
     parser.add_argument("-u", "--update", dest='update', type=str, default='all', required=False)
+    parser.add_argument("-w", "--whitespace", dest='whitespace', action='store_false', default=True, required=False)
     parser.add_argument("-V", "--version", dest='version', action='store_true', required=False)
     return parser.parse_args()
 
@@ -500,7 +503,7 @@ def init_cli():
 
                 for path in paths:
                     try:
-                        inc = linecount(path)
+                        inc = linecount(path, args.whitespace)
                         highlight = acct if inc > hicount_threshold else Colors.AQUA
                         tcount += inc    # total line count
                         tobjects += 1    # increment total number of objects
