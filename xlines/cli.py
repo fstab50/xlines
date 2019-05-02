@@ -356,6 +356,53 @@ def options(parser, help_menu=False):
     return parser.parse_args()
 
 
+def multiprocessing_main(parameters):
+    """Execute Operations using concurrency (multi-process) model"""
+    global q
+    q = Queue()
+
+    processes = []
+    for i in container:
+        t = multiprocessing.Process(target=mp_linecount, args=(i, ex.types))
+        processes.append(t)
+        t.start()
+
+    for one_process in processes:
+        one_process.join()
+
+    mylist = []
+    while not q.empty():
+        mylist.append(q.get())
+
+    stdout_message(message='Length of resultset: {}'.format(len(mylist)))
+    export_json_object(mylist, logging=False)
+    stdout_message(message='Done')
+    return 0
+
+    pool_args = []
+    if len(sys.argv) > 2:
+        container.extend(sys.argv[1:])
+    elif '.' in sys.argv:
+        container.append('.')
+
+        for element in container:
+            pool_args.extend([(x,) for x in locate_fileobjects(element)])
+    # Pool multiprocess module
+    # prepare args with tuples
+    for element in container:
+        pool_args.extend([(x,) for x in locate_fileobjects(element)])
+
+    # run instance of main with each item set in separate thread
+    # pool function:  return dict with {file: linecount} which can then be printed
+    # out to cli
+    with Pool(processes=8) as pool:
+        try:
+            pool.starmap(line_orchestrator, pool_args)
+        except Exception:
+            pass
+    sys.exit(exit_codes['EX_OK']['Code'])
+
+
 def package_version():
     """
     Prints package version and requisite PACKAGE info
@@ -442,50 +489,8 @@ def init_cli():
 
         if args.multiprocess:
             # --- run with concurrency --
+            multiprocessing_main(args.sum)
 
-            global q
-            q = Queue()
-
-            processes = []
-            for i in container:
-                t = multiprocessing.Process(target=mp_linecount, args=(i, ex.types))
-                processes.append(t)
-                t.start()
-
-            for one_process in processes:
-                one_process.join()
-
-            mylist = []
-            while not q.empty():
-                mylist.append(q.get())
-
-            stdout_message(message='Length of resultset: {}'.format(len(mylist)))
-            export_json_object(mylist, logging=False)
-            stdout_message(message='Done')
-            return 0
-
-            pool_args = []
-            if len(sys.argv) > 2:
-                container.extend(sys.argv[1:])
-            elif '.' in sys.argv:
-                container.append('.')
-
-                for element in container:
-                    pool_args.extend([(x,) for x in locate_fileobjects(element)])
-            # Pool multiprocess module
-            # prepare args with tuples
-            for element in container:
-                pool_args.extend([(x,) for x in locate_fileobjects(element)])
-
-            # run instance of main with each item set in separate thread
-            # pool function:  return dict with {file: linecount} which can then be printed
-            # out to cli
-            with Pool(processes=8) as pool:
-                try:
-                    pool.starmap(line_orchestrator, pool_args)
-                except Exception:
-                    pass
-            sys.exit(exit_codes['EX_OK']['Code'])
 
         elif not args.multiprocess:
 
