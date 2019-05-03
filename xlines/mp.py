@@ -10,12 +10,34 @@ Module Functions:
 import os
 import multiprocessing
 from multiprocessing import Queue
-from xlines.cli import linecount, locate_fileobjects, remove_illegal, BUFFER, acct, text, rst
-from xlines.cli import print_header, print_footer
-from xlines.cli import BUFFER, acct, bwt, text, rst, arrow, div
-from xlines.statics import local_config
 from pyaws.utils import stdout_message, export_json_object
 from pyaws.colors import Colors
+from xlines.common import BUFFER, acct, bwt, text, rst, arrow, div, horiz
+from xlines.statics import local_config
+from xlines.common import locate_fileobjects, remove_illegal, linecount
+
+
+def print_header(w):
+    total_width = w + local_config['PROJECT']['COUNT_COLUMN_WIDTH']
+    header_lhs = 'object'
+    header_rhs = 'line count'
+    tab = '\t'.expandtabs(total_width - len(header_lhs) - len(header_rhs))
+    tab4 = '\t'.expandtabs(4)
+    print(tab4 + (horiz * (total_width)))
+    print(f'{tab4}{header_lhs}{tab}{header_rhs}')
+    print(tab4 + (horiz * (total_width)))
+
+
+def print_footer(total, object_count, w):
+    total_width = w + local_config['PROJECT']['COUNT_COLUMN_WIDTH']
+    msg = 'Total ({} objects):'.format(str(object_count))
+    tab = '\t'.expandtabs(total_width - len(msg) - len(str(total)) - 1)
+
+    # redefine with color codes added
+    msg = f'Total ({title + "{:,}".format(object_count) + rst} objects):'
+    tab4 = '\t'.expandtabs(4)
+    print(tab4 + (horiz * (total_width)))
+    print(f'{tab4}{msg}{tab}{bd + "{:,}".format(total) + rst:>6}' + '\n')
 
 
 def longest_path_mp(paths):
@@ -116,26 +138,3 @@ def multiprocessing_main(container, exclusions):
     export_json_object(results, logging=False)
     stdout_message(message='Num of objects: {}'.format(len(results)))
     return 0
-
-    pool_args = []
-    if len(sys.argv) > 2:
-        container.extend(sys.argv[1:])
-    elif '.' in sys.argv:
-        container.append('.')
-
-        for element in container:
-            pool_args.extend([(x,) for x in locate_fileobjects(element)])
-    # Pool multiprocess module
-    # prepare args with tuples
-    for element in container:
-        pool_args.extend([(x,) for x in locate_fileobjects(element)])
-
-    # run instance of main with each item set in separate thread
-    # pool function:  return dict with {file: linecount} which can then be printed
-    # out to cli
-    with Pool(processes=8) as pool:
-        try:
-            pool.starmap(line_orchestrator, pool_args)
-        except Exception:
-            pass
-    sys.exit(exit_codes['EX_OK']['Code'])
