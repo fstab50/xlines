@@ -35,9 +35,11 @@ menu_body = Colors.BOLD + """
                     -s, --sum <value1>...
                    [-e, --exclusions ]
                    [-c, --configure  ]
-                   [-V, --version  ]
                    [-d, --debug    ]
                    [-h, --help     ]
+                   [-m, --multiprocess  ]
+                   [-w, --whitespace  ]
+                   [-V, --version  ]
     """ + Colors.BOLD + """
   OPTIONS
         -s, --sum""" + Colors.RESET + """ (string): Sum the counts of all lines contained
