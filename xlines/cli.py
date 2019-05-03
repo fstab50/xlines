@@ -242,7 +242,7 @@ def options(parser, help_menu=False):
     """
     parser.add_argument("-i", "--index", dest='index', action='store_true', required=False)
     parser.add_argument("-C", "--configure", dest='configure', action='store_true', required=False)
-    parser.add_argument("-d", "--debug", dest='debug', action='store_true', required=False)
+    parser.add_argument("-d", "--debug", dest='debug', action='store_true', default=False, required=False)
     parser.add_argument("-h", "--help", dest='help', action='store_true', required=False)
     parser.add_argument("-m", "--multiprocess", dest='multiprocess', default=False, action='store_true', required=False)
     parser.add_argument("-s", "--sum", dest='sum', nargs='*', default='.', required=False)
@@ -334,11 +334,10 @@ def init_cli():
             print(args.sum)
             print('\nsys.argv contents:')
             print(sys.argv)
-            sys.exit(0)
 
         if args.multiprocess:
             # --- run with concurrency --
-            multiprocessing_main([x for x in args.sum], ex)
+            multiprocessing_main([x for x in args.sum], ex, args.debug)
 
 
         elif not args.multiprocess:

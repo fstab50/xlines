@@ -17,12 +17,11 @@ from xlines.statics import local_config
 from xlines.common import locate_fileobjects, remove_illegal, linecount, print_header, print_footer
 
 
-def longest_path_mp(paths):
+def longest_path_mp(object_list):
     longest = 0
-    for path in paths:
-        for key in path.keys():
-            if len(key) > longest:
-                longest = len(key)
+    for path_dict in object_list:
+        if len(path_dict['path']) > longest:
+            longest = len(path_dict['path'])
     return longest
 
 
@@ -43,7 +42,7 @@ def mp_linecount(path, exclusions):
             for p in valid_paths:
                 q.put({'path': p, 'count': linecount(p)})
     except UnicodeDecodeError:
-        q.put({p: None})
+        q.put({'path': p, 'count': None})
         return
 
 
@@ -99,7 +98,7 @@ def print_results(object_list):
     return True
 
 
-def multiprocessing_main(container, exclusions):
+def multiprocessing_main(container, exclusions, debug):
     """Execute Operations using concurrency (multi-process) model"""
 
     global q
@@ -119,6 +118,8 @@ def multiprocessing_main(container, exclusions):
         results.append(q.get())
 
     print_results(results)
-    export_json_object(results, logging=False)
-    stdout_message(message='Num of objects: {}'.format(len(results)))
+
+    if debug:
+        export_json_object(results, logging=False)
+        stdout_message(message='Num of objects: {}'.format(len(results)))
     return 0
