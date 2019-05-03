@@ -1,0 +1,1 @@
+ fpm --python-bin python3 --python-dependencies --python-pip /usr/bin/pip3 --no-python-fix-name --python-install-bin /usr/local/bin  --python-bin python3 -s python -t rpm ./setup.py
