@@ -40,7 +40,8 @@ from xlines.statics import PACKAGE, local_config
 from xlines.help_menu import menu_body
 from xlines import about, logger
 from xlines.mp import multiprocessing_main
-from xlines.common import linecount, locate_fileobjects, remove_illegal, remove_duplicates
+from xlines.common import linecount, locate_fileobjects, remove_illegal
+from xlines.common import ExcludedTypes
 
 
 try:
@@ -139,37 +140,6 @@ def help_menu():
         )
     print(menu_body)
     return
-
-
-class ExcludedTypes():
-    def __init__(self, ex_path, ex_container=[]):
-        self.types = ex_container
-        if not self.types:
-            self.types.extend(self.parse_exclusions(ex_path))
-
-    def excluded(self, path):
-        for i in self.types:
-            if i in path:
-                return True
-        return False
-
-    def parse_exclusions(self, path):
-        """
-        Parse persistent fs location store for file extensions to exclude
-        """
-        try:
-            return [x.strip() for x in open(path).readlines()]
-        except OSError:
-            return []
-
-
-def summary(repository_list):
-    """ Prints summary stats """
-    count = len(repository_list)
-    stdout_message(
-        '%s Local git repositories detected and indexed' %
-        (TITLE + str(count) + Colors.RESET))
-    return True
 
 
 def main(**kwargs):
