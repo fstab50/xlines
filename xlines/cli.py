@@ -356,14 +356,14 @@ def options(parser, help_menu=False):
     return parser.parse_args()
 
 
-def multiprocessing_main(parameters):
+def multiprocessing_main(container, exclusions):
     """Execute Operations using concurrency (multi-process) model"""
     global q
     q = Queue()
 
     processes = []
     for i in container:
-        t = multiprocessing.Process(target=mp_linecount, args=(i, ex.types))
+        t = multiprocessing.Process(target=mp_linecount, args=(i, exclusions.types))
         processes.append(t)
         t.start()
 
@@ -374,9 +374,8 @@ def multiprocessing_main(parameters):
     while not q.empty():
         mylist.append(q.get())
 
-    stdout_message(message='Length of resultset: {}'.format(len(mylist)))
     export_json_object(mylist, logging=False)
-    stdout_message(message='Done')
+    stdout_message(message='Num of objects: {}'.format(len(mylist)))
     return 0
 
     pool_args = []
@@ -489,7 +488,7 @@ def init_cli():
 
         if args.multiprocess:
             # --- run with concurrency --
-            multiprocessing_main(args.sum)
+            multiprocessing_main([x for x in args.sum], ex)
 
 
         elif not args.multiprocess:
