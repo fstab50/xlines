@@ -167,7 +167,6 @@ def locate_fileobjects(origin, path=expath):
 
     """
     fobjects = []
-    ex = ExcludedTypes(path)
 
     if os.path.isfile(origin):
         return [origin]
