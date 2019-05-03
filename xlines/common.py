@@ -4,6 +4,61 @@ Summary.
     Commons Module -- Common Functionality
 
 """
+import os
+import inspect
+from pyaws.colors import Colors
+from xlines import logger
+from xlines.statics import local_config
+
+
+try:
+    from pyaws.core.oscodes_unix import exit_codes
+    os_type = 'Linux'
+    user_home = os.getenv('HOME')
+    splitchar = '/'                             # character for splitting paths (linux)
+    acct = Colors.ORANGE
+    text = Colors.BRIGHT_PURPLE
+    TITLE = Colors.WHITE + Colors.BOLD
+except Exception:
+    from pyaws.core.oscodes_win import exit_codes    # non-specific os-safe codes
+    os_type = 'Windows'
+    user_home = os.getenv('username')
+    splitchar = '\\'                            # character for splitting paths (windows)
+    acct = Colors.CYAN
+    text = Colors.LT2GRAY
+    TITLE = Colors.WHITE + Colors.BOLD
+
+
+# universal colors
+rd = Colors.RED + Colors.BOLD
+yl = Colors.YELLOW + Colors.BOLD
+fs = Colors.GOLD3
+bd = Colors.BOLD
+gn = Colors.BRIGHT_GREEN
+title = Colors.BRIGHT_WHITE + Colors.BOLD
+bbc = bd + Colors.BRIGHT_CYAN
+frame = gn + bd
+btext = text + Colors.BOLD
+bwt = Colors.BRIGHT_WHITE
+bdwt = Colors.BOLD + Colors.BRIGHT_WHITE
+ub = Colors.UNBOLD
+rst = Colors.RESET
+
+# globals
+container = []
+config_dir = local_config['CONFIG']['CONFIG_PATH']
+expath = local_config['EXCLUSIONS']['EX_PATH']
+div = text + '/' + rst
+div_len = 2
+horiz = text + '-' + rst
+arrow = bwt + '-> ' + rst
+BUFFER = local_config['PROJECT']['BUFFER']
+
+
+def linecount(path, whitespace=True):
+    if whitespace:
+        return len(open(path).readlines())
+    return len(list(filter(lambda x: x != '\n', open(path).readlines())))
 
 
 class ExcludedTypes():
