@@ -30,10 +30,6 @@ import sys
 import json
 import inspect
 import argparse
-import multiprocessing
-from multiprocessing import Queue
-from multiprocessing.dummy import Pool
-from pyaws.utils import export_json_object
 from pyaws.utils import stdout_message
 from pyaws.colors import Colors
 from xlines.statics import PACKAGE, local_config
@@ -42,6 +38,7 @@ from xlines import about, logger
 from xlines.mp import multiprocessing_main
 from xlines.common import linecount, locate_fileobjects, remove_illegal
 from xlines.common import ExcludedTypes
+
 
 
 try:
