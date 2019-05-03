@@ -83,6 +83,29 @@ class ExcludedTypes():
             return []
 
 
+def print_header(w):
+    total_width = w + local_config['PROJECT']['COUNT_COLUMN_WIDTH']
+    header_lhs = 'object'
+    header_rhs = 'line count'
+    tab = '\t'.expandtabs(total_width - len(header_lhs) - len(header_rhs))
+    tab4 = '\t'.expandtabs(4)
+    print(tab4 + (horiz * (total_width)))
+    print(f'{tab4}{header_lhs}{tab}{header_rhs}')
+    print(tab4 + (horiz * (total_width)))
+
+
+def print_footer(total, object_count, w):
+    total_width = w + local_config['PROJECT']['COUNT_COLUMN_WIDTH']
+    msg = 'Total ({} objects):'.format(str(object_count))
+    tab = '\t'.expandtabs(total_width - len(msg) - len(str(total)) - 1)
+
+    # redefine with color codes added
+    msg = f'Total ({title + "{:,}".format(object_count) + rst} objects):'
+    tab4 = '\t'.expandtabs(4)
+    print(tab4 + (horiz * (total_width)))
+    print(f'{tab4}{msg}{tab}{bd + "{:,}".format(total) + rst:>6}' + '\n')
+
+
 def remove_duplicates(duplicates):
     """
     Summary.
