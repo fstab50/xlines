@@ -33,8 +33,7 @@ import xlines
 
 
 requires = [
-    'pyaws>=0.2.28',
-    'veryprettytable>=0.8.1'
+    'pyaws>=0.2.28'
 ]
 
 
