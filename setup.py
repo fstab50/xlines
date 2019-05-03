@@ -120,7 +120,7 @@ class PostInstall(install):
 
             completion_file = user_home() + '/.bash_completion'
             completion_dir = user_home() + '/.bash_completion.d'
-            config_dir = user_home() + '/.config/xlines'
+            config_dir = user_home() + '/.config/' + _project
 
             if not os.path.exists(os_parityPath(completion_file)):
                 create_artifact(os_parityPath(completion_file), 'file')
