@@ -132,8 +132,9 @@ def help_menu():
     """
     Displays help menu contents
     """
+    tab = '\t'.expandtabs(20)
     print(
-        Colors.BOLD + '\n\t\t\t  ' + PACKAGE + Colors.RESET +
+        Colors.BOLD + '\n' + tab + PACKAGE + Colors.RESET +
         ' help contents'
         )
     print(menu_body)
