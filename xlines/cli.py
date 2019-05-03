@@ -40,6 +40,8 @@ from xlines.statics import PACKAGE, local_config
 from xlines.help_menu import menu_body
 from xlines import about, logger
 from xlines.mp import multiprocessing_main
+from xlines.common import linecount, locate_fileobjects, remove_illegal, remove_duplicates
+
 
 try:
     from pyaws.core.oscodes_unix import exit_codes
@@ -82,12 +84,6 @@ div_len = 2
 horiz = text + '-' + rst
 arrow = bwt + '-> ' + rst
 BUFFER = local_config['PROJECT']['BUFFER']
-
-
-def linecount(path, whitespace=True):
-    if whitespace:
-        return len(open(path).readlines())
-    return len(list(filter(lambda x: x != '\n', open(path).readlines())))
 
 
 def sp_linecount(path, exclusions):
@@ -161,40 +157,6 @@ def help_menu():
     return
 
 
-def remove_duplicates(duplicates):
-    """
-    Summary.
-
-        Module function utilsing a generator to remove duplicates
-        from large scale lists with minimal resource use
-
-    Args:
-        duplicates (list): contains repeated elements
-
-    Returns:
-        generator object (iter)
-    """
-    uniq = []
-
-    def dedup(d):
-        for element in d:
-            if element not in uniq:
-                uniq.append(element)
-                yield element
-    return [x for x in dedup(duplicates)]
-
-
-def remove_illegal(d, illegal):
-    """Removes excluded file types"""
-    bad = []
-
-    for path in d:
-        for t in illegal:
-            if t in path:
-                bad.append(path)
-    return list(filter(lambda x: x not in bad, d))
-
-
 class ExcludedTypes():
     def __init__(self, ex_path, ex_container=[]):
         self.types = ex_container
@@ -215,56 +177,6 @@ class ExcludedTypes():
             return [x.strip() for x in open(path).readlines()]
         except OSError:
             return []
-
-
-def locate_fileobjects(origin, path=expath):
-    """
-    Summary.
-
-        - Walks local fs directories identifying all git repositories
-
-    Args:
-        - origin (str): filesystem directory location
-
-    Returns:
-        - paths, TYPE: list
-        - Format:
-
-         .. code-block:: json
-
-                [
-                    '/cloud-custodian/tools/c7n_mailer/c7n_mailer/utils_email.py',
-                    '/cloud-custodian/tools/c7n_mailer/c7n_mailer/slack_delivery.py',
-                    '/cloud-custodian/tools/c7n_mailer/c7n_mailer/datadog_delivery.py',
-                    '/cloud-custodian/tools/c7n_sentry/setup.py',
-                    '/cloud-custodian/tools/c7n_sentry/test_sentry.py',
-                    '/cloud-custodian/tools/c7n_kube/setup.py',
-                    '...
-                ]
-
-    """
-    fobjects = []
-    ex = ExcludedTypes(path)
-
-    if os.path.isfile(origin):
-        return [origin]
-
-    for root, dirs, files in os.walk(origin):
-        for file in [f for f in files if '.git' not in root]:
-            try:
-
-                full_path = os.path.abspath(os.path.join(root, file))
-
-                #if not ex.excluded(full_path):
-                fobjects.append(full_path)
-
-            except OSError:
-                logger.exception(
-                    '%s: Read error while examining local filesystem path (%s)' %
-                    (inspect.stack()[0][3], path)
-                )
-                continue
-    return remove_duplicates(fobjects)
 
 
 def summary(repository_list):
@@ -355,55 +267,6 @@ def options(parser, help_menu=False):
     parser.add_argument("-w", "--whitespace", dest='whitespace', action='store_false', default=True, required=False)
     parser.add_argument("-V", "--version", dest='version', action='store_true', required=False)
     return parser.parse_args()
-
-
-def multiprocessing_deprecated(container, exclusions):
-    """Execute Operations using concurrency (multi-process) model"""
-
-    global q
-    q = Queue()
-
-    processes = []
-    for i in container:
-        t = multiprocessing.Process(target=mp_linecount, args=(i, exclusions.types))
-        processes.append(t)
-        t.start()
-
-    for one_process in processes:
-        one_process.join()
-
-    results = []
-    while not q.empty():
-        results.append(q.get())
-
-    width = longest_path_mp(results)
-    print_header(width)
-    export_json_object(results, logging=False)
-    stdout_message(message='Num of objects: {}'.format(len(results)))
-    return 0
-
-    pool_args = []
-    if len(sys.argv) > 2:
-        container.extend(sys.argv[1:])
-    elif '.' in sys.argv:
-        container.append('.')
-
-        for element in container:
-            pool_args.extend([(x,) for x in locate_fileobjects(element)])
-    # Pool multiprocess module
-    # prepare args with tuples
-    for element in container:
-        pool_args.extend([(x,) for x in locate_fileobjects(element)])
-
-    # run instance of main with each item set in separate thread
-    # pool function:  return dict with {file: linecount} which can then be printed
-    # out to cli
-    with Pool(processes=8) as pool:
-        try:
-            pool.starmap(line_orchestrator, pool_args)
-        except Exception:
-            pass
-    sys.exit(exit_codes['EX_OK']['Code'])
 
 
 def package_version():
