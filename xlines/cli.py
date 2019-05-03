@@ -39,6 +39,7 @@ from pyaws.colors import Colors
 from xlines.statics import PACKAGE, local_config
 from xlines.help_menu import menu_body
 from xlines import about, logger
+from xlines.mp import multiprocessing_main
 
 try:
     from pyaws.core.oscodes_unix import exit_codes
@@ -356,8 +357,9 @@ def options(parser, help_menu=False):
     return parser.parse_args()
 
 
-def multiprocessing_main(container, exclusions):
+def multiprocessing_deprecated(container, exclusions):
     """Execute Operations using concurrency (multi-process) model"""
+
     global q
     q = Queue()
 
@@ -370,12 +372,14 @@ def multiprocessing_main(container, exclusions):
     for one_process in processes:
         one_process.join()
 
-    mylist = []
+    results = []
     while not q.empty():
-        mylist.append(q.get())
+        results.append(q.get())
 
-    export_json_object(mylist, logging=False)
-    stdout_message(message='Num of objects: {}'.format(len(mylist)))
+    width = longest_path_mp(results)
+    print_header(width)
+    export_json_object(results, logging=False)
+    stdout_message(message='Num of objects: {}'.format(len(results)))
     return 0
 
     pool_args = []
