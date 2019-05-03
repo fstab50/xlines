@@ -445,7 +445,7 @@ def print_footer(total, object_count, w):
     tab = '\t'.expandtabs(total_width - len(msg) - len(str(total)) - 1)
 
     # redefine with color codes added
-    msg = 'Total ({} objects):'.format(title + str(object_count) + rst)
+    msg = f'Total ({title + "{:,}".format(object_count) + rst} objects):'
     tab4 = '\t'.expandtabs(4)
     print(tab4 + (horiz * (total_width)))
     print(f'{tab4}{msg}{tab}{bd + "{:,}".format(total) + rst:>6}' + '\n')
