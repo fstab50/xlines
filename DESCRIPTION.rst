@@ -19,4 +19,4 @@ PACKAGE:  xlines
         * outputs filename plus number of lines 
 
     * Exclusion list of File extensions not counted
-    * Customize exclusion list
+    * User customizable
