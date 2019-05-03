@@ -31,13 +31,17 @@ def mp_linecount(path, exclusions):
     p = path
     try:
         if os.path.isfile(path):
-            q.put({os.path.abspath(path): linecount(path)})
+            q.put({
+                    'path': os.path.abspath(path),
+                    'count': linecount(path)
+                }
+            )
 
         elif os.path.isdir(path):
             d = locate_fileobjects(path)
             valid_paths = remove_illegal(d, exclusions)
             for p in valid_paths:
-                q.put({p: linecount(p)})
+                q.put({'path': p, 'count': linecount(p)})
     except UnicodeDecodeError:
         q.put({p: None})
         return
@@ -53,11 +57,11 @@ def print_results(object_list):
     count_width = local_config['PROJECT']['COUNT_COLUMN_WIDTH']
     hicount_threshold = local_config['PROJECT']['COUNT_THRESHOLD']
 
-    for path_dict in object_list:
+    for object_dict in object_list:
 
         try:
-            path = path_dict.keys()
-            inc = path_dict.value()
+            path = object_dict['path']
+            inc = object_dict['count']
             highlight = acct if inc > hicount_threshold else Colors.AQUA
             tcount += inc    # total line count
             tobjects += 1    # increment total number of objects
@@ -90,6 +94,9 @@ def print_results(object_list):
         except Exception:
             io_fail.append(path)
             continue
+
+    print_footer(tcount, tobjects, width)
+    return True
 
 
 def multiprocessing_main(container, exclusions):

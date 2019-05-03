@@ -104,23 +104,6 @@ def sp_linecount(path, exclusions):
         pass
 
 
-def mp_linecount(path, exclusions):
-    """Multiprocessing line count"""
-    p = path
-    try:
-        if os.path.isfile(path):
-            q.put({os.path.abspath(path): linecount(path)})
-
-        elif os.path.isdir(path):
-            d = locate_fileobjects(path)
-            valid_paths = remove_illegal(d, exclusions)
-            for p in valid_paths:
-                q.put({p: linecount(p)})
-    except UnicodeDecodeError:
-        q.put({p: None})
-        return
-
-
 def filter_args(kwarg_dict, *args):
     """
     Summary:
