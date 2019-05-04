@@ -1,11 +1,11 @@
 
-**linect** | Count the number of lines of text
+**codelines** | Count the number of lines of text
 ------------------------------------------------
 
-PACKAGE:  linect
+PACKAGE:  codelines
 
 
-**linect**:
+**codelines**:
 
     * Python3 commandline utility.
     * Essential software developer tools
@@ -15,7 +15,7 @@ PACKAGE:  linect
     * Count lines in specific file objects provided as parameters
     * Alternatively provide a parent directory (project directory):
 
-        * linect sums all lines of text in all objects in subdirs.
+        * codelines sums all lines of text in all objects in subdirs.
         * outputs filename plus number of lines 
 
     * Exclusion list of File extensions not counted

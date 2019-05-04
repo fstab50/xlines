@@ -1,6 +1,6 @@
 """
 
-linect :  Copyright 2018-2019, Blake Huber
+codelines :  Copyright 2018-2019, Blake Huber
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ from setuptools import setup, find_packages
 from setuptools.command.develop import develop
 from setuptools.command.install import install
 from codecs import open
-import linect
+import codelines
 
 
 requires = [
@@ -37,10 +37,10 @@ requires = [
 ]
 
 
-_project = 'linect'
+_project = 'codelines'
 _ex_fname = 'exclusions.list'
 _root = os.path.abspath(os.path.dirname(__file__))
-_comp_fname = 'linect-completion.bash'
+_comp_fname = 'codelines-completion.bash'
 
 
 def _root_user():
@@ -176,12 +176,12 @@ def user_home():
 
 setup(
     name=_project,
-    version=linect.__version__,
+    version=codelines.__version__,
     description='Count the number of lines of code in a project',
     long_description=read('DESCRIPTION.rst'),
-    url='https://github.com/fstab50/linect',
-    author=linect.__author__,
-    author_email=linect.__email__,
+    url='https://github.com/fstab50/codelines',
+    author=codelines.__author__,
+    author_email=codelines.__email__,
     license='GPL-3.0',
     classifiers=[
         'Topic :: Software Development :: Build Tools',
@@ -205,7 +205,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'linect=linect.cli:init_cli'
+            'codelines=codelines.cli:init_cli'
         ]
     },
     zip_safe=False

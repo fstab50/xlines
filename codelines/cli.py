@@ -2,7 +2,7 @@
 """
 
 #
-# linect, GPL v3 License
+# codelines, GPL v3 License
 #
 # Copyright (c) 2018-2019 Blake Huber
 #
@@ -32,12 +32,12 @@ import inspect
 import argparse
 from pyaws.utils import stdout_message
 from pyaws.colors import Colors
-from linect.statics import PACKAGE, local_config
-from linect.help_menu import menu_body
-from linect import about, logger
-from linect.mp import multiprocessing_main
-from linect.common import linecount, locate_fileobjects, remove_illegal
-from linect.common import ExcludedTypes
+from codelines.statics import PACKAGE, local_config
+from codelines.help_menu import menu_body
+from codelines import about, logger
+from codelines.mp import multiprocessing_main
+from codelines.common import linecount, locate_fileobjects, remove_illegal
+from codelines.common import ExcludedTypes
 
 
 
@@ -293,7 +293,7 @@ def init_cli():
 
     elif args.sum and precheck():
 
-        ex = ExcludedTypes(ex_path='/home/blake/.config/linect/exclusions.list')
+        ex = ExcludedTypes(ex_path='/home/blake/.config/codelines/exclusions.list')
         container = []
         container.extend(args.sum)
 

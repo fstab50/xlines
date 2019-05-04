@@ -1,6 +1,6 @@
 from pyaws import logd, Colors
-from linect._version import __version__ as version
-from linect.statics import local_config
+from codelines._version import __version__ as version
+from codelines.statics import local_config
 
 
 __author__ = 'Blake Huber'

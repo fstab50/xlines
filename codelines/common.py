@@ -7,8 +7,8 @@ Summary.
 import os
 import inspect
 from pyaws.colors import Colors
-from linect import logger
-from linect.statics import local_config
+from codelines import logger
+from codelines.statics import local_config
 
 
 try:
