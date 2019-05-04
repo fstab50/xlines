@@ -195,6 +195,38 @@ function _xlines_completions(){
             return 0
             ;;
 
+        '--')
+            if [[ $(echo "${COMP_WORDS[@]}" | grep '\-\-sum') ]] && \
+               [[ $(echo "${COMP_WORDS[@]}" | grep '\-\-multiprocess') ]] && \
+               [[ $(echo "${COMP_WORDS[@]}" | grep '\-\-whitespace') ]]; then
+                return 0
+
+            elif [[ ! $(echo "${COMP_WORDS[@]}" | grep '\-\-sum') ]] && \
+                 [[ $(echo "${COMP_WORDS[@]}" | grep '\-\-multiprocess') ]] && \
+                 [[ $(echo "${COMP_WORDS[@]}" | grep '\-\-whitespace') ]]; then
+                COMPREPLY=( $(compgen -W "--sum" -- ${cur}) )
+                return 0
+
+            elif [[ $(echo "${COMP_WORDS[@]}" | grep '\-\-sum') ]] && \
+                 [[ !$(echo "${COMP_WORDS[@]}" | grep '\-\-multiprocess') ]] && \
+                 [[ $(echo "${COMP_WORDS[@]}" | grep '\-\-whitespace') ]]; then
+                COMPREPLY=( $(compgen -W "--multiprocess" -- ${cur}) )
+                return 0
+
+            elif [[ $(echo "${COMP_WORDS[@]}" | grep '\-\-sum') ]] && \
+                 [[ $(echo "${COMP_WORDS[@]}" | grep '\-\-multiprocess') ]] && \
+                 [[ ! $(echo "${COMP_WORDS[@]}" | grep '\-\-whitespace') ]]; then
+                COMPREPLY=( $(compgen -W "--whitespace" -- ${cur}) )
+                return 0
+
+            elif [[ $(echo "${COMP_WORDS[@]}" | grep '\-\-sum') ]] && \
+                 [[ ! $(echo "${COMP_WORDS[@]}" | grep '\-\-multiprocess') ]] && \
+                 [[ ! $(echo "${COMP_WORDS[@]}" | grep '\-\-whitespace') ]]; then
+                COMPREPLY=( $(compgen -W "--multiprocess --whitespace" -- ${cur}) )
+                return 0
+            fi
+            ;;
+
     esac
 
     case "${prev}" in
