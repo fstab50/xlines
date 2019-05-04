@@ -228,14 +228,6 @@ def package_version():
     sys.exit(exit_codes['EX_OK']['Code'])
 
 
-def path_width(words):
-    max_len = 0
-    for word in words:
-        if len(str(word)) > max_len:
-            max_len = len(str(word))
-    return 100 if max_len > 100 else max_len
-
-
 def precheck():
     """
     Pre-execution Dependency Check
