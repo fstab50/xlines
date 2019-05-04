@@ -70,7 +70,7 @@ function _filter_objects(){
 }
 
 
-function _complete_xlines_commands(){
+function _complete_codelines_commands(){
     local cmds="$1"
     local split='6'       # times to split screen width
     local ct="0"
@@ -84,7 +84,7 @@ function _complete_xlines_commands(){
     COMPREPLY=( "${formatted_cmds[@]}")
     return 0
     #
-    # <-- end function _complete_xlines_commands -->
+    # <-- end function _complete_codelines_commands -->
 }
 
 
@@ -163,9 +163,9 @@ function _pathopt(){
 }
 
 
-function _xlines_completions(){
+function _codelines_completions(){
     ##
-    ##  Completion structures for xlines exectuable
+    ##  Completion structures for codelines exectuable
     ##
     local options numargs numoptions cur prev initcmd
 
@@ -286,10 +286,10 @@ function _xlines_completions(){
             fi
             ;;
 
-        'xlines')
+        'codelines')
             if [ "$cur" = "" ] || [ "$cur" = "--" ]; then
 
-                _complete_xlines_commands "${commands}"
+                _complete_codelines_commands "${commands}"
                 return 0
 
             fi
@@ -304,4 +304,4 @@ function _xlines_completions(){
 
     COMPREPLY=( $(compgen -W "${commands}" -- ${cur}) )
 
-} && complete -F _xlines_completions xlines
+} && complete -F _codelines_completions codelines
