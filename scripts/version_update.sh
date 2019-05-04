@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-PACKAGE='xlines'
+PACKAGE='codelines'
 VERSION="$1"
 PIP_CALL=$(which pip3)
 GIT=$(which git)
