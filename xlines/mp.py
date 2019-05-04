@@ -12,9 +12,9 @@ import multiprocessing
 from multiprocessing import Queue
 from pyaws.utils import stdout_message, export_json_object
 from pyaws.colors import Colors
-from xlines.common import BUFFER, acct, bwt, text, rst, arrow, div
-from xlines.statics import local_config
-from xlines.common import locate_fileobjects, remove_illegal, linecount, print_header, print_footer
+from linect.common import BUFFER, acct, bwt, text, rst, arrow, div
+from linect.statics import local_config
+from linect.common import locate_fileobjects, remove_illegal, linecount, print_header, print_footer
 
 
 def longest_path_mp(object_list):

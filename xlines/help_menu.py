@@ -6,8 +6,8 @@ Help Menu
 
 """
 
-from xlines.statics import PACKAGE
-from xlines import Colors
+from linect.statics import PACKAGE
+from linect import Colors
 
 
 PKG_ACCENT = Colors.ORANGE
@@ -19,8 +19,8 @@ synopsis_cmd = (
     PARAM_ACCENT + ' --sum ' + Colors.RESET + ' <dir1> <dir2> <fname1> ... '
     )
 
-url_doc = Colors.URL + 'http://xlines.readthedocs.io' + Colors.RESET
-url_sc = Colors.URL + 'https://github.com/fstab50/xlines' + Colors.RESET
+url_doc = Colors.URL + 'http://linect.readthedocs.io' + Colors.RESET
+url_sc = Colors.URL + 'https://github.com/fstab50/linect' + Colors.RESET
 
 menu_body = Colors.BOLD + """
   DESCRIPTION""" + Colors.RESET + """

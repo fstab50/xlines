@@ -2,7 +2,7 @@
 include README.rst
 include DESCRIPTION.rst
 include LICENSE
-include bash/xlines-completion.bash
+include bash/linect-completion.bash
 include config/exclusions.list
 
 # exclude
