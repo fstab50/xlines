@@ -251,13 +251,19 @@ def print_header(w):
 
 def print_footer(total, object_count, w):
     total_width = w + local_config['PROJECT']['COUNT_COLUMN_WIDTH']
+
+    # calc dimensions; no color codes
     msg = 'Total ({} objects):'.format(str(object_count))
     tab = '\t'.expandtabs(total_width - len(msg) - len(str(total)) - 1)
 
     # redefine with color codes added
     msg = f'Total ({title + "{:,}".format(object_count) + rst} objects):'
     tab4 = '\t'.expandtabs(4)
+
+    # divider pattern
     print(tab4 + (horiz * (total_width)))
+
+    # ending summary stats line
     print(f'{tab4}{msg}{tab}{bd + "{:,}".format(total) + rst:>6}' + '\n')
 
 
