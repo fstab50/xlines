@@ -195,7 +195,7 @@ function _xlines_completions(){
             ;;
 
         'xlines')
-            COMPREPLY=( $(compgen -W "${options}" -- ${cur}) )
+            _complete_xlines_commands "${options}"
             return 0
             ;;
 
