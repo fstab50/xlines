@@ -42,8 +42,8 @@ title_separator = (
     )
 
 package_header = (
-    '\n\t\t' + Colors.CYAN + PACKAGE + Colors.RESET + ' version: ' + Colors.WHITE +
-    Colors.BOLD + __version__ + Colors.RESET + '  |  ' + python_header + '\n\n'
+    '\n\t\t' + Colors.DARK_BLUE + PACKAGE + Colors.RESET + ' version: ' + Colors.WHITE +
+    Colors.BOLD +  __version__ + Colors.RESET + '  |  ' + python_header + '\n\n'
     )
 
 copyright = Colors.LT2GRAY + """
