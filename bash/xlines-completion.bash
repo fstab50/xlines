@@ -178,7 +178,7 @@ function _xlines_completions(){
     numargs=0
     numoptions=0
 
-    options='--help --exclusions --configure --multiprocess --sum --version --whitespace'
+    commands='--help --exclusions --configure --multiprocess --sum --version --whitespace'
 
     function _is_sum(){
         if [[ "$(echo "${COMP_WORDS[@]}" | grep '\-\-sum')" ]]; then
@@ -188,14 +188,18 @@ function _xlines_completions(){
         fi
     }
 
-    case "${prev}" in
+    case "${cur}" in
 
-        '--help' | '--exclusions' | '--multiprocess' | '--whitespace' | '--version')
+        '--sum')
+            _pathopt
             return 0
             ;;
 
-        'xlines')
-            _complete_xlines_commands "${options}"
+    esac
+
+    case "${prev}" in
+
+        '--help' | '--exclusions' | '--version')
             return 0
             ;;
 
@@ -208,6 +212,57 @@ function _xlines_completions(){
             return 0
             ;;
 
+        '--multiprocess')
+            if [[ $(echo "${COMP_WORDS[@]}" | grep '\-\-sum') ]] && \
+               [[ $(echo "${COMP_WORDS[@]}" | grep '\-\-whitespace') ]]; then
+                return 0
+
+            elif [[ ! $(echo "${COMP_WORDS[@]}" | grep '\-\-sum') ]] && \
+                 [[ $(echo "${COMP_WORDS[@]}" | grep '\-\-whitespace') ]]; then
+                COMPREPLY=( $(compgen -W "--sum" -- ${cur}) )
+                return 0
+
+            elif [[ $(echo "${COMP_WORDS[@]}" | grep '\-\-sum') ]] && \
+                 [[ ! $(echo "${COMP_WORDS[@]}" | grep '\-\-whitespace') ]]; then
+                COMPREPLY=( $(compgen -W "--whitespace" -- ${cur}) )
+                return 0
+
+            else
+                COMPREPLY=( $(compgen -W "--sum --whitespace" -- ${cur}) )
+                return 0
+            fi
+            ;;
+
+        '--whitespace')
+            if [[ $(echo "${COMP_WORDS[@]}" | grep '\-\-sum') ]] && \
+               [[ $(echo "${COMP_WORDS[@]}" | grep '\-\-multiprocess') ]]; then
+                return 0
+
+            elif [[ ! $(echo "${COMP_WORDS[@]}" | grep '\-\-sum') ]] && \
+                 [[ $(echo "${COMP_WORDS[@]}" | grep '\-\-multiprocess') ]]; then
+                COMPREPLY=( $(compgen -W "--sum" -- ${cur}) )
+                return 0
+
+            elif [[ $(echo "${COMP_WORDS[@]}" | grep '\-\-sum') ]] && \
+                 [[ ! $(echo "${COMP_WORDS[@]}" | grep '\-\-multiprocess') ]]; then
+                COMPREPLY=( $(compgen -W "--multiprocess" -- ${cur}) )
+                return 0
+
+            else
+                COMPREPLY=( $(compgen -W "--sum --multiprocess" -- ${cur}) )
+                return 0
+            fi
+            ;;
+
+        'xlines')
+            if [ "$cur" = "" ] || [ "$cur" = "--" ]; then
+
+                _complete_xlines_commands "${commands}"
+                return 0
+
+            fi
+            ;;
+
         *)
             _pathopt
             return 0
@@ -215,6 +270,6 @@ function _xlines_completions(){
 
     esac
 
-    #COMPREPLY=( $(compgen -W "${objects}" -- ${cur}) )
+    COMPREPLY=( $(compgen -W "${commands}" -- ${cur}) )
 
 } && complete -F _xlines_completions xlines
