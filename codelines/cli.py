@@ -252,8 +252,11 @@ def print_header(w):
 def print_footer(total, object_count, w):
     total_width = w + local_config['PROJECT']['COUNT_COLUMN_WIDTH']
 
+    # add commas
+    total_lines = '{:,}'.format(object_count)
+
     # calc dimensions; no color codes
-    msg = 'Total ({} objects):'.format(str(object_count))
+    msg = 'Total ({} objects):'.format(total_lines)
     tab = '\t'.expandtabs(total_width - len(msg) - len(str(total)) - 1)
 
     # redefine with color codes added
