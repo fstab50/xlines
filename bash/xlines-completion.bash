@@ -54,9 +54,11 @@ function _filter_objects(){
     ##
     ##  returns file objects in pwd; minus exception list members
     ##
-    declare -a container
+    declare -a container fcollection
 
-    for object in $(ls $PWD); do
+    mapfile -t fcollection < <(ls $PWD)
+
+    for object in "${fcollection[@]}"; do
         if [[ $(echo "${exceptions[@]}" | grep $object) ]]; then
             continue
         else
@@ -83,6 +85,32 @@ function _complete_xlines_commands(){
     return 0
     #
     # <-- end function _complete_xlines_commands -->
+}
+
+
+function _filedir(){
+    local i IFS='
+' xspec;
+    _tilde "$cur" || return 0;
+    local -a toks;
+    local quoted x tmp;
+    _quote_readline_by_ref "$cur" quoted;
+    x=$( compgen -d -- "$quoted" ) && while read -r tmp; do
+        toks+=("$tmp");
+    done <<< "$x";
+    if [[ "$1" != -d ]]; then
+        xspec=${1:+"!*.@($1|${1^^})"};
+        x=$( compgen -f -X "$xspec" -- $quoted ) && while read -r tmp; do
+            toks+=("$tmp");
+        done <<< "$x";
+    fi;
+    [[ -n ${COMP_FILEDIR_FALLBACK:-} && -n "$1" && "$1" != -d && ${#toks[@]} -lt 1 ]] && x=$( compgen -f -- $quoted ) && while read -r tmp; do
+        toks+=("$tmp");
+    done <<< "$x";
+    if [[ ${#toks[@]} -ne 0 ]]; then
+        compopt -o filenames 2> /dev/null;
+        COMPREPLY+=("${toks[@]}");
+    fi
 }
 
 
@@ -150,12 +178,19 @@ function _xlines_completions(){
     numargs=0
     numoptions=0
 
-    options='--help --exclusions --configuration --sum'
-    objects=$(_filter_objects)
+    options='--help --exclusions --configure --multiprocess --sum --version --whitespace'
+
+    function _is_sum(){
+        if [[ "$(echo "${COMP_WORDS[@]}" | grep '\-\-sum')" ]]; then
+            is_sum='yes'
+        else
+            is_sum='no'
+        fi
+    }
 
     case "${prev}" in
 
-        '--help' | '--exclusions' | '--configuration')
+        '--help' | '--exclusions' | '--multiprocess' | '--whitespace' | '--version')
             return 0
             ;;
 
@@ -169,8 +204,17 @@ function _xlines_completions(){
             return 0
             ;;
 
+        '--configure')
+            return 0
+            ;;
+
+        *)
+            _pathopt
+            return 0
+            ;;
+
     esac
 
-    COMPREPLY=( $(compgen -W "${objects}" -- ${cur}) )
+    #COMPREPLY=( $(compgen -W "${objects}" -- ${cur}) )
 
 } && complete -F _xlines_completions xlines
