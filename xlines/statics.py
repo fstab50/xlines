@@ -50,8 +50,8 @@ else:
     config_dir = '.config'
     config_subdir = PACKAGE
     config_filename = 'xlinesconf.json'
-    config_dirpath = user_home + '/' + config_dir
-    config_path = user_home + '/' + config_dir + '/' + config_subdir + '/' + config_filename
+    config_dirpath = user_home + '/' + config_dir + '/' + config_subdir
+    config_path = config_dirpath + '/' + config_filename
 
     # output format
     count_column_width = 7
@@ -59,10 +59,7 @@ else:
     count_threshold = 1000
 
     # exclusions
-    exclusions = 'exclusions.list'
-
-    # exception file
-    ex_filename = 'xlines.exceptions'
+    ex_filename = 'exclusions.list'
 
     # logging parameters
     enable_logging = False
@@ -83,7 +80,6 @@ else:
             "COUNT_COLUMN_WIDTH": count_column_width,
             "COUNT_THRESHOLD": count_threshold,
             "BUFFER":  min_buffer_chars,
-            "EXCEPTION_FILENAME": ex_filename
         },
         "CONFIG": {
             "CONFIG_DATE": "",
@@ -93,8 +89,8 @@ else:
             "CONFIG_PATH": config_path
         },
         "EXCLUSIONS": {
-            "EX_DIR": config_dir,
-            "EX_FNAME": exclusions,
+            "EX_DIR": config_dirpath,
+            "EX_FILENAME": ex_filename,
             "EX_PATH": config_dirpath + '/' + ex_filename
         },
         "LOGGING": {
