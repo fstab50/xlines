@@ -26,9 +26,7 @@ Count the number of lines of text in a code project (or anything else)
 
 ## Dependencies
 
-[xlines](https://github.com/fstab50/xlines) requires:
-
-* python3.6 +
+[xlines](https://github.com/fstab50/xlines) requires python3.6+
 
 
 [back to the top](#top)
@@ -42,7 +40,7 @@ To display the help menu:
     $ xlines --help
 ```
 
-![help](https://s3.us-east-2.amazonaws.com/http-imagestore/xlines/help-menu.png)]
+[![help](./assets/help-menu.png)](https://s3.us-east-2.amazonaws.com/http-imagestore/xlines/help-menu.png)]
 
 
 [back to the top](#top)
