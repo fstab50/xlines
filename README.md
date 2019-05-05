@@ -87,9 +87,7 @@ All works contained herein copyrighted via below author unless work is explicitl
 
 ## License
 
-* Software contained in this repo is licensed under the [license agreement](./LICENSE.md).
-
-You may display the license and copyright information by issuing the following command:
+* Software contained in this repo is licensed under the [license agreement](./LICENSE.md).  You may display the license and copyright information by issuing the following command:
 
 ```
 $ xlines --version
