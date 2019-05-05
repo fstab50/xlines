@@ -40,7 +40,7 @@ To display the help menu:
     $ xlines --help
 ```
 
-[![help](./assets/help-menu.png)](https://s3.us-east-2.amazonaws.com/http-imagestore/xlines/help-menu.png)]
+[![help](./assets/help-menu.png)](https://s3.us-east-2.amazonaws.com/http-imagestore/xlines/help-menu.png)
 
 
 [back to the top](#top)
@@ -54,7 +54,7 @@ To display the help menu:
     $ xlines --exclusions
 ```
 
-![help](https://s3.us-east-2.amazonaws.com/http-imagestore/xlines/exclusions.png)]<!-- .element height="50%" width="50%" -->
+[![help](./assets/exclusions.png)](https://s3.us-east-2.amazonaws.com/http-imagestore/xlines/exclusions.png)<!-- .element height="50%" width="50%" -->
 
 
 [back to the top](#top)
@@ -68,7 +68,7 @@ Counting lines in large repository with long paths.
     $ xlines  --sum  git/AWSAMPLES/aws-serverless-workshops/
 ```
 
-![repo1-1](https://s3.us-east-2.amazonaws.com/http-imagestore/xlines/repofinal.png)
+[![repo1-1](./assets/repofinal.png)](https://s3.us-east-2.amazonaws.com/http-imagestore/xlines/repofinal.png)
 
 
 [back to the top](#top)
@@ -93,7 +93,7 @@ All works contained herein copyrighted via below author unless work is explicitl
 $ xlines --version
 ```
 
-[![help](./assets/version-copyright.png)](https://s3.us-east-2.amazonaws.com/http-imagestore/xlines/version-copyright.png)]
+[![help](./assets/version-copyright.png)](https://s3.us-east-2.amazonaws.com/http-imagestore/xlines/version-copyright.png)
 
 
 [back to the top](#top)
