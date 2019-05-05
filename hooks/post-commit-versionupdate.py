@@ -8,6 +8,7 @@
 """
 import os
 import sys
+import re
 import inspect
 
 
@@ -20,6 +21,7 @@ def packagename(filename):
 
 
 PACKAGE = packagename('DESCRIPTION.rst') or None
+pattern = re.compile('^\*\*Version\*\*')
 
 if PACKAGE is None:
     print('Problem executing post-commit-hook (%s). Exit' % __file__)
@@ -39,8 +41,8 @@ try:
                 lines[index] = newline
                 break
 
-            elif '\\*\\*Version\\*\\*:' in line:
-                newline = ' \\*\\*Version\\*\\*: ' + __version__ + '\n'
+            elif pattern.mach(line):
+                newline = '\*\*Version\*\*: ' + __version__ + '\n'
                 lines[index] = newline
                 break
 
