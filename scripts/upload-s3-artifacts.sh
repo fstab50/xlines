@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-PROFILE='gcreds-da-atos'
+PROFILE='imagestore'
 BUCKET='http-imagestore'
 KEY='xlines'
 
