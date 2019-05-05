@@ -94,20 +94,30 @@ def _configure():
         Success | Failure, TYPE: bool
     """
     try:
+        # clear screen
+        os.system('cls' if os.name == 'nt' else 'clear')
+        display_exclusions()
+
         with open(expath) as f1:
             exclusions = [x.strip() for x in f1.readlines()]
 
         # query user input for new exclusions
-        response = input('Enter multiple file type exclusios to add separated by commas:')
-        add_list = response.split(',')
+        response = input('  Enter multiple file type exclusios to add separated by commas [quit]: ')
 
-        # add new extensions to existing
-        exclusions.extend(['.' + x for x in add_list if '.' not in x])
+        if not response:
+            sys.exit(exit_codes['EX_OK']['Code'])
+        else:
+            add_list = response.split(',')
 
-        # write out new exclusions config file
-        with open(expath) as f1:
-            f1.write([x + '\n' for x in exclusions])
-        return True
+            # add new extensions to existing
+            exclusions.extend(['.' + x for x in add_list if '.' not in x])
+
+            # write out new exclusions config file
+            with open(expath, 'w') as f2:
+                f2.writelines([x + '\n' for x in exclusions])
+
+            display_exclusions()    # display resulting exclusions set
+            return True
     except OSError:
         stdout_message(
             message='Unable to modify local config file located at {}'.format(expath),
