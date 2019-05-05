@@ -86,6 +86,35 @@ arrow = bwt + '-> ' + rst
 BUFFER = local_config['PROJECT']['BUFFER']
 
 
+def configure_start():
+    """
+        Add exclusions and update runtime constants
+
+    Returns:
+        Success | Failure, TYPE: bool
+    """
+    try:
+        with open(expath) as f1:
+            exclusions = [x.strip() for x in f1.readlines()]
+
+        # query user input for new exclusions
+        response = input('Enter multiple file type exclusios to add separated by commas:')
+        add_list = response.split(',')
+
+        # add new extensions to existing
+        exclusions.extend(['.' + x for x in add_list if '.' not in x])
+
+        # write out new exclusions config file
+        with open(expath) as f1:
+            f1.write([x + '\n' for x in exclusions])
+        return True
+    except OSError:
+        stdout_message(
+            message='Unable to modify local config file located at {}'.format(expath),
+            prefix='WARN')
+        return False
+
+
 def display_exclusions():
     """
     Show list of all file type extensions which are excluded
@@ -326,6 +355,9 @@ def init_cli():
 
     elif args.exclusions:
         display_exclusions()
+
+    elif args.configure:
+        configure_start()
 
     elif args.sum and precheck():
 
