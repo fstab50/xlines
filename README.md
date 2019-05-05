@@ -48,7 +48,7 @@ To display the help menu:
 * * *
 ## Exclusions
 
-[xlines](https://github.com/fstab50/xlines) persists a list of excluded file types on the local filesystem.  To see this list of file types excluded from line count totals, type the following:
+[xlines](https://github.com/fstab50/xlines) maintains a list of file types on the local filesystem that are excluded from line count totals.  To see this list of file types excluded from line count totals, type the following:
 
 ```bash
     $ xlines --exclusions
