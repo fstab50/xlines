@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+TMPDIR='/tmp'
 PROFILE='imagestore'
 BUCKET='http-imagestore'
 KEY='xlines'
@@ -40,11 +41,12 @@ if _valid_iamuser $PROFILE; then
     for i in $(ls .); do
 
         # upload object
-        printf -- '\n%s\n' "s3 object $BOLD$i$UNBOLD uploaded..."
-        aws --profile $PROFILE s3 cp ./$i s3://$BUCKET/$KEY/$i
+        printf -- '\n%s\n\n' "s3 object $BOLD$i$UNBOLD:"
+        aws --profile $PROFILE s3 cp ./$i s3://$BUCKET/$KEY/$i 2>/dev/null > $TMPDIR/aws.txt
+        printf -- '\t%s\n' "- s3 upload: $(cat $TMPDIR/aws.txt  | awk -F ':' '{print $2 $3}')"
 
         aws --profile $PROFILE s3api put-object-acl --acl 'public-read' --bucket $BUCKET --key $KEY/$i
-        printf -- '%s\n' "s3 object acl applied to $i..."
+        printf -- '\t%s\n' "- s3 acl applied to object $i..."
 
     done
 
@@ -54,3 +56,5 @@ if _valid_iamuser $PROFILE; then
 else
     echo "You must ensure $PROFILE is present in the local awscli configuration"
 fi
+
+exit 0
