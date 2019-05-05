@@ -5,8 +5,8 @@ PROFILE='imagestore'
 BUCKET='http-imagestore'
 KEY='xlines'
 
-pkg_path=$(cd $(dirname $0); pwd -P)
-source $pkg_path/colors.sh
+pkg_path=$(cd "$(dirname $0)"; pwd -P)
+source "$pkg_path/colors.sh"
 
 
 function _git_root(){
@@ -59,5 +59,8 @@ if _valid_iamuser $PROFILE; then
 else
     echo "You must ensure $PROFILE is present in the local awscli configuration"
 fi
+
+# clean up
+rm $TMPDIR/aws.txt || true
 
 exit 0
