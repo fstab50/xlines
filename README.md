@@ -89,6 +89,15 @@ All works contained herein copyrighted via below author unless work is explicitl
 
 * Software contained in this repo is licensed under the [license agreement](./LICENSE.md).
 
+You may display the license and copyright information by issuing the following command:
+
+```
+$ xlines --version
+```
+
+[![help](./assets/version-copyright.png)](https://s3.us-east-2.amazonaws.com/http-imagestore/xlines/version-copyright.png)]
+
+
 [back to the top](#top)
 
 * * *
