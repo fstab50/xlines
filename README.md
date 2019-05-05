@@ -1,6 +1,6 @@
 <a name="top"></a>
 * * *
-# nlines
+# xlines
 * * *
 
 ## Summary
@@ -26,7 +26,7 @@ Count the number of lines of text in a code project (or anything else)
 
 ## Dependencies
 
-[nlines](https://github.com/fstab50/nlines) requires bash v4.4+
+[xlines](https://github.com/fstab50/xlines) requires bash v4.4+
 
 
 [back to the top](#top)
@@ -37,10 +37,10 @@ Count the number of lines of text in a code project (or anything else)
 To display the help menu:
 
 ```bash
-    $ nlines --help
+    $ xlines --help
 ```
 
-![help](https://s3.us-east-2.amazonaws.com/http-imagestore/nlines/help-menu.png)]
+![help](https://s3.us-east-2.amazonaws.com/http-imagestore/xlines/help-menu.png)]
 
 
 [back to the top](#top)
@@ -48,13 +48,13 @@ To display the help menu:
 * * *
 ## Exclusions
 
-[nlines](https://github.com/fstab50/nlines) persists a list of excluded file types on the local filesystem.  To see this list, type the following:
+[xlines](https://github.com/fstab50/xlines) persists a list of excluded file types on the local filesystem.  To see this list, type the following:
 
 ```bash
-    $ nlines --exclusions
+    $ xlines --exclusions
 ```
 
-![help](https://s3.us-east-2.amazonaws.com/http-imagestore/nlines/exclusions.png)]<!-- .element height="50%" width="50%" -->
+![help](https://s3.us-east-2.amazonaws.com/http-imagestore/xlines/exclusions.png)]<!-- .element height="50%" width="50%" -->
 
 
 [back to the top](#top)
@@ -65,10 +65,10 @@ To display the help menu:
 Counting lines in large repository with long paths.
 
 ```bash
-    $ nlines  --sum  git/AWSAMPLES/aws-serverless-workshops/
+    $ xlines  --sum  git/AWSAMPLES/aws-serverless-workshops/
 ```
 
-![repo1-1](https://s3.us-east-2.amazonaws.com/http-imagestore/nlines/repofinal.png)
+![repo1-1](https://s3.us-east-2.amazonaws.com/http-imagestore/xlines/repofinal.png)
 
 
 [back to the top](#top)
