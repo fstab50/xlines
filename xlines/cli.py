@@ -38,7 +38,7 @@ from xlines import about, logger
 from xlines.mp import multiprocessing_main
 from xlines.common import linecount, locate_fileobjects, remove_illegal
 from xlines.common import ExcludedTypes
-
+from xlines.colormap import ColorMap
 
 
 try:
@@ -59,6 +59,7 @@ except Exception:
     TITLE = Colors.WHITE + Colors.BOLD
 
 # universal colors
+cm = ColorMap()
 rd = Colors.RED + Colors.BOLD
 yl = Colors.YELLOW + Colors.BOLD
 fs = Colors.GOLD3
@@ -71,7 +72,7 @@ btext = text + Colors.BOLD
 bwt = Colors.BRIGHT_WHITE
 bdwt = Colors.BOLD + Colors.BRIGHT_WHITE
 ub = Colors.UNBOLD
-rst = Colors.RESET
+rst = cm.rst
 
 # globals
 container = []
@@ -82,6 +83,37 @@ div_len = 2
 horiz = text + '-' + rst
 arrow = bwt + '-> ' + rst
 BUFFER = local_config['PROJECT']['BUFFER']
+
+
+def display_exclusions():
+    """
+    Show list of all file type extensions which are excluded
+    from line total calculations
+    """
+    msg = f'{expath} not found.  Run $ {PACKAGE} --configure'
+    tab = '\t'.expandtabs(15)
+
+    # numbering
+    div = cm.bpl + ')' + rst
+    width = 3
+
+    try:
+
+        if os.path.exists(expath):
+            with open(expath) as f1:
+                exclusions = [x.strip() for x in f1.readlines()]
+
+        stdout_message(message='File types excluded from line totals:')
+
+        for index, ext in enumerate(exclusions):
+            print('{}{:>3}{}'.format(tab, index, div + ':  ' + ext))
+
+        sys.stdout.write('\n')
+        return True
+
+    except OSError as e:
+        stdout_message(message=f'Error: {e}. ' + msg, prefix='WARN')
+        return False
 
 
 def sp_linecount(path, exclusions):
@@ -208,7 +240,7 @@ def options(parser, help_menu=False):
     Returns:
         TYPE: argparse object, parser argument set
     """
-    parser.add_argument("-i", "--index", dest='index', action='store_true', required=False)
+    parser.add_argument("-e", "--exclusions", dest='exclusions', action='store_true', required=False)
     parser.add_argument("-C", "--configure", dest='configure', action='store_true', required=False)
     parser.add_argument("-d", "--debug", dest='debug', action='store_true', default=False, required=False)
     parser.add_argument("-h", "--help", dest='help', action='store_true', required=False)
@@ -291,6 +323,9 @@ def init_cli():
 
     elif args.version:
         package_version()
+
+    elif args.exclusions:
+        display_exclusions()
 
     elif args.sum and precheck():
 
