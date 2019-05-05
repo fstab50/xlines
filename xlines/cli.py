@@ -41,6 +41,8 @@ from xlines.common import ExcludedTypes
 from xlines.colormap import ColorMap
 
 
+cm = ColorMap()
+
 try:
     from pyaws.core.oscodes_unix import exit_codes
     os_type = 'Linux'
@@ -59,7 +61,6 @@ except Exception:
     TITLE = Colors.WHITE + Colors.BOLD
 
 # universal colors
-cm = ColorMap()
 rd = Colors.RED + Colors.BOLD
 yl = Colors.YELLOW + Colors.BOLD
 fs = Colors.GOLD3
@@ -95,7 +96,6 @@ def display_exclusions():
 
     # numbering
     div = cm.bpl + ')' + rst
-    width = 3
 
     try:
 
@@ -106,7 +106,7 @@ def display_exclusions():
         stdout_message(message='File types excluded from line totals:')
 
         for index, ext in enumerate(exclusions):
-            print('{}{:>3}{}'.format(tab, index, div + ':  ' + ext))
+            print('{}{:>3}{}'.format(tab, index + 1, div + ':  ' + ext))
 
         sys.stdout.write('\n')
         return True
