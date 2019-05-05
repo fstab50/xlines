@@ -24,8 +24,9 @@ url_sc = Colors.URL + 'https://github.com/fstab50/xlines' + Colors.RESET
 
 menu_body = Colors.BOLD + """
   DESCRIPTION""" + Colors.RESET + """
-        Count lines of text. Utility for code projects
-        Source Code:  """ + url_sc + """
+
+            Count lines of text. Utility for code projects
+            Source Code:  """ + url_sc + """
     """ + Colors.BOLD + """
   SYNOPSIS""" + Colors.RESET + """
 
@@ -44,14 +45,13 @@ menu_body = Colors.BOLD + """
         -s, --sum""" + Colors.RESET + """ (string): Sum the counts of all lines contained
             in filesystem objects referenced in the sum parameter
     """ + Colors.BOLD + """
-        -c, --configuration""" + Colors.RESET + """: Configure runtime parameter via the
-            cli menu. Change display format, color scheme, toggle
-            human-readable line count figures
+        -c, --configure""" + Colors.RESET + """:  Configure runtime parameter via the cli
+            menu. Change display format, color scheme, etc values
     """ + Colors.BOLD + """
-        -d, --debug""" + Colors.RESET + """: Output additional debug information
-    """ + Colors.BOLD + """
-        -V, --version""" + Colors.RESET + """: Print package version
+        -d, --debug""" + Colors.RESET + """: Print out additional debugging information
     """ + Colors.BOLD + """
         -h, --help""" + Colors.RESET + """: Show this help message and exit
+    """ + Colors.BOLD + """
+        -V, --version""" + Colors.RESET + """: Print package version and copyright info
 
     """
