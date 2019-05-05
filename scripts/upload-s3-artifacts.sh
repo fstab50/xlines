@@ -36,9 +36,12 @@ ROOT=$(_git_root)
 if _valid_iamuser $PROFILE; then
 
     printf -- '\n'
-    cd "$ROOT/assets"
+    cd "$ROOT/assets" || true
 
-    for i in $(ls .); do
+    declare -a arr_files
+    mapfile -t arr_files < <(ls . 2>/dev/null)
+
+    for i in "${arr_files[@]}"; do
 
         # upload object
         printf -- '\n%s\n\n' "s3 object $BOLD$i$UNBOLD:"
