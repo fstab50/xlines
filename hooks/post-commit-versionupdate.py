@@ -41,8 +41,8 @@ try:
                 lines[index] = newline
                 break
 
-            elif pattern.mach(line):
-                newline = '\*\*Version\*\*: ' + __version__ + '\n'
+            elif pattern.match(line):
+                newline = '**Version**: ' + __version__ + '\n'
                 lines[index] = newline
                 break
 
