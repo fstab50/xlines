@@ -6,7 +6,9 @@
 #   - Filename:  commit-msg
 #
 
-source core/version.py
+# extract package name
+PACKAGE=$(grep PACKAGE DESCRIPTION.rst | awk -F ':' '{print $2}')
+source $PACKAGE/_version.py
 
 VERSION="$__version__"
 DEPRECATED="$(grep 'Version:' README.md | awk -F ':' '{print $2}')"
