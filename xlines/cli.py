@@ -86,7 +86,7 @@ arrow = bwt + '-> ' + rst
 BUFFER = local_config['PROJECT']['BUFFER']
 
 
-def configure_start():
+def _configure():
     """
         Add exclusions and update runtime constants
 
@@ -357,7 +357,7 @@ def init_cli():
         display_exclusions()
 
     elif args.configure:
-        configure_start()
+        _configure()
 
     elif args.sum and precheck():
 
