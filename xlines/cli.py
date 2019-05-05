@@ -102,7 +102,7 @@ def _configure():
             exclusions = [x.strip() for x in f1.readlines()]
 
         # query user input for new exclusions
-        response = input('  Enter multiple file type exclusios to add separated by commas [quit]: ')
+        response = input('  Enter file extensioin types to be excluded separated by commas [quit]: ')
 
         if not response:
             sys.exit(exit_codes['EX_OK']['Code'])
