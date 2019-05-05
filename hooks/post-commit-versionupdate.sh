@@ -18,9 +18,4 @@ if [ ! "$DEPRECATED" ]; then
     DEPRECATED="$(grep '\*\*Version\*\*:' README.md | awk -F ':' '{print $2}')"
 fi
  
- 
-# strip surrounding whitespace
-#STRIPPED="$(sed -e 's/[[:space:]]*$//' <<<${DEPRECATED})"
-
-#sed -i "s/$STRIPPED/\t$VERSION/g" README.md
 sed -i "s/$DEPRECATED/\t$VERSION/g" README.md
