@@ -26,8 +26,11 @@ Count the number of lines of text in a code project (or anything else)
 
 ## Dependencies
 
-[xlines](https://github.com/fstab50/xlines) requires bash v4.4+
+[xlines](https://github.com/fstab50/xlines) requires:
 
+* python3.6 +
+* Linux (tested)
+* Windows (untested)
 
 [back to the top](#top)
 
