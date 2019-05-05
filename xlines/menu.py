@@ -89,10 +89,10 @@ if __name__ == '__main__':
     submenu2 = CursesMenu("Logging Configuration", "Do you want to enable logging?")
     q2_item1 = FunctionItem("Yes", selection_menu_example(), ['yes'])
     q2_item2 = FunctionItem("No", input, ['No'])
-    #selection_menu_example()
-    print('\nsubmenu_selection is: %s\n' % str(submenu_selection))
+    print('\nsubmenu_selection is: %s\n' % str(selection_menu_example()))
     submenu2.append_item(q2_item1)
     submenu2.append_item(q2_item2)
+
     submenu_logging = SubmenuItem("Configure Logging", submenu2, menu=menu)
     menu.append_item(submenu_logging)
     menu.show()
