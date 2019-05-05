@@ -195,7 +195,7 @@ function _xlines_completions(){
             return 0
             ;;
 
-        '--')
+        '--' | '-')
             if [[ $(echo "${COMP_WORDS[@]}" | grep '\-\-sum') ]] && \
                [[ $(echo "${COMP_WORDS[@]}" | grep '\-\-multiprocess') ]] && \
                [[ $(echo "${COMP_WORDS[@]}" | grep '\-\-whitespace') ]]; then
