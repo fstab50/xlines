@@ -11,15 +11,15 @@ Returns:
 
 import sys
 import datetime
-from codelines.statics import PACKAGE, LICENSE
-from codelines import Colors
-from codelines import __version__
+from xlines.statics import PACKAGE, LICENSE
+from xlines import Colors
+from xlines import __version__
 
 
 # url formatting
-url_doc = Colors.URL + 'https://codelines.readthedocs.io' + Colors.RESET
-url_sc = Colors.URL + 'https://github.com/fstab50/codelines' + Colors.RESET
-url_lic = Colors.URL + 'http://codelines.readthedocs.io/en/latest/license.html' + Colors.RESET
+url_doc = Colors.URL + 'https://xlines.readthedocs.io' + Colors.RESET
+url_sc = Colors.URL + 'https://github.com/fstab50/xlines' + Colors.RESET
+url_lic = Colors.URL + 'http://xlines.readthedocs.io/en/latest/license.html' + Colors.RESET
 
 # copyright range thru current calendar year
 current_year = datetime.datetime.today().year

@@ -2,7 +2,7 @@
 """
 
 #
-# codelines, GPL v3 License
+# xlines, GPL v3 License
 #
 # Copyright (c) 2018-2019 Blake Huber
 #
@@ -32,12 +32,12 @@ import inspect
 import argparse
 from pyaws.utils import stdout_message
 from pyaws.colors import Colors
-from codelines.statics import PACKAGE, local_config
-from codelines.help_menu import menu_body
-from codelines import about, logger
-from codelines.mp import multiprocessing_main
-from codelines.common import linecount, locate_fileobjects, remove_illegal
-from codelines.common import ExcludedTypes
+from xlines.statics import PACKAGE, local_config
+from xlines.help_menu import menu_body
+from xlines import about, logger
+from xlines.mp import multiprocessing_main
+from xlines.common import linecount, locate_fileobjects, remove_illegal
+from xlines.common import ExcludedTypes
 
 
 
@@ -294,7 +294,7 @@ def init_cli():
 
     elif args.sum and precheck():
 
-        ex = ExcludedTypes(ex_path='/home/blake/.config/codelines/exclusions.list')
+        ex = ExcludedTypes(ex_path='/home/blake/.config/xlines/exclusions.list')
         container = []
         container.extend(args.sum)
 

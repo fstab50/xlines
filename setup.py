@@ -1,6 +1,6 @@
 """
 
-codelines :  Copyright 2018-2019, Blake Huber
+xlines :  Copyright 2018-2019, Blake Huber
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ from setuptools import setup, find_packages
 from setuptools.command.develop import develop
 from setuptools.command.install import install
 from codecs import open
-import codelines
+import xlines
 
 
 requires = [
@@ -37,10 +37,10 @@ requires = [
 ]
 
 
-_project = 'codelines'
+_project = 'xlines'
 _ex_fname = 'exclusions.list'
 _root = os.path.abspath(os.path.dirname(__file__))
-_comp_fname = 'codelines-completion.bash'
+_comp_fname = 'xlines-completion.bash'
 
 
 def _root_user():
@@ -176,12 +176,12 @@ def user_home():
 
 setup(
     name=_project,
-    version=codelines.__version__,
+    version=xlines.__version__,
     description='Count the number of lines of code in a project',
     long_description=read('DESCRIPTION.rst'),
-    url='https://github.com/fstab50/codelines',
-    author=codelines.__author__,
-    author_email=codelines.__email__,
+    url='https://github.com/fstab50/xlines',
+    author=xlines.__author__,
+    author_email=xlines.__email__,
     license='GPL-3.0',
     classifiers=[
         'Topic :: Software Development :: Build Tools',
@@ -205,7 +205,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'codelines=codelines.cli:init_cli'
+            'xlines=xlines.cli:init_cli'
         ]
     },
     zip_safe=False
