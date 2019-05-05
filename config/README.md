@@ -6,6 +6,6 @@
 
 * Name:  ```exclusions.list```
 
-* Location:  ```~/.config/codelines/exclusions.list```
+* Location:  ```~/.config/xlines/exclusions.list```
 
 * * *
