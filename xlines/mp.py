@@ -38,8 +38,8 @@ def mp_linecount(path, exclusions):
 
         elif os.path.isdir(path):
             d = locate_fileobjects(path)
-            valid_paths = remove_illegal(d, exclusions)
-            for p in valid_paths:
+            # remove paths to invalid objects in d
+            for p in remove_illegal(d, exclusions):
                 q.put({'path': p, 'count': linecount(p)})
     except UnicodeDecodeError:
         q.put({'path': p, 'count': None})
