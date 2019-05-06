@@ -64,7 +64,7 @@ following:
 
         $ xlines --exclusions
 
-|help|
+|exclusions|
 
 
 `back to the top <#top>`__
@@ -110,7 +110,7 @@ License
 
     $ xlines --version
 
-|help|
+|copyright|
 
 `back to the top <#top>`__
 
@@ -135,9 +135,9 @@ agreement <./LICENSE.md>`__.
 
 .. |help| image:: ./assets/help-menu.png
    :target: https://s3.us-east-2.amazonaws.com/http-imagestore/xlines/help-menu.png
-.. |help| image:: ./assets/exclusions.png
+.. |exclusions| image:: ./assets/exclusions.png
    :target: https://s3.us-east-2.amazonaws.com/http-imagestore/xlines/exclusions.png
 .. |repo1-1| image:: ./assets/repofinal.png
    :target: https://s3.us-east-2.amazonaws.com/http-imagestore/xlines/repofinal.png
-.. |help| image:: ./assets/version-copyright.png
+.. |copyright| image:: ./assets/version-copyright.png
    :target: https://s3.us-east-2.amazonaws.com/http-imagestore/xlines/version-copyright.png
