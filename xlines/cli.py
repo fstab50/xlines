@@ -102,7 +102,7 @@ def _configure():
             exclusions = [x.strip() for x in f1.readlines()]
 
         # query user input for new exclusions
-        response = input('  Enter file extensioin types to be excluded separated by commas [quit]: ')
+        response = input('  Enter file extension types to be excluded separated by commas [quit]: ')
 
         if not response:
             sys.exit(exit_codes['EX_OK']['Code'])
@@ -161,7 +161,6 @@ def sp_linecount(path, exclusions):
     try:
         if os.path.isfile(path):
             return remove_illegal([path], exclusions)
-            #print_reportline({os.path.abspath(path): linecount(path)})
 
         elif os.path.isdir(path):
             d = locate_fileobjects(path)
