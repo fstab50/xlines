@@ -64,7 +64,11 @@ following:
 
         $ xlines --exclusions
 
-|help|\
+|help|
+
+.. image:: ./assets/help-menu.png
+   :alt: help
+   :scale: 100%
 
 `back to the top <#top>`__
 
@@ -80,6 +84,7 @@ Counting lines in large repository with long paths.
         $ xlines  --sum  git/AWSAMPLES/aws-serverless-workshops/
 
 |repo1-1|
+
 
 `back to the top <#top>`__
 
