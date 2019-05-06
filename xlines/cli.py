@@ -384,7 +384,6 @@ def init_cli():
             # --- run with concurrency --
             multiprocessing_main([x for x in args.sum], ex, args.debug)
 
-
         elif not args.multiprocess:
 
             io_fail = []
