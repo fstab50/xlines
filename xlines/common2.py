@@ -156,7 +156,7 @@ def remove_illegal(d, illegal):
 
         # filter for illegal file extensions
         fobject = os.path.split(fpath)[1]
-        if ('.' in fobject) and (fobject.split('.')[1] in illegal):
+        if ('.' in fobject) and ('.' + fobject.split('.')[1] in illegal):
             bad.append(fpath)
 
         # filter for illegal dirs
