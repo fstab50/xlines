@@ -13,9 +13,6 @@
 .PBM
 .PNM
 .svg
-pycache
-_env
-venv
 .html
 .xml
 .eggs
