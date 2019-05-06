@@ -1,4 +1,5 @@
- \* \* * # xlines * \* \*
+ xlines
+ =======
 
 Summary
 -------
@@ -59,7 +60,7 @@ following:
 
         $ xlines --exclusions
 
-|help|\ 
+|help|\
 
 `back to the top <#top>`__
 
