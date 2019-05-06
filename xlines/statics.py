@@ -90,10 +90,9 @@ else:
             "CONFIG_PATH": config_path
         },
         "EXCLUSIONS": {
-            "EX_DIR": config_dirpath,
             "EX_FILENAME": ext_filename,
-            "EX_EXT": config_dirpath + '/' + ext_filename,
-            "EX_DIR": config_dirpath + '/' + dir_filename
+            "EX_EXT_PATH": config_dirpath + '/' + ext_filename,
+            "EX_DIR_PATH": config_dirpath + '/' + dir_filename
         },
         "LOGGING": {
             "ENABLE_LOGGING": enable_logging,

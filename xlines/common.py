@@ -47,7 +47,7 @@ rst = Colors.RESET
 # globals
 container = []
 config_dir = local_config['CONFIG']['CONFIG_PATH']
-expath = local_config['EXCLUSIONS']['EX_PATH']
+expath = local_config['EXCLUSIONS']['EX_EXT_PATH']
 div = text + '/' + rst
 div_len = 2
 horiz = text + '-' + rst
