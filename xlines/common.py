@@ -47,7 +47,7 @@ rst = Colors.RESET
 # globals
 container = []
 config_dir = local_config['CONFIG']['CONFIG_PATH']
-expath = local_config['EXCLUSIONS']['EX_PATH']
+expath = local_config['EXCLUSIONS']['EX_EXT_PATH']
 div = text + '/' + rst
 div_len = 2
 horiz = text + '-' + rst
@@ -143,7 +143,7 @@ def remove_illegal(d, illegal):
     def parse_list(path):
         """Reads in list from file object"""
         with open(path) as f1:
-            return f1.readlines()
+            return [x.strip() for x in f1.readlines()]
 
     bad = []
 
@@ -153,11 +153,13 @@ def remove_illegal(d, illegal):
         illegal_dirs = ['pycache', 'venv']
 
     for fpath in d:
+
         # filter for illegal file extensions
         fobject = os.path.split(fpath)[1]
         if '.' in fobject:
             if fobject.split('.')[1] in illegal:
                 bad.append(fpath)
+
         # filter for illegal dirs
         if list(filter(lambda x: x in fpath, illegal_dirs)):
             bad.append(fpath)
