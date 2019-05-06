@@ -140,29 +140,13 @@ def remove_illegal(d, illegal):
     Returns:
         legal filesystem paths (str)
     """
-    def parse_list(path):
-        """Reads in list from file object"""
-        with open(path) as f1:
-            return [x.strip() for x in f1.readlines()]
-
     bad = []
 
-    try:
-        illegal_dirs = parse_list(local_config['EXCLUSIONS']['EX_DIR_PATH'])
-    except KeyError:
-        illegal_dirs = ['pycache', 'venv']
-
-    for fpath in d:
-
-        # filter for illegal file extensions
-        fobject = os.path.split(fpath)[1]
-        if ('.' in fobject) and (fobject.split('.')[1] in illegal):
-            bad.append(fpath)
-
-        # filter for illegal dirs
-        elif list(filter(lambda x: x in fpath, illegal_dirs)):
-            bad.append(fpath)
-    return list(set(d) - set(bad))
+    for path in d:
+        for t in illegal:
+            if t in path:
+                bad.append(path)
+    return list(filter(lambda x: x not in bad, d))
 
 
 def locate_fileobjects(origin, path=expath):
