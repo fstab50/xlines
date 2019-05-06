@@ -54,12 +54,6 @@ horiz = text + '-' + rst
 arrow = bwt + '-> ' + rst
 BUFFER = local_config['PROJECT']['BUFFER']
 
-illegal_dirs = [
-    'p3_venv',
-    '_env',
-    'pycache'
-]
-
 
 def linecount(path, whitespace=True):
     if whitespace:
@@ -152,7 +146,11 @@ def remove_illegal(d, illegal):
             return f1.readlines()
 
     bad = []
-    illegal_dirs = parse_list(os.getenv('HOME') + '/.config/xlines/directories.list')
+
+    try:
+        illegal_dirs = parse_list(local_config['EXCLUSIONS']['EX_DIR_PATH'])
+    except KeyError:
+        illegal_dirs = ['pycache', 'venv']
 
     for fpath in d:
         # filter for illegal file extensions
