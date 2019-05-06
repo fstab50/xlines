@@ -59,7 +59,8 @@ else:
     count_threshold = 1000
 
     # exclusions
-    ex_filename = 'exclusions.list'
+    ext_filename = 'exclusions.list'
+    dir_filename = 'directories.list'
 
     # logging parameters
     enable_logging = False
@@ -90,8 +91,8 @@ else:
         },
         "EXCLUSIONS": {
             "EX_DIR": config_dirpath,
-            "EX_FILENAME": ex_filename,
-            "EX_PATH": config_dirpath + '/' + ex_filename
+            "EX_FILENAME": ext_filename,
+            "EX_PATH": config_dirpath + '/' + ext_filename
         },
         "LOGGING": {
             "ENABLE_LOGGING": enable_logging,
