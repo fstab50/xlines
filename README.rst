@@ -1,7 +1,9 @@
 
 =======
- xlines -- code line counter
+ xlines
 =======
+
+--------------
 
 Summary
 -------
