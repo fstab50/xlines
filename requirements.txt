@@ -1,4 +1,6 @@
 pandoc
 pkginfo
+prompt-toolkit
 pyaws
 twine
+veryprettytable
