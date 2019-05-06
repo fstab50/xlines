@@ -78,7 +78,7 @@ rst = cm.rst
 # globals
 container = []
 config_dir = local_config['CONFIG']['CONFIG_PATH']
-expath = local_config['EXCLUSIONS']['EX_PATH']
+expath = local_config['EXCLUSIONS']['EX_EXT']
 div = text + '/' + rst
 div_len = 2
 horiz = text + '-' + rst
