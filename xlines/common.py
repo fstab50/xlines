@@ -130,7 +130,16 @@ def remove_duplicates(duplicates):
 
 
 def remove_illegal(d, illegal):
-    """Removes excluded file types"""
+    """
+        Removes excluded file types
+
+    Args:
+        :d (list): list of filesystem paths ending with object
+        :illegal (list):  list of file type extensions for ommission
+
+    Returns:
+        legal filesystem paths (str)
+    """
     bad = []
 
     for path in d:
