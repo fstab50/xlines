@@ -66,9 +66,6 @@ following:
 
 |help|
 
-.. image:: ./assets/help-menu.png
-   :alt: help
-   :scale: 100%
 
 `back to the top <#top>`__
 
