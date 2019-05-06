@@ -162,7 +162,7 @@ def remove_illegal(d, illegal):
         # filter for illegal dirs
         elif list(filter(lambda x: x in fpath, illegal_dirs)):
             bad.append(fpath)
-    return list(set(d) - set(bad))
+    return sorted(list(set(d) - set(bad)))
 
 
 def locate_fileobjects(origin, path=expath):
