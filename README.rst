@@ -1,4 +1,6 @@
- xlines
+
+=======
+ xlines -- code line counter
 =======
 
 Summary
