@@ -48,6 +48,9 @@ menu_body = Colors.BOLD + """
         -c, --configure""" + Colors.RESET + """:  Configure runtime parameter via the cli
             menu. Change display format, color scheme, etc values
     """ + Colors.BOLD + """
+        -e, --exclusions""" + Colors.RESET + """:  Print out list of file type extensions
+            and directories excluded from line count calculations
+    """ + Colors.BOLD + """
         -d, --debug""" + Colors.RESET + """: Print out additional debugging information
     """ + Colors.BOLD + """
         -h, --help""" + Colors.RESET + """: Show this help message and exit
