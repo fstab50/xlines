@@ -10,7 +10,6 @@ import inspect
 from veryprettytable import VeryPrettyTable
 from pyaws.colors import Colors
 from xlines.colormap import ColorMap
-from xlines import logger
 from xlines.statics import local_config
 
 cm = ColorMap()
