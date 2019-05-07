@@ -31,7 +31,6 @@ except Exception:
     text = Colors.LT2GRAY
 
 
-
 # universal colors
 rd = Colors.RED + Colors.BOLD
 yl = Colors.YELLOW + Colors.BOLD
