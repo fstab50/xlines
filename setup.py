@@ -39,6 +39,7 @@ requires = [
 
 _project = 'xlines'
 _ex_fname = 'exclusions.list'
+_ex_dirs_fname = 'directories.list'
 _root = os.path.abspath(os.path.dirname(__file__))
 _comp_fname = 'xlines-completion.bash'
 
@@ -201,7 +202,8 @@ setup(
     },
     data_files=[
         (user_home() + '/' + '.bash_completion.d', ['bash/' + _comp_fname]),
-        (user_home() + '/' + '.config' + '/' + _project, ['config/' + _ex_fname])
+        (user_home() + '/' + '.config' + '/' + _project, ['config/' + _ex_fname]),
+        (user_home() + '/' + '.config' + '/' + _project, ['config/' + _ex_dirs_fname])
     ],
     entry_points={
         'console_scripts': [
