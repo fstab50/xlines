@@ -6,7 +6,6 @@ BUCKET='http-imagestore'
 KEY='xlines'
 
 pkg_path=$(cd "$(dirname $0)"; pwd -P)
-source "$pkg_path/colors.sh"
 
 
 function _git_root(){
@@ -31,6 +30,9 @@ function _valid_iamuser(){
 
 
 ROOT=$(_git_root)
+
+# color codes
+source "$ROOT/core/colors.sh"
 
 
 if _valid_iamuser $PROFILE; then
