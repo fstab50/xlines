@@ -6,8 +6,8 @@ Summary.
 """
 import os
 import inspect
+import platform
 from pyaws.colors import Colors
-from platform
 from xlines import logger
 from xlines.statics import local_config
 
