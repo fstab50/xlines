@@ -28,7 +28,6 @@ from shutil import copy2 as copyfile
 from setuptools import setup, find_packages
 from setuptools.command.develop import develop
 from setuptools.command.install import install
-from pathlib import Path
 from codecs import open
 import xlines
 
@@ -163,7 +162,7 @@ def user_home():
     """Returns os specific home dir for current user"""
     try:
         if platform.system() == 'Linux':
-            return str(Path.home())
+            return os.path.expanduser('~')
 
         elif platform.system() == 'Windows':
             username = os.getenv('username')
