@@ -188,9 +188,6 @@ def user_home():
         raise e
 
 
-# reset python home
-_set_pythonpath()
-
 setup(
     name=_project,
     version=xlines.__version__,
@@ -217,9 +214,9 @@ setup(
         'install': PostInstall
     },
     data_files=[
-        (user_home() + '/' + '.bash_completion.d', ['bash/' + _comp_fname]),
-        (user_home() + '/' + '.config' + '/' + _project, ['config/' + _ex_fname]),
-        (user_home() + '/' + '.config' + '/' + _project, ['config/' + _ex_dirs_fname])
+        (os_parityPath(user_home() + '/' + '.bash_completion.d'), ['bash/' + _comp_fname]),
+        (os_parityPath(user_home() + '/' + '.config' + '/' + _project), ['config/' + _ex_fname]),
+        (os_parityPath(user_home() + '/' + '.config' + '/' + _project), ['config/' + _ex_dirs_fname])
     ],
     entry_points={
         'console_scripts': [
