@@ -28,6 +28,7 @@ from shutil import copy2 as copyfile
 from setuptools import setup, find_packages
 from setuptools.command.develop import develop
 from setuptools.command.install import install
+from pathlib import Path
 from codecs import open
 import xlines
 
@@ -162,14 +163,14 @@ def user_home():
     """Returns os specific home dir for current user"""
     try:
         if platform.system() == 'Linux':
-            return os.getenv('HOME')
+            return str(Path.home())
 
         elif platform.system() == 'Windows':
             username = os.getenv('username')
             return 'C:\\Users\\' + username
 
         elif platform.system() == 'Java':
-            print('Unsupported os type')
+            print('Unable to determine home dir, unsupported os type')
             sys.exit(1)
     except OSError as e:
         raise e
