@@ -7,6 +7,7 @@ Summary.
 import os
 import inspect
 from pyaws.colors import Colors
+from platform
 from xlines import logger
 from xlines.statics import local_config
 
@@ -212,3 +213,20 @@ def locate_fileobjects(origin, path=expath):
                 )
                 continue
     return remove_duplicates(fobjects)
+
+
+def user_home():
+    """Returns os specific home dir for current user"""
+    try:
+        if platform.system() == 'Linux':
+            return os.path.expanduser('~')
+
+        elif platform.system() == 'Windows':
+            username = os.getenv('username')
+            return 'C:\\Users\\' + username
+
+        elif platform.system() == 'Java':
+            print('Unable to determine home dir, unsupported os type')
+            sys.exit(1)
+    except OSError as e:
+        raise e
