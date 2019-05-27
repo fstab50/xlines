@@ -47,13 +47,25 @@ _comp_fname = 'xlines-completion.bash'
 
 def _root_user():
     """
-    Checks localhost root or sudo access
+    Checks localhost root or sudo access.  Returns bool
     """
     if os.geteuid() == 0:
         return True
     elif subprocess.getoutput('echo $EUID') == '0':
         return True
     return False
+
+
+def _user():
+    """Returns username of caller"""
+    return getpass.getuser()
+
+
+def _set_pythonpath():
+    """
+    Temporarily reset PYTHONPATH to prevent home dir = python module home
+    """
+    os.environ['PYTHONPATH'] = '/'
 
 
 def create_artifact(object_path, type):
@@ -163,7 +175,7 @@ def user_home():
     """Returns os specific home dir for current user"""
     try:
         if platform.system() == 'Linux':
-            return '/home/' + getpass.getuser()
+            return os.path.expanduser('~')
 
         elif platform.system() == 'Windows':
             username = os.getenv('username')
@@ -175,6 +187,9 @@ def user_home():
     except OSError as e:
         raise e
 
+
+# reset python home
+_set_pythonpath()
 
 setup(
     name=_project,
