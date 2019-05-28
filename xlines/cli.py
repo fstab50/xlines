@@ -441,7 +441,8 @@ def init_cli():
             print_footer(tcount, tobjects, width)
 
             if args.debug:
-                print('Skipped file objects:')
+                tab4 = '\t'.expandtabs(4)
+                print('\n' + tab4 + 'Skipped file objects:\n' + tab4 + ('-' * (width + count_width)))
                 for file in io_fail:
                     print('\t{}'.format(file))   # Write this out to a file in /tmp for later viewing
             sys.exit(exit_codes['E_DEPENDENCY']['Code'])
