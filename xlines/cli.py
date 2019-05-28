@@ -30,6 +30,7 @@ import sys
 import json
 import inspect
 import argparse
+from pathlib import Path
 from pyaws.utils import stdout_message
 from pyaws.colors import Colors
 from xlines.statics import PACKAGE, local_config
@@ -369,7 +370,7 @@ def init_cli():
 
     elif args.sum and precheck():
 
-        ex = ExcludedTypes(ex_path='/home/blake/.config/xlines/exclusions.list')
+        ex = ExcludedTypes(ex_path=str(Path.home()) + '/.config/xlines/exclusions.list')
         container = []
         container.extend(args.sum)
 
@@ -381,7 +382,7 @@ def init_cli():
 
         if args.multiprocess:
             # --- run with concurrency --
-            multiprocessing_main([x for x in args.sum], ex, args.debug)
+            multiprocessing_main(args.sum, ex, args.debug)
 
         elif not args.multiprocess:
 
