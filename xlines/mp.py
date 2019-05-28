@@ -8,6 +8,7 @@ Module Functions:
 
 """
 import os
+import sys
 import multiprocessing
 from multiprocessing import Queue
 from pyaws.utils import stdout_message, export_json_object
@@ -99,13 +100,29 @@ def print_results(object_list):
 
 
 def multiprocessing_main(container, exclusions, debug):
-    """Execute Operations using concurrency (multi-process) model"""
+    """
+    Execute Operations using concurrency (multi-process) model
+    """
+    def deconstruct(alist):
+        """Creates list of subdirs in all top-level directories"""
+        d_list = []
+        for i in alist:
+            if os.path.isdir(i):
+                d_list.extend([os.path.join(i, x) for x in os.listdir(i)])
+            else:
+                d_list.append(i)
+        return d_list
+
+    if debug:
+        stdout_message('Objects contained in container directories:', prefix='DEBUG')
+        for i in deconstruct(container):
+            print(i)
 
     global q
     q = Queue()
 
     processes = []
-    for i in container:
+    for i in deconstruct(container):
         t = multiprocessing.Process(target=mp_linecount, args=(i, exclusions.types))
         processes.append(t)
         t.start()
