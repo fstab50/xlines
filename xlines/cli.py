@@ -399,7 +399,9 @@ def init_cli():
                 paths = sp_linecount(i, ex.types)
 
                 for path in paths:
+
                     try:
+
                         inc = linecount(path, args.whitespace)
                         highlight = cm.accent if inc > hicount_threshold else cm.aqu
                         tcount += inc    # total line count
@@ -428,8 +430,10 @@ def init_cli():
                         # incremental count formatting
                         ct_format = acct if inc > hicount_threshold else bwt
 
+                        # format tabular line totals with commas
                         output_str = f'{tab4}{lpath}{div}{fname}{tab}{ct_format}{"{:,}".format(inc):>7}{rst}'
                         print(output_str)
+
                     except Exception:
                         io_fail.append(path)
                         continue
