@@ -373,6 +373,11 @@ def init_cli():
         help_menu()
         sys.exit(exit_codes['EX_OK']['Code'])
 
+    elif len(sys.argv) == 2 and (sys.argv[1] != '.'):
+        print(f'sys.argv: {sys.argv}')
+        help_menu()
+        sys.exit(exit_codes['EX_OK']['Code'])
+
     elif args.help:
         help_menu()
         sys.exit(exit_codes['EX_OK']['Code'])
