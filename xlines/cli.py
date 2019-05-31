@@ -284,7 +284,7 @@ def options(parser, help_menu=False):
     parser.add_argument("-d", "--debug", dest='debug', action='store_true', default=False, required=False)
     parser.add_argument("-h", "--help", dest='help', action='store_true', required=False)
     parser.add_argument("-m", "--multiprocess", dest='multiprocess', default=False, action='store_true', required=False)
-    parser.add_argument("-s", "--sum", dest='sum', nargs='*', default='.', required=False)
+    parser.add_argument("-s", "--sum", dest='sum', nargs='*', default=os.getcwd(), required=False)
     parser.add_argument("-w", "--whitespace", dest='whitespace', action='store_false', default=True, required=False)
     parser.add_argument("-V", "--version", dest='version', action='store_true', required=False)
     return parser.parse_args()
@@ -340,6 +340,24 @@ def print_footer(total, object_count, w):
     print(f'{tab4}{msg}{tab}{bd + "{:,}".format(total) + rst:>6}' + '\n')
 
 
+def create_container(parameters):
+    """
+    Summary.
+
+        Create container list of fs artifacts to count
+
+    Returns:
+        list (iter)
+
+    """
+    container = []
+    if isinstance(parameters, list):
+        container.extend(parameters)
+    else:
+        container.append(parameters)
+    return container
+
+
 def init_cli():
 
     parser = argparse.ArgumentParser(add_help=False)
@@ -371,18 +389,20 @@ def init_cli():
     elif args.sum and precheck():
 
         ex = ExcludedTypes(ex_path=str(Path.home()) + '/.config/xlines/exclusions.list')
-        container = []
-        container.extend(args.sum)
+        container = create_container(args.sum)
+
 
         if args.debug:
             print('\nargs.sum:')
             print(args.sum)
             print('\nsys.argv contents:')
             print(sys.argv)
+            print(f'container is:\n {container}')
+            sys.exit(0)
 
         if args.multiprocess:
             # --- run with concurrency --
-            multiprocessing_main(args.sum, ex, args.debug)
+            multiprocessing_main(container, ex, args.debug)
 
         elif not args.multiprocess:
 
