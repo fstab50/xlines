@@ -118,7 +118,7 @@ def remove_duplicates(duplicates):
         duplicates (list): contains repeated elements
 
     Returns:
-        generator object (iter)
+        list object (iter)
     """
     uniq = []
 
