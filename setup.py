@@ -29,6 +29,7 @@ from setuptools import setup, find_packages
 from setuptools.command.develop import develop
 from setuptools.command.install import install
 import getpass
+from pathlib import Path
 from codecs import open
 import xlines
 
@@ -39,9 +40,9 @@ requires = [
 
 
 _project = 'xlines'
+_root = os.path.abspath(os.path.dirname(__file__))
 _ex_fname = 'exclusions.list'
 _ex_dirs_fname = 'directories.list'
-_root = os.path.abspath(os.path.dirname(__file__))
 _comp_fname = 'xlines-completion.bash'
 
 
@@ -141,6 +142,23 @@ class PostInstall(install):
                 create_artifact(os_parityPath(completion_dir), 'dir')
             if not os.path.exists(os_parityPath(config_dir)):
                 create_artifact(os_parityPath(config_dir), 'dir')
+
+            # ensure installation of home directory profile artifacts (data_files)
+            if not os.path.exists(os_parityPath(completion_dir + '/' + _comp_fname)):
+                copyfile(
+                    os_parityPath('bash' + '/' + _comp_fname),
+                    os_parityPath(completion_dir + '/' + _comp_fname)
+                )
+            if not os.path.exists(os_parityPath(config_dir + '/' + _ex_fname)):
+                copyfile(
+                    os_parityPath('config' + '/' + _ex_fname),
+                    os_parityPath(config_dir + '/' + _ex_fname)
+                )
+            if not os.path.exists(os_parityPath(config_dir + '/' + _ex_dirs_fname)):
+                copyfile(
+                    os_parityPath('config' + '/' + _ex_dirs_fname),
+                    os_parityPath(config_dir + '/' + _ex_dirs_fname)
+                )
 
             if _root_user():
                 copyfile(
