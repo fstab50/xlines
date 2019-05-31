@@ -287,7 +287,7 @@ def options(parser, help_menu=False):
     parser.add_argument("-s", "--sum", dest='sum', nargs='*', default=os.getcwd(), required=False)
     parser.add_argument("-w", "--whitespace", dest='whitespace', action='store_false', default=True, required=False)
     parser.add_argument("-V", "--version", dest='version', action='store_true', required=False)
-    return parser.parse_args()
+    return parser.parse_known_args()
 
 
 def package_version():
@@ -363,7 +363,7 @@ def init_cli():
     parser = argparse.ArgumentParser(add_help=False)
 
     try:
-        args = options(parser)
+        args, unknown = options(parser)
     except Exception as e:
         help_menu()
         stdout_message(str(e), 'ERROR')
@@ -397,7 +397,8 @@ def init_cli():
             print(args.sum)
             print('\nsys.argv contents:')
             print(sys.argv)
-            print(f'container is:\n {container}')
+            print(f'\ncontainer is:\n {container}')
+            print(f'\nunknown object: {unknown}')
             sys.exit(0)
 
         if args.multiprocess:
