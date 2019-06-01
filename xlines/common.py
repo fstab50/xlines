@@ -7,12 +7,16 @@ Summary.
 import os
 import json
 import inspect
+import logging
 import platform
 from pathlib import Path
 from xlines import Colors
-from xlines import logger
 from xlines.statics import local_config
+from xlines._version import __version__
 
+
+logger = logging.getLogger(__version__)
+logger.setLevel(logging.INFO)
 
 try:
     from pyaws.core.oscodes_unix import exit_codes

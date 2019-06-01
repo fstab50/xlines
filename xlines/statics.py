@@ -18,6 +18,7 @@ import inspect
 import logging
 from xlines.common import read_local_config, get_os, os_parityPath
 from xlines._version import __version__
+
 logger = logging.getLogger(__version__)
 logger.setLevel(logging.INFO)
 
