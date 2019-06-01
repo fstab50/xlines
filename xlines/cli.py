@@ -31,11 +31,10 @@ import json
 import inspect
 import argparse
 from pathlib import Path
-from xlines import Colors
+from xlines import about, Colors, logger
 from xlines.usermessage import stdout_message
 from xlines.statics import PACKAGE, local_config
 from xlines.help_menu import menu_body
-from xlines import about, logger
 from xlines.mp import multiprocessing_main
 from xlines.common import linecount, locate_fileobjects, remove_illegal
 from xlines.common import ExcludedTypes
