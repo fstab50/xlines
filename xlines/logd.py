@@ -9,9 +9,10 @@ import logging
 import logging.handlers
 from pathlib import Path
 from xlines.statics import local_config
+from xlines._version import __version__
 
 
-syslog = logging.getLogger()
+syslog = logging.getLogger(__version__)
 syslog.setLevel(logging.DEBUG)
 
 
