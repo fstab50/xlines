@@ -15,7 +15,7 @@ from xlines import Colors
 from xlines.mp_ancillary import BUFFER, acct, bwt, text, rst, arrow, div
 from xlines.export import export_json_object
 from xlines import local_config
-from xlines.common import locate_fileobjects, remove_illegal, linecount, print_header, print_footer
+from xlines.mp_ancillary import locate_fileobjects, remove_illegal, linecount, print_header, print_footer
 
 
 def longest_path_mp(object_list):
