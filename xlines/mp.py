@@ -11,9 +11,9 @@ import os
 import sys
 import multiprocessing
 from multiprocessing import Queue
-from pyaws.utils import stdout_message, export_json_object
-from pyaws.colors import Colors
-from xlines.common import BUFFER, acct, bwt, text, rst, arrow, div
+from xlines.usermessage import stdout_message
+from xlines.colors import Colors
+from xlines.common import BUFFER, acct, bwt, text, rst, arrow, div, export_json_object
 from xlines.statics import local_config
 from xlines.common import locate_fileobjects, remove_illegal, linecount, print_header, print_footer
 

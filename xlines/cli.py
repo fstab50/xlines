@@ -31,8 +31,8 @@ import json
 import inspect
 import argparse
 from pathlib import Path
-from pyaws.utils import stdout_message
-from pyaws.colors import Colors
+from xlines.colors import Colors
+from xlines.usermessage import stdout_message
 from xlines.statics import PACKAGE, local_config
 from xlines.help_menu import menu_body
 from xlines import about, logger
