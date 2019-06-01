@@ -8,7 +8,6 @@ Module Functions:
 
 """
 import os
-import sys
 import multiprocessing
 from multiprocessing import Queue
 from xlines.usermessage import stdout_message
