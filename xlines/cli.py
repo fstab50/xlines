@@ -31,7 +31,7 @@ import json
 import inspect
 import argparse
 from pathlib import Path
-from xlines.colors import Colors
+from xlines import Colors
 from xlines.usermessage import stdout_message
 from xlines.statics import PACKAGE, local_config
 from xlines.help_menu import menu_body

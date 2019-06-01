@@ -1,4 +1,4 @@
-from pyaws import logd, Colors
+from xlines.colors import Colors
 from xlines._version import __version__ as version
 from xlines.statics import local_config
 
