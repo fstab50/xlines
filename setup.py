@@ -35,7 +35,7 @@ import xlines
 
 
 requires = [
-    'pyaws>=0.2.32'
+    'pygments'
 ]
 
 

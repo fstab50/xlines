@@ -9,7 +9,7 @@ Module Classes:
 
 """
 
-from pyaws import Colors
+from xlines.colors import Colors
 
 # color object
 co = Colors()
