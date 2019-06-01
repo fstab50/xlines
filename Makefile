@@ -78,6 +78,26 @@ build: pre-build setup-venv    ## Build dist, increment version || force version
 	cd $(CUR_DIR) && $(PYTHON3_PATH) setup.py sdist
 
 
+.PHONY: builddeb
+builddeb:     ## Build Debian distribution (.deb) os package
+	@echo "Building Debian package format of $(PROJECT)"; \
+	if [ ! -d $(VENV_DIR) ]; then $(MAKE) setup-venv; fi; \
+	if [ $(VERSION) ]; then . $(VENV_DIR)/bin/activate && \
+	$(PYTHON3_PATH) $(SCRIPT_DIR)/builddeb.py --build --set-version $(VERSION); \
+	else cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && $(PYTHON3_PATH) $(SCRIPT_DIR)/builddeb.py --build; fi
+
+
+.PHONY: buildrpm
+buildrpm:     ## Build Redhat distribution (.rpm) os package
+	@echo "Building RPM package format of $(PROJECT)";
+	if [ ! -f $(VENV_DIR) ]; then $(MAKE) setup-venv; fi; \
+	if [ $(VERSION) ]; then cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
+	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py --build --set-version $(VERSION); else \
+	cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && $(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py --build; fi
+	$(PYTHON3_PATH) setup.py bdist --formats=rpm
+	$(PYTHON3_PATH) setup.py bdist_rpm --spec-file=packaging/rpm/xlines.spec
+	
+
 .PHONY: testpypi
 testpypi: build     ## Deploy to testpypi without regenerating prebuild artifacts
 	@echo "Deploy $(PROJECT) to test.pypi.org"
