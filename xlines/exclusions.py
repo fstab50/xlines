@@ -7,22 +7,22 @@ Summary.
 """
 import os
 import inspect
-from veryprettytable import VeryPrettyTable
-from pyaws.colors import Colors
+#from veryprettytable import VeryPrettyTable
+from xlines.colors import Colors
 from xlines.colormap import ColorMap
 from xlines.statics import local_config
 
 cm = ColorMap()
 
 try:
-    from pyaws.core.oscodes_unix import exit_codes
+    from xlines.oscodes_unix import exit_codes
     os_type = 'Linux'
     user_home = os.getenv('HOME')
     splitchar = '/'                             # character for splitting paths (linux)
     acct = cm.accent
     text = Colors.BRIGHT_PURPLE
 except Exception:
-    from pyaws.core.oscodes_win import exit_codes    # non-specific os-safe codes
+    from xlines.oscodes_win import exit_codes    # non-specific os-safe codes
     os_type = 'Windows'
     user_home = os.getenv('username')
     splitchar = '\\'                            # character for splitting paths (windows)
