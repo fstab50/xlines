@@ -34,15 +34,14 @@ Requires: epel-release
 
 
 %description
-branchdiff is a utility for use with git version control. branchdiff
-provides user access to advanced  git features without requiring any
-knowledge of advanced git syntax.
+xlines is a utility for counting lines of text in code projects. xlines
+attempts to skip binary files or other file types which are not text.
 .
-branch diff features:
-  * Illustration of differences between current working branch and master branch
-  * Details when commits were made to the current branch, by whom
-  * Summary statistics for all commits
-  * Advanced file difference illustration between branches
+xlines features:
+  * Exclusion list of excluded file type extensions
+  * Directory list of filesystem directories to exclude
+  * User settable threshold for marking files with large line counts
+  * Colorized output
 
 %prep
 
@@ -58,7 +57,7 @@ install -m 0755 -d $RPM_BUILD_ROOT/%{_compdir}
 install -m 0755 xlines $RPM_BUILD_ROOT/%{_bindir}/
 install -m 0644 xlines $RPM_BUILD_ROOT/%{_libdir}/xlines
 install -m 0644 version.py $RPM_BUILD_ROOT/%{_libdir}/version.py
-install -m 0644 branchdiff-completion.bash $RPM_BUILD_ROOT/%{_compdir}/xlines-completion.bash
+install -m 0644 xlines-completion.bash $RPM_BUILD_ROOT/%{_compdir}/xlines-completion.bash
 
 
 %files
@@ -89,29 +88,10 @@ elif [ -f "$HOME/.profile" ]; then
 fi
 
 
-# path updates - sudo user
-if [ $SUDO_USER ]; then
-
-    if [ -f "/home/$SUDO_USER/.bashrc" ]; then
-        printf -- '%s\n\n' 'PATH=$PATH:/usr/local/bin' >> "/home/$SUDO_USER/.bashrc"
-        printf -- '%s\n' 'export PATH' >> "/home/$SUDO_USER/.bashrc"
-
-    elif [ -f "/home/$SUDO_USER/.bash_profile" ]; then
-        printf -- '%s\n\n' 'PATH=$PATH:/usr/local/bin' >> "/home/$SUDO_USER/.bash_profile"
-        printf -- '%s\n' 'export PATH' >> "/home/$SUDO_USER/.bash_profile"
-
-    elif [ -f "/home/$SUDO_USER/.profile" ]; then
-        printf -- '%s\n\n' 'PATH=$PATH:/usr/local/bin' >> "/home/$SUDO_USER/.profile"
-        printf -- '%s\n' 'export PATH' >> "/home/$SUDO_USER/.profile"
-    fi
-
-fi
-
-
 ##   install bash_completion (amazonlinux 1 only); other epel pkgs   ##
 
-if [ -f '/usr/local/lib/branchdiff/os_distro.sh' ]; then
-    if [ "$(sh /usr/local/lib/branchdiff/os_distro.sh | awk '{print $2}')" -eq "1" ]; then
+if [ -f '/usr/local/lib/xlines/os_distro.sh' ]; then
+    if [ "$(sh /usr/local/lib/xlines/os_distro.sh | awk '{print $2}')" -eq "1" ]; then
         yum -y install bash-completion xclip  --enablerepo=epel
     fi
 else
