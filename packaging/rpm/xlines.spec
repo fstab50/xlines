@@ -28,7 +28,7 @@ License:        GPL
 URL:            PROJECT_URL
 Source:         %{name}-%{version}.%{release}.tar.gz
 Prefix:         /usr
-Requires:      python36 python36-setuptools python36-pygments bash-completion
+Requires:      python36 python36-pip python36-setuptools python36-pygments bash-completion
 
 %if 0%{?rhel}%{?amzn2}
 Requires: bash-completion
