@@ -99,12 +99,6 @@ buildrpm:     ## Build Redhat distribution (.rpm) os package
 	sudo cp -r /usr/local/lib/python3.6/site-packages/setuptools* /usr/lib/python3.*/site-packages/
 	sudo cp -r /usr/local/lib/python3.6/site-packages/pkg_resources* /usr/lib/python3.*/site-packages/
 	$(PYTHON3_PATH) setup_rpm.py bdist_rpm --requires=$(OS_REQUIRES) --python='/usr/bin/python3'
-	#$(PYTHON3_PATH) setup.py bdist_rpm --requires=$(OS_REQUIRES) --python='/usr/bin/python3' --post-install=$(POST_SCRIPT)
-	#if [ ! -f $(VENV_DIR) ]; then $(MAKE) setup-venv; fi
-	#if [ $(VERSION) ]; then cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
-	#$(PYTHON3_PATH) setup.py bdist_rpm --spec-file=packaging/rpm/xlines.spec --version=dummy; else \
-	#cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
-	#$(PYTHON3_PATH) setup.py bdist_rpm --spec-file=packaging/rpm/xlines.spec
 
 
 .PHONY: testpypi

@@ -26,8 +26,6 @@ import subprocess
 from shutil import which
 from shutil import copy2 as copyfile
 from setuptools import setup, find_packages
-from setuptools.command.develop import develop
-from setuptools.command.install import install
 import getpass
 from pathlib import Path
 from codecs import open
@@ -102,69 +100,6 @@ class PostInstallDevelop(develop):
     def run(self):
         subprocess.check_call("bash scripts/post-install-dev.sh".split())
         develop.run(self)
-
-
-class PostInstall(install):
-    """
-    Summary.
-
-        Postinstall script to place bash completion artifacts
-        on local filesystem
-
-    """
-    def valid_os_shell(self):
-        """
-        Summary.
-
-            Validates install environment for Linux and Bash shell
-
-        Returns:
-            Success | Failure, TYPE bool
-
-        """
-        if platform.system() == 'Windows':
-            return False
-        elif which('bash'):
-            return True
-        elif 'bash' in subprocess.getoutput('echo $SHELL'):
-            return True
-        return False
-
-    def run(self):
-        """
-        Summary.
-
-            Executes post installation configuration only if correct
-            environment detected
-
-        """
-        if self.valid_os_shell():
-
-            completion_dir = '/etc/bash_completion.d'
-            config_dir = module_dir() + _project + '/config/'
-
-            if not os.path.exists(completion_dir):
-                create_artifact(completion_dir, 'dir')
-            if not os.path.exists(config_dir):
-                create_artifact(config_dir, 'dir')
-
-            # ensure installation of home directory profile artifacts (data_files)
-            if not os.path.exists(os_parityPath(completion_dir + '/' + _comp_fname)):
-                copyfile(
-                    os_parityPath('bash' + '/' + _comp_fname),
-                    os_parityPath(completion_dir + '/' + _comp_fname)
-                )
-            if not os.path.exists(os_parityPath(config_dir + '/' + _ex_fname)):
-                copyfile(
-                    os_parityPath('config' + '/' + _ex_fname),
-                    os_parityPath(config_dir + '/' + _ex_fname)
-                )
-            if not os.path.exists(os_parityPath(config_dir + '/' + _ex_dirs_fname)):
-                copyfile(
-                    os_parityPath('config' + '/' + _ex_dirs_fname),
-                    os_parityPath(config_dir + '/' + _ex_dirs_fname)
-                )
-        install.run(self)
 
 
 def preclean(dst):
