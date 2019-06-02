@@ -92,8 +92,8 @@ builddeb:     ## Build Debian distribution (.deb) os package
 .PHONY: buildrpm
 buildrpm:     ## Build Redhat distribution (.rpm) os package
 	sudo -H pip3 install -U pip setuptools
-	sudo cp -r /usr/local/lib/python3.*/site-packages/setuptools* /usr/lib/python3.*/site-packages/
-	sudo cp -r /usr/local/lib/python3.*/site-packages/pkg-resources* /usr/lib/python3.*/site-packages/
+	sudo cp -r /usr/local/lib/python3.6/site-packages/setuptools* /usr/lib/python3.*/site-packages/
+	sudo cp -r /usr/local/lib/python3.6/site-packages/pkg-resources* /usr/lib/python3.*/site-packages/
 	$(PYTHON3_PATH) setup.py bdist_rpm --requires=$(OS_REQUIRES) --python='/usr/bin/python3' --post-install=$(POST_SCRIPT)
 	#if [ ! -f $(VENV_DIR) ]; then $(MAKE) setup-venv; fi
 	#if [ $(VERSION) ]; then cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
