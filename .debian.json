@@ -1,0 +1,83 @@
+{
+    "Package": "deb",
+    "Project": "branchdiff",
+    "Executable": "branchdiff",
+    "ProjectUrl": "https://github.com/fstab50/branchdiff",
+    "IssuesUrl": "https://github.com/fstab50/branchdiff/issues",
+    "Description": "Utility for illustrating the status of a git working branch",
+    "Version": "MAJOR_VERSION",
+    "Release": "MINOR_VERSION",
+    "PreInstall": ["", ""],
+    "DependencyList": [
+        "bash (>= 4.1)",
+        "bc (>= 1.0)",
+        "debianutils",
+        "git (>= 1.8.3)",
+        "coreutils (>= 8.0)",
+        "bash-completion",
+        "xclip",
+        "gnupg2",
+        "sudo",
+        "wget"
+    ],
+    "LogFiles": [ ],
+    "VersionModule": "version.py",
+    "DockerImage": "centos7:debbuildD",
+    "DockerContiner": "builddeb-branchdiff",
+    "DockerUser": "builder",
+    "DockerBuildScript": "docker-builddeb.sh",
+    "BashCompletion": "branchdiff-completion.bash",
+    "ControlFile": {
+        "Name": "control",
+        "Summary": "Utility for illustrating the status of a git working branch",
+        "Description":  "",
+        "BuildArch": "amd64",
+        "License": "MIT",
+        "Source": "branchdiff-MAJOR_VERSION.MINOR_VERSION.tar.gz",
+        "BuildDirName": "branchdiff-MAJOR_VERSION.MINOR_VERSION",
+        "Directories": [
+            {
+                "Dirname": "/usr/local/lib/branchdiff",
+                "Permissions": "0755"
+            },
+            {
+                "Dirname": "/usr/local/bin",
+                "Permissions": "0755"
+            }
+        ],
+        "Files": [
+            {
+                "filename": "branchdiff",
+                "SourceLocation": "branchdiff-MAJOR_VERSION/branchdiff",
+                "location": "/usr/local/bin/branchdiff",
+                "Permissions": "0755"
+
+            },
+            {
+                "filename": "std_functions.sh",
+                "SourceLocation": "/tmp/build/branchdiff-MAJOR_VERSION/std_functions.sh",
+                "SpecFilePath": "/usr/local/lib/branchdiff/std_functions.sh",
+                "Permissions": "0755"
+            },
+            {
+                "filename": "colors.sh",
+                "SourceLocation": "/tmp/build/branchdiff-MAJOR_VERSION/colors.sh",
+                "SpecFilePath": "/usr/local/lib/branchdiff/colors.sh",
+                "Permissions": "0755"
+            },
+            {
+                "filename": "exitcodes.sh",
+                "SourceLocation": "/tmp/build/branchdiff-MAJOR_VERSION/exitcodes.sh",
+                "SpecFilePath": "/usr/local/lib/branchdiff/colors.sh",
+                "Permissions": "0755"
+            },
+            {
+                "filename": "version.py",
+                "SourceLocation": "/tmp/build/branchdiff-MAJOR_VERSION/version.py",
+                "SpecFilePath": "/usr/local/lib/branchdiff/version.py",
+                "Permissions": "0755"
+            }
+        ],
+        "BuildComment": "Debian Package built by CI/CD automtation"
+    }
+}
