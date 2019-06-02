@@ -4,19 +4,21 @@
 %define name        xlines
 %define version     MAJOR_VERSION
 %define release     MINOR_VERSION
-%define _homedir    %{echo $HOME}
+%define _homedir    %{getenv:HOME}
 %define _bindir     usr/local/bin
-%define _libdir     usr/local/lib/python3.6/site-packages
+%define _libdir     usr/local/lib/python3.6/site-packages/xlines
+%define _distinfo   usr/local/lib/python3.6/site-packages/xlines-MAJOR_VERSION.MINOR_VERSION.dist-info
 %define _compdir    etc/bash_completion.d
 %define _confdir    %{_homedir}/.config/xlines
 %define _topdir     /home/DOCKERUSER/rpmbuild
+%define python37    %{which python3.7}
 %define buildroot   %{_topdir}/%{name}-%{version}
 
 BuildRoot:      %{buildroot}
 Name:           %{name}
 Version:        %{version}
 Release:        %{release}
-Summary:        Easily count lines of code
+Summary:        Count lines of text in code projects
 
 Group:          Development/Tools
 BuildArch:      noarch
@@ -32,6 +34,11 @@ Requires: bash-completion
 
 %if 0%{?amzn1}
 Requires: epel-release
+%endif
+
+%if %{?python37:1}%{!?python37:0}
+%define _libdir     usr/local/lib/python3.7/site-packages/xlines
+%define _distinfo   usr/local/lib/python3.7/site-packages/xlines-MAJOR_VERSION.MINOR_VERSION.dist-info
 %endif
 
 
@@ -64,7 +71,7 @@ install -m 0644 xlines-completion.bash $RPM_BUILD_ROOT/%{_compdir}/xlines-comple
 
 
 %files
- %defattr(-,root,root)
+%defattr(-,root,root)
 /%{_libdir}
 /%{_bindir}
 /%{_compdir}
