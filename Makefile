@@ -90,12 +90,11 @@ builddeb:     ## Build Debian distribution (.deb) os package
 .PHONY: buildrpm
 buildrpm:     ## Build Redhat distribution (.rpm) os package
 	@echo "Building RPM package format of $(PROJECT)";
-	if [ ! -f $(VENV_DIR) ]; then $(MAKE) setup-venv; fi; \
-	cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && $(PIP_CALL) install -U xlines;
-	cp -r $(VENV_DIR)/lib/python3.?/site-packages/pygments $(CUR_DIR);
-	if [ $(VERSION) ]; then \
-	$(PYTHON3_PATH) setup.py bdist_rpm --spec-file=packaging/rpm/xlines.spec --version $(VERSION); \
-	else $(PYTHON3_PATH) setup.py bdist_rpm --spec-file=packaging/rpm/xlines.spec
+	if [ ! -f $(VENV_DIR) ]; then $(MAKE) setup-venv; fi;
+	if [ $(VERSION) ]; then cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
+	$(PYTHON3_PATH) setup.py bdist_rpm --spec-file=packaging/rpm/xlines.spec --version=$(VERSION); \
+	else cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \ 
+	$(PYTHON3_PATH) setup.py bdist_rpm --spec-file=packaging/rpm/xlines.spec; fi
 
 
 .PHONY: testpypi
