@@ -5,6 +5,7 @@
 %define version     MAJOR_VERSION
 %define release     MINOR_VERSION
 %define _homedir    %{getenv:HOME}
+%define _binprefix  %{echo %{which python3} | awk -F '/' '{print $NF}'}
 %define _bindir     usr/local/bin
 %define _libdir     usr/local/lib/python3.6/site-packages/xlines
 %define _distinfo   usr/local/lib/python3.6/site-packages/xlines-MAJOR_VERSION.MINOR_VERSION.dist-info
