@@ -4,9 +4,11 @@
 %define name        xlines
 %define version     MAJOR_VERSION
 %define release     MINOR_VERSION
+%define _homedir    %{echo $HOME}
 %define _bindir     usr/local/bin
-%define _libdir     usr/local/lib/python3.*/site-packages
+%define _libdir     usr/local/lib/python3.6/site-packages
 %define _compdir    etc/bash_completion.d
+%define _confdir    %{_homedir}/.config/xlines
 %define _topdir     /home/DOCKERUSER/rpmbuild
 %define buildroot   %{_topdir}/%{name}-%{version}
 
@@ -54,6 +56,7 @@ xlines features:
 install -m 0755 -d $RPM_BUILD_ROOT/%{_bindir}
 install -m 0755 -d $RPM_BUILD_ROOT/%{_libdir}
 install -m 0755 -d $RPM_BUILD_ROOT/%{_compdir}
+install -m 0755 -d $RPM_BUILD_ROOT/%{_confdir}
 install -m 0755 xlines $RPM_BUILD_ROOT/%{_bindir}/
 install -m 0644 xlines $RPM_BUILD_ROOT/%{_libdir}/xlines
 install -m 0644 version.py $RPM_BUILD_ROOT/%{_libdir}/version.py
@@ -65,10 +68,10 @@ install -m 0644 xlines-completion.bash $RPM_BUILD_ROOT/%{_compdir}/xlines-comple
 /%{_libdir}
 /%{_bindir}
 /%{_compdir}
+/%{_confdir}
 
 
-%post
-#!/usr/bin/env bash
+%post -p /bin/bash
 
 BIN_PATH=/usr/local/bin
 
