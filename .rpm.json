@@ -1,38 +1,38 @@
 {
     "Package": "rpm",
-    "Project": "branchdiff",
-    "ProjectUrl": "https://github.com/fstab50/branchdiff",
-    "Description": "Utility for illustrating the status of a git working branch",
+    "Project": "xlines",
+    "ProjectUrl": "https://github.com/fstab50/xlines",
+    "Description": "Utility for counting lines in code projects",
     "Version": "MAJOR_VERSION",
     "Release": "MINOR_VERSION",
     "PreInstall": ["rpm-build", "rpmdevtools"],
     "DependencyList": [
-        "bash >= 4.1",
-        "bc >= 1.0",
-        "git >= 1.8.3",
-        "epel-release",
-        "coreutils >= 8.0",
+        "bash >= 4.2",
         "bash-completion",
-        "which"
+        "python36",
+        "python36-libs",
+        "python36-pip",
+        "python36-setuptools",
+        "python36-pygments"
     ],
     "LogFiles": [ ],
-    "VersionModule": "version.py",
-    "DockerImage": "rpmbuildD",
-    "DockerContainer": "buildbranchdiff",
+    "VersionModule": "_version.py",
+    "DockerImage": "rpmbuildF",
+    "DockerContainer": "buildxlines",
     "DockerUser": "builder",
     "DockerBuildScript": "docker-buildrpm.sh",
-    "BashCompletion": "branchdiff-completion.bash",
+    "BashCompletion": "xlines-completion.bash",
     "SpecFile": {
-        "Name": "branchdiff.spec",
+        "Name": "xlines.spec",
         "Summary": "Utility for illustrating the status of a git working branch",
         "Group":  "Development Tools",
         "BuildArch": "noarch",
         "License": "MIT",
-        "Source": "branchdiff-MAJOR_VERSION.MINOR_VERSION.tar.gz",
-        "BuildDirName": "branchdiff-MAJOR_VERSION",
+        "Source": "xlines-MAJOR_VERSION.MINOR_VERSION.tar.gz",
+        "BuildDirName": "xlines-MAJOR_VERSION",
         "Directories": [
             {
-                "Dirname": "/usr/local/lib/branchdiff",
+                "Dirname": "/usr/local/lib/xlines",
                 "Permissions": "0755"
             },
             {
@@ -42,35 +42,11 @@
         ],
         "Files": [
             {
-                "filename": "branchdiff",
-                "SourceLocation": "rpmbuild/SOURCES/branchdiff-MAJOR_VERSION/branchdiff",
-                "location": "/usr/local/bin/branchdiff",
+                "filename": "xlines",
+                "SourceLocation": "rpmbuild/SOURCES/xlines-MAJOR_VERSION/xlines",
+                "location": "/usr/local/bin/xlines",
                 "Permissions": "0755"
 
-            },
-            {
-                "filename": "std_functions.sh",
-                "SourceLocation": "rpmbuild/SOURCES/branchdiff-MAJOR_VERSION/std_functions.sh",
-                "SpecFilePath": "/usr/local/lib/branchdiff/std_functions.sh",
-                "Permissions": "0755"
-            },
-            {
-                "filename": "colors.sh",
-                "SourceLocation": "rpmbuild/SOURCES/branchdiff-MAJOR_VERSION/colors.sh",
-                "SpecFilePath": "/usr/local/lib/branchdiff/colors.sh",
-                "Permissions": "0755"
-            },
-            {
-                "filename": "exitcodes.sh",
-                "SourceLocation": "rpmbuild/SOURCES/branchdiff-MAJOR_VERSION/exitcodes.sh",
-                "SpecFilePath": "/usr/local/lib/branchdiff/colors.sh",
-                "Permissions": "0755"
-            },
-            {
-                "filename": "version.py",
-                "SourceLocation": "rpmbuild/SOURCES/branchdiff-MAJOR_VERSION/version.py",
-                "SpecFilePath": "/usr/local/lib/branchdiff/version.py",
-                "Permissions": "0755"
             }
         ],
         "BuildComment": "RPM Package built by CI/CD automtation"
