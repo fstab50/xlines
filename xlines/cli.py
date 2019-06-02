@@ -419,7 +419,6 @@ def init_cli():
             print(sys.argv)
             print(f'\ncontainer is:\n {container}')
             print(f'\nunknown object: {unknown}')
-            sys.exit(0)
 
         if args.multiprocess:
             # --- run with concurrency --
