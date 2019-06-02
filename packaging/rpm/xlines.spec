@@ -5,7 +5,7 @@
 %define version     MAJOR_VERSION
 %define release     MINOR_VERSION
 %define _homedir    %{getenv:HOME}
-%define _binprefix  %{echo %{which python3} | awk -F '/' '{print $NF}'}
+%define _root       %{getenv:PYTHON3_ROOT}
 %define _bindir     usr/local/bin
 %define _libdir     usr/local/lib/python3.6/site-packages/xlines
 %define _distinfo   usr/local/lib/python3.6/site-packages/xlines-MAJOR_VERSION.MINOR_VERSION.dist-info
@@ -65,10 +65,10 @@ install -m 0755 -d $RPM_BUILD_ROOT/%{_bindir}
 install -m 0755 -d $RPM_BUILD_ROOT/%{_libdir}
 install -m 0755 -d $RPM_BUILD_ROOT/%{_compdir}
 install -m 0755 -d $RPM_BUILD_ROOT/%{_confdir}
-install -m 0755 xlines $RPM_BUILD_ROOT/%{_bindir}/
-install -m 0644 xlines $RPM_BUILD_ROOT/%{_libdir}/xlines
-install -m 0644 version.py $RPM_BUILD_ROOT/%{_libdir}/version.py
+install -m 0644 -d xlines $RPM_BUILD_ROOT/%{_libdir}/xlines
 install -m 0644 xlines-completion.bash $RPM_BUILD_ROOT/%{_compdir}/xlines-completion.bash
+install -m 0644 exclusions.list $RPM_BUILD_ROOT/%{_confdir}/exclusions.list
+install -m 0644 directories.list $RPM_BUILD_ROOT/%{_confdir}/directories.list
 
 
 %files
