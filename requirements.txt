@@ -1,3 +1,4 @@
 pandoc
 pkginfo
+setuptools
 twine
