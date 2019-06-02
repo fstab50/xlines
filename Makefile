@@ -20,6 +20,8 @@ MODULE_PATH := $(CUR_DIR)/$(PROJECT)
 SCRIPTS := $(CUR_DIR)/scripts
 DOC_PATH := $(CUR_DIR)/docs
 REQUIREMENT = $(CUR_DIR)/requirements.txt
+OS_REQUIRES = 'python36,python36-pip,python36-setuptools,python36-pygments'
+POST_SCRIPT = $(SCRIPTS)/ospackages_postinstall.py
 VERSION_FILE = $(CUR_DIR)/$(PROJECT)/_version.py
 
 
@@ -89,13 +91,15 @@ builddeb:     ## Build Debian distribution (.deb) os package
 
 .PHONY: buildrpm
 buildrpm:     ## Build Redhat distribution (.rpm) os package
-	#@echo "Building RPM package format of $(PROJECT)";
-	if [ ! -f $(VENV_DIR) ]; then $(MAKE) setup-venv; fi
+	sudo -H $(PIP_CALL) install -U setuptools
+	sudo cp -r /usr/local/lib/python3.*/site-packages/setuptools* /usr/lib/python3.*/site-packages/
+	sudo cp -r /usr/local/lib/python3.*/site-packages/pkg-resources* /usr/lib/python3.*/site-packages/
+	$(PYTHON3_PATH) setup.py bdist_rpm --requires=$(OS_REQUIRES) --python='/usr/bin/python3' --post-install=$(POST_SCRIPT)
+	#if [ ! -f $(VENV_DIR) ]; then $(MAKE) setup-venv; fi
 	#if [ $(VERSION) ]; then cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
 	#$(PYTHON3_PATH) setup.py bdist_rpm --spec-file=packaging/rpm/xlines.spec --version=dummy; else \
-	cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
+	#cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
 	#$(PYTHON3_PATH) setup.py bdist_rpm --spec-file=packaging/rpm/xlines.spec
-	$(PYTHON3_PATH) setup.py bdist_rpm --requires="python36,python36-setuptools,python36-pygments" --python='/usr/bin/python3'
 
 
 .PHONY: testpypi
