@@ -2,8 +2,8 @@
 #   RPM spec: xlines, 2019 jun
 #
 %define name        xlines
-%define version     $MAJOR_VERSION
-%define release     $MINOR_VERSION
+%define version     %{getenv:MAJOR_VERSION}
+%define release     %{getenv:MINOR_VERSION}
 %define _homedir    %{getenv:HOME}
 %define _root       %{getenv:PYTHON3_ROOT}
 %define _bindir     usr/local/bin
@@ -11,7 +11,8 @@
 %define _distinfo   usr/local/lib/python3.6/site-packages/xlines-MAJOR_VERSION.MINOR_VERSION.dist-info
 %define _compdir    etc/bash_completion.d
 %define _confdir    %{_homedir}/.config/xlines
-%define _topdir     /home/DOCKERUSER/rpmbuild
+#%define _topdir     /home/DOCKERUSER/rpmbuild
+%define _topdir     /home/builder/rpmbuild
 %define python37    %{which python3.7}
 %define buildroot   %{_topdir}/%{name}-%{version}
 

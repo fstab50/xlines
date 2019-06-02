@@ -94,7 +94,8 @@ buildrpm:     ## Build Redhat distribution (.rpm) os package
 	#if [ $(VERSION) ]; then cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
 	#$(PYTHON3_PATH) setup.py bdist_rpm --spec-file=packaging/rpm/xlines.spec --version=dummy; else \
 	cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
-	$(PYTHON3_PATH) setup.py bdist_rpm --spec-file=packaging/rpm/xlines.spec
+	#$(PYTHON3_PATH) setup.py bdist_rpm --spec-file=packaging/rpm/xlines.spec
+	$(PYTHON3_PATH) setup.py bdist_rpm --requires="python36,python36-setuptools,python36-pygments" --python='/usr/bin/python3'
 
 
 .PHONY: testpypi
