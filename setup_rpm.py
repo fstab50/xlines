@@ -84,7 +84,7 @@ def module_dir():
     if 'local' in bin:
         return '/usr/local/lib/' + bin.split('/')[-1] + '/site-packages'
     return '/usr/lib/' + bin.split('/')[-1] + '/site-packages'
-    
+
 
 def os_parityPath(path):
     """
@@ -211,8 +211,8 @@ setup(
     python_requires='>=3.6, <4',
     data_files=[
         (os_parityPath('/etc/bash_completion.d'), ['bash/' + _comp_fname]),
-        (os_parityPath(module_dir() + _project + '/config/'), ['config/' + _ex_fname]),
-        (os_parityPath(module_dir() + _project + '/config/'), ['config/' + _ex_dirs_fname])
+        (os_parityPath(module_dir() + '/' + _project + '/config/'), ['config/' + _ex_fname]),
+        (os_parityPath(module_dir() +  '/' + _project + '/config/'), ['config/' + _ex_dirs_fname])
     ],
     entry_points={
         'console_scripts': [
