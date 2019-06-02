@@ -24,7 +24,7 @@ VERSION_FILE = $(CUR_DIR)/$(PROJECT)/_version.py
 
 # os package creation
 OS_REQUIRES = 'python36,python36-pip,python36-setuptools,python36-pygments'
-POST_SCRIPT = $(SCRIPTS)/ospackages_postinstall.py
+POST_SCRIPT = $(SCRIPTS)/ospackage_postinstall.py
 YUM_CALL = sudo $(shell which yum)
 
 
