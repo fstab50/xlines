@@ -91,7 +91,7 @@ builddeb:     ## Build Debian distribution (.deb) os package
 
 .PHONY: buildrpm
 buildrpm:     ## Build Redhat distribution (.rpm) os package
-	sudo -H $(PIP_CALL) install -U setuptools
+	sudo -H pip3 install -U pip setuptools
 	sudo cp -r /usr/local/lib/python3.*/site-packages/setuptools* /usr/lib/python3.*/site-packages/
 	sudo cp -r /usr/local/lib/python3.*/site-packages/pkg-resources* /usr/lib/python3.*/site-packages/
 	$(PYTHON3_PATH) setup.py bdist_rpm --requires=$(OS_REQUIRES) --python='/usr/bin/python3' --post-install=$(POST_SCRIPT)
