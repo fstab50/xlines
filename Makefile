@@ -20,9 +20,12 @@ MODULE_PATH := $(CUR_DIR)/$(PROJECT)
 SCRIPTS := $(CUR_DIR)/scripts
 DOC_PATH := $(CUR_DIR)/docs
 REQUIREMENT = $(CUR_DIR)/requirements.txt
+VERSION_FILE = $(CUR_DIR)/$(PROJECT)/_version.py
+
+# os package creation
 OS_REQUIRES = 'python36,python36-pip,python36-setuptools,python36-pygments'
 POST_SCRIPT = $(SCRIPTS)/ospackages_postinstall.py
-VERSION_FILE = $(CUR_DIR)/$(PROJECT)/_version.py
+YUM_CALL = $(shell which yum)
 
 
 # --- rollup targets  ------------------------------------------------------------------------------
@@ -91,6 +94,7 @@ builddeb:     ## Build Debian distribution (.deb) os package
 
 .PHONY: buildrpm
 buildrpm:     ## Build Redhat distribution (.rpm) os package
+	$(YUM_CALL) install python36 python36-pip python36-setuptools
 	sudo -H pip3 install -U pip setuptools
 	sudo cp -r /usr/local/lib/python3.6/site-packages/setuptools* /usr/lib/python3.*/site-packages/
 	sudo cp -r /usr/local/lib/python3.6/site-packages/pkg_resources* /usr/lib/python3.*/site-packages/
