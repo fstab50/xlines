@@ -389,15 +389,7 @@ def init_cli():
         stdout_message(str(e), 'ERROR')
         sys.exit(exit_codes['E_BADARG']['Code'])
 
-    if len(sys.argv) == 1:
-        help_menu()
-        sys.exit(exit_codes['EX_OK']['Code'])
-
-    elif len(sys.argv) == 2 and (sys.argv[1] != '.'):
-        help_menu()
-        sys.exit(exit_codes['EX_OK']['Code'])
-
-    elif args.help:
+    if len(sys.argv) == 1 or args.help:
         help_menu()
         sys.exit(exit_codes['EX_OK']['Code'])
 
@@ -409,6 +401,10 @@ def init_cli():
 
     elif args.configure:
         _configure()
+
+    elif len(sys.argv) == 2 and (sys.argv[1] != '.'):
+        help_menu()
+        sys.exit(exit_codes['EX_OK']['Code'])
 
     elif args.sum and precheck():
 
