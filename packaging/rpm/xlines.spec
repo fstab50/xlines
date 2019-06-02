@@ -2,8 +2,8 @@
 #   RPM spec: xlines, 2019 jun
 #
 %define name        xlines
-%define version     MAJOR_VERSION
-%define release     MINOR_VERSION
+%define version     $MAJOR_VERSION
+%define release     $MINOR_VERSION
 %define _homedir    %{getenv:HOME}
 %define _root       %{getenv:PYTHON3_ROOT}
 %define _bindir     usr/local/bin
@@ -27,7 +27,7 @@ License:        GPL
 URL:            PROJECT_URL
 Source:         %{name}-%{version}.%{release}.tar.gz
 Prefix:         /usr
-Requires:      DEPLIST
+Requires:      python36 python36-setuptools python36-pygments bash-completion
 
 %if 0%{?rhel}%{?amzn2}
 Requires: bash-completion
