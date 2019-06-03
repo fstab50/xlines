@@ -29,7 +29,6 @@ from setuptools import setup, find_packages
 from setuptools.command.develop import develop
 from setuptools.command.install import install
 import getpass
-from pathlib import Path
 from codecs import open
 import xlines
 
@@ -76,6 +75,15 @@ def create_artifact(object_path, type):
             f1.write(sourcefile_content())
     elif type == 'dir':
         os.makedirs(object_path)
+
+
+def module_dir():
+    """Filsystem location of Python3 modules"""
+    bin_path = which('python3.6') or which('python3.7')
+    bin = bin_path.split('/')[-1]
+    if 'local' in bin:
+        return '/usr/local/lib/' + bin + '/site-packages'
+    return '/usr/lib/' + bin + '/site-packages'
 
 
 def os_parityPath(path):
@@ -130,8 +138,31 @@ class PostInstall(install):
             environment detected
 
         """
-        if self.valid_os_shell():
+        if self.valid_os_shell() and _root_user():
+            completion_dir = '/etc/bash_completion.d'
+            config_dir = module_dir() + _project + '/config/'
 
+            if not os.path.exists(os_parityPath(config_dir)):
+                create_artifact(os_parityPath(config_dir), 'dir')
+
+            # ensure installation of home directory profile artifacts (data_files)
+            if not os.path.exists(os_parityPath(completion_dir + '/' + _comp_fname)):
+                copyfile(
+                    os_parityPath('bash' + '/' + _comp_fname),
+                    os_parityPath(completion_dir + '/' + _comp_fname)
+                )
+            if not os.path.exists(os_parityPath(config_dir + '/' + _ex_fname)):
+                copyfile(
+                    os_parityPath('config' + '/' + _ex_fname),
+                    os_parityPath(config_dir + '/' + _ex_fname)
+                )
+            if not os.path.exists(os_parityPath(config_dir + '/' + _ex_dirs_fname)):
+                copyfile(
+                    os_parityPath('config' + '/' + _ex_dirs_fname),
+                    os_parityPath(config_dir + '/' + _ex_dirs_fname)
+                )
+
+        elif self.valid_os_shell():
             completion_file = user_home() + '/.bash_completion'
             completion_dir = user_home() + '/.bash_completion.d'
             config_dir = user_home() + '/.config/' + _project
@@ -159,13 +190,6 @@ class PostInstall(install):
                     os_parityPath('config' + '/' + _ex_dirs_fname),
                     os_parityPath(config_dir + '/' + _ex_dirs_fname)
                 )
-
-            if _root_user():
-                copyfile(
-                        completion_dir + '/' + _comp_fname,
-                        '/etc/bash_completion.d/' + _comp_fname,
-                    )
-                os.remove(completion_dir + '/' + _comp_fname)
         install.run(self)
 
 

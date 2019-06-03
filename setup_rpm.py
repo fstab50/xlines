@@ -79,7 +79,7 @@ def create_artifact(object_path, type):
 def module_dir():
     """Filsystem location of Python3 modules"""
     bin_path = which('python3.6') or which('python3.7')
-    bin =  bin_path.split('/')[-1]
+    bin = bin_path.split('/')[-1]
     if 'local' in bin:
         return '/usr/local/lib/' + bin + '/site-packages'
     return '/usr/lib/' + bin + '/site-packages'
