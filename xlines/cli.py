@@ -328,7 +328,7 @@ def package_version():
     sys.exit(exit_codes['EX_OK']['Code'])
 
 
-def precheck(expath, exdirpath):
+def precheck(user_exfiles, user_exdirs):
     """
     Pre-execution Dependency Check
     """
@@ -342,14 +342,14 @@ def precheck(expath, exdirpath):
         if not os.path.exists(_config_dir):
             os.makedirs(_config_dir)
 
-        if os.path.exists(_os_ex_fname) and not os.path.exists(expath):
-            copyfile(_os_ex_fname, expath)
+        if os.path.exists(_os_ex_fname) and not os.path.exists(user_exfiles):
+            copyfile(_os_ex_fname, user_exfiles)
         else:
             global expath
             expath = _os_ex_fname
 
-        if os.path.exists(_os_dir_fname) and not os.path.exists(exdirpath):
-            copyfile(_os_dir_fname, exdirpath)
+        if os.path.exists(_os_dir_fname) and not os.path.exists(user_exdirs):
+            copyfile(_os_dir_fname, user_exdirs)
         else:
             global exdirpath
             exdirpath = _os_dir_fname
