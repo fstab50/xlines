@@ -78,6 +78,7 @@ rst = cm.rst
 container = []
 config_dir = local_config['CONFIG']['CONFIG_PATH']
 expath = local_config['EXCLUSIONS']['EX_EXT_PATH']
+exdirpath = local_config['EXCLUSIONS']['EX_DIR_PATH']
 div = text + '/' + rst
 div_len = 2
 horiz = text + '-' + rst
@@ -292,6 +293,15 @@ class MaxWidth():
         return self.max_width if self.max_width < self.term_width else self.term_width
 
 
+def module_dir():
+    """Filsystem location of Python3 modules"""
+    bin_path = which('python3.6') or which('python3.7')
+    bin =  bin_path.split('/')[-1]
+    if 'local' in bin:
+        return '/usr/local/lib/' + bin + '/site-packages'
+    return '/usr/lib/' + bin + '/site-packages'
+
+
 def options(parser, help_menu=False):
     """
     Summary:
@@ -322,9 +332,20 @@ def precheck():
     """
     Pre-execution Dependency Check
     """
-    # check if git root dir set; otherwise use home
-    # check logging enabled
-    # check if config file
+    _os_configdir = module_dir() + '/config'
+    _os_ex_fname = _os_configdir + '/' + local_config['EXCLUSIONS']['EX_FILENAME']
+    _os_dir_fname = _os_configdir + '/' + local_config['EXCLUSIONS']['EX_DIR_FILENAME']
+
+    try:
+        # check if exists; copy
+        if os.path.exits(_os_ex_fname) and not os.path.exists(expath):
+            copyfile(_os_ex_fname, expath)
+        if os.path.exits(_os_dir_fname) and not os.path.exists(exdirpath):
+            copyfile(_os_dir_fname, exdirpath)
+    except OSError:
+        fx = inspect.stack()[0][3]
+        logger.exception('{}: Problem installing user config files. Exit'.format(fx))
+        return False
     return True
 
 
