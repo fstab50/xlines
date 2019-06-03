@@ -92,6 +92,7 @@ else:
         },
         "EXCLUSIONS": {
             "EX_FILENAME": ext_filename,
+            "EX_DIR_FILENAME": dir_filename,
             "EX_EXT_PATH": config_dirpath + '/' + ext_filename,
             "EX_DIR_PATH": config_dirpath + '/' + dir_filename
         },
