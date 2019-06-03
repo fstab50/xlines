@@ -332,7 +332,7 @@ def precheck(user_exfiles, user_exdirs, debug):
     """
     Pre-execution Dependency Check
     """
-    _os_configdir = module_dir() + '/' + local_config['PROJECT']['PACKAGE']  + '/config'
+    _os_configdir = module_dir() + '/' + local_config['PROJECT']['PACKAGE'] + '/config'
     _os_ex_fname = _os_configdir + '/' + local_config['EXCLUSIONS']['EX_FILENAME']
     _os_dir_fname = _os_configdir + '/' + local_config['EXCLUSIONS']['EX_DIR_FILENAME']
     _config_dir = local_config['CONFIG']['CONFIG_DIR']
@@ -348,17 +348,21 @@ def precheck(user_exfiles, user_exdirs, debug):
         if not os.path.exists(_config_dir):
             os.makedirs(_config_dir)
 
-        if os.path.exists(_os_ex_fname) and not os.path.exists(user_exfiles):
-            copyfile(_os_ex_fname, user_exfiles)
-        else:
-            global expath
-            expath = _os_ex_fname
+        # cp system config file to user if user config files absent
+        if os.path.exists(_os_ex_fname) and os.path.exists(_os_dir_fname):
 
-        if os.path.exists(_os_dir_fname) and not os.path.exists(user_exdirs):
-            copyfile(_os_dir_fname, user_exdirs)
-        else:
-            global exdirpath
-            exdirpath = _os_dir_fname
+            if not os.path.exists(user_exfiles):
+                copyfile(_os_ex_fname, user_exfiles)
+
+            if not os.path.exists(user_exdirs):
+                copyfile(_os_dir_fname, user_exdirs)
+
+        global expath
+        expath = user_exfiles
+
+        global exdirpath
+        exdirpath = user_exdirs
+
     except OSError:
         fx = inspect.stack()[0][3]
         logger.exception('{}: Problem installing user config files. Exit'.format(fx))
