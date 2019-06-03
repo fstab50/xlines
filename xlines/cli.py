@@ -328,7 +328,7 @@ def package_version():
     sys.exit(exit_codes['EX_OK']['Code'])
 
 
-def precheck(user_exfiles, user_exdirs):
+def precheck(user_exfiles, user_exdirs, debug):
     """
     Pre-execution Dependency Check
     """
@@ -336,6 +336,12 @@ def precheck(user_exfiles, user_exdirs):
     _os_ex_fname = _os_configdir + '/' + local_config['EXCLUSIONS']['EX_FILENAME']
     _os_dir_fname = _os_configdir + '/' + local_config['EXCLUSIONS']['EX_DIR_FILENAME']
     _config_dir = local_config['CONFIG']['CONFIG_DIR']
+
+    if debug:
+        stdout_message(f'_os_configdir: {_os_configdir}: system py modules location', prefix='DBUG')
+        stdout_message(f'_os_ex_fname: {_os_ex_fname}: system exclusions.list path', prefix='DBUG')
+        stdout_message(f'_os_dir_fname: {_os_dir_fname}: system directories.list file path', prefix='DBUG')
+        stdout_message(f'_configdir: {_config_dir}: user home config file location', prefix='DBUG')
 
     try:
         # check if exists; copy
@@ -439,7 +445,7 @@ def init_cli():
         help_menu()
         sys.exit(exit_codes['EX_OK']['Code'])
 
-    elif args.sum and precheck(ex_files, ex_dirs):
+    elif args.sum and precheck(ex_files, ex_dirs, args.debug):
 
         ex = ExcludedTypes(ex_path=str(Path.home()) + '/.config/xlines/exclusions.list')
         container = create_container(args.sum)
