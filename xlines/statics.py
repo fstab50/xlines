@@ -86,7 +86,7 @@ else:
         "CONFIG": {
             "CONFIG_DATE": "",
             "CONFIG_FILENAME": config_filename,
-            "CONFIG_DIR": config_dir,
+            "CONFIG_DIR": config_dirpath,
             "CONFIG_SUBDIR": config_subdir,
             "CONFIG_PATH": config_path
         },

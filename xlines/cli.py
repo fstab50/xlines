@@ -335,9 +335,12 @@ def precheck():
     _os_configdir = module_dir() + '/config'
     _os_ex_fname = _os_configdir + '/' + local_config['EXCLUSIONS']['EX_FILENAME']
     _os_dir_fname = _os_configdir + '/' + local_config['EXCLUSIONS']['EX_DIR_FILENAME']
+    _config_dir = local_config['CONFIG']['CONFIG_DIR']
 
     try:
         # check if exists; copy
+        if not os.path.exists(_config_dir):
+            os.makedirs(_config_dir)
         if os.path.exits(_os_ex_fname) and not os.path.exists(expath):
             copyfile(_os_ex_fname, expath)
         if os.path.exits(_os_dir_fname) and not os.path.exists(exdirpath):
