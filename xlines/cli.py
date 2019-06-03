@@ -332,7 +332,7 @@ def precheck(user_exfiles, user_exdirs, debug):
     """
     Pre-execution Dependency Check
     """
-    _os_configdir = module_dir() + '/config'
+    _os_configdir = module_dir() + '/' + local_config['PROJECT']['PACKAGE']  + '/config'
     _os_ex_fname = _os_configdir + '/' + local_config['EXCLUSIONS']['EX_FILENAME']
     _os_dir_fname = _os_configdir + '/' + local_config['EXCLUSIONS']['EX_DIR_FILENAME']
     _config_dir = local_config['CONFIG']['CONFIG_DIR']
