@@ -342,9 +342,9 @@ def precheck():
         # check if exists; copy
         if not os.path.exists(_config_dir):
             os.makedirs(_config_dir)
-        if os.path.exits(_os_ex_fname) and not os.path.exists(expath):
+        if os.path.exists(_os_ex_fname) and not os.path.exists(expath):
             copyfile(_os_ex_fname, expath)
-        if os.path.exits(_os_dir_fname) and not os.path.exists(exdirpath):
+        if os.path.exists(_os_dir_fname) and not os.path.exists(exdirpath):
             copyfile(_os_dir_fname, exdirpath)
     except OSError:
         fx = inspect.stack()[0][3]
