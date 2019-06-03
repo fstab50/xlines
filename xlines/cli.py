@@ -30,6 +30,7 @@ import sys
 import json
 import inspect
 import argparse
+from shutil import copy2 as copyfile
 from shutil import which
 from pathlib import Path
 from xlines import about, Colors, logger
