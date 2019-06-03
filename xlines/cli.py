@@ -86,7 +86,7 @@ arrow = bwt + '-> ' + rst
 BUFFER = local_config['PROJECT']['BUFFER']
 
 
-def _configure():
+def _configure(expath, exdirpath):
     """
         Add exclusions and update runtime constants
 
@@ -94,9 +94,10 @@ def _configure():
         Success | Failure, TYPE: bool
     """
     try:
+
         # clear screen
         os.system('cls' if os.name == 'nt' else 'clear')
-        display_exclusions()
+        display_exclusions(expath, exdirpath)
 
         with open(expath) as f1:
             exclusions = [x.strip() for x in f1.readlines()]
@@ -116,8 +117,9 @@ def _configure():
             with open(expath, 'w') as f2:
                 f2.writelines([x + '\n' for x in exclusions])
 
-            display_exclusions()    # display resulting exclusions set
+            display_exclusions(expath, exdirpath)    # display resulting exclusions set
             return True
+
     except OSError:
         stdout_message(
             message='Unable to modify local config file located at {}'.format(expath),
@@ -125,7 +127,7 @@ def _configure():
         return False
 
 
-def display_exclusions():
+def display_exclusions(expath, exdirpath):
     """
     Show list of all file type extensions which are excluded
     from line total calculations
@@ -357,12 +359,6 @@ def precheck(user_exfiles, user_exdirs, debug):
             if not os.path.exists(user_exdirs):
                 copyfile(_os_dir_fname, user_exdirs)
 
-        global expath
-        expath = user_exfiles
-
-        global exdirpath
-        exdirpath = user_exdirs
-
     except OSError:
         fx = inspect.stack()[0][3]
         logger.exception('{}: Problem installing user config files. Exit'.format(fx))
@@ -432,6 +428,10 @@ def init_cli():
         stdout_message(str(e), 'ERROR')
         sys.exit(exit_codes['E_BADARG']['Code'])
 
+    # validate configuration files
+    if not precheck(ex_files, ex_dirs, args.debug):
+        sys.exit(exit_codes['EX_DEPENDENCY']['Code'])
+
     if len(sys.argv) == 1 or args.help:
         help_menu()
         sys.exit(exit_codes['EX_OK']['Code'])
@@ -440,16 +440,16 @@ def init_cli():
         package_version()
 
     elif args.exclusions:
-        display_exclusions()
+        display_exclusions(ex_files, ex_dirs)
 
     elif args.configure:
-        _configure()
+        _configure(ex_files, ex_dirs)
 
     elif len(sys.argv) == 2 and (sys.argv[1] != '.'):
         help_menu()
         sys.exit(exit_codes['EX_OK']['Code'])
 
-    elif args.sum and precheck(ex_files, ex_dirs, args.debug):
+    elif args.sum:
 
         ex = ExcludedTypes(ex_path=str(Path.home()) + '/.config/xlines/exclusions.list')
         container = create_container(args.sum)
