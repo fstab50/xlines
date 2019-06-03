@@ -343,10 +343,18 @@ def precheck():
         # check if exists; copy
         if not os.path.exists(_config_dir):
             os.makedirs(_config_dir)
+
         if os.path.exists(_os_ex_fname) and not os.path.exists(expath):
             copyfile(_os_ex_fname, expath)
+        else:
+            global expath
+            expath = _os_ex_fname
+
         if os.path.exists(_os_dir_fname) and not os.path.exists(exdirpath):
             copyfile(_os_dir_fname, exdirpath)
+        else:
+            global exdirpath
+            exdirpath = _os_dir_fname
     except OSError:
         fx = inspect.stack()[0][3]
         logger.exception('{}: Problem installing user config files. Exit'.format(fx))
