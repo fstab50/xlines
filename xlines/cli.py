@@ -79,8 +79,8 @@ rst = cm.rst
 # globals
 container = []
 config_dir = local_config['CONFIG']['CONFIG_PATH']
-expath = local_config['EXCLUSIONS']['EX_EXT_PATH']
-exdirpath = local_config['EXCLUSIONS']['EX_DIR_PATH']
+#expath = local_config['EXCLUSIONS']['EX_EXT_PATH']
+#exdirpath = local_config['EXCLUSIONS']['EX_DIR_PATH']
 div = text + '/' + rst
 div_len = 2
 horiz = text + '-' + rst
@@ -330,7 +330,7 @@ def package_version():
     sys.exit(exit_codes['EX_OK']['Code'])
 
 
-def precheck():
+def precheck(expath, exdirpath):
     """
     Pre-execution Dependency Check
     """
@@ -413,7 +413,8 @@ def create_container(parameters):
 
 
 def init_cli():
-
+    expath = local_config['EXCLUSIONS']['EX_EXT_PATH']
+    exdirpath = local_config['EXCLUSIONS']['EX_DIR_PATH']
     parser = argparse.ArgumentParser(add_help=False)
 
     try:
@@ -440,7 +441,7 @@ def init_cli():
         help_menu()
         sys.exit(exit_codes['EX_OK']['Code'])
 
-    elif args.sum and precheck():
+    elif args.sum and precheck(expath, exdirpath):
 
         ex = ExcludedTypes(ex_path=str(Path.home()) + '/.config/xlines/exclusions.list')
         container = create_container(args.sum)
