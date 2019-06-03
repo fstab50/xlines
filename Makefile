@@ -26,6 +26,7 @@ VERSION_FILE = $(CUR_DIR)/$(PROJECT)/_version.py
 OS_REQUIRES = 'python36,python36-pip,python36-setuptools,python36-pygments'
 POST_SCRIPT = $(SCRIPTS)/ospackage_postinstall.py
 YUM_CALL = sudo $(shell which yum)
+ALIEN_CALL = sudo $(shell which alien)
 
 
 # --- rollup targets  ------------------------------------------------------------------------------
@@ -86,10 +87,9 @@ build: pre-build setup-venv    ## Build dist, increment version || force version
 .PHONY: builddeb
 builddeb:     ## Build Debian distribution (.deb) os package
 	@echo "Building Debian package format of $(PROJECT)"; \
-	if [ ! -d $(VENV_DIR) ]; then $(MAKE) setup-venv; fi; \
-	if [ $(VERSION) ]; then . $(VENV_DIR)/bin/activate && \
-	$(PYTHON3_PATH) $(SCRIPT_DIR)/builddeb.py --build --set-version $(VERSION); \
-	else cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && $(PYTHON3_PATH) $(SCRIPT_DIR)/builddeb.py --build; fi
+	$(YUM_CALL) install -y epel-release
+	$(YUM_CALL) install -y alien
+	$(ALIEN_CALL) --to-deb dist/xlines-*.noarch.rpm
 
 
 .PHONY: buildrpm
