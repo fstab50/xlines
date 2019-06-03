@@ -23,7 +23,7 @@ REQUIREMENT = $(CUR_DIR)/requirements.txt
 VERSION_FILE = $(CUR_DIR)/$(PROJECT)/_version.py
 
 # os package creation
-OS_REQUIRES = 'python36,python36-pip,python36-setuptools,python36-pygments'
+OS_REQUIRES = 'python36,python36-pip,python36-setuptools,python36-pygments,bash-completion'
 POST_SCRIPT = $(SCRIPTS)/ospackage_postinstall.py
 YUM_CALL = sudo $(shell which yum)
 ALIEN_CALL = sudo $(shell which alien)
