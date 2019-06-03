@@ -528,7 +528,8 @@ def init_cli():
                 print('\n' + tab4 + 'Skipped file objects:\n' + tab4 + ('-' * (width + count_width)))
                 for file in io_fail:
                     print('\t{}'.format(file))   # Write this out to a file in /tmp for later viewing
-            sys.exit(exit_codes['E_DEPENDENCY']['Code'])
+
+            sys.exit(exit_codes['EX_OK']['Code'])
 
     else:
         stdout_message(
