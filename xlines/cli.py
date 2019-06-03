@@ -130,7 +130,6 @@ def display_exclusions():
     Show list of all file type extensions which are excluded
     from line total calculations
     """
-    msg = f'{expath} not found.  Run $ {PACKAGE} --configure'
     tab = '\t'.expandtabs(15)
 
     # numbering
@@ -151,7 +150,8 @@ def display_exclusions():
         return True
 
     except OSError as e:
-        stdout_message(message=f'Error: {e}. ' + msg, prefix='WARN')
+        fx = inspect.stack()[0][3]
+        stdout_message(message=f'{fx}: Error: {e}. ', prefix='WARN')
         return False
 
 
