@@ -96,13 +96,6 @@ def os_parityPath(path):
     return path
 
 
-class PostInstallDevelop(develop):
-    """ post-install, development """
-    def run(self):
-        subprocess.check_call("bash scripts/post-install-dev.sh".split())
-        develop.run(self)
-
-
 def preclean(dst):
     if os.path.exists(dst):
         os.remove(dst)
