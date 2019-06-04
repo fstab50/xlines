@@ -229,37 +229,6 @@ class PostInstallRoot(install):
                     os_parityPath(user_home() + '/.config/' + _project + '/' + _ex_dirs_fname),
                     os_parityPath(config_dir + '/' + _ex_dirs_fname)
                 )
-
-        # bash shell + user
-        elif self.valid_os_shell():
-
-            completion_file = user_home() + '/.bash_completion'
-            completion_dir = user_home() + '/.bash_completion.d'
-            config_dir = user_home() + '/.config/' + _project
-
-            if not os.path.exists(os_parityPath(completion_file)):
-                create_artifact(os_parityPath(completion_file), 'file')
-            if not os.path.exists(os_parityPath(completion_dir)):
-                create_artifact(os_parityPath(completion_dir), 'dir')
-            if not os.path.exists(os_parityPath(config_dir)):
-                create_artifact(os_parityPath(config_dir), 'dir')
-
-            # ensure installation of home directory profile artifacts (data_files)
-            if not os.path.exists(os_parityPath(completion_dir + '/' + _comp_fname)):
-                copyfile(
-                    os_parityPath('bash' + '/' + _comp_fname),
-                    os_parityPath(completion_dir + '/' + _comp_fname)
-                )
-            if not os.path.exists(os_parityPath(config_dir + '/' + _ex_fname)):
-                copyfile(
-                    os_parityPath('config' + '/' + _ex_fname),
-                    os_parityPath(config_dir + '/' + _ex_fname)
-                )
-            if not os.path.exists(os_parityPath(config_dir + '/' + _ex_dirs_fname)):
-                copyfile(
-                    os_parityPath('config' + '/' + _ex_dirs_fname),
-                    os_parityPath(config_dir + '/' + _ex_dirs_fname)
-                )
         install.run(self)
 
 
