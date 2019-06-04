@@ -110,7 +110,7 @@ buildrpm-rhel:     ## Build Redhat distribution (.rpm) os package
 buildrpm-aml:     ## Build Amazon Linux 2 distribution (.rpm) os package
 	$(YUM_CALL) -y install python3 python3-pip python3-setuptools which sudo
 	$(PIP3_CALL) install -U pip setuptools pygments
-	bash cp -r /usr/local/lib64/python3.*/site-packages/pygments .
+	cp -r /usr/local/lib64/python3.*/site-packages/pygments .
 	$(PYTHON3_PATH) setup_rpm.py bdist_rpm --requires=$(AML_REQUIRES) --pre-install=$(PRE_SCRIPT)
 
 
