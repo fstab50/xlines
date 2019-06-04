@@ -102,7 +102,7 @@ buildrpm-rhel:     ## Build Redhat distribution (.rpm) os package
 	sudo -H pip3 install -U pip setuptools pygments
 	sudo cp -r /usr/local/lib/python3.*/site-packages/setuptools* /usr/lib/python3.*/site-packages/
 	sudo cp -r /usr/local/lib/python3.*/site-packages/pkg_resources* /usr/lib/python3.*/site-packages/
-	bash cp -r /usr/local/lib/python3.*/site-packages/pygments .
+	cp -r /usr/local/lib/python3.*/site-packages/pygments .
 	$(PYTHON3_PATH) setup_rpm.py bdist_rpm --requires=$(RHEL_REQUIRES) --python='/usr/bin/python3' --pre-install=$(PRE_SCRIPT)
 
 
