@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 
 xlines :  Copyright 2018-2019, Blake Huber
