@@ -29,6 +29,7 @@ PRE_SCRIPT = $(SCRIPTS)/rpm_preinstall.sh
 POST_SCRIPT = $(SCRIPTS)/rpm_postinstall.py
 YUM_CALL = sudo $(shell which yum)
 ALIEN_CALL = sudo $(shell which alien)
+PIP3_CALL = sudo -H $(shell which pip3)
 
 
 # --- rollup targets  ------------------------------------------------------------------------------
@@ -108,7 +109,7 @@ buildrpm-rhel:     ## Build Redhat distribution (.rpm) os package
 .PHONY: buildrpm-amazonlinux
 buildrpm-aml:     ## Build Amazon Linux 2 distribution (.rpm) os package
 	$(YUM_CALL) -y install python3 python3-pip python3-setuptools which sudo
-	sudo -H pip3 install -U pip setuptools pygments
+	$(PIP3_CALL) install -U pip setuptools pygments
 	bash cp -r /usr/local/lib64/python3.*/site-packages/pygments .
 	$(PYTHON3_PATH) setup_rpm.py bdist_rpm --requires=$(AML_REQUIRES) --pre-install=$(PRE_SCRIPT)
 
