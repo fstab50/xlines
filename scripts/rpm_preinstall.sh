@@ -1,36 +1,24 @@
 #!/usr/bin/env bash
-"""
 
-xlines :  Copyright 2018-2019, Blake Huber
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-see: https://www.gnu.org/licenses/#GPL
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-contained in the program LICENSE file.
-
-"""
-
-import os
-import sys
-import platform
-import subprocess
-from shutil import which
-from shutil import copy2 as copyfile
-from setuptools.command.install import install
-import getpass
-from pathlib import Path
-from codecs import open
-
+#
+#  xlines preinstall script :  Copyright 2018-2019, Blake Huber
+#
+#  This program is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation, either version 3 of the License, or
+#  (at your option) any later version.
+#
+#  see: https://www.gnu.org/licenses/#GPL
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  contained in the program LICENSE file.
+#
 
 _project='xlines'
 
