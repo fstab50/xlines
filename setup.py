@@ -221,12 +221,12 @@ class PostInstallRoot(install):
                 )
             if not os.path.exists(os_parityPath(config_dir + '/' + _ex_fname)):
                 copyfile(
-                    os_parityPath(user_home() + '/.config/' + _project + '/' + _ex_fname),
+                    os_parityPath('config' + '/' + _ex_fname),
                     os_parityPath(config_dir + '/' + _ex_fname)
                 )
             if not os.path.exists(os_parityPath(config_dir + '/' + _ex_dirs_fname)):
                 copyfile(
-                    os_parityPath(user_home() + '/.config/' + _project + '/' + _ex_dirs_fname),
+                    os_parityPath('config' + '/' + _ex_dirs_fname),
                     os_parityPath(config_dir + '/' + _ex_dirs_fname)
                 )
         install.run(self)
