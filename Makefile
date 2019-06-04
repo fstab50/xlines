@@ -23,7 +23,7 @@ REQUIREMENT = $(CUR_DIR)/requirements.txt
 VERSION_FILE = $(CUR_DIR)/$(PROJECT)/_version.py
 
 # os package creation
-RHEL_REQUIRES = 'python36,python36-pip,python36-setuptools,bash-completion'
+RHEL_REQUIRES = 'python36,python36-pip,python36-setuptools,python36-pygments,bash-completion'
 AML_REQUIRES = 'python3,python3-pip,python3-setuptools,bash-completion'
 PRE_SCRIPT = $(SCRIPTS)/rpm_preinstall.py
 POST_SCRIPT = $(SCRIPTS)/rpm_postinstall.py
@@ -99,13 +99,9 @@ builddeb:     ## Build Debian distribution (.deb) os package
 buildrpm-rhel:     ## Build Redhat distribution (.rpm) os package
 	$(YUM_CALL) -y install epel-release which
 	$(YUM_CALL) -y install python36 python36-pip python36-setuptools
-	$(PIP3_CALL) install -U pip setuptools pygments
+	$(PIP3_CALL) install -U pip setuptools
 	sudo cp -r /usr/local/lib/python3.*/site-packages/setuptools* /usr/lib/python3.*/site-packages/
 	sudo cp -r /usr/local/lib/python3.*/site-packages/pkg_resources* /usr/lib/python3.*/site-packages/
-	if [ -d /usr/local/lib/python3.*/site-packages/pygments ]; then \
-	cp -r /usr/local/lib/python3.*/site-packages/pygments .; \
-	elif [ -d /usr/local/lib64/python3.*/site-packages/pygments ]; then \
-	cp -r /usr/local/lib64/python3.*/site-packages/pygments .; fi
 	$(PYTHON3_PATH) setup_rpm.py bdist_rpm --requires=$(RHEL_REQUIRES) --python='/usr/bin/python3' --pre-install=$(PRE_SCRIPT)
 
 
