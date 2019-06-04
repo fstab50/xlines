@@ -298,8 +298,8 @@ if _root_user():
         },
         data_files=[
             (os_parityPath('/etc/bash_completion.d'), ['bash/' + _comp_fname]),
-            (os_parityPath(module_dir() + _project + '/config'), ['config/' + _ex_fname]),
-            (os_parityPath(module_dir() + _project + '/config'), ['config/' + _ex_dirs_fname])
+            (os_parityPath(module_dir() + '/' + _project + '/config'), ['config/' + _ex_fname]),
+            (os_parityPath(module_dir() + '/' + _project + '/config'), ['config/' + _ex_dirs_fname])
         ],
         entry_points={
             'console_scripts': [
@@ -340,8 +340,8 @@ else:
         },
         data_files=[
             (os_parityPath(user_home() + '/' + '.bash_completion.d'), ['bash/' + _comp_fname]),
-            (os_parityPath(user_home() + '/' + '.config' + '/' + _project), ['config/' + _ex_fname]),
-            (os_parityPath(user_home() + '/' + '.config' + '/' + _project), ['config/' + _ex_dirs_fname])
+            (os_parityPath(user_home() + '/' + '.config' + '/' + _project), ['config' + '/' + _ex_fname]),
+            (os_parityPath(user_home() + '/' + '.config' + '/' + _project), ['config' + '/' + _ex_dirs_fname])
         ],
         entry_points={
             'console_scripts': [
