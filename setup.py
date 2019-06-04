@@ -269,6 +269,8 @@ def user_home():
         raise e
 
 
+# branch install based on user priviledge level
+
 if _root_user():
 
     setup(
@@ -311,7 +313,7 @@ if _root_user():
 
 else:
 
-    # normal priviledge user
+    # non-priviledged user
 
     setup(
         name=_project,
