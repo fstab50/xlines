@@ -25,7 +25,8 @@ VERSION_FILE = $(CUR_DIR)/$(PROJECT)/_version.py
 # os package creation
 RHEL_REQUIRES = 'python36,python36-pip,python36-setuptools,bash-completion'
 AML_REQUIRES = 'python3,python3-pip,python3-setuptools,bash-completion'
-POST_SCRIPT = $(SCRIPTS)/ospackage_postinstall.py
+PRE_SCRIPT = $(SCRIPTS)/rpm_preinstall.sh
+POST_SCRIPT = $(SCRIPTS)/rpm_postinstall.py
 YUM_CALL = sudo $(shell which yum)
 ALIEN_CALL = sudo $(shell which alien)
 
@@ -101,15 +102,15 @@ buildrpm-rhel:     ## Build Redhat distribution (.rpm) os package
 	sudo cp -r /usr/local/lib/python3.*/site-packages/setuptools* /usr/lib/python3.*/site-packages/
 	sudo cp -r /usr/local/lib/python3.*/site-packages/pkg_resources* /usr/lib/python3.*/site-packages/
 	bash cp -r /usr/local/lib/python3.*/site-packages/pygments .
-	$(PYTHON3_PATH) setup_rpm.py bdist_rpm --requires=$(RHEL_REQUIRES) --python='/usr/bin/python3' --preinstall=
+	$(PYTHON3_PATH) setup_rpm.py bdist_rpm --requires=$(RHEL_REQUIRES) --python='/usr/bin/python3' --pre-install=$(PRE_SCRIPT)
 
 
 .PHONY: buildrpm-amazonlinux
-buildrpm-amazonlinux:     ## Build Redhat distribution (.rpm) os package
+buildrpm-aml:     ## Build Amazon Linux 2 distribution (.rpm) os package
 	$(YUM_CALL) -y install python3 python3-pip python3-setuptools which sudo
 	sudo -H pip3 install -U pip setuptools pygments
 	bash cp -r /usr/local/lib64/python3.*/site-packages/pygments .
-	$(PYTHON3_PATH) setup_rpm.py bdist_rpm --requires=$(AML_REQUIRES) --python='/usr/bin/python3'
+	$(PYTHON3_PATH) setup_rpm.py bdist_rpm --requires=$(AML_REQUIRES) --pre-install=$(PRE_SCRIPT)
 
 
 .PHONY: testpypi
