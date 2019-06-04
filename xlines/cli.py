@@ -146,7 +146,7 @@ def display_exclusions(expath, exdirpath):
         stdout_message(message='File types excluded from line totals:')
 
         for index, ext in enumerate(exclusions):
-            print('{}{:>3}{}'.format(tab, index + 1, div + ':  ' + ext))
+            print('{}{:>3}{}'.format(tab, index + 1, div + '  ' + ext))
 
         sys.stdout.write('\n')
         return True
