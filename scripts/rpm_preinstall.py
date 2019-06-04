@@ -61,6 +61,7 @@ def _package_installed(package):
 if _redhat_linux():
 
     cmd = 'yum -y install epel-release'
+    
     r = subprocess.getoutput(cmd)
     if _package_installed('epel-release'):
         sys.exit(0)
