@@ -99,10 +99,13 @@ builddeb:     ## Build Debian distribution (.deb) os package
 buildrpm-rhel:     ## Build Redhat distribution (.rpm) os package
 	$(YUM_CALL) -y install epel-release which
 	$(YUM_CALL) -y install python36 python36-pip python36-setuptools
-	sudo -H pip3 install -U pip setuptools pygments
+	$(PIP3_CALL) pip3 install -U pip setuptools pygments
 	sudo cp -r /usr/local/lib/python3.*/site-packages/setuptools* /usr/lib/python3.*/site-packages/
 	sudo cp -r /usr/local/lib/python3.*/site-packages/pkg_resources* /usr/lib/python3.*/site-packages/
-	cp -r /usr/local/lib/python3.*/site-packages/pygments .
+	if [ -d /usr/local/lib/python3.*/site-packages/pygments ]; then \
+	cp -r /usr/local/lib/python3.*/site-packages/pygments .; \
+	elif [ -d /usr/local/lib64/python3.*/site-packages/pygments ]; then \
+	cp -r /usr/local/lib64/python3.*/site-packages/pygments .; fi
 	$(PYTHON3_PATH) setup_rpm.py bdist_rpm --requires=$(RHEL_REQUIRES) --python='/usr/bin/python3' --pre-install=$(PRE_SCRIPT)
 
 
@@ -113,7 +116,7 @@ buildrpm-aml:     ## Build Amazon Linux 2 distribution (.rpm) os package
 	sudo cp -r /usr/local/lib/python3.*/site-packages/setuptools* /usr/lib/python3.*/site-packages/
 	sudo cp -r /usr/local/lib/python3.*/site-packages/pkg_resources* /usr/lib/python3.*/site-packages/
 	cp -r /usr/local/lib64/python3.*/site-packages/pygments .
-	$(PYTHON3_PATH) setup_rpm.py bdist_rpm --requires=$(AML_REQUIRES) --python='/usr/bin/python3' 
+	$(PYTHON3_PATH) setup_rpm.py bdist_rpm --requires=$(AML_REQUIRES) --python='/usr/bin/python3'
 
 
 .PHONY: testpypi
