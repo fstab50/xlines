@@ -77,3 +77,5 @@ if _redhat_linux; then
     exit 0
 
 fi
+
+exit 0
