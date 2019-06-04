@@ -53,7 +53,7 @@ function _redhat_linux(){
 }
 
 
-function _amazon_linux(){
+function _amazonlinux(){
     ##
     ##  determines if Amazon Linux
     ##

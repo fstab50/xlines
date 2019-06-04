@@ -23,7 +23,8 @@ REQUIREMENT = $(CUR_DIR)/requirements.txt
 VERSION_FILE = $(CUR_DIR)/$(PROJECT)/_version.py
 
 # os package creation
-OS_REQUIRES = 'python36,python36-pip,python36-setuptools,python36-pygments,bash-completion'
+RHEL_REQUIRES = 'python36,python36-pip,python36-setuptools,bash-completion'
+AML_REQUIRES = 'python3,python3-pip,python3-setuptools,bash-completion'
 POST_SCRIPT = $(SCRIPTS)/ospackage_postinstall.py
 YUM_CALL = sudo $(shell which yum)
 ALIEN_CALL = sudo $(shell which alien)
@@ -92,13 +93,23 @@ builddeb:     ## Build Debian distribution (.deb) os package
 	$(ALIEN_CALL) --to-deb dist/xlines-*.noarch.rpm
 
 
-.PHONY: buildrpm
-buildrpm:     ## Build Redhat distribution (.rpm) os package
+.PHONY: buildrpm-rhel
+buildrpm-rhel:     ## Build Redhat distribution (.rpm) os package
+	$(YUM_CALL) -y install epel-release which
 	$(YUM_CALL) -y install python36 python36-pip python36-setuptools
-	sudo -H pip3 install -U pip setuptools
-	sudo cp -r /usr/local/lib/python3.6/site-packages/setuptools* /usr/lib/python3.*/site-packages/
-	sudo cp -r /usr/local/lib/python3.6/site-packages/pkg_resources* /usr/lib/python3.*/site-packages/
-	$(PYTHON3_PATH) setup_rpm.py bdist_rpm --requires=$(OS_REQUIRES) --python='/usr/bin/python3'
+	sudo -H pip3 install -U pip setuptools pygments
+	sudo cp -r /usr/local/lib/python3.*/site-packages/setuptools* /usr/lib/python3.*/site-packages/
+	sudo cp -r /usr/local/lib/python3.*/site-packages/pkg_resources* /usr/lib/python3.*/site-packages/
+	bash cp -r /usr/local/lib/python3.*/site-packages/pygments .
+	$(PYTHON3_PATH) setup_rpm.py bdist_rpm --requires=$(RHEL_REQUIRES) --python='/usr/bin/python3' --preinstall=
+
+
+.PHONY: buildrpm-amazonlinux
+buildrpm-amazonlinux:     ## Build Redhat distribution (.rpm) os package
+	$(YUM_CALL) -y install python3 python3-pip python3-setuptools which sudo
+	sudo -H pip3 install -U pip setuptools pygments
+	bash cp -r /usr/local/lib64/python3.*/site-packages/pygments .
+	$(PYTHON3_PATH) setup_rpm.py bdist_rpm --requires=$(AML_REQUIRES) --python='/usr/bin/python3'
 
 
 .PHONY: testpypi
