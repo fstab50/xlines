@@ -21,52 +21,49 @@ contained in the program LICENSE file.
 
 import os
 import sys
+import re
+import inspect
+import subprocess
 import platform
 
 _project = 'xlines'
+distribution = platform.linux_distribution()[0]
 
 
 def _redhat_linux():
     """
     Determines if Redhat Enterprise Linux, Centos
     """
-    if [[ -f /etc/redhat-release ]]; then
-        return 0
+    try:
+        if os.path.exists('/etc/redhat-release'):
+            return True
 
-    elif [[ $(grep -i centos /etc/os-release) ]]; then
-        return 0
+        elif re.search('centos', distribution, re.IGNORECASE):
+            return True
 
-    elif [[ $(grep -i redhat /etc/os-release) ]]; then
-        return 0
-    fi
-
-    return 1
-}
-
-
-function _amazonlinux(){
-    ##
-    ##  determines if Amazon Linux
-    ##
-    if [[ -f /etc/redhat-release ]]; then
-        return 0
-
-    elif [[ $(grep -i centos /etc/os-release) ]]; then
-        return 0
-
-    elif [[ $(grep -i redhat /etc/os-release) ]]; then
-        return 0
-    fi
-
-    return 1
-}
+        elif re.search('redhat', distribution, re.IGNORECASE):
+            return True
+    except OSError:
+        fx = inspect.stack()[0][3]
+        print('{}: Problem determining Linux distribution'.format(fx))
+    return False
 
 
-if _redhat_linux; then
+def _package_installed(package):
+    cmd = 'rpm -qi ' + package
+    r = subprocess.getoutput(cmd)
+    if 'Install Date' in r:
+        return True
+    return False
 
-    yum -y install epel-release || exit 1
-    exit 0
 
-fi
+if _redhat_linux():
 
-exit 0
+    cmd = 'yum -y install epel-release'
+    r = subprocess.getoutput(cmd)
+    if _package_installed('epel-release'):
+        sys.exit(0)
+    else:
+        sys.exit(1)
+
+sys.exit(0)
