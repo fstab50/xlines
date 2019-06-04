@@ -99,7 +99,7 @@ builddeb:     ## Build Debian distribution (.deb) os package
 buildrpm-rhel:     ## Build Redhat distribution (.rpm) os package
 	$(YUM_CALL) -y install epel-release which
 	$(YUM_CALL) -y install python36 python36-pip python36-setuptools
-	$(PIP3_CALL) pip3 install -U pip setuptools pygments
+	$(PIP3_CALL) install -U pip setuptools pygments
 	sudo cp -r /usr/local/lib/python3.*/site-packages/setuptools* /usr/lib/python3.*/site-packages/
 	sudo cp -r /usr/local/lib/python3.*/site-packages/pkg_resources* /usr/lib/python3.*/site-packages/
 	if [ -d /usr/local/lib/python3.*/site-packages/pygments ]; then \
