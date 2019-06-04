@@ -138,7 +138,9 @@ class PostInstall(install):
             environment detected
 
         """
+        # bash shell + root user
         if self.valid_os_shell() and _root_user():
+
             completion_dir = '/etc/bash_completion.d'
             config_dir = module_dir() + _project + '/config/'
 
@@ -162,7 +164,9 @@ class PostInstall(install):
                     os_parityPath(config_dir + '/' + _ex_dirs_fname)
                 )
 
+        # bash shell + user
         elif self.valid_os_shell():
+
             completion_file = user_home() + '/.bash_completion'
             completion_dir = user_home() + '/.bash_completion.d'
             config_dir = user_home() + '/.config/' + _project
