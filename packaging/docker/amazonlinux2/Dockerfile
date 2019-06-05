@@ -40,6 +40,7 @@ RUN yum -y install rpm-build rpmdevtools
 
 # user operations
 ENV USER='builder'
+
 RUN useradd $USER -d /home/$USER -u 1000 -m -G users,wheel && \
     echo "# macros"                      >  /home/$USER/.rpmmacros && \
     echo "%_topdir    /home/$USER/rpmbuild" >> /home/$USER/.rpmmacros && \
