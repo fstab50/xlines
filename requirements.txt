@@ -1,4 +1,5 @@
 pandoc
 pkginfo
+pygments
 setuptools
 twine
