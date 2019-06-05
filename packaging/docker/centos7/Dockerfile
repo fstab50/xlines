@@ -43,6 +43,8 @@ RUN useradd builder -d /home/builder -u 1000 -m -G users,wheel && \
     echo "%_rpmdir    %{_topdir}"        >> /home/builder/.rpmmacros && \
     echo "%_srcrpmdir %{_topdir}"        >> /home/builder/.rpmmacros
 
+RUN useradd dblake -d /home/dblake -u 1001 -m -G users,wheel
+
 # mount volume here to cp completed rpm to on the host
 RUN mkdir /mnt/rpm
 VOLUME /mnt/rpm
@@ -50,6 +52,7 @@ VOLUME /mnt/rpm
 # configure sudoers
 RUN sed -i '/secure_path\ =/d' /etc/sudoers
 RUN echo "builder ALL=(ALL:ALL) NOPASSWD:ALL" >> /etc/sudoers
+RUN echo "dblake ALL=(ALL:ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 # rpmbuild deps
 RUN cd && rpmdev-setuptree
