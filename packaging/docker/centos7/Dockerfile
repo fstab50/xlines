@@ -61,16 +61,15 @@ RUN mv ~/rpmbuild /home/builder/
 ADD ./bashrc  /home/builder/.bashrc
 ADD ./.rpmmacros /home/builder/
 
-RUN chown -R builder /home/builder
 
 EXPOSE 8080
-
-USER builder
 
 # configure home for builder
 RUN mkdir -p /home/builder/.config/bash
 ADD ./colors.sh /home/builder/.config/bash/
 ADD ./motd-centos.sh /home/builder/.config/bash/motd.sh
+
+RUN chown -R builder:builder /home/builder
 
 # environment variables
 ENV CONTAINER=rpmbuild OS=centos DIST=el7

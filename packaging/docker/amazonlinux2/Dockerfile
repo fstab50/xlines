@@ -39,7 +39,7 @@ RUN yum install -y gcc gcc-c++ \
 RUN yum -y install rpm-build rpmdevtools
 
 # user operations
-ENV USER='dblake'
+ENV USER='builder'
 RUN useradd $USER -d /home/$USER -u 1000 -m -G users,wheel && \
     echo "# macros"                      >  /home/$USER/.rpmmacros && \
     echo "%_topdir    /home/$USER/rpmbuild" >> /home/$USER/.rpmmacros && \
@@ -84,7 +84,7 @@ ADD ./motd-amazonlinux2.sh /home/$USER/.config/bash/motd.sh
 ADD ./loadavg-flat-layout.sh /home/$USER/.config/bash/loadavg-flat-layout.sh
 
 # completion actions
-RUN chown -R $USER /home/$USER
+RUN chown -R $USER:$USER /home/$USER
 
 # connectivity
 EXPOSE 8080
