@@ -38,7 +38,7 @@ cd centos7 || false
 
 # create image
 std_message "Begin image build" "INFO"
-docker build -t centos7:rpmbuildA .
+docker build  -t  $image .
 
 # create container
 std_message "Creating and running container -- START" "INFO"

@@ -38,7 +38,7 @@ cd amazonlinux2 || false
 
 # create image
 std_message "Begin image build" "INFO"
-docker build -t amazonlinux:rpmbuildA .
+docker build  -t  $image .
 
 # create container
 std_message "Creating and running container -- START" "INFO"
