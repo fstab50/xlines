@@ -104,7 +104,7 @@ builddeb:     ## Build Debian distribution (.deb) os package
 .PHONY: buildrpm-rhel
 buildrpm-rhel:  artifacts   ## Build Redhat distribution (.rpm) os package
 	$(YUM_CALL) -y install epel-release which
-	$(YUM_CALL) -y install python36 python36-pip python36-setuptools
+	$(YUM_CALL) -y install python36 python36-pip python36-setuptools python36-devel
 	sudo -H $(PIP3_CALL) install -U pip setuptools
 	sudo cp -r /usr/local/lib/python3.*/site-packages/setuptools* /usr/lib/python3.*/site-packages/
 	sudo cp -r /usr/local/lib/python3.*/site-packages/pkg_resources* /usr/lib/python3.*/site-packages/
