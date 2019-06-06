@@ -98,6 +98,10 @@ EXPOSE 8080
 # environment variables
 ENV CONTAINER=rpmbuildD OS=centos DIST=el7
 
+
+# completion update
+RUN yum -y update; yum clean all
+
 ##
 
 # end rpm build Dockerfile
