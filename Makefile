@@ -131,7 +131,8 @@ testpypi: build     ## Deploy to testpypi without regenerating prebuild artifact
 pypi: clean build    ## Deploy to pypi without regenerating prebuild artifacts
 	@echo "Deploy $(PROJECT) to pypi.org"
 	. $(VENV_DIR)/bin/activate && twine upload --repository pypi dist/*
-
+	rm -f $(CUR_DIR)/README.rst
+	
 
 .PHONY: install
 install:    ## Install (source: pypi). Build artifacts exist
