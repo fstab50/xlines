@@ -25,7 +25,7 @@ VERSION_FILE = $(CUR_DIR)/$(PROJECT)/_version.py
 # os package creation
 RHEL_REQUIRES = 'python36,python36-pip,python36-setuptools,python36-pygments,bash-completion'
 AML_REQUIRES = 'python3,python3-pip,python3-setuptools,bash-completion'
-PRE_SCRIPT = $(SCRIPTS)/rpm_preinstall.py
+PRE_SCRIPT = $(SCRIPTS)/rpm_preinstall.sh
 POST_SCRIPT = $(SCRIPTS)/rpm_postinstall.py
 YUM_CALL = sudo $(shell which yum)
 ALIEN_CALL = sudo $(shell which alien)
