@@ -14,6 +14,7 @@ PYTHON3_PATH := $(shell which $(PYTHON_VERSION))
 GIT := $(shell which git)
 VENV_DIR := $(CUR_DIR)/p3_venv
 PIP_CALL := $(VENV_DIR)/bin/pip
+PANDOC_CALL := $(shell which pandoc)
 ACTIVATE = $(shell . $(VENV_DIR)/bin/activate)
 MAKE = $(shell which make)
 MODULE_PATH := $(CUR_DIR)/$(PROJECT)
@@ -62,6 +63,11 @@ setup-venv:    ## Create and activiate python venv
 	$(PIP_CALL) install -r $(REQUIREMENT)
 
 
+.PHONY: artifacts
+artifacts:	  ## Generate documentation build artifacts (*.rst)
+	$(PANDOC_CALL) --from=markdown --to=rst README.md --output=README.rst
+
+
 .PHONY: test
 test:     ## Run pytest unittests
 	if [ $(PDB) ]; then PDB = "true"; \
@@ -81,7 +87,7 @@ docs: clean setup-venv    ## Generate sphinx documentation
 
 
 .PHONY: build
-build: pre-build setup-venv    ## Build dist, increment version || force version (VERSION=X.Y)
+build: pre-build setup-venv artifacts   ## Build dist, increment version || force version (VERSION=X.Y)
 	if [ $(VERSION) ]; then bash $(SCRIPTS)/version_update.sh $(VERSION); \
 	else bash $(SCRIPTS)/version_update.sh; fi && . $(VENV_DIR)/bin/activate && \
 	cd $(CUR_DIR) && $(PYTHON3_PATH) setup.py sdist
@@ -96,7 +102,7 @@ builddeb:     ## Build Debian distribution (.deb) os package
 
 
 .PHONY: buildrpm-rhel
-buildrpm-rhel:     ## Build Redhat distribution (.rpm) os package
+buildrpm-rhel:  artifacts   ## Build Redhat distribution (.rpm) os package
 	$(YUM_CALL) -y install epel-release which
 	$(YUM_CALL) -y install python36 python36-pip python36-setuptools
 	$(PIP3_CALL) install -U pip setuptools
@@ -106,7 +112,7 @@ buildrpm-rhel:     ## Build Redhat distribution (.rpm) os package
 
 
 .PHONY: buildrpm-aml
-buildrpm-aml:     ## Build Amazon Linux 2 distribution (.rpm) os package
+buildrpm-aml:  artifacts  ## Build Amazon Linux 2 distribution (.rpm) os package
 	$(YUM_CALL) -y install python3 python3-pip python3-setuptools which sudo rpm-build
 	$(PIP3_CALL) install -U pip setuptools pygments
 	sudo cp -r /usr/local/lib/python3.*/site-packages/setuptools* /usr/lib/python3.*/site-packages/
