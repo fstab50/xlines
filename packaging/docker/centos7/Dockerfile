@@ -70,7 +70,9 @@ ADD ./.gitconfig /home/$USER1/
 
 # configure home for USER1
 RUN mkdir -p /home/$USER1/.config/bash
-ADD ./colors.sh /home/$USER1/.config/bash/
+RUN mkdir -p /home/$USER1/git
+RUN cd ~/git; git clone 'https://github.com/fstab50/xlines.git'
+ADD ./colors.sh /home/$USER1/.config/bash/colors.sh
 ADD ./motd-centos7.sh /home/$USER1/.config/bash/motd.sh
 ADD ./loadavg-flat-layout.sh /home/$USER1/.config/bash/loadavg-flat-layout.sh
 
@@ -83,7 +85,7 @@ ADD ./.gitconfig /home/USER2/
 
 # configure home for USER2
 RUN mkdir -p /home/$USER2/.config/bash
-ADD ./colors.sh /home/$USER2/.config/bash/
+ADD ./colors.sh /home/$USER2/.config/bash/colors.sh
 ADD ./motd-centos7.sh /home/$USER2/.config/bash/motd.sh
 ADD ./loadavg-flat-layout.sh /home/$USER2/.config/bash/loadavg-flat-layout.sh
 
