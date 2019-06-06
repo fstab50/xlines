@@ -107,7 +107,7 @@ EXPOSE 8080
 
 
 # environment variables
-ENV CONTAINER=rpmbuild OS=amazonlinux DIST=amzn2
+ENV CONTAINER=rpmbuildD OS=amazonlinux DIST=amzn2
 
 ##
 

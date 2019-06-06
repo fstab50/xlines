@@ -71,7 +71,7 @@ ADD ./.gitconfig /home/$USER1/
 # configure home for USER1
 RUN mkdir -p /home/$USER1/.config/bash
 ADD ./colors.sh /home/$USER1/.config/bash/
-ADD ./motd-amazonlinux2.sh /home/$USER1/.config/bash/motd.sh
+ADD ./motd-centos7.sh /home/$USER1/.config/bash/motd.sh
 ADD ./loadavg-flat-layout.sh /home/$USER1/.config/bash/loadavg-flat-layout.sh
 
 # completion actions
@@ -84,14 +84,14 @@ ADD ./.gitconfig /home/USER2/
 # configure home for USER2
 RUN mkdir -p /home/$USER2/.config/bash
 ADD ./colors.sh /home/$USER2/.config/bash/
-ADD ./motd-amazonlinux2.sh /home/$USER2/.config/bash/motd.sh
+ADD ./motd-centos7.sh /home/$USER2/.config/bash/motd.sh
 ADD ./loadavg-flat-layout.sh /home/$USER2/.config/bash/loadavg-flat-layout.sh
 
 # completion actions
 RUN chown -R $USER2:$USER2 /home/$USER2
 
 # environment variables
-ENV CONTAINER=rpmbuild OS=centos DIST=el7
+ENV CONTAINER=rpmbuildD OS=centos DIST=el7
 
 ##
 
