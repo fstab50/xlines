@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 """
 
 xlines :  Copyright 2018-2019, Blake Huber
@@ -63,7 +64,7 @@ if _redhat_linux():
     cmd = 'yum -y install epel-release'
 
     r = subprocess.getoutput(cmd)
-    
+
     if _package_installed('epel-release'):
         sys.exit(0)
     else:
