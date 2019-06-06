@@ -61,7 +61,7 @@ function _amazonlinux(){
 
 if _redhat_linux; then
 
-    yum -y install epel-release || exit 1
+    yum -y install epel-release
     exit 0
 
 fi
