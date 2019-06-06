@@ -37,7 +37,7 @@ RUN yum install -y gcc gcc-c++ \
 
 # user operations
 ENV USER1 'builder'
-ENV USER2'dblake'
+ENV USER2 'dblake'
 
 RUN useradd $USER1 -d /home/$USER1 -u 1000 -m -G users,wheel && \
     echo "# macros"                      >  /home/$USER1/.rpmmacros && \
