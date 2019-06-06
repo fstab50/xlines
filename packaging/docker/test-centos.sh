@@ -4,7 +4,7 @@
 #   Manual creation of container assets for testing
 #
 
-container='xlinesRHEL'
+container='xlinesCentOS'
 image='centos7:rpmbuildD'
 
 
