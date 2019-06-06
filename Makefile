@@ -30,7 +30,7 @@ PRE_SCRIPT = $(SCRIPTS)/rpm_preinstall.py
 POST_SCRIPT = $(SCRIPTS)/rpm_postinstall.py
 YUM_CALL = sudo $(shell which yum)
 ALIEN_CALL = sudo $(shell which alien)
-PIP3_CALL = sudo -H $(shell which pip)
+PIP3_CALL = $(shell which pip3)
 
 
 # --- rollup targets  ------------------------------------------------------------------------------
@@ -105,7 +105,7 @@ builddeb:     ## Build Debian distribution (.deb) os package
 buildrpm-rhel:  artifacts   ## Build Redhat distribution (.rpm) os package
 	$(YUM_CALL) -y install epel-release which
 	$(YUM_CALL) -y install python36 python36-pip python36-setuptools
-	$(PIP3_CALL) install -U pip setuptools
+	sudo -H $(PIP3_CALL) install -U pip setuptools
 	sudo cp -r /usr/local/lib/python3.*/site-packages/setuptools* /usr/lib/python3.*/site-packages/
 	sudo cp -r /usr/local/lib/python3.*/site-packages/pkg_resources* /usr/lib/python3.*/site-packages/
 	$(PYTHON3_PATH) setup_rpm.py bdist_rpm --requires=$(RHEL_REQUIRES) --python='/usr/bin/python3' --pre-install=$(PRE_SCRIPT)
@@ -132,7 +132,7 @@ pypi: clean build    ## Deploy to pypi without regenerating prebuild artifacts
 	@echo "Deploy $(PROJECT) to pypi.org"
 	. $(VENV_DIR)/bin/activate && twine upload --repository pypi dist/*
 	rm -f $(CUR_DIR)/README.rst
-	
+
 
 .PHONY: install
 install:    ## Install (source: pypi). Build artifacts exist
