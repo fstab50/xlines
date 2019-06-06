@@ -4,6 +4,8 @@
 #   Manual creation of container assets for testing
 #
 
+container='AML2test'
+
 
 function _git_root(){
     ##
@@ -26,8 +28,7 @@ function container_started(){
 
 
 pkg_path=$(cd "$(dirname $0)"; pwd -P)
-container='AML2test'
-source '$_git_root/scripts/std_functions.sh'
+source "$_git_root/scripts/std_functions.sh"
 
 
 # working directory

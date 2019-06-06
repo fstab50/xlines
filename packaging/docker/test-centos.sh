@@ -4,6 +4,8 @@
 #   Manual creation of container assets for testing
 #
 
+container='xlinesRHEL'
+
 
 function _git_root(){
     ##
@@ -26,8 +28,8 @@ function container_started(){
 
 
 pkg_path=$(cd "$(dirname $0)"; pwd -P)
-container='xlinesRHEL'
-source '$_git_root/scripts/std_functions.sh'
+source "$_git_root/scripts/std_functions.sh"
+
 
 # working directory
 cd centos7 || false
