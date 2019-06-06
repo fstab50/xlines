@@ -90,6 +90,11 @@ ADD ./loadavg-flat-layout.sh /home/$USER2/.config/bash/loadavg-flat-layout.sh
 # completion actions
 RUN chown -R $USER2:$USER2 /home/$USER2
 
+
+# connectivity
+EXPOSE 8080
+
+
 # environment variables
 ENV CONTAINER=rpmbuildD OS=centos DIST=el7
 
