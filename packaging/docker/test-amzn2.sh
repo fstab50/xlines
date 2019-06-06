@@ -5,6 +5,7 @@
 #
 
 container='AML2test'
+image='amazonlinux:rpmbuildD'
 
 
 function _git_root(){
@@ -40,7 +41,7 @@ docker build -t amazonlinux:rpmbuildA .
 
 # create container
 std_message "Creating and running container -- START" "INFO"
-docker run --name=$container -d -v /tmp/rpm:/mnt/rpm -ti amazonlinux:rpmbuildA tail -f /dev/null &
+docker run  --name=$container  -d -v /tmp/rpm:/mnt/rpm  -ti   $image  tail -f /dev/null &
 
 if container_started; then
     std_message "Container ${container} started successfully" "OK"
