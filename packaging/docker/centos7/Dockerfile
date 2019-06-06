@@ -65,8 +65,8 @@ RUN mv ~/rpmbuild /home/$USER1/
 
 # dotfiles, USER1
 ADD ./bashrc  /home/$USER1/.bashrc
-ADD ./.rpmmacros /home/$USER1/
-ADD ./.gitconfig /home/$USER1/
+ADD ./.rpmmacros /home/$USER1/.rpmmacros
+ADD ./.gitconfig /home/$USER1/.gitconfig
 
 # configure home for USER1
 RUN mkdir -p /home/$USER1/.config/bash
@@ -81,7 +81,7 @@ RUN chown -R $USER1:$USER1 /home/$USER1
 
 # dotfiles, USER2
 ADD ./bashrc  /home/$USER2/.bashrc
-ADD ./.gitconfig /home/USER2/
+ADD ./.gitconfig /home/USER2/.gitconfig
 
 # configure home for USER2
 RUN mkdir -p /home/$USER2/.config/bash
