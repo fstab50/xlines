@@ -284,7 +284,7 @@ if _root_user():
         license='GPL-3.0',
         classifiers=[
             'Topic :: Software Development :: Build Tools',
-            'Development Status :: 3 - Alpha',
+            'Development Status :: 4 - Beta',
             'Programming Language :: Python :: 3.6',
             'Programming Language :: Python :: 3.7',
             'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
@@ -326,7 +326,7 @@ else:
         license='GPL-3.0',
         classifiers=[
             'Topic :: Software Development :: Build Tools',
-            'Development Status :: 3 - Alpha',
+            'Development Status :: 4 - Beta',
             'Programming Language :: Python :: 3.6',
             'Programming Language :: Python :: 3.7',
             'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
