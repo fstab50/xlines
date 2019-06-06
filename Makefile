@@ -30,7 +30,7 @@ PRE_SCRIPT = $(SCRIPTS)/rpm_preinstall.py
 POST_SCRIPT = $(SCRIPTS)/rpm_postinstall.py
 YUM_CALL = sudo $(shell which yum)
 ALIEN_CALL = sudo $(shell which alien)
-PIP3_CALL = sudo -H $(shell which pip3)
+PIP3_CALL = sudo -H $(shell which pip)
 
 
 # --- rollup targets  ------------------------------------------------------------------------------
