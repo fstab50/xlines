@@ -65,6 +65,7 @@ setup-venv:    ## Create and activiate python venv
 
 .PHONY: artifacts
 artifacts:	  ## Generate documentation build artifacts (*.rst)
+	$(YUM_CALL) install -y pandoc
 	$(PANDOC_CALL) --from=markdown --to=rst README.md --output=README.rst
 
 
