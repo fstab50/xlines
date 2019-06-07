@@ -32,7 +32,7 @@ function _valid_iamuser(){
 ROOT=$(_git_root)
 
 # color codes
-source "$ROOT/core/colors.sh"
+source "$ROOT/scripts/colors.sh"
 
 
 if _valid_iamuser $PROFILE; then
