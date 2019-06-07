@@ -20,7 +20,7 @@ function container_started(){
     ##
     ##  check container status
     ##
-    if [[ $(docker ps | grep $container) ]]; then
+    if [ "$(docker ps | grep $container 2>/dev/null)" ]; then
         return 0
     else
         return 1
@@ -49,6 +49,11 @@ if container_started; then
 else
     std_message "Container ${container} failed to start" "FAIL"
 fi
+
+# clean
+std_message 'Cleaning up intermediate image artifacts' 'INFO'
+docker image prune -f
+
 
 cd $pkg_path || true
 exit 0
