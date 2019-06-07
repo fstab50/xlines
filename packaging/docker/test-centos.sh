@@ -50,5 +50,10 @@ else
     std_message "Container ${container} failed to start" "FAIL"
 fi
 
+# clean
+std_message 'Cleaning up intermediate image artifacts' 'INFO'
+docker image prune -f
+
+
 cd $pkg_path || true
 exit 0
