@@ -34,7 +34,7 @@ source "$(_git_root)/scripts/colors.sh"
 
 
 # working directory
-cd amazonlinux2 || false
+cd "$(_git_root)/packaging/docker/amazonlinux2" || false
 
 # create image
 std_message "Begin image build" "INFO"

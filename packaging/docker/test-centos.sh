@@ -34,7 +34,7 @@ source "$(_git_root)/scripts/colors.sh"
 
 
 # working directory
-cd centos7 || false
+cd "$(_git_root)/packaging/docker/centos7" || false
 
 # create image
 std_message "Begin image build" "INFO"
