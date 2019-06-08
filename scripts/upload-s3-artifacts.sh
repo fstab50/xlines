@@ -2,7 +2,7 @@
 
 TMPDIR='/tmp'
 PROFILE='imagestore'
-BUCKET='http-imagestore'
+BUCKET='images.awscloud.center'
 KEY='xlines'
 
 pkg_path=$(cd "$(dirname $0)"; pwd -P)
