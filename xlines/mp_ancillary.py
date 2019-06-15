@@ -53,7 +53,7 @@ div = text + '/' + rst
 div_len = 2
 horiz = text + '-' + rst
 arrow = bwt + '-> ' + rst
-BUFFER = local_config['PROJECT']['BUFFER']
+BUFFER = local_config['OUTPUT']['BUFFER']
 
 
 def linecount(path, whitespace=True):
@@ -171,7 +171,7 @@ def locate_fileobjects(origin, path=expath):
 
 
 def print_header(w):
-    total_width = w + local_config['PROJECT']['COUNT_COLUMN_WIDTH']
+    total_width = w + local_config['OUTPUT']['COUNT_COLUMN_WIDTH']
     header_lhs = 'object'
     header_rhs = 'line count'
     tab = '\t'.expandtabs(total_width - len(header_lhs) - len(header_rhs))
@@ -182,7 +182,7 @@ def print_header(w):
 
 
 def print_footer(total, object_count, w):
-    total_width = w + local_config['PROJECT']['COUNT_COLUMN_WIDTH']
+    total_width = w + local_config['OUTPUT']['COUNT_COLUMN_WIDTH']
     msg = 'Total ({} objects):'.format(str(object_count))
     tab = '\t'.expandtabs(total_width - len(msg) - len(str(total)) - 1)
 
