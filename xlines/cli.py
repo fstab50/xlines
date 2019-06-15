@@ -291,7 +291,7 @@ class MaxWidth():
             if len(path) > self.max_width:
                 self.max_width = len(path)
             if len(path) > self.term_width:
-                break
+                continue
         return self.max_width if (self.max_width < self.term_width) else self.term_width
 
 
