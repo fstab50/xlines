@@ -83,7 +83,7 @@ div = text + '/' + rst
 div_len = 2
 horiz = text + '-' + rst
 arrow = bwt + '-> ' + rst
-BUFFER = local_config['PROJECT']['BUFFER']
+BUFFER = local_config['OUTPUT']['BUFFER']
 
 
 def _configure(expath, exdirpath):
@@ -282,7 +282,7 @@ def longest_path(parameters, exclusions):
 
 class MaxWidth():
     def __init__(self):
-        self.buffer = local_config['PROJECT']['COUNT_COLUMN_WIDTH'] + BUFFER
+        self.buffer = local_config['OUTPUT']['COUNT_COLUMN_WIDTH'] + BUFFER
         self.term_width = os.get_terminal_size().columns - self.buffer
         self.max_width = 0
 
@@ -292,7 +292,7 @@ class MaxWidth():
                 self.max_width = len(path)
             if len(path) > self.term_width:
                 break
-        return self.max_width if self.max_width < self.term_width else self.term_width
+        return self.max_width if (self.max_width < self.term_width) else self.term_width
 
 
 def module_dir():
@@ -367,7 +367,7 @@ def precheck(user_exfiles, user_exdirs, debug):
 
 
 def print_header(w):
-    total_width = w + local_config['PROJECT']['COUNT_COLUMN_WIDTH']
+    total_width = w + local_config['OUTPUT']['COUNT_COLUMN_WIDTH']
     header_lhs = 'object'
     header_rhs = 'line count'
     tab = '\t'.expandtabs(total_width - len(header_lhs) - len(header_rhs))
@@ -378,7 +378,7 @@ def print_header(w):
 
 
 def print_footer(total, object_count, w):
-    total_width = w + local_config['PROJECT']['COUNT_COLUMN_WIDTH']
+    total_width = w + local_config['OUTPUT']['COUNT_COLUMN_WIDTH']
 
     # add commas
     total_lines = '{:,}'.format(object_count)
@@ -474,8 +474,8 @@ def init_cli():
             width = longest_path(container, ex)
 
             print_header(width)
-            count_width = local_config['PROJECT']['COUNT_COLUMN_WIDTH']
-            hicount_threshold = local_config['PROJECT']['COUNT_THRESHOLD']
+            count_width = local_config['OUTPUT']['COUNT_COLUMN_WIDTH']
+            hicount_threshold = local_config['OUTPUT']['COUNT_HI_THRESHOLD']
 
             for i in container:
 
