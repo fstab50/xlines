@@ -55,10 +55,10 @@ else:
     config_path = config_dirpath + '/' + config_filename
 
     # output format
-    count_column_width = 7                                           # characters
-    min_buffer_chars = 6                                             # characters
-    min_output_width = 80 - count_column_width - min_buffer_chars    # characters
-    count_threshold = 1000                                           # number of lines of text
+    count_column_width = 7                                    # characters
+    min_buffer_chars = 6                                      # characters
+    min_width = 80 - count_column_width - min_buffer_chars    # characters
+    count_threshold = 1000                                    # number of lines of text
 
     # exclusions
     ext_filename = 'exclusions.list'
@@ -102,7 +102,7 @@ else:
             "SYSLOG_FILE": False
         },
         "OUTPUT": {
-            "MIN_WIDTH": min_output_width,
+            "MIN_WIDTH": min_width,
             "COUNT_COLUMN_WIDTH": count_column_width,
             "COUNT_HI_THRESHOLD": count_threshold,
             "BUFFER":  min_buffer_chars
