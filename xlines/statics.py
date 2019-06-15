@@ -55,10 +55,10 @@ else:
     config_path = config_dirpath + '/' + config_filename
 
     # output format
-    count_column_width = 7        # characters
-    min_buffer_chars = 6          # characters
-    count_threshold = 1000        # number of lines of text
-    min_output_width = 80        # characters
+    count_column_width = 7                                           # characters
+    min_buffer_chars = 6                                             # characters
+    min_output_width = 80 - count_column_width - min_buffer_chars    # characters
+    count_threshold = 1000                                           # number of lines of text
 
     # exclusions
     ext_filename = 'exclusions.list'
@@ -79,8 +79,7 @@ else:
         "PROJECT": {
             "PACKAGE": PACKAGE,
             "PACKAGE_VERSION": version,
-            "HOME": user_home,
-
+            "HOME": user_home
         },
         "CONFIG": {
             "CONFIG_DATE": "",
