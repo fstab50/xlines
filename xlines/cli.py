@@ -284,7 +284,7 @@ class MaxWidth():
     def __init__(self):
         self.buffer = local_config['OUTPUT']['COUNT_COLUMN_WIDTH'] + BUFFER
         self.term_width = os.get_terminal_size().columns - self.buffer
-        self.max_width = 0
+        self.max_width = local_config['OUTPUT']['MIN_WIDTH']
 
     def calc_maxpath(self, path_list):
         for path in path_list:
