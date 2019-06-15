@@ -58,7 +58,7 @@ else:
     count_column_width = 7        # characters
     min_buffer_chars = 6          # characters
     count_threshold = 1000        # number of lines of text
-    min_output_width = 100        # characters
+    min_output_width = 80        # characters
 
     # exclusions
     ext_filename = 'exclusions.list'
