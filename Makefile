@@ -88,7 +88,7 @@ docs: clean setup-venv    ## Generate sphinx documentation
 
 
 .PHONY: build
-build: pre-build setup-venv artifacts   ## Build dist, increment version || force version (VERSION=X.Y)
+build: pre-build setup-venv   ## Build dist, increment version || force version (VERSION=X.Y)
 	if [ $(VERSION) ]; then bash $(SCRIPTS)/version_update.sh $(VERSION); \
 	else bash $(SCRIPTS)/version_update.sh; fi && . $(VENV_DIR)/bin/activate && \
 	cd $(CUR_DIR) && $(PYTHON3_PATH) setup.py sdist
