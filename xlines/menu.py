@@ -4,7 +4,7 @@ Curses-menu
 import sys
 import logging
 from xlines import __version__
-from xlines.cli import display_exclusions
+from xlines.configure import display_exclusions
 
 try:
     from cursesmenu import CursesMenu, SelectionMenu
