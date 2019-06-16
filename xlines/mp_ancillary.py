@@ -121,7 +121,7 @@ def remove_illegal(d, illegal):
     return sorted(list(set(d) - set(bad)))
 
 
-def locate_fileobjects(origin, path=expath):
+def locate_fileobjects(origin, relpath=False, path=expath):
     """
     Summary.
 
@@ -129,6 +129,7 @@ def locate_fileobjects(origin, path=expath):
 
     Args:
         - origin (str): filesystem directory location
+        - relpath (bool): return paths relative to current cursor position (default: False)
 
     Returns:
         - paths, TYPE: list
@@ -156,7 +157,12 @@ def locate_fileobjects(origin, path=expath):
         for file in [f for f in files if '.git' not in root]:
             try:
 
-                full_path = os.path.abspath(os.path.join(root, file))
+                if relpath:
+                    # relative paths (optional)
+                    full_path = os.path.relpath(os.path.join(root, file))
+                else:
+                    # absolute paths (default)
+                    full_path = os.path.abspath(os.path.join(root, file))
 
                 #if not ex.excluded(full_path):
                 fobjects.append(full_path)
