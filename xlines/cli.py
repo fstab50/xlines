@@ -128,6 +128,13 @@ def _configure(expath, exdirpath):
         return False
 
 
+def absolute_paths(path_list):
+    prefix = '/'
+    if any(i.startswith(prefix) for i in path_list):
+        return True
+    return False
+
+
 def display_exclusions(expath, exdirpath):
     """
     Show list of all file type extensions which are excluded
@@ -180,7 +187,7 @@ class ExcludedTypes():
             return []
 
 
-def sp_linecount(path, exclusions):
+def sp_linecount(path, abspath, exclusions):
     """
         Single threaded (sequentials processing) line count
 
@@ -194,7 +201,7 @@ def sp_linecount(path, exclusions):
             return remove_illegal([path], exclusions)
 
         elif os.path.isdir(path):
-            d = locate_fileobjects(path)
+            d = locate_fileobjects(path, abspath)
             valid_paths = remove_illegal(d, exclusions)
             return valid_paths
 
@@ -275,10 +282,11 @@ def longest_path(parameters, exclusions):
         width (integer), number of characters in longest path
     """
     mp = MaxWidth()     # max path object
+    abspath = absolute_paths(parameters)
 
     for i in parameters:
         try:
-            paths = sp_linecount(i, exclusions.types)
+            paths = sp_linecount(i, abspath, exclusions.types)
             width = mp.calc_maxpath(paths)
         except TypeError:
             stdout_message(message='Provided path appears to be invalid', prefix='WARN')
@@ -304,7 +312,7 @@ class MaxWidth():
 def module_dir():
     """Filsystem location of Python3 modules"""
     bin_path = which('python3.6') or which('python3.7')
-    bin =  bin_path.split('/')[-1]
+    bin = bin_path.split('/')[-1]
     if 'local' in bin:
         return '/usr/local/lib/' + bin + '/site-packages'
     return '/usr/lib/' + bin + '/site-packages'
@@ -427,7 +435,7 @@ def init_cli():
 
         ex = ExcludedTypes(ex_path=str(Path.home()) + '/.config/xlines/exclusions.list')
         container = create_container(args.sum)
-
+        abspath = absolute_paths(container)
 
         if args.debug:
             print('\nargs.sum:')
@@ -453,7 +461,7 @@ def init_cli():
 
             for i in container:
 
-                paths = sp_linecount(i, ex.types)
+                paths = sp_linecount(i, abspath, ex.types)
 
                 for path in paths:
 
