@@ -1,5 +1,5 @@
 """
-    Static Variable assignments
+    Static assignments for universally used colors and variables
 
 """
 

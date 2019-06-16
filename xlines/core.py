@@ -10,7 +10,7 @@ import logging
 from xlines.colors import Colors
 from xlines.statics import local_config
 from xlines._version import __version__
-
+from xlines.variables import *
 
 logger = logging.getLogger(__version__)
 logger.setLevel(logging.INFO)
@@ -32,7 +32,7 @@ except Exception:
     text = Colors.LT2GRAY
     TITLE = Colors.WHITE + Colors.BOLD
 
-
+"""
 # universal colors
 rd = Colors.RED + Colors.BOLD
 yl = Colors.YELLOW + Colors.BOLD
@@ -56,7 +56,7 @@ div_len = 2
 horiz = text + '-' + rst
 arrow = bwt + '-> ' + rst
 BUFFER = local_config['OUTPUT']['BUFFER']
-
+"""
 
 def linecount(path, whitespace=True):
     if whitespace:
