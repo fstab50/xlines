@@ -5,9 +5,9 @@ Summary.
 
 """
 import os
+import sys
 import inspect
 import logging
-from xlines.statics import local_config
 from xlines.usermessage import stdout_message
 from xlines.colormap import ColorMap
 from xlines._version import __version__
@@ -17,6 +17,15 @@ logger = logging.getLogger(__version__)
 logger.setLevel(logging.INFO)
 
 cm = ColorMap()
+
+try:
+
+    from xlines.oscodes_unix import exit_codes
+    os_type = 'Linux'
+
+except Exception:
+    from xlines.oscodes_win import exit_codes    # non-specific os-safe codes
+    os_type = 'Windows'
 
 
 def display_exclusions(expath, exdirpath):
