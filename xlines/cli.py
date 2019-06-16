@@ -26,6 +26,7 @@ SOFTWARE.
 """
 import os
 import sys
+import re
 import json
 import inspect
 import argparse
@@ -318,8 +319,6 @@ class RelpathProcessing():
             return './' + path
         elif self.pattern_asci.match(path):
             return './' + path
-        elif path.startswith('/'):
-            return '.' + path
         else:
             return './' + path
 
@@ -424,6 +423,7 @@ def init_cli():
 
                         # format tabular line totals with commas
                         #output_str = f'{tab4}{lpath}{div}{fname}{tab}{ct_format}{"{:,}".format(inc):>7}{rst}'
+                        # RUN IT THRU RELPATH CLASS HERE
                         output_str = f'{tab4}{lpath}{fname}{tab}{ct_format}{"{:,}".format(inc):>7}{rst}'
                         print(output_str)
 
