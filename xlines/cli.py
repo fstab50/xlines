@@ -69,6 +69,7 @@ bd = Colors.BOLD
 gn = Colors.BRIGHT_GREEN
 title = Colors.BRIGHT_WHITE + Colors.BOLD
 bbc = bd + Colors.BRIGHT_CYAN
+highlight = bd + Colors.BRIGHT_YELLOW2
 frame = gn + bd
 btext = text + Colors.BOLD
 bwt = Colors.BRIGHT_WHITE
@@ -383,6 +384,9 @@ def print_header(w):
 
 
 def print_footer(total, object_count, w):
+    """
+    Print total number of objects and cumulative total line count
+    """
     total_width = w + local_config['OUTPUT']['COUNT_COLUMN_WIDTH']
 
     # add commas
@@ -400,7 +404,7 @@ def print_footer(total, object_count, w):
     print(tab4 + (horiz * (total_width)))
 
     # ending summary stats line
-    print(f'{tab4}{msg}{tab}{bd + "{:,}".format(total) + rst:>6}' + '\n')
+    print(f'{tab4}{msg}{tab}{highlight + "{:,}".format(total) + rst:>6}' + '\n')
 
 
 def create_container(parameters):
