@@ -306,6 +306,24 @@ def create_container(parameters):
     return container
 
 
+class RelpathProcessing():
+    """Corrects relative paths"""
+    def __init__(self):
+        self.pattern_hidden = re.compile('^.[a-z]+')                    # hidden file (.xyz)
+        self.pattern_asci = re.compile('^[a-z]+', re.IGNORECASE)        # regular, standalone file
+
+    def normalize(self, path):
+        """Prepends correct filesystem syntax if pwd counted"""
+        if self.pattern_hidden.match(path):
+            return './' + path
+        elif self.pattern_asci.match(path):
+            return './' + path
+        elif path.startswith('/'):
+            return '.' + path
+        else:
+            return './' + path
+
+
 def init_cli():
     ex_files = local_config['EXCLUSIONS']['EX_EXT_PATH']
     ex_dirs = local_config['EXCLUSIONS']['EX_DIR_PATH']
@@ -405,8 +423,13 @@ def init_cli():
                         ct_format = acct if inc > hicount_threshold else bwt
 
                         # format tabular line totals with commas
-                        output_str = f'{tab4}{lpath}{div}{fname}{tab}{ct_format}{"{:,}".format(inc):>7}{rst}'
+                        #output_str = f'{tab4}{lpath}{div}{fname}{tab}{ct_format}{"{:,}".format(inc):>7}{rst}'
+                        output_str = f'{tab4}{lpath}{fname}{tab}{ct_format}{"{:,}".format(inc):>7}{rst}'
                         print(output_str)
+
+                        if args.debug:
+                            print(tab4*2 + 'lpath is {}'.format(lpath))
+                            print(tab4*2 + 'fname is {}\n'.format(fname))
 
                     except Exception:
                         io_fail.append(path)

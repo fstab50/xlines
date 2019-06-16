@@ -5,6 +5,7 @@ Summary.
 
 """
 import os
+import re
 import inspect
 import logging
 from xlines.colors import Colors
@@ -127,13 +128,17 @@ def locate_fileobjects(origin, abspath=True):
     """
     def relpath_normalize(path):
         """Prepends correct filesystem syntax if pwd counted"""
-        if path.startswith('.'):
-            return path
-        elif path.startswith('/'):
-            return '.' + path
+        if pattern_hidden.match(path):
+            return './' + path
+        elif pattern_asci.match(path):
+            return './' + path
+        #elif path.startswith('/'):
+        #    return '.' + path
         else:
             return './' + path
 
+    pattern_hidden = re.compile('^.[a-z]+')        # hidden file (.xyz)
+    pattern_asci = re.compile('^[a-z]+', re.IGNORECASE)
     fobjects = []
 
     if os.path.isfile(origin):
