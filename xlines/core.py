@@ -125,6 +125,15 @@ def locate_fileobjects(origin, abspath=True):
                 ]
 
     """
+    def relpath_normalize(path):
+        """Prepends correct filesystem syntax if pwd counted"""
+        if path.startswith('.'):
+            return path
+        elif path.startswith('/'):
+            return '.' + path
+        else:
+            return './' + path
+
     fobjects = []
 
     if os.path.isfile(origin):
@@ -140,6 +149,7 @@ def locate_fileobjects(origin, abspath=True):
                 else:
                     # relative paths (optional)
                     _path = os.path.relpath(os.path.join(root, file))
+                    _path = relpath_normalize(_path)
 
                 fobjects.append(_path)
 
