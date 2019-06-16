@@ -163,7 +163,7 @@ update-src-install:    ## Update Install (source: local source).
 
 
 .PHONY: rebuild-docs
-rebuild-docs:   ##  Regenerate sphinx documentation
+rebuild-docs:   ## Regenerate sphinx documentation
 	cd $(CUR_DIR)/docs && . $(VENV_DIR)/bin/activate && $(MAKE) html && cd $(CUR_DIR);
 
 
