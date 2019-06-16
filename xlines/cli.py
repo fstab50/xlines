@@ -422,9 +422,7 @@ def init_cli():
                         ct_format = acct if inc > hicount_threshold else bwt
 
                         # format tabular line totals with commas
-                        #output_str = f'{tab4}{lpath}{div}{fname}{tab}{ct_format}{"{:,}".format(inc):>7}{rst}'
-                        # RUN IT THRU RELPATH CLASS HERE
-                        output_str = f'{tab4}{lpath}{fname}{tab}{ct_format}{"{:,}".format(inc):>7}{rst}'
+                        output_str = f'{tab4}{lpath}{div}{fname}{tab}{ct_format}{"{:,}".format(inc):>7}{rst}'
                         print(output_str)
 
                         if args.debug:

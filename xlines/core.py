@@ -127,15 +127,13 @@ def locate_fileobjects(origin, abspath=True):
 
     """
     def relpath_normalize(path):
-        """Prepends correct filesystem syntax if pwd counted"""
-        if pattern_hidden.match(path):
+        """
+        Prepends correct relative filesystem syntax if analyzed pwd
+        """
+        if pattern_hidden.match(path) or pattern_asci.match(path):
             return './' + path
-        elif pattern_asci.match(path):
-            return './' + path
-        #elif path.startswith('/'):
-        #    return '.' + path
-        else:
-            return './' + path
+        elif path.startswith('..'):
+            return path
 
     pattern_hidden = re.compile('^.[a-z]+')        # hidden file (.xyz)
     pattern_asci = re.compile('^[a-z]+', re.IGNORECASE)
