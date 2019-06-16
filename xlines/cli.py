@@ -444,6 +444,7 @@ def init_cli():
             print(sys.argv)
             print(f'\ncontainer is:\n {container}')
             print(f'\nunknown object: {unknown}')
+            print('abspath bool is {}'.format(abspath))
 
         if args.multiprocess:
             # --- run with concurrency --

@@ -166,7 +166,6 @@ def locate_fileobjects(origin, abspath=True):
                     # relative paths (optional)
                     _path = os.path.relpath(os.path.join(root, file))
 
-                #if not ex.excluded(full_path):
                 fobjects.append(_path)
 
             except OSError:
