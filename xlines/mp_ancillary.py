@@ -1,7 +1,7 @@
 """
 Summary.
 
-    Commons Module -- Common Functionality
+    Core Logic Module -- Common Functionality
 
 """
 import os
