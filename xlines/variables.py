@@ -2,15 +2,28 @@
     Static assignments for universally used colors and variables
 
 """
-
 from xlines.statics import local_config
 from xlines.colors import Colors
 
+try:
 
-# special colors
-acct = Colors.ORANGE
-text = Colors.BRIGHT_PURPLE
-TITLE = Colors.WHITE + Colors.BOLD
+    from xlines.oscodes_unix import exit_codes
+    os_type = 'Linux'
+
+    # special colors - linux
+    acct = Colors.ORANGE
+    text = Colors.BRIGHT_PURPLE
+    TITLE = Colors.WHITE + Colors.BOLD
+
+except Exception:
+    from xlines.oscodes_win import exit_codes    # non-specific os-safe codes
+    os_type = 'Windows'
+
+    # special colors - windows
+    acct = Colors.CYAN
+    text = Colors.LT2GRAY
+    TITLE = Colors.WHITE + Colors.BOLD
+
 
 # universal colors
 rd = Colors.RED + Colors.BOLD
