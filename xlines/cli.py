@@ -38,7 +38,7 @@ from xlines.usermessage import stdout_message
 from xlines.statics import PACKAGE, local_config
 from xlines.help_menu import menu_body
 from xlines.mp import multiprocessing_main
-from xlines.core import linecount, locate_fileobjects, remove_illegal
+from xlines.core import linecount, locate_fileobjects, remove_illegal, print_footer, print_header
 from xlines.colormap import ColorMap
 
 
@@ -370,41 +370,6 @@ def precheck(user_exfiles, user_exdirs, debug):
         logger.exception('{}: Problem installing user config files. Exit'.format(fx))
         return False
     return True
-
-
-def print_header(w):
-    total_width = w + local_config['OUTPUT']['COUNT_COLUMN_WIDTH']
-    header_lhs = 'object'
-    header_rhs = 'line count'
-    tab = '\t'.expandtabs(total_width - len(header_lhs) - len(header_rhs))
-    tab4 = '\t'.expandtabs(4)
-    print(tab4 + (horiz * (total_width)))
-    print(f'{tab4}{header_lhs}{tab}{header_rhs}')
-    print(tab4 + (horiz * (total_width)))
-
-
-def print_footer(total, object_count, w):
-    """
-    Print total number of objects and cumulative total line count
-    """
-    total_width = w + local_config['OUTPUT']['COUNT_COLUMN_WIDTH']
-
-    # add commas
-    total_lines = '{:,}'.format(object_count)
-
-    # calc dimensions; no color codes
-    msg = 'Total ({} objects):'.format(total_lines)
-    tab = '\t'.expandtabs(total_width - len(msg) - len(str(total)) - 1)
-
-    # redefine with color codes added
-    msg = f'Total ({title + "{:,}".format(object_count) + rst} objects):'
-    tab4 = '\t'.expandtabs(4)
-
-    # divider pattern
-    print(tab4 + (horiz * (total_width)))
-
-    # ending summary stats line
-    print(f'{tab4}{msg}{tab}{highlight + "{:,}".format(total) + rst:>6}' + '\n')
 
 
 def create_container(parameters):
