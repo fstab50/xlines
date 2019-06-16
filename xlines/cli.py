@@ -38,6 +38,7 @@ from xlines.statics import PACKAGE, local_config
 from xlines.help_menu import menu_body
 from xlines.mp import multiprocessing_main
 from xlines.core import linecount, locate_fileobjects, remove_illegal, print_footer, print_header
+from xlines.configure import display_exclusions, _configure
 from xlines.colormap import ColorMap
 from xlines.variables import *
 
@@ -65,82 +66,11 @@ except Exception:
 container = []
 
 
-def _configure(expath, exdirpath):
-    """
-        Add exclusions and update runtime constants
-
-    Returns:
-        Success | Failure, TYPE: bool
-    """
-    try:
-
-        # clear screen
-        os.system('cls' if os.name == 'nt' else 'clear')
-        display_exclusions(expath, exdirpath)
-
-        with open(expath) as f1:
-            exclusions = [x.strip() for x in f1.readlines()]
-
-        # query user input for new exclusions
-        response = input('  Enter file extension types to be excluded separated by commas [quit]: ')
-
-        if not response:
-            sys.exit(exit_codes['EX_OK']['Code'])
-        else:
-            add_list = response.split(',')
-
-            # add new extensions to existing
-            exclusions.extend(['.' + x for x in add_list if '.' not in x])
-
-            # write out new exclusions config file
-            with open(expath, 'w') as f2:
-                f2.writelines([x + '\n' for x in exclusions])
-
-            display_exclusions(expath, exdirpath)    # display resulting exclusions set
-            return True
-
-    except OSError:
-        stdout_message(
-            message='Unable to modify local config file located at {}'.format(expath),
-            prefix='WARN')
-        return False
-
-
 def absolute_paths(path_list):
     prefix = '/'
     if any(i.startswith(prefix) for i in path_list):
         return True
     return False
-
-
-def display_exclusions(expath, exdirpath):
-    """
-    Show list of all file type extensions which are excluded
-    from line total calculations
-    """
-    tab = '\t'.expandtabs(15)
-
-    # numbering
-    div = cm.bpl + ')' + rst
-
-    try:
-
-        if os.path.exists(expath):
-            with open(expath) as f1:
-                exclusions = [x.strip() for x in f1.readlines()]
-
-        stdout_message(message='File types excluded from line totals:')
-
-        for index, ext in enumerate(exclusions):
-            print('{}{:>3}{}'.format(tab, index + 1, div + '  ' + ext))
-
-        sys.stdout.write('\n')
-        return True
-
-    except OSError as e:
-        fx = inspect.stack()[0][3]
-        stdout_message(message=f'{fx}: Error: {e}. ', prefix='WARN')
-        return False
 
 
 class ExcludedTypes():
