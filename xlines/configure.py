@@ -58,6 +58,11 @@ def display_exclusions(expath, exdirpath):
         return False
 
 
+def main_menupage(options):
+    """Displays main configuration menu jump page and options"""
+    pass
+    
+
 def _configure(expath, exdirpath):
     """
         Add exclusions and update runtime constants
