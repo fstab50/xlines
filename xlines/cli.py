@@ -38,7 +38,7 @@ from xlines.usermessage import stdout_message
 from xlines.statics import PACKAGE, local_config
 from xlines.help_menu import menu_body
 from xlines.mp import multiprocessing_main
-from xlines.mp_ancillary import linecount, locate_fileobjects, remove_illegal
+from xlines.core import linecount, locate_fileobjects, remove_illegal
 from xlines.colormap import ColorMap
 
 
