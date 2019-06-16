@@ -5,6 +5,7 @@ Summary.
 
 """
 import os
+import inspect
 import logging
 from xlines.colors import Colors
 from xlines.statics import local_config
@@ -122,7 +123,7 @@ def remove_illegal(d, illegal):
     return sorted(list(set(d) - set(bad)))
 
 
-def locate_fileobjects(origin, relpath=False, path=expath):
+def locate_fileobjects(origin, abspath=True, path=expath):
     """
     Summary.
 
@@ -158,12 +159,12 @@ def locate_fileobjects(origin, relpath=False, path=expath):
         for file in [f for f in files if '.git' not in root]:
             try:
 
-                if relpath:
-                    # relative paths (optional)
-                    full_path = os.path.relpath(os.path.join(root, file))
-                else:
+                if abspath:
                     # absolute paths (default)
                     full_path = os.path.abspath(os.path.join(root, file))
+                else:
+                    # relative paths (optional)
+                    full_path = os.path.relpath(os.path.join(root, file))
 
                 #if not ex.excluded(full_path):
                 fobjects.append(full_path)
