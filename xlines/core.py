@@ -39,6 +39,7 @@ fs = Colors.GOLD3
 bd = Colors.BOLD
 gn = Colors.BRIGHT_GREEN
 title = Colors.BRIGHT_WHITE + Colors.BOLD
+highlight = bd + Colors.BRIGHT_YELLOW2
 bbc = bd + Colors.BRIGHT_CYAN
 frame = gn + bd
 btext = text + Colors.BOLD
@@ -188,12 +189,24 @@ def print_header(w):
 
 
 def print_footer(total, object_count, w):
+    """
+    Print total number of objects and cumulative total line count
+    """
     total_width = w + local_config['OUTPUT']['COUNT_COLUMN_WIDTH']
-    msg = 'Total ({} objects):'.format(str(object_count))
+
+    # add commas
+    total_lines = '{:,}'.format(object_count)
+
+    # calc dimensions; no color codes
+    msg = 'Total ({} objects):'.format(total_lines)
     tab = '\t'.expandtabs(total_width - len(msg) - len(str(total)) - 1)
 
     # redefine with color codes added
     msg = f'Total ({title + "{:,}".format(object_count) + rst} objects):'
     tab4 = '\t'.expandtabs(4)
+
+    # divider pattern
     print(tab4 + (horiz * (total_width)))
-    print(f'{tab4}{msg}{tab}{bd + "{:,}".format(total) + rst:>6}' + '\n')
+
+    # ending summary stats line
+    print(f'{tab4}{msg}{tab}{highlight + "{:,}".format(total) + rst:>6}' + '\n')
