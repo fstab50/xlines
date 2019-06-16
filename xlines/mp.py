@@ -54,8 +54,8 @@ def print_results(object_list):
     width = longest_path_mp(object_list)
 
     print_header(width)
-    count_width = local_config['PROJECT']['COUNT_COLUMN_WIDTH']
-    hicount_threshold = local_config['PROJECT']['COUNT_THRESHOLD']
+    count_width = local_config['OUTPUT']['COUNT_COLUMN_WIDTH']
+    hicount_threshold = local_config['OUTPUT']['COUNT_HI_THRESHOLD']
 
     for object_dict in object_list:
 
