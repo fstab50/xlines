@@ -180,9 +180,15 @@ class ExcludedTypes():
 
 
 def sp_linecount(path, exclusions):
-    """Single process line count"""
-    p = path
+    """
+        Single threaded (sequentials processing) line count
+
+    Return:
+        valid filesystem paths (str)
+
+    """
     try:
+
         if os.path.isfile(path):
             return remove_illegal([path], exclusions)
 
@@ -190,8 +196,7 @@ def sp_linecount(path, exclusions):
             d = locate_fileobjects(path)
             valid_paths = remove_illegal(d, exclusions)
             return valid_paths
-            #for p in valid_paths:
-            #    print_reportline({p: linecount(p)})
+
     except UnicodeDecodeError:
         pass
 
