@@ -135,8 +135,8 @@ def locate_fileobjects(origin, abspath=True):
         elif path.startswith('..'):
             return path
 
-    pattern_hidden = re.compile('^.[a-z]+')        # hidden file (.xyz)
-    pattern_asci = re.compile('^[a-z]+', re.IGNORECASE)
+    pattern_hidden = re.compile('^.[a-z]+')                    # hidden file (.xyz)
+    pattern_asci = re.compile('^[a-z]+', re.IGNORECASE)        # standalone, regular file
     fobjects = []
 
     if os.path.isfile(origin):
