@@ -34,22 +34,6 @@ exceptions=(
 )
 
 
-function current_branch(){
-    ##
-    ##  returns current working branch
-    ##
-    echo "$(git branch 2>/dev/null | grep '\*' | awk '{print $2}')"
-}
-
-
-function _git_root(){
-    ##
-    ##  determines full path to current git project root
-    ##
-    echo "$(git rev-parse --show-toplevel 2>/dev/null)"
-}
-
-
 function _filter_objects(){
     ##
     ##  returns file objects in pwd; minus exception list members
@@ -178,15 +162,7 @@ function _xlines_completions(){
     numargs=0
     numoptions=0
 
-    commands='--help --exclusions --configure --multiprocess --sum --version --whitespace'
-
-    function _is_sum(){
-        if [[ "$(echo "${COMP_WORDS[@]}" | grep '\-\-sum')" ]]; then
-            is_sum='yes'
-        else
-            is_sum='no'
-        fi
-    }
+    commands='--help --exclusions --configure --debug --multiprocess --sum --version --whitespace'
 
     case "${cur}" in
 
@@ -231,7 +207,7 @@ function _xlines_completions(){
 
     case "${prev}" in
 
-        '--help' | '--exclusions' | '--version')
+        '--help' | '--exclusions' | '--version' | '--debug')
             return 0
             ;;
 
