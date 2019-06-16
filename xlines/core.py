@@ -123,7 +123,7 @@ def remove_illegal(d, illegal):
     return sorted(list(set(d) - set(bad)))
 
 
-def locate_fileobjects(origin, abspath=True, path=expath):
+def locate_fileobjects(origin, abspath=True):
     """
     Summary.
 
@@ -131,7 +131,7 @@ def locate_fileobjects(origin, abspath=True, path=expath):
 
     Args:
         - origin (str): filesystem directory location
-        - relpath (bool): return paths relative to current cursor position (default: False)
+        - abspath (bool): return absolute paths relative to current cursor position
 
     Returns:
         - paths, TYPE: list
@@ -161,18 +161,18 @@ def locate_fileobjects(origin, abspath=True, path=expath):
 
                 if abspath:
                     # absolute paths (default)
-                    full_path = os.path.abspath(os.path.join(root, file))
+                    _path = os.path.abspath(os.path.join(root, file))
                 else:
                     # relative paths (optional)
-                    full_path = os.path.relpath(os.path.join(root, file))
+                    _path = os.path.relpath(os.path.join(root, file))
 
                 #if not ex.excluded(full_path):
-                fobjects.append(full_path)
+                fobjects.append(_path)
 
             except OSError:
                 logger.exception(
                     '%s: Read error while examining local filesystem path (%s)' %
-                    (inspect.stack()[0][3], path)
+                    (inspect.stack()[0][3], _path)
                 )
                 continue
     return remove_duplicates(fobjects)
