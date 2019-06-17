@@ -54,7 +54,7 @@ else:
     config_dirpath = user_home + '/' + config_dir + '/' + config_subdir
     config_path = config_dirpath + '/' + config_filename
 
-    # output format
+    # output dimensions
     count_column_width = 7                                    # characters
     min_buffer_chars = 6                                      # characters
     min_width = 80 - count_column_width - min_buffer_chars    # characters
