@@ -71,29 +71,31 @@ def main_menupage(exclusion_files, exclusions_dirs):
 
         ''' + bdwt + PACKAGE + rst + ''' configuration main menu:
 
-            a)  Add file type exclusion list
+                a)  Add file type exclusion list
 
-            b)  Remove file type from exclusion list
+                b)  Remove file type from exclusion list
 
-            c)  Set high count threshold (''' + highlight + 'highlight' + rst + ''' file objects)
+                c)  Set high line count threshold (''' + acct + 'highlight' + rst + ''' file objects)
 
-            d)  quit
+                d)  quit
     ________________________________________________________________________________
-
     ''')
     loop = True
     tab8 = '\t'.expandtabs(8)
 
     while loop:
         answer = input('{}Choose operation [quit]: '.format(tab8))
+        sys.stdout.write('\n')
+
         if not answer:
             return True
         elif answer in ['a', 'b', 'c', 'd']:
+            condition_map(answer)
             loop = False
-            return condition_map(answer)
         else:
             stdout_message('You must provide a letter a, b, c, or d', prefix='INFO')
-
+            sys.stdout.write('\n')
+            
 
 def _configure_add(expath, exdirpath):
     """
