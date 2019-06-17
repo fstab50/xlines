@@ -39,7 +39,7 @@ from xlines.statics import PACKAGE, local_config
 from xlines.help_menu import menu_body
 from xlines.mp import multiprocessing_main
 from xlines.core import linecount, locate_fileobjects, remove_illegal, print_footer, print_header
-from xlines.configure import display_exclusions, _configure
+from xlines.configure import display_exclusions, main_menupage
 from xlines.colormap import ColorMap
 from xlines.variables import *
 
@@ -350,7 +350,7 @@ def init_cli():
         display_exclusions(ex_files, ex_dirs)
 
     elif args.configure:
-        _configure(ex_files, ex_dirs)
+        main_menupage(ex_files, ex_dirs)
 
     elif len(sys.argv) == 2 and (sys.argv[1] != '.'):
         help_menu()

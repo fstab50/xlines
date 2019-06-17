@@ -11,6 +11,7 @@ import logging
 from xlines.usermessage import stdout_message
 from xlines.colormap import ColorMap
 from xlines._version import __version__
+from xlines.statics import PACKAGE
 from xlines.variables import *
 
 logger = logging.getLogger(__version__)
@@ -58,12 +59,43 @@ def display_exclusions(expath, exdirpath):
         return False
 
 
-def main_menupage(options):
-    """Displays main configuration menu jump page and options"""
+def condition_map(letter):
     pass
-    
 
-def _configure(expath, exdirpath):
+
+def main_menupage(exclusion_files, exclusions_dirs):
+    """Displays main configuration menu jump page and options"""
+    os.system('cls' if os.name == 'nt' else 'clear')
+    print('''
+    ________________________________________________________________________________
+
+        ''' + bdwt + PACKAGE + rst + ''' configuration main menu:
+
+            a)  Add file type exclusion list
+
+            b)  Remove file type from exclusion list
+
+            c)  Set high count threshold (''' + highlight + 'highlight' + rst + ''' file objects)
+
+            d)  quit
+    ________________________________________________________________________________
+
+    ''')
+    loop = True
+    tab8 = '\t'.expandtabs(8)
+
+    while loop:
+        answer = input('{}Choose operation [quit]: '.format(tab8))
+        if not answer:
+            return True
+        elif answer in ['a', 'b', 'c', 'd']:
+            loop = False
+            return condition_map(answer)
+        else:
+            stdout_message('You must provide a letter a, b, c, or d', prefix='INFO')
+
+
+def _configure_add(expath, exdirpath):
     """
         Add exclusions and update runtime constants
 
@@ -88,7 +120,7 @@ def _configure(expath, exdirpath):
             add_list = response.split(',')
 
             # add new extensions to existing
-            exclusions.extend(['.' + x for x in add_list if '.' not in x])
+            exclusions.extend([x if x.startswith('.') else '.' + x for x in add_list])
 
             # write out new exclusions config file
             with open(expath, 'w') as f2:
