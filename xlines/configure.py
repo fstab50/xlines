@@ -152,42 +152,59 @@ def _configure_add(expath, exdirpath):
 
 def _configure_remove(expath, exdirpath):
 
-    # open current file type exclusions
-    with open(expath) as f1:
-        f2 = [x.strip() for x in f1.readlines()]
-
-    # print out current exclusion list contents
-    for index, i in enumerate(f2):
-        print(f'{index})  {i}')
-
-    answer = input('\nPick a number to remove [none]: ')
-
-    # remove entry selected by user
-    f2.pop(int(answer)
-
-    # Acknowledge removal
-    if int(answer) in f2:
-        stdout_message(
-            message='Failure to remove {} - reason unknown'.format(answer),
-            indent=16,
-            prefix='FAIL')
-    else:
-        stdout_message(
-                message='Successfully removed file type exclusion: {}'.format(answer),
-                indent=16,
-                prefix='ok'
-            )
-
-    # write new exclusions.list
     try:
+        # clear screen
+        display_exclusions(expath, exdirpath)
 
-        with open(expath, 'w') as f1:
-            list(filter(lambda x: f1.write(x + '\n'), f2))
+        # open current file type exclusions
+        with open(expath) as f1:
+            f2 = [x.strip() for x in f1.readlines()]
 
-    except OSError as e:
-        fx = inspect.stack()[0][3]
-        stdout_message(f'{fx}: Problem writing new file type exclusion list: {expath}', prefix='WARN')
-        sys.exit(exit_codes['E_ENVIRONMENT']['Code'])
+        # print out current exclusion list contents
+        for index, i in enumerate(f2):
+            print(f'{index})  {i}')
+
+        answer = input('\nPick a number to remove [none]: ')
+
+        if not answer:
+            return True
+        else:
+            # remove entry selected by user
+            f2.pop(int(answer) - 1)
+
+        try:
+            # write new exclusion list to local disk
+            with open(expath, 'w') as f1:
+                list(filter(lambda x: f1.write(x + '\n'), f2))
+
+        except OSError as e:
+            fx = inspect.stack()[0][3]
+            stdout_message(
+                f'{fx}: Problem writing new file type exclusion list: {expath}: {e}',
+                prefix='WARN')
+            return False
+
+        # show new exclusion list contents
+        display_exclusions(expath, exdirpath)    # display resulting exclusions set
+
+        # Acknowledge removal
+        if answer in f2:
+            stdout_message(
+                message='Failure to remove {} - reason unknown'.format(f2[int(answer)]),
+                indent=16,
+                prefix='FAIL')
+
+        else:
+            stdout_message(
+                    message='Successfully removed file type exclusion: {}'.format(f2[int(answer) - 1]),
+                    indent=16,
+                    prefix='ok'
+                )
+    except OSError:
+        stdout_message(
+            message='Unable to modify local config file located at {}'.format(expath),
+            prefix='WARN')
+        return False
 
 
 def _configure_hicount(expath, exdirpath):
