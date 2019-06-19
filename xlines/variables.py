@@ -43,6 +43,7 @@ rst = Colors.RESET
 
 # globals
 expath = local_config['EXCLUSIONS']['EX_EXT_PATH']
+exdirpath = local_config['EXCLUSIONS']['EX_DIR_PATH']
 config_dir = local_config['CONFIG']['CONFIG_PATH']
 div = text + '/' + rst
 div_len = 2

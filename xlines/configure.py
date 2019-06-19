@@ -59,13 +59,13 @@ def display_exclusions(expath, exdirpath):
         return False
 
 
-def condition_map(letter):
+def condition_map(letter, expath, exdirpath):
     return {
         'a': _configure_add,
         'b': _configure_delete,
         'c': _configure_hicount,
-        'd': sys.exit(0)
-    }.get(letter, sys.exit(0))
+        'd': sys.exit
+    }.get(letter, lambda: None)(expath, exdirpath)
 
 
 def main_menupage(exclusion_files, exclusions_dirs):
@@ -98,7 +98,7 @@ def main_menupage(exclusion_files, exclusions_dirs):
         if not answer:
             return True
         elif answer in ['a', 'b', 'c', 'd']:
-            condition_map(answer)
+            condition_map(answer, expath, exdirpath)
             loop = False
         else:
             stdout_message('You must provide a letter a, b, c, or d', prefix='INFO')
@@ -144,3 +144,13 @@ def _configure_add(expath, exdirpath):
             message='Unable to modify local config file located at {}'.format(expath),
             prefix='WARN')
         return False
+
+
+def _configure_delete(expath, exdirpath):
+    print('delete file ext -- stub\n')
+    pass
+
+
+def _configure_hicount(expath, exdirpath):
+    print('set hicount -- stub\n')
+    pass
