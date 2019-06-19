@@ -64,8 +64,8 @@ def condition_map(letter, expath, exdirpath):
         'a': _configure_add,
         'b': _configure_delete,
         'c': _configure_hicount,
-        'd': sys.exit
-    }.get(letter, lambda: None)(expath, exdirpath)
+        'd': lambda x, y: sys.exit
+    }.get(letter, lambda x, y: None)(expath, exdirpath)
 
 
 def main_menupage(exclusion_files, exclusions_dirs):
