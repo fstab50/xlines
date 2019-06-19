@@ -77,6 +77,7 @@ def main_menupage(exclusion_files, exclusions_dirs):
 
         ''' + bdwt + PACKAGE + rst + ''' configuration main menu:
 
+
               a)  Add file type exclusion list
 
               b)  Remove file type from exclusion list
