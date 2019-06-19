@@ -60,7 +60,12 @@ def display_exclusions(expath, exdirpath):
 
 
 def condition_map(letter):
-    pass
+    return {
+        'a': _configure_add,
+        'b': _configure_delete,
+        'c': _configure_hicount,
+        'd': sys.exit(0)
+    }.get(letter, sys.exit(0))
 
 
 def main_menupage(exclusion_files, exclusions_dirs):
@@ -69,15 +74,17 @@ def main_menupage(exclusion_files, exclusions_dirs):
     print('''
     ________________________________________________________________________________
 
+
         ''' + bdwt + PACKAGE + rst + ''' configuration main menu:
 
-                a)  Add file type exclusion list
+              a)  Add file type exclusion list
 
-                b)  Remove file type from exclusion list
+              b)  Remove file type from exclusion list
 
-                c)  Set high line count threshold (''' + acct + 'highlight' + rst + ''' file objects)
+              c)  Set high line count threshold (''' + acct + 'highlight' + rst + ''' file objects)
 
-                d)  quit
+              d)  quit
+
     ________________________________________________________________________________
     ''')
     loop = True
@@ -95,7 +102,7 @@ def main_menupage(exclusion_files, exclusions_dirs):
         else:
             stdout_message('You must provide a letter a, b, c, or d', prefix='INFO')
             sys.stdout.write('\n')
-            
+
 
 def _configure_add(expath, exdirpath):
     """
