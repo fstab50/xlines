@@ -62,7 +62,7 @@ def display_exclusions(expath, exdirpath):
 def condition_map(letter, expath, exdirpath):
     return {
         'a': _configure_add,
-        'b': _configure_delete,
+        'b': _configure_remove,
         'c': _configure_hicount,
         'd': lambda x, y: sys.exit
     }.get(letter, lambda x, y: None)(expath, exdirpath)
@@ -92,7 +92,7 @@ def main_menupage(exclusion_files, exclusions_dirs):
     tab8 = '\t'.expandtabs(8)
 
     while loop:
-        answer = input('{}Choose operation [quit]: '.format(tab8))
+        answer = input('{}Choose operation [quit]: '.format(tab8)).lower()
         sys.stdout.write('\n')
 
         if not answer:
@@ -101,7 +101,11 @@ def main_menupage(exclusion_files, exclusions_dirs):
             condition_map(answer, expath, exdirpath)
             loop = False
         else:
-            stdout_message('You must provide a letter a, b, c, or d', prefix='INFO')
+            stdout_message(
+                    message='You must provide a letter a, b, c, or d',
+                    indent=16,
+                    prefix='INFO'
+                )
             sys.stdout.write('\n')
 
 
@@ -146,8 +150,8 @@ def _configure_add(expath, exdirpath):
         return False
 
 
-def _configure_delete(expath, exdirpath):
-    print('delete file ext -- stub\n')
+def _configure_remove(expath, exdirpath):
+    print('remove file ext -- stub\n')
     pass
 
 
