@@ -311,11 +311,7 @@ class RelpathProcessing():
 
     def normalize(self, path):
         """Prepends correct filesystem syntax if pwd counted"""
-        if self.pattern_hidden.match(path):
-            return './' + path
-        elif self.pattern_asci.match(path):
-            return './' + path
-        else:
+        if self.pattern_hidden.match(path) or self.pattern_asci.match(path):
             return './' + path
 
 

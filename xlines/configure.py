@@ -179,25 +179,37 @@ def _configure_remove(expath, exdirpath):
     Return:
         Succsss || Failure, TYPE: bool
     """
+    tab8 = '\t'.expandtabs(8)
+    loop = True
+
     try:
-        # clear screen
+        # print out current exclusion list contents
         display_exclusions(expath, exdirpath)
 
         # open current file type exclusions
         with open(expath) as f1:
             f2 = [x.strip() for x in f1.readlines()]
 
-        # print out current exclusion list contents
-        for index, i in enumerate(f2):
-            print(f'{index})  {i}')
-
-        answer = input('\nPick a number to remove [none]: ')
+        while loop:
+            answer = input(tab8 + 'Pick a number to remove [none]: ')
+            if int(answer) in range(1, len(f2) + 1) or not answer:
+                loop = False
+            else:
+                max_index = len(f2)
+                stdout_message(
+                    message=f'You must pick a number between 1 and {max_index}',
+                    prefix='WARN'
+                )
 
         if not answer:
+            sys.stdout.write('\n')
             return True
         else:
+            # correct for f2 list index
+            answer = int(answer) - 1
             # remove entry selected by user
-            f2.pop(int(answer) - 1)
+            deprecated = f2[answer]
+            f2.pop(int(answer))
 
         if not _configure_rewrite(expath, f2):
             return False
@@ -206,15 +218,15 @@ def _configure_remove(expath, exdirpath):
         display_exclusions(expath, exdirpath)    # display resulting exclusions set
 
         # Acknowledge removal
-        if answer in f2:
+        if str(answer) in f2:
             stdout_message(
-                message='Failure to remove {} - reason unknown'.format(f2[int(answer)]),
+                message='Failure to remove {} - reason unknown'.format(f2[answer]),
                 indent=16,
                 prefix='FAIL')
 
         else:
             stdout_message(
-                    message='Successfully removed file type exclusion: {}'.format(f2[int(answer) - 1]),
+                    message='Successfully removed file type exclusion: {}'.format(deprecated),
                     indent=16,
                     prefix='ok'
                 )
