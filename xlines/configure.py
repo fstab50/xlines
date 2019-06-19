@@ -150,6 +150,21 @@ def _configure_add(expath, exdirpath):
         return False
 
 
+def _configure_rewrite(expath, newlist):
+    try:
+        # write new exclusion list to local disk
+        with open(expath, 'w') as f1:
+            list(filter(lambda x: f1.write(x + '\n'), newlist))
+
+    except OSError as e:
+        fx = inspect.stack()[0][3]
+        stdout_message(
+            f'{fx}: Problem writing new file type exclusion list: {expath}: {e}',
+            prefix='WARN')
+        return False
+    return True
+
+
 def _configure_remove(expath, exdirpath):
 
     try:
@@ -172,16 +187,7 @@ def _configure_remove(expath, exdirpath):
             # remove entry selected by user
             f2.pop(int(answer) - 1)
 
-        try:
-            # write new exclusion list to local disk
-            with open(expath, 'w') as f1:
-                list(filter(lambda x: f1.write(x + '\n'), f2))
-
-        except OSError as e:
-            fx = inspect.stack()[0][3]
-            stdout_message(
-                f'{fx}: Problem writing new file type exclusion list: {expath}: {e}',
-                prefix='WARN')
+        if not _configure_rewrite(expath, f2):
             return False
 
         # show new exclusion list contents
