@@ -151,6 +151,13 @@ def _configure_add(expath, exdirpath):
 
 
 def _configure_rewrite(expath, newlist):
+    """
+        Rewrite existing exclusion list on local filesystem with
+        modified contents from _configure operation
+
+    Return:
+        Succsss || Failure, TYPE: bool
+    """
     try:
         # write new exclusion list to local disk
         with open(expath, 'w') as f1:
@@ -166,7 +173,12 @@ def _configure_rewrite(expath, newlist):
 
 
 def _configure_remove(expath, exdirpath):
+    """
+        Remove file type extension from exclusion list
 
+    Return:
+        Succsss || Failure, TYPE: bool
+    """
     try:
         # clear screen
         display_exclusions(expath, exdirpath)
