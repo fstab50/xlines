@@ -73,6 +73,10 @@ def stdout_message(message, prefix='INFO', quiet=False, multiline=False, indent=
                 header = (Colors.YELLOW + '\t[ ' + Colors.ORANGE + prefix +
                           Colors.YELLOW + ' ]' + Colors.RESET + ': ')
 
+            elif prefix in ('OK') or severity.upper() == 'OK':
+                header = (Colors.YELLOW + '\t[  ' + Colors.BOLD + Colors.GREEN + prefix +
+                          Colors.YELLOW + '  ]' + Colors.RESET + ': ')
+
             elif prefix in ('OK', 'DONE', 'GOOD') or severity.upper() == 'OK':
                 header = (Colors.YELLOW + '\t[ ' + Colors.BOLD + Colors.GREEN + prefix +
                           Colors.YELLOW + ' ]' + Colors.RESET + ': ')

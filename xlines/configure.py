@@ -11,7 +11,7 @@ import logging
 from xlines.usermessage import stdout_message
 from xlines.colormap import ColorMap
 from xlines._version import __version__
-from xlines.statics import PACKAGE
+from xlines.statics import PACKAGE, local_config
 from xlines.variables import *
 
 logger = logging.getLogger(__version__)
@@ -38,12 +38,17 @@ def section_header(section, tabspaces=12):
     """
     Prints section header title and function ("section") with border
     """
+    if section.lower() in ('add', 'delete'):
+        title = '{} File Type Exclusions Menu'.format(bdwt + section.title() + rst)
+    else:
+        title = 'high line count {} update'.format(bdwt + section + rst)
+
     border = bbl
     tab = '\t'.expandtabs(tabspaces)
     tab4 = '\t'.expandtabs(4)
-    print(border + tab4 + '____________________________________________\n')
-    print('{}{} File Type Exclusions Menu'.format(tab, bdwt + section.title() + rst))
-    print(border + tab4 + '____________________________________________\n')
+    print(border + tab4 + '____________________________________________\n' + rst)
+    print('{}{}'.format(tab, title))
+    print(border + tab4 + '____________________________________________\n' + rst)
     return True
 
 
@@ -258,8 +263,6 @@ def _configure_remove(expath, exdirpath):
                     message=f'You must pick a number between 1 and {max_index}',
                     prefix='WARN'
                 )
-
-
     except OSError:
         stdout_message(
             message='Unable to modify local config file located at {}'.format(expath),
@@ -268,5 +271,60 @@ def _configure_remove(expath, exdirpath):
 
 
 def _configure_hicount(expath, exdirpath):
-    print('set hicount -- stub\n')
-    pass
+    """
+        User update high line count threshold persisted on local filesystem
+
+    Returns:
+        Success || Failure, TYPE: bool
+
+    """
+    def _exit(loop_break):
+        leave = input('Exit? [quit]')
+        if not leave or 'q' in leave:
+            loop_break = False
+            return True
+        return loop_break
+
+    tab4 = '\t'.expandtabs(4)
+    tab8 = '\t'.expandtabs(8)
+    loop = True
+    local_linecount_file = local_config['CONFIG']['COUNT_HI_THRESHOLD_FILEPATH']
+
+    try:
+        clearscreen()
+        section_header('threshold', tabspaces=10)
+
+        while loop:
+
+            if os.path.exists(local_linecount_file):
+                with open(local_linecount_file) as f1:
+                    threshold = int(f1.read().strip())
+
+            stdout_message(message='Current high line count threshold is {}{}{}'.format(bdwt, threshold, rst))
+            answer = input(f'{tab4}Enter a new line count threshold or q to quit [{threshold}]: ')
+
+            try:
+                if not answer:
+                    stdout_message(f'High line count threshold remains {threshold}', prefix='ok')
+                    sys.exit(exit_codes['EX_OK']['Code'])
+
+                elif 'q' in answer:
+                    loop = False
+                    return True
+
+                elif type(int(answer)) is int:
+                    # rewrite threshold file on local filesystem
+                    with open(local_linecount_file, 'w') as f1:
+                        f1.write(str(answer) + '\n')
+                    stdout_message(message='high line count threshold set to {}'.format(answer), prefix='ok')
+                    sys.exit(exit_codes['EX_OK']['Code'])
+
+                else:
+                    stdout_message(message='You must enter an integer number', prefix='INFO')
+            except ValueError:
+                pass
+    except OSError:
+        fx = inspect.stack()[0][3]
+        logger.exception(f'{fx}: Problem reading local hicount threshold file. Abort')
+        return False
+    return True

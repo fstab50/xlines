@@ -285,7 +285,6 @@ def precheck(user_exfiles, user_exdirs, debug):
     _os_ex_fname = _os_configdir + '/' + local_config['EXCLUSIONS']['EX_FILENAME']
     _os_dir_fname = _os_configdir + '/' + local_config['EXCLUSIONS']['EX_DIR_FILENAME']
     _config_dir = local_config['CONFIG']['CONFIG_DIR']
-    _ct_threshold = hicount_threshold() or local_config['CONFIG']['COUNT_HI_THRESHOLD']
 
     if debug:
         stdout_message(f'_os_configdir: {_os_configdir}: system py modules location', prefix='DBUG')
@@ -311,7 +310,7 @@ def precheck(user_exfiles, user_exdirs, debug):
         fx = inspect.stack()[0][3]
         logger.exception('{}: Problem installing user config files. Exit'.format(fx))
         return False
-    return _ct_threshold
+    return True
 
 
 def create_container(parameters):
@@ -357,9 +356,8 @@ def init_cli():
         sys.exit(exit_codes['E_BADARG']['Code'])
 
     # validate configuration files
-    hicount_threshold = precheck(ex_files, ex_dirs, args.debug)
-    if hicount_threshold is None:
-        sys.exit(exit_codes['EX_DEPENDENCY']['Code'])
+    if precheck(ex_files, ex_dirs, args.debug):
+        _ct_threshold = hicount_threshold() or local_config['CONFIG']['COUNT_HI_THRESHOLD']
 
     if len(sys.argv) == 1 or args.help:
         help_menu()
@@ -405,7 +403,6 @@ def init_cli():
 
             print_header(width)
             count_width = local_config['OUTPUT']['COUNT_COLUMN_WIDTH']
-            #hicount_threshold = local_config['OUTPUT']['COUNT_HI_THRESHOLD']
 
             for i in container:
 
@@ -416,7 +413,7 @@ def init_cli():
                     try:
 
                         inc = linecount(path, args.whitespace)
-                        highlight = cm.accent if inc > hicount_threshold else cm.aqu
+                        highlight = cm.accent if inc > _ct_threshold else cm.aqu
                         tcount += inc    # total line count
                         tobjects += 1    # increment total number of objects
 
@@ -441,7 +438,7 @@ def init_cli():
                         fname = highlight + fname + rst
 
                         # incremental count formatting
-                        ct_format = acct if inc > hicount_threshold else bwt
+                        ct_format = acct if inc > _ct_threshold else bwt
 
                         # format tabular line totals with commas
                         output_str = f'{tab4}{lpath}{div}{fname}{tab}{ct_format}{"{:,}".format(inc):>7}{rst}'
