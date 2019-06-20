@@ -59,6 +59,7 @@ else:
     min_buffer_chars = 6                                      # characters
     min_width = 70 - count_column_width - min_buffer_chars    # characters
     count_threshold = 1000                                    # number of lines of text
+    threshold_filename = 'linecount.threshold'
 
     # exclusions
     ext_filename = 'exclusions.list'
@@ -86,7 +87,8 @@ else:
             "CONFIG_FILENAME": config_filename,
             "CONFIG_DIR": config_dirpath,
             "CONFIG_SUBDIR": config_subdir,
-            "CONFIG_PATH": config_path
+            "CONFIG_PATH": config_path,
+            "COUNT_HI_THRESHOLD_FILEPATH": config_dirpath + '/' + threshold_filename
         },
         "EXCLUSIONS": {
             "EX_FILENAME": ext_filename,

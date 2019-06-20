@@ -249,6 +249,34 @@ def package_version():
     sys.exit(exit_codes['EX_OK']['Code'])
 
 
+def hicount_threshold():
+    """
+        Retrieves high line count threshold from local filesystem if exists
+
+    Returns:
+        high line count threshold || None
+
+    """
+    local_linecount_file = local_config['CONFIG']['COUNT_HI_THRESHOLD_FILEPATH']
+    reference_threshold = local_config['OUTPUT']['COUNT_HI_THRESHOLD']
+
+    try:
+
+        if os.path.exists(local_linecount_file):
+            with open(local_linecount_file) as f1:
+                threshold = f1.read().strip()
+        else:
+            # not exist; create threshold file on local filesystem
+            with open(local_linecount_file, 'w') as f1:
+                f1.write(str(reference_threshold) + '\n')
+                threshold = reference_threshold
+    except OSError:
+        fx = inspect.stack()[0][3]
+        logger.exception(f'{fx}: Problem reading local hicount threshold file. Abort')
+        return None
+    return int(threshold)
+
+
 def precheck(user_exfiles, user_exdirs, debug):
     """
     Pre-execution Dependency Check
@@ -257,6 +285,7 @@ def precheck(user_exfiles, user_exdirs, debug):
     _os_ex_fname = _os_configdir + '/' + local_config['EXCLUSIONS']['EX_FILENAME']
     _os_dir_fname = _os_configdir + '/' + local_config['EXCLUSIONS']['EX_DIR_FILENAME']
     _config_dir = local_config['CONFIG']['CONFIG_DIR']
+    _ct_threshold = hicount_threshold() or local_config['CONFIG']['COUNT_HI_THRESHOLD']
 
     if debug:
         stdout_message(f'_os_configdir: {_os_configdir}: system py modules location', prefix='DBUG')
@@ -282,7 +311,7 @@ def precheck(user_exfiles, user_exdirs, debug):
         fx = inspect.stack()[0][3]
         logger.exception('{}: Problem installing user config files. Exit'.format(fx))
         return False
-    return True
+    return _ct_threshold
 
 
 def create_container(parameters):
@@ -328,7 +357,8 @@ def init_cli():
         sys.exit(exit_codes['E_BADARG']['Code'])
 
     # validate configuration files
-    if not precheck(ex_files, ex_dirs, args.debug):
+    hicount_threshold = precheck(ex_files, ex_dirs, args.debug)
+    if hicount_threshold is None:
         sys.exit(exit_codes['EX_DEPENDENCY']['Code'])
 
     if len(sys.argv) == 1 or args.help:
@@ -375,7 +405,7 @@ def init_cli():
 
             print_header(width)
             count_width = local_config['OUTPUT']['COUNT_COLUMN_WIDTH']
-            hicount_threshold = local_config['OUTPUT']['COUNT_HI_THRESHOLD']
+            #hicount_threshold = local_config['OUTPUT']['COUNT_HI_THRESHOLD']
 
             for i in container:
 
