@@ -33,6 +33,7 @@ bd = Colors.BOLD
 gn = Colors.BRIGHT_GREEN
 title = Colors.BRIGHT_WHITE + Colors.BOLD
 bbc = bd + Colors.BRIGHT_CYAN
+bbl = bd + Colors.BRIGHT_BLUE
 highlight = bd + Colors.BRIGHT_YELLOW2
 frame = gn + bd
 btext = text + Colors.BOLD

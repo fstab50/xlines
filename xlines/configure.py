@@ -35,11 +35,15 @@ def clearscreen():
 
 
 def section_header(section, tabspaces=12):
+    """
+    Prints section header title and function ("section") with border
+    """
+    border = bbl
     tab = '\t'.expandtabs(tabspaces)
     tab4 = '\t'.expandtabs(4)
-    print(bdwt + tab4 + '____________________________________________\n')
+    print(border + tab4 + '____________________________________________\n')
     print('{}{} File Type Exclusions Menu'.format(tab, bdwt + section.title() + rst))
-    print(bdwt + tab4 + '____________________________________________\n')
+    print(border + tab4 + '____________________________________________\n')
     return True
 
 
@@ -59,7 +63,7 @@ def display_exclusions(expath, exdirpath):
             with open(expath) as f1:
                 exclusions = [x.strip() for x in f1.readlines()]
 
-        stdout_message(message='File types excluded from line totals:')
+        stdout_message(message='File types excluded from line counts:')
 
         for index, ext in enumerate(exclusions):
             print('{}{:>3}{}'.format(tab, index + 1, div + '  ' + ext))
@@ -87,30 +91,32 @@ def main_menupage(expath, exdirpath):
     Displays main configuration menu jump page and options
     """
     def menu():
+        border = bbl
+        icolor = bbl
         clearscreen()
-        print('''
+        print(border + '''
         ________________________________________________________________________________
-
+        ''' + rst + '''
 
             ''' + bdwt + PACKAGE + rst + ''' configuration main menu:
 
 
-                  a)  Add file type to exclusion list
+                  ''' + icolor + 'a' + rst + ''')  Add file type to exclusion list
 
-                  b)  Remove file type from exclusion list
+                  ''' + icolor + 'b' + rst + ''')  Remove file type from exclusion list
 
-                  c)  Set high line count threshold (''' + acct + 'highlight' + rst + ''' file objects)
+                  ''' + icolor + 'c' + rst + ''')  Set high line count threshold (''' + acct + 'highlight' + rst + ''' file objects)
 
-                  d)  quit
-
+                  ''' + icolor + 'd' + rst + ''')  quit
+        ''' + border + '''
         ________________________________________________________________________________
-        ''')
+        ''' + rst)
     loop = True
     tab8 = '\t'.expandtabs(8)
 
     while loop:
         menu()
-        answer = input('{}Choose operation [quit]: '.format(tab8)).lower()
+        answer = input('\n{}Choose operation [quit]: '.format(tab8)).lower()
         sys.stdout.write('\n')
 
         if not answer or answer == 'd':
@@ -200,6 +206,7 @@ def _configure_remove(expath, exdirpath):
     Return:
         Succsss || Failure, TYPE: bool
     """
+    tab4 = '\t'.expandtabs(4)
     tab8 = '\t'.expandtabs(8)
     loop = True
 
@@ -214,7 +221,7 @@ def _configure_remove(expath, exdirpath):
             section_header('delete', tabspaces=10)
             display_exclusions(expath, exdirpath)
 
-            answer = input(tab8 + 'Pick a number to remove [done]: ')
+            answer = input(tab4 + 'Pick the number of a file type to remove [done]: ')
 
             if not answer:
                 loop = False
