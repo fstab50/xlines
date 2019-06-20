@@ -29,6 +29,20 @@ except Exception:
     os_type = 'Windows'
 
 
+def clearscreen():
+    os.system('cls' if os.name == 'nt' else 'clear')
+    return True
+
+
+def section_header(section, tabspaces=12):
+    tab = '\t'.expandtabs(tabspaces)
+    tab4 = '\t'.expandtabs(4)
+    print(bdwt + tab4 + '____________________________________________\n')
+    print('{}{} File Type Exclusions Menu'.format(tab, bdwt + section.title() + rst))
+    print(bdwt + tab4 + '____________________________________________\n')
+    return True
+
+
 def display_exclusions(expath, exdirpath):
     """
     Show list of all file type extensions which are excluded
@@ -73,7 +87,7 @@ def main_menupage(expath, exdirpath):
     Displays main configuration menu jump page and options
     """
     def menu():
-        os.system('cls' if os.name == 'nt' else 'clear')
+        clearscreen()
         print('''
         ________________________________________________________________________________
 
@@ -121,32 +135,34 @@ def _configure_add(expath, exdirpath):
     Returns:
         Success | Failure, TYPE: bool
     """
-    try:
+    loop = True
 
-        # clear screen
-        os.system('cls' if os.name == 'nt' else 'clear')
-        display_exclusions(expath, exdirpath)
+    try:
 
         with open(expath) as f1:
             exclusions = [x.strip() for x in f1.readlines()]
 
-        # query user input for new exclusions
-        response = input('  Enter file extension types to be excluded separated by commas [quit]: ')
+        while loop:
 
-        if not response:
-            sys.exit(exit_codes['EX_OK']['Code'])
-        else:
-            add_list = response.split(',')
+            clearscreen()
+            section_header('add')
+            display_exclusions(expath, exdirpath)
+            # query user input for new exclusions
+            response = input('  Enter file extension types to be excluded separated by commas [quit]: ')
 
-            # add new extensions to existing
-            exclusions.extend([x if x.startswith('.') else '.' + x for x in add_list])
+            if not response:
+                loop = False
+                sys.stdout.write('\n')
+                return True
+            else:
+                add_list = response.split(',')
 
-            # write out new exclusions config file
-            with open(expath, 'w') as f2:
-                f2.writelines([x + '\n' for x in exclusions])
+                # add new extensions to existing
+                exclusions.extend([x if x.startswith('.') else '.' + x for x in add_list])
 
-            display_exclusions(expath, exdirpath)    # display resulting exclusions set
-            return True
+                # write out new exclusions config file
+                with open(expath, 'w') as f2:
+                    f2.writelines([x + '\n' for x in exclusions])
 
     except OSError:
         stdout_message(
@@ -188,14 +204,15 @@ def _configure_remove(expath, exdirpath):
     loop = True
 
     try:
-        # print out current exclusion list contents
-        display_exclusions(expath, exdirpath)
 
         # open current file type exclusions
         with open(expath) as f1:
             f2 = [x.strip() for x in f1.readlines()]
 
         while loop:
+            clearscreen()
+            section_header('del')
+            display_exclusions(expath, exdirpath)
 
             answer = input(tab8 + 'Pick a number to remove [none]: ')
 
@@ -213,9 +230,6 @@ def _configure_remove(expath, exdirpath):
 
                 if not _configure_rewrite(expath, f2):
                     return False
-
-                # show new exclusion list contents
-                display_exclusions(expath, exdirpath)    # display resulting exclusions set
 
                 # Acknowledge removal
                 if str(answer) in f2:
