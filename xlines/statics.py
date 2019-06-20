@@ -57,7 +57,7 @@ else:
     # output dimensions
     count_column_width = 7                                    # characters
     min_buffer_chars = 6                                      # characters
-    min_width = 80 - count_column_width - min_buffer_chars    # characters
+    min_width = 70 - count_column_width - min_buffer_chars    # characters
     count_threshold = 1000                                    # number of lines of text
 
     # exclusions
