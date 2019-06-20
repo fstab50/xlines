@@ -148,7 +148,7 @@ def _configure_add(expath, exdirpath):
             section_header('add')
             display_exclusions(expath, exdirpath)
             # query user input for new exclusions
-            response = input('  Enter file extension types to be excluded separated by commas [quit]: ')
+            response = input('  Enter file extension types separated by commas [done]: ')
 
             if not response:
                 loop = False
@@ -211,10 +211,10 @@ def _configure_remove(expath, exdirpath):
 
         while loop:
             clearscreen()
-            section_header('del')
+            section_header('delete', tabspaces=10)
             display_exclusions(expath, exdirpath)
 
-            answer = input(tab8 + 'Pick a number to remove [none]: ')
+            answer = input(tab8 + 'Pick a number to remove [done]: ')
 
             if not answer:
                 loop = False
@@ -234,15 +234,15 @@ def _configure_remove(expath, exdirpath):
                 # Acknowledge removal
                 if str(answer) in f2:
                     stdout_message(
-                    message='Failure to remove {} - reason unknown'.format(f2[answer]),
-                    indent=16,
-                    prefix='FAIL')
-
+                        message='Failure to remove {} - reason unknown'.format(f2[answer]),
+                        indent=16,
+                        prefix='FAIL'
+                    )
                 else:
                     stdout_message(
-                    message='Successfully removed file type exclusion: {}'.format(deprecated),
-                    indent=16,
-                    prefix='ok'
+                        message='Successfully removed file type exclusion: {}'.format(deprecated),
+                        indent=16,
+                        prefix='ok'
                     )
 
             else:
