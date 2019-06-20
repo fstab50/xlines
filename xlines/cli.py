@@ -249,7 +249,7 @@ def package_version():
     sys.exit(exit_codes['EX_OK']['Code'])
 
 
-def hicount_threshold():
+def set_hicount_threshold():
     """
         Retrieves high line count threshold from local filesystem if exists
 
@@ -357,7 +357,7 @@ def init_cli():
 
     # validate configuration files
     if precheck(ex_files, ex_dirs, args.debug):
-        _ct_threshold = hicount_threshold() or local_config['CONFIG']['COUNT_HI_THRESHOLD']
+        _ct_threshold = set_hicount_threshold() or local_config['CONFIG']['COUNT_HI_THRESHOLD']
 
     if len(sys.argv) == 1 or args.help:
         help_menu()
