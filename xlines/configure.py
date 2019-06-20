@@ -68,38 +68,43 @@ def condition_map(letter, expath, exdirpath):
     }.get(letter, lambda x, y: None)(expath, exdirpath)
 
 
-def main_menupage(exclusion_files, exclusions_dirs):
-    """Displays main configuration menu jump page and options"""
-    os.system('cls' if os.name == 'nt' else 'clear')
-    print('''
-    ________________________________________________________________________________
+def main_menupage(expath, exdirpath):
+    """
+    Displays main configuration menu jump page and options
+    """
+    def menu():
+        os.system('cls' if os.name == 'nt' else 'clear')
+        print('''
+        ________________________________________________________________________________
 
 
-        ''' + bdwt + PACKAGE + rst + ''' configuration main menu:
+            ''' + bdwt + PACKAGE + rst + ''' configuration main menu:
 
 
-              a)  Add file type to exclusion list
+                  a)  Add file type to exclusion list
 
-              b)  Remove file type from exclusion list
+                  b)  Remove file type from exclusion list
 
-              c)  Set high line count threshold (''' + acct + 'highlight' + rst + ''' file objects)
+                  c)  Set high line count threshold (''' + acct + 'highlight' + rst + ''' file objects)
 
-              d)  quit
+                  d)  quit
 
-    ________________________________________________________________________________
-    ''')
+        ________________________________________________________________________________
+        ''')
     loop = True
     tab8 = '\t'.expandtabs(8)
 
     while loop:
+        menu()
         answer = input('{}Choose operation [quit]: '.format(tab8)).lower()
         sys.stdout.write('\n')
 
-        if not answer:
+        if not answer or answer == 'd':
             return True
-        elif answer in ['a', 'b', 'c', 'd']:
+
+        elif answer in ['a', 'b', 'c']:
             condition_map(answer, expath, exdirpath)
-            loop = False
+
         else:
             stdout_message(
                     message='You must provide a letter a, b, c, or d',
@@ -191,9 +196,41 @@ def _configure_remove(expath, exdirpath):
             f2 = [x.strip() for x in f1.readlines()]
 
         while loop:
+
             answer = input(tab8 + 'Pick a number to remove [none]: ')
-            if int(answer) in range(1, len(f2) + 1) or not answer:
+
+            if not answer:
                 loop = False
+                sys.stdout.write('\n')
+                return True
+
+            elif int(answer) in range(1, len(f2) + 1):
+                # correct for f2 list index
+                answer = int(answer) - 1
+                # remove entry selected by user
+                deprecated = f2[answer]
+                f2.pop(int(answer))
+
+                if not _configure_rewrite(expath, f2):
+                    return False
+
+                # show new exclusion list contents
+                display_exclusions(expath, exdirpath)    # display resulting exclusions set
+
+                # Acknowledge removal
+                if str(answer) in f2:
+                    stdout_message(
+                    message='Failure to remove {} - reason unknown'.format(f2[answer]),
+                    indent=16,
+                    prefix='FAIL')
+
+                else:
+                    stdout_message(
+                    message='Successfully removed file type exclusion: {}'.format(deprecated),
+                    indent=16,
+                    prefix='ok'
+                    )
+
             else:
                 max_index = len(f2)
                 stdout_message(
@@ -201,35 +238,7 @@ def _configure_remove(expath, exdirpath):
                     prefix='WARN'
                 )
 
-        if not answer:
-            sys.stdout.write('\n')
-            return True
-        else:
-            # correct for f2 list index
-            answer = int(answer) - 1
-            # remove entry selected by user
-            deprecated = f2[answer]
-            f2.pop(int(answer))
 
-        if not _configure_rewrite(expath, f2):
-            return False
-
-        # show new exclusion list contents
-        display_exclusions(expath, exdirpath)    # display resulting exclusions set
-
-        # Acknowledge removal
-        if str(answer) in f2:
-            stdout_message(
-                message='Failure to remove {} - reason unknown'.format(f2[answer]),
-                indent=16,
-                prefix='FAIL')
-
-        else:
-            stdout_message(
-                    message='Successfully removed file type exclusion: {}'.format(deprecated),
-                    indent=16,
-                    prefix='ok'
-                )
     except OSError:
         stdout_message(
             message='Unable to modify local config file located at {}'.format(expath),
