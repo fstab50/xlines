@@ -65,7 +65,7 @@ setup-venv:    ## Create and activiate python venv
 
 .PHONY: artifacts
 artifacts:	  ## Generate documentation build artifacts (*.rst)
-	if [ $(shell rpm -qi epel-release | grep -i not) ]; then \
+	if [ $(shell $(shell rpm -qi epel-release) | grep -i not) ]; then \
 	$(YUM_CALL) install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm; \
 	$(YUM_CALL) -y update; fi
 	$(YUM_CALL) install -y pandoc
