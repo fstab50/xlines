@@ -120,7 +120,7 @@ buildrpm-aml:  artifacts  ## Build Amazon Linux 2 distribution (.rpm) os package
 	$(PIP3_CALL) install -U pip setuptools pygments
 	sudo cp -r /usr/local/lib/python3.*/site-packages/setuptools* /usr/lib/python3.*/site-packages/
 	sudo cp -r /usr/local/lib/python3.*/site-packages/pkg_resources* /usr/lib/python3.*/site-packages/
-	cp -r /usr/local/lib64/python3.*/site-packages/pygments .
+	cp -r /usr/local/lib64/python3.*/site-packages/[p-P]ygments*  .
 	$(PYTHON3_PATH) setup_rpm.py bdist_rpm --requires=$(AML_REQUIRES) --python='/usr/bin/python3'
 
 
