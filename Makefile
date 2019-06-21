@@ -31,7 +31,6 @@ POST_SCRIPT = $(SCRIPTS)/rpm_postinstall.py
 YUM_CALL = sudo $(shell which yum)
 ALIEN_CALL = sudo $(shell which alien)
 PIP3_CALL = $(shell which pip3)
-EPEL_PRESENT = $(shell rpm -qi epel-release)
 
 
 # --- rollup targets  ------------------------------------------------------------------------------
@@ -66,9 +65,9 @@ setup-venv:    ## Create and activiate python venv
 
 .PHONY: artifacts
 artifacts:	  ## Generate documentation build artifacts (*.rst)
-	if [ ! $(EPEL_PRESENT) ]; then \
+	if [ $(shell rpm -qi epel-release | grep -i not) ]; then \
 	$(YUM_CALL) install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm; \
-	$(YUM_CALL) -y update; fi 
+	$(YUM_CALL) -y update; fi
 	$(YUM_CALL) install -y pandoc
 	$(PANDOC_CALL) --from=markdown --to=rst README.md --output=README.rst
 
