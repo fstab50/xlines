@@ -120,7 +120,7 @@ buildrpm-rhel:  artifacts   ## Build Redhat distribution (.rpm) os package
 .PHONY: buildrpm-aml
 buildrpm-aml:  artifacts  ## Build Amazon Linux 2 distribution (.rpm) os package
 	$(YUM_CALL) -y install python3 python3-pip python3-setuptools which sudo rpm-build
-	$(PIP3_CALL) install -U pip setuptools pygments
+	sudo -H $(PIP3_CALL) install -U pip setuptools pygments
 	sudo cp -r /usr/local/lib/python3.*/site-packages/setuptools* /usr/lib/python3.*/site-packages/
 	sudo cp -r /usr/local/lib/python3.*/site-packages/pkg_resources* /usr/lib/python3.*/site-packages/
 	cp -r /usr/local/lib64/python3.*/site-packages/[p-P]ygments*  .
