@@ -65,6 +65,8 @@ setup-venv:    ## Create and activiate python venv
 
 .PHONY: artifacts
 artifacts:	  ## Generate documentation build artifacts (*.rst)
+	$(YUM_CALL) install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+	$(YUM_CALL) -y update
 	$(YUM_CALL) install -y pandoc
 	$(PANDOC_CALL) --from=markdown --to=rst README.md --output=README.rst
 
