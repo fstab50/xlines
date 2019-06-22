@@ -301,7 +301,7 @@ def _configure_hicount(expath, exdirpath):
                     threshold = int(f1.read().strip())
 
             stdout_message(message='Current high line count threshold is {}{}{}'.format(bdwt, threshold, rst))
-            answer = input(f'{tab4}Enter a new line count threshold or q to quit [{threshold}]: ')
+            answer = input(f'{tab4}Enter high line count threshold [{threshold}]: ')
 
             try:
                 if not answer:

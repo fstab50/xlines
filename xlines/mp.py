@@ -31,11 +31,12 @@ def mp_linecount(path, exclusions):
     p = path
     try:
         if os.path.isfile(path):
-            q.put({
-                    'path': os.path.abspath(path),
-                    'count': linecount(path)
-                }
-            )
+            q.put(
+                    {
+                        'path': os.path.abspath(path),
+                        'count': linecount(path)
+                    }
+                )
 
         elif os.path.isdir(path):
             d = locate_fileobjects(path)
