@@ -1,42 +1,46 @@
-#
-#   RPM spec: xlines, 2019 jun
-#
-%define name        xlines
+##   RPM spec: xlines, 2019 jun  ##
+%global srcname xlines
+
+%define name        python-%{srcname}
 %define version     %{getenv:MAJOR_VERSION}
 %define release     %{getenv:MINOR_VERSION}
-%define _homedir    %{getenv:HOME}
-%define _root       %{getenv:PYTHON3_ROOT}
-%define _bindir     usr/local/bin
-%define _libdir     usr/local/lib/python3.6/site-packages/xlines
-%define _distinfo   usr/local/lib/python3.6/site-packages/xlines-MAJOR_VERSION.MINOR_VERSION.dist-info
-%define _compdir    etc/bash_completion.d
-%define _confdir    %{_homedir}/.config/xlines
-#%define _topdir     /home/DOCKERUSER/rpmbuild
+#%define _homedir    %{getenv:HOME}
+#%define _root       %{getenv:PYTHON3_ROOT}
+#%define _bindir     usr/local/bin
+#%define _libdir     usr/local/lib/python3.6/site-packages/xlines
+#%define _distinfo   usr/local/lib/python3.6/site-packages/xlines-MAJOR_VERSION.MINOR_VERSION.dist-info
+#%define _compdir    etc/bash_completion.d
+#%define _confdir    %{_homedir}/.config/xlines
 %define _topdir     /home/builder/rpmbuild
 %define python37    %{which python3.7}
 %define buildroot   %{_topdir}/%{name}-%{version}
 
-BuildRoot:      %{buildroot}
 Name:           %{name}
 Version:        %{version}
-Release:        %{release}
+Release:        1%{?dist}
 Summary:        Count lines of text in code projects
 
 Group:          Development/Tools
 BuildArch:      noarch
 License:        GPL
-URL:            PROJECT_URL
-Source:         %{name}-%{version}.%{release}.tar.gz
-Prefix:         /usr
-Requires:      python36 python36-pip python36-setuptools python36-pygments bash-completion
+URL:            https://pypi.python.org/pypi/%{srcname}
+#$Source:         %{name}-%{version}.%{release}.tar.gz
+Source0:        %{pypi_source}
+Requires:       python36 python36-pip python36-setuptools python36-pygments bash-completion
 
-%if 0%{?rhel}%{?amzn2}
-Requires: bash-completion
+%if 0%{?rhel}
+Requires:             bash-completion
+%define postscript    rpm_postinstall.py
 %endif
 
-%if 0%{?amzn1}
-Requires: epel-release
+%if 0%{?amzn2}
+Requires:             bash-completion
+%define postscript    amzn2_postinstall.py
 %endif
+
+#%if 0%{?amzn1}
+#Requires: epel-release
+#%endif
 
 %if %{?python37:1}%{!?python37:0}
 %define _libdir     usr/local/lib/python3.7/site-packages/xlines
@@ -55,21 +59,32 @@ xlines features:
   * Colorized output
 
 %prep
+%autosetup -n %{srcname}-%{version}
 
-%setup -q
 
 %build
+%py3_build
 
 
 %install
-install -m 0755 -d $RPM_BUILD_ROOT/%{_bindir}
-install -m 0755 -d $RPM_BUILD_ROOT/%{_libdir}
-install -m 0755 -d $RPM_BUILD_ROOT/%{_compdir}
-install -m 0755 -d $RPM_BUILD_ROOT/%{_confdir}
-install -m 0644 -d xlines $RPM_BUILD_ROOT/%{_libdir}/xlines
-install -m 0644 xlines-completion.bash $RPM_BUILD_ROOT/%{_compdir}/xlines-completion.bash
-install -m 0644 exclusions.list $RPM_BUILD_ROOT/%{_confdir}/exclusions.list
-install -m 0644 directories.list $RPM_BUILD_ROOT/%{_confdir}/directories.list
+%py3_install
+#install -m 0644 -d xlines $RPM_BUILD_ROOT/%{_libdir}/xlines
+#install -m 0644 xlines-completion.bash $RPM_BUILD_ROOT/%{_compdir}/xlines-completion.bash
+#install -m 0644 exclusions.list $RPM_BUILD_ROOT/%{_confdir}/exclusions.list
+#install -m 0644 directories.list $RPM_BUILD_ROOT/%{_confdir}/directories.list
+
+
+%check
+%{__python3} setup.py test
+
+
+# Note that there is no %%files section for the unversioned python module
+%files -n python3-%{srcname}
+%license COPYING
+%doc README.rst
+%{python3_sitelib}/%{srcname}-*.egg-info/
+%{python3_sitelib}/%{srcname}/
+%{_bindir}/sample-exec
 
 
 %files
@@ -99,16 +114,16 @@ elif [ -f "$HOME/.profile" ]; then
 
 fi
 
+# run postinstall script
+/bin/python3 %{buildroot}/%{postscript}
 
 ##   install bash_completion (amazonlinux 1 only); other epel pkgs   ##
 
-if [ -f '/usr/local/lib/xlines/os_distro.sh' ]; then
-    if [ "$(sh /usr/local/lib/xlines/os_distro.sh | awk '{print $2}')" -eq "1" ]; then
-        yum -y install bash-completion xclip  --enablerepo=epel
-    fi
-else
-    yum -y install xclip --enablerepo=epel
-fi
+#if [ -f '/usr/local/lib/xlines/os_distro.sh' ]; then
+#    if [ "$(sh /usr/local/lib/xlines/os_distro.sh | awk '{print $2}')" -eq "1" ]; then
+#        yum -y install bash-completion  --enablerepo=epel
+#    fi
+#fi
 
 
 ##   end post install   ##
