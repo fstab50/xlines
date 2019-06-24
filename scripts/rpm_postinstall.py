@@ -93,32 +93,20 @@ class PostInstall(install):
             environment detected
 
         """
-        if self.valid_os_shell():
+        pygments_core = 'pygments'
+        pygments_dist = 'Pygments-*.dist-info'
+        _libdir = '/usr/local/lib64/' + python_version + '/site-packages'
 
-            completion_dir = '/etc/bash_completion.d'
-            config_dir = user_home() + '/.config/' + _project
-
-            if not os.path.exists(completion_dir):
-                create_artifact(completion_dir, 'dir')
-            if not os.path.exists(config_dir):
-                create_artifact(config_dir, 'dir')
-
-            # ensure installation of home directory profile artifacts (data_files)
-            if not os.path.exists(os_parityPath(completion_dir + '/' + _comp_fname)):
-                copyfile(
-                    os_parityPath('bash' + '/' + _comp_fname),
-                    os_parityPath(completion_dir + '/' + _comp_fname)
-                )
-            if not os.path.exists(os_parityPath(config_dir + '/' + _ex_fname)):
-                copyfile(
-                    os_parityPath('config' + '/' + _ex_fname),
-                    os_parityPath(config_dir + '/' + _ex_fname)
-                )
-            if not os.path.exists(os_parityPath(config_dir + '/' + _ex_dirs_fname)):
-                copyfile(
-                    os_parityPath('config' + '/' + _ex_dirs_fname),
-                    os_parityPath(config_dir + '/' + _ex_dirs_fname)
-                )
+        # ensure installation of pygments in correct location
+        if not os.path.exists(os_parityPath(_libdir + '/' + pygments_core)):
+            copyfile(
+                os_parityPath(pygments_core),
+                os_parityPath(_libdir + '/' + pygments_core)
+            )
+            copyfile(
+                os_parityPath(pygments_dist),
+                os_parityPath(_libdir + '/' + pygments_dist)
+            )
         install.run(self)
 
 PostInstall()
