@@ -20,13 +20,11 @@ contained in the program LICENSE file.
 """
 
 import os
-import sys
 import platform
 import subprocess
 from shutil import which
 from shutil import copy2 as copyfile
 from setuptools.command.install import install
-import getpass
 from pathlib import Path
 from codecs import open
 
@@ -37,15 +35,6 @@ _ex_fname = 'exclusions.list'
 _ex_dirs_fname = 'directories.list'
 _comp_fname = 'xlines-completion.bash'
 _homedir = str(Path.home())
-
-
-def create_artifact(object_path, type):
-    """Creates post install filesystem artifacts"""
-    if type == 'file':
-        with open(object_path, 'w') as f1:
-            f1.write(sourcefile_content())
-    elif type == 'dir':
-        os.makedirs(object_path)
 
 
 def os_parityPath(path):
@@ -93,9 +82,10 @@ class PostInstall(install):
             environment detected
 
         """
+        py_version = os.path.split(which('python3.7'))[1] or os.path.split(which('python3.6'))[1]
         pygments_core = 'pygments'
         pygments_dist = 'Pygments-*.dist-info'
-        _libdir = '/usr/local/lib64/' + python_version + '/site-packages'
+        _libdir = '/usr/local/lib64/' + py_version + '/site-packages'
 
         # ensure installation of pygments in correct location
         if not os.path.exists(os_parityPath(_libdir + '/' + pygments_core)):
@@ -108,5 +98,6 @@ class PostInstall(install):
                 os_parityPath(_libdir + '/' + pygments_dist)
             )
         install.run(self)
+
 
 PostInstall()
