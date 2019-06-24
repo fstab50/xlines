@@ -48,9 +48,16 @@ Requires:             bash-completion
 #%endif
 
 %if %{?python37:1}%{!?python37:0}
-%define _libdir     usr/local/lib/python3.7/site-packages/xlines
-%define _distinfo   usr/local/lib/python3.7/site-packages/xlines-MAJOR_VERSION.MINOR_VERSION.dist-info
+%define _libdir       usr/local/lib/python3.7/site-packages/xlines
+%define _xdist        usr/local/lib/python3.7/site-packages/xlines-MAJOR_VERSION.MINOR_VERSION.dist-info
+%define _pygdist      usr/local/lib64/python3.7/site-packages/Pygments*.dist-info
 %endif
+
+
+%package -n python3-%{srcname}
+Summary:            %{summary}
+BuildRequires:      python3-devel
+%{?python_provide:%python_provide python3-%{srcname}}
 
 
 %description
@@ -62,6 +69,7 @@ xlines features:
   * Directory list of filesystem directories to exclude
   * User settable threshold for marking files with large line counts
   * Colorized output
+
 
 %prep
 %autosetup -n %{srcname}-%{version}
@@ -83,7 +91,6 @@ xlines features:
 %{__python3} setup.py test
 
 
-# Note that there is no %%files section for the unversioned python module
 %files -n python3-%{srcname}
 %license COPYING
 %doc README.rst
