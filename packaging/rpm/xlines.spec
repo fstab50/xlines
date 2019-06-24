@@ -6,14 +6,14 @@
 
 %global srcname xlines
 
-%define name        python-%{srcname}
+%define name        python3-%{srcname}
 %define version     %{getenv:MAJOR_VERSION}
 %define release     %{getenv:MINOR_VERSION}
 #%define _homedir    %{getenv:HOME}
 #%define _root       %{getenv:PYTHON3_ROOT}
 #%define _bindir     usr/local/bin
-#%define _libdir     usr/local/lib/python3.6/site-packages/xlines
-#%define _distinfo   usr/local/lib/python3.6/site-packages/xlines-MAJOR_VERSION.MINOR_VERSION.dist-info
+%define _libdir     usr/local/lib/python3.6/site-packages/xlines
+%define _xdist      usr/local/lib/python3.6/site-packages/xlines-MAJOR_VERSION.MINOR_VERSION.dist-info
 #%define _compdir    etc/bash_completion.d
 #%define _confdir    %{_homedir}/.config/xlines
 %define _topdir     /home/builder/rpmbuild
@@ -51,12 +51,16 @@ Requires:             bash-completion
 %define _libdir       usr/local/lib/python3.7/site-packages/xlines
 %define _xdist        usr/local/lib/python3.7/site-packages/xlines-MAJOR_VERSION.MINOR_VERSION.dist-info
 %define _pygdist      usr/local/lib64/python3.7/site-packages/Pygments*.dist-info
+%else
+%define _libdir       usr/local/lib/python3.6/site-packages/xlines
+%define _xdist        usr/local/lib/python3.6/site-packages/xlines-MAJOR_VERSION.MINOR_VERSION.dist-info
+%define _pygdist      usr/local/lib64/python3.6/site-packages/Pygments*.dist-info
 %endif
 
 
 %package -n python3-%{srcname}
 Summary:            %{summary}
-BuildRequires:      python3-devel
+BuildRequires:      python36 python36-pip python36-setuptools python36-devel which
 %{?python_provide:%python_provide python3-%{srcname}}
 
 
