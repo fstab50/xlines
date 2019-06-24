@@ -4,7 +4,6 @@
 #   Manual creation of container assets for testing
 #
 
-container='xlinesCentOS'
 image='centos7:rpmbuildD'
 
 
@@ -32,6 +31,14 @@ pkg_path=$(cd "$(dirname $0)"; pwd -P)
 source "$(_git_root)/scripts/std_functions.sh"
 source "$(_git_root)/scripts/colors.sh"
 
+if [ "$1" ]; then
+    container="$1"
+else
+    tab='          '
+    std_message "You must provide the name of a container to create as a parameter
+    ${tab}$ sh test-centos.sh 'xlinesCentOS'" "FAIL"
+    exit 1
+fi
 
 # working directory
 cd "$(_git_root)/packaging/docker/centos7" || false
@@ -41,7 +48,7 @@ std_message "Begin image build" "INFO"
 docker build  -t  $image .
 
 # create container
-std_message "Creating and running container -- START" "INFO"
+std_message "Creating and running container ($container) -- START" "INFO"
 docker run  --name=$container  -d -v /tmp/rpm:/mnt/rpm  -ti  $image  tail -f /dev/null &
 
 if container_started; then
