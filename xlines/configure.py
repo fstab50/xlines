@@ -37,11 +37,18 @@ def clearscreen():
 
 
 def _init_screen(height_percent=0.25):
-    """Initializes screen before configuration artifact display"""
+    """
+
+        Initializes screen before configuration artifact display
+
+    Returns:
+        width in columns for centering artifacts on cli terminal
+        right to left, TYPE: int
+    """
     clearscreen()
-    terminal_ht = int(terminal_size(height=True)[0])
-    print('\n' * int(terminal_ht * height_percent))
-    return True
+    rows, columns = terminal_size(height=True)
+    print('\n' * int(int(rows) * height_percent))
+    return int(columns)
 
 
 def section_header(section, tabspaces=12):
@@ -106,9 +113,14 @@ def main_menupage(expath, exdirpath):
     Displays main configuration menu jump page and options
     """
     def menu():
+        bar = '''
+        ________________________________________________________________________________
+        '''
+        pattern_width = len(bar)
         border = bbl
         icolor = bbl
-        _init_screen()
+        width = _init_screen()
+        offset = '\t'.expandtabs(int(width / 2) - (pattern_width / 2)))
         print(border + '''
         ________________________________________________________________________________
         ''' + rst + '''
@@ -232,7 +244,7 @@ def _configure_remove(expath, exdirpath):
             f2 = [x.strip() for x in f1.readlines()]
 
         while loop:
-            clearscreen()
+            _init_screen()
             section_header('delete', tabspaces=10)
             display_exclusions(expath, exdirpath)
 
@@ -300,7 +312,7 @@ def _configure_hicount(expath, exdirpath):
     local_linecount_file = local_config['CONFIG']['COUNT_HI_THRESHOLD_FILEPATH']
 
     try:
-        clearscreen()
+        _init_screen()
         section_header('threshold', tabspaces=10)
 
         while loop:
