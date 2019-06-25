@@ -146,6 +146,7 @@ def _configure_add(expath, exdirpath):
     Returns:
         Success | Failure, TYPE: bool
     """
+    tab4 = '\t'.expandtabs(4)
     loop = True
 
     try:
@@ -159,7 +160,7 @@ def _configure_add(expath, exdirpath):
             section_header('add')
             display_exclusions(expath, exdirpath)
             # query user input for new exclusions
-            response = input('  Enter file extension types separated by commas [done]: ')
+            response = input(tab4 + 'Enter file extension types separated by commas [done]: ')
 
             if not response:
                 loop = False
@@ -212,7 +213,6 @@ def _configure_remove(expath, exdirpath):
         Succsss || Failure, TYPE: bool
     """
     tab4 = '\t'.expandtabs(4)
-    tab8 = '\t'.expandtabs(8)
     loop = True
 
     try:
@@ -287,6 +287,7 @@ def _configure_hicount(expath, exdirpath):
 
     tab4 = '\t'.expandtabs(4)
     tab8 = '\t'.expandtabs(8)
+    tab13 = '\t'.expandtabs(13)
     loop = True
     local_linecount_file = local_config['CONFIG']['COUNT_HI_THRESHOLD_FILEPATH']
 
@@ -300,24 +301,28 @@ def _configure_hicount(expath, exdirpath):
                 with open(local_linecount_file) as f1:
                     threshold = int(f1.read().strip())
 
-            stdout_message(message='Current high line count threshold is {}{}{}'.format(bdwt, threshold, rst))
-            answer = input(f'{tab4}Enter high line count threshold [{threshold}]: ')
+            stdout_message(
+                message='Current high line count threshold: {}{}{}'.format(bdwt, threshold, rst)
+                )
+            answer = input(f'{tab13}Enter high line count threshold [{threshold}]: ')
 
             try:
                 if not answer:
                     stdout_message(f'High line count threshold remains {threshold}', prefix='ok')
-                    sys.exit(exit_codes['EX_OK']['Code'])
+                    loop = False
+                    return mainmenu_return()
 
                 elif 'q' in answer:
                     loop = False
-                    return True
+                    return mainmenu_return()
 
                 elif type(int(answer)) is int:
                     # rewrite threshold file on local filesystem
                     with open(local_linecount_file, 'w') as f1:
                         f1.write(str(answer) + '\n')
                     stdout_message(message='high line count threshold set to {}'.format(answer), prefix='ok')
-                    sys.exit(exit_codes['EX_OK']['Code'])
+                    loop = False
+                    return mainmenu_return()
 
                 else:
                     stdout_message(message='You must enter an integer number', prefix='INFO')
@@ -328,3 +333,12 @@ def _configure_hicount(expath, exdirpath):
         logger.exception(f'{fx}: Problem reading local hicount threshold file. Abort')
         return False
     return True
+
+
+def mainmenu_return():
+    """Return control to configuration main menu"""
+    tab13 = '\t'.expandtabs(13)
+    answer = input(f'{tab13}Return to configuration main menu [yes]: ')
+    if not answer or answer in ('yes', 'Yes'):
+        return True
+    return False
