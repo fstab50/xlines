@@ -148,6 +148,6 @@ setup(
             'xlines=xlines.cli:init_cli'
         ]
     },
-    options={'bdist_rpm': {'post_install': 'scripts/rpm_postinstall.py'}},
+    #options={'bdist_rpm': {'post_install': 'scripts/rpm_postinstall.py'}},
     zip_safe=False
 )
