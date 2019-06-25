@@ -109,7 +109,7 @@ builddeb:     ## Build Debian distribution (.deb) os package
 buildrpm-rhel:  artifacts   ## Build Redhat distribution (.rpm) os package
 	$(YUM_CALL) -y install epel-release which
 	$(YUM_CALL) -y install python36 python36-pip python36-setuptools python36-devel
-	PIPATH=$(PIP3_CALL); sudo -H $(PIPATH) install -U pip setuptools
+	PIPATH=$(shell which pip3); sudo -H $(PIPATH) install -U pip setuptools
 	sudo cp -r /usr/local/lib/python3.*/site-packages/setuptools* /usr/lib/python3.*/site-packages/
 	sudo cp -r /usr/local/lib/python3.*/site-packages/pkg_resources* /usr/lib/python3.*/site-packages/
 	$(PYTHON3_PATH) setup_rpm.py bdist_rpm --requires=$(RHEL_REQUIRES) --python='/usr/bin/python3'
