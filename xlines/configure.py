@@ -101,6 +101,8 @@ def main_menupage(expath, exdirpath):
         border = bbl
         icolor = bbl
         clearscreen()
+        terminal_ht = int(terminal_size(height=True)[0])
+        print('\n' * int(terminal_ht / 2 * 0.50))
         print(border + '''
         ________________________________________________________________________________
         ''' + rst + '''

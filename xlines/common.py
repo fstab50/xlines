@@ -10,6 +10,8 @@ import json
 import inspect
 import logging
 import platform
+import subprocess
+from shutil import which
 from pathlib import Path
 from xlines._version import __version__
 
@@ -159,10 +161,15 @@ def terminal_size(height=False):
         columns (str, default) || rows, columns, TYPE: tuple
 
     """
-    rows, columns = os.popen('stty size', 'r').read().split()
-    if height:
-        return rows, columns
-    return columns
+    try:
+        rows, columns = os.popen('stty size 2>/dev/null', 'r').read().split()
+        if height:
+            return rows, columns
+        return columns
+    except ValueError as e:
+        if which('tput'):
+            return subprocess.getoutput('tput cols')
+        raise e
 
 
 def user_home():
