@@ -156,7 +156,7 @@ def terminal_size(height=False):
         in columns is returned.
 
     Returns:
-        columns (default) || rows, columns, TYPE: tuple
+        columns (str, default) || rows, columns, TYPE: tuple
 
     """
     rows, columns = os.popen('stty size', 'r').read().split()
