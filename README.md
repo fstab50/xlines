@@ -13,15 +13,15 @@ Count the number of lines of text in a code project (or anything else)
 
 ## Contents
 
-* [**Dependencies**](#dependencies)
+* [**DEPENDENCIES**](#dependencies)
 
 * [**USAGE**](#usage)
 
 * [**EXCLUSIONS**](#exclusions)
 
 * [**INSTALLATION**](#installation)
-    * [Pip Install](#pip-install):  Any OS
-    * [Ubuntu, Linux Mint, Debian-based Distributions](#installation)
+    * [Pip Install](#installation)
+    * [Ubuntu, Linux Mint, Debian-based Distributions](#debian-distro-install)
     * [Redhat, CentOS, Fedora, Amazon Linux](#redhat-distro-install)
 
 * [**SCREENSHOTS**](#screenshots)
@@ -55,7 +55,7 @@ To display the help menu:
     $ xlines --help
 ```
 
-[![help](./assets/help-menu.png)](https://s3.us-east-2.amazonaws.com/http-imagestore/xlines/help-menu.png)
+[![help](./assets/help-menu.png)](http://d1qxyi0fawulzu.cloudfront.net/xlines/help-menu.png)
 
 
 [back to the top](#top)
@@ -95,8 +95,10 @@ To install xlines for all users (Linux):
 $  sudo -H pip3 install xlines
 ```
 
-* * *
+[back to the top](#top)
 
+* * *
+<a name="debian-distro-install"></a>
 ### Ubuntu, Linux Mint, Debian variants
 
 xlines is not yet offered in native Debian Linux package format.
