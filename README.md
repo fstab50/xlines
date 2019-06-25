@@ -13,14 +13,28 @@ Count the number of lines of text in a code project (or anything else)
 
 ## Contents
 
-* [Getting Started](#getting-started)
-* [Dependencies](#dependencies)
-* [Help](#help)
-* [Exclusions](#exclusions)
-* [Screenshots](#screenshots)
-* [Author & Copyright](#author--copyright)
-* [License](#license)
-* [Disclaimer](#disclaimer)
+* [**Dependencies**](#dependencies)
+
+* [**USAGE**](#usage)
+
+* [**EXCLUSIONS**](#exclusions)
+
+* [**INSTALLATION**](#installation)
+    * [Pip Install](#pip-install):  Any OS
+    * [Ubuntu, Linux Mint, Debian-based Distributions](#installation)
+    * [Redhat, CentOS, Fedora, Amazon Linux](#redhat-distro-install)
+
+* [**SCREENSHOTS**](#screenshots)
+
+* [**AUTHOR & COPYRIGHT**](#authorcopyright)
+
+* [**LICENSE**](#license)
+
+* [**DISCLAIMER**](#disclaimer)
+
+--
+
+[back to the top](#top)
 
 * * *
 
@@ -32,7 +46,8 @@ Count the number of lines of text in a code project (or anything else)
 [back to the top](#top)
 
 * * *
-## Help
+
+## Usage
 
 To display the help menu:
 
@@ -54,8 +69,94 @@ To display the help menu:
     $ xlines --exclusions
 ```
 
-[![help](./assets/exclusions.png)](https://s3.us-east-2.amazonaws.com/http-imagestore/xlines/exclusions.png)<!-- .element height="50%" width="50%" -->
+[![help](./assets/exclusions.png)](http://d1qxyi0fawulzu.cloudfront.net/xlines/exclusions.png)
 
+
+[back to the top](#top)
+
+
+* * *
+## Installation
+* * *
+
+### Pip Install
+
+xlines may be installed on Linux or Windows via **pip**, [the python package installer](https://pypi.org/project/pip)
+
+To install xlines for a single user:
+
+```
+$  pip3 install xlines --user
+```
+
+To install xlines for all users (Linux):
+
+```
+$  sudo -H pip3 install xlines
+```
+
+* * *
+
+### Ubuntu, Linux Mint, Debian variants
+
+xlines is not yet offered in native Debian Linux package format.
+
+
+[back to the top](#top)
+
+* * *
+<a name="redhat-distro-install"></a>
+### Redhat, CentOS, Fedora
+
+The easiest way to install **xlines** on redhat-based Linux distributions is via the developer-tools package repository:
+
+1. Download and install the repo definition file
+
+    ```
+    $ sudo yum install wget
+    ```
+
+    [![rpm-install1](./assets/rpm-install-1.png)](http://d1qxyi0fawulzu.cloudfront.net/xlines/rpm-install-1.png)
+
+    ```
+    $ wget http://awscloud.center/rpm/developer-tools.repo
+    ```
+
+    [![rpm-install2](./assets/rpm-install-2.png)](http://d1qxyi0fawulzu.cloudfront.net/xlines/rpm-install-2.png)
+
+    ```
+    $ sudo mv developer-tools.repo /etc/yum.repos.d/  &&  sudo chown 0:0 developer-tools.repo
+    ```
+
+2. Update local repository cache
+
+    ```
+    $ sudo yum update -y
+    ```
+
+3. Install **xlines** os package
+
+    ```
+    $ sudo yum install xlines
+    ```
+
+    [![rpm-install3](./assets/rpm-install-3.png)](http://d1qxyi0fawulzu.cloudfront.net/xlines/rpm-install-3.png)
+
+
+    Answer "y":
+
+    [![rpm-install4](./assets/rpm-install-4.png)](http://d1qxyi0fawulzu.cloudfront.net/xlines/rpm-install-4.png)
+
+
+4. Verify Installation
+
+    ```
+    $ yum info xlines
+    ```
+
+    [![rpm-install5](./assets/rpm-install-5.png)](http://d1qxyi0fawulzu.cloudfront.net/xlines/rpm-install-5.png)
+
+--
 
 [back to the top](#top)
 
@@ -68,7 +169,7 @@ Counting lines in large repository with long paths.
     $ xlines  --sum  git/AWSAMPLES/aws-serverless-workshops/
 ```
 
-[![repo1-1](./assets/repofinal.png)](https://s3.us-east-2.amazonaws.com/http-imagestore/xlines/repofinal.png)
+[![repo1-1](./assets/repofinal.png)](http://d1qxyi0fawulzu.cloudfront.net/xlines/repofinal.png)
 
 
 [back to the top](#top)
