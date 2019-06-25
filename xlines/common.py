@@ -155,6 +155,9 @@ def terminal_size(height=False):
         called with height=True; else only width of terminal
         in columns is returned.
 
+    Returns:
+        columns (default) || rows, columns, TYPE: tuple
+
     """
     rows, columns = os.popen('stty size', 'r').read().split()
     if height:
