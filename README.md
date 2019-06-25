@@ -26,7 +26,7 @@ Count the number of lines of text in a code project (or anything else)
 
 * [**SCREENSHOTS**](#screenshots)
 
-* [**AUTHOR & COPYRIGHT**](#authorcopyright)
+* [**AUTHOR & COPYRIGHT**](#author--copyright)
 
 * [**LICENSE**](#license)
 
@@ -81,7 +81,7 @@ To display the help menu:
 
 ### Pip Install
 
-xlines may be installed on Linux or Windows via **pip**, [the python package installer](https://pypi.org/project/pip)
+xlines may be installed on Linux or Windows via [pip, python package installer](https://pypi.org/project/pip)
 
 To install xlines for a single user:
 
