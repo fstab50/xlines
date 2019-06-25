@@ -147,6 +147,21 @@ def os_parityPath(path):
     return path
 
 
+def terminal_size(height=False):
+    """
+    Summary.
+
+        Returns size of linux terminal rows, columns if
+        called with height=True; else only width of terminal
+        in columns is returned.
+
+    """
+    rows, columns = os.popen('stty size', 'r').read().split()
+    if height:
+        return rows, columns
+    return columns
+
+
 def user_home():
     """Returns os specific home dir for current user"""
     try:

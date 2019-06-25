@@ -9,6 +9,7 @@ import sys
 import inspect
 import logging
 from xlines.usermessage import stdout_message
+from xlines.common import terminal_size
 from xlines.colormap import ColorMap
 from xlines._version import __version__
 from xlines.statics import PACKAGE, local_config
@@ -18,6 +19,7 @@ logger = logging.getLogger(__version__)
 logger.setLevel(logging.INFO)
 
 cm = ColorMap()
+top = print('\n' * 20)
 
 try:
 
@@ -285,8 +287,6 @@ def _configure_hicount(expath, exdirpath):
             return True
         return loop_break
 
-    tab4 = '\t'.expandtabs(4)
-    tab8 = '\t'.expandtabs(8)
     tab13 = '\t'.expandtabs(13)
     loop = True
     local_linecount_file = local_config['CONFIG']['COUNT_HI_THRESHOLD_FILEPATH']
