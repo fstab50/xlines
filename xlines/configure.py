@@ -113,17 +113,15 @@ def main_menupage(expath, exdirpath):
     Displays main configuration menu jump page and options
     """
     def menu():
-        bar = '''
+        border = bbl
+        icolor = bbl
+        bar = border + '''
         ________________________________________________________________________________
         '''
         pattern_width = len(bar)
-        border = bbl
-        icolor = bbl
         width = _init_screen()
-        offset = '\t'.expandtabs(int(width / 2) - (pattern_width / 2)))
-        print(border + '''
-        ________________________________________________________________________________
-        ''' + rst + '''
+        offset = '\t'.expandtabs(int((width / 2) - (pattern_width / 2)))
+        _menu = (bar + rst + '''
 
             ''' + bdwt + PACKAGE + rst + ''' configuration main menu:
 
@@ -135,9 +133,9 @@ def main_menupage(expath, exdirpath):
                   ''' + icolor + 'c' + rst + ''')  Set high line count threshold (''' + acct + 'highlight' + rst + ''' file objects)
 
                   ''' + icolor + 'd' + rst + ''')  quit
-        ''' + border + '''
-        ________________________________________________________________________________
-        ''' + rst)
+        ''' + border + bar + rst)
+        print(_menu)
+
     loop = True
     tab8 = '\t'.expandtabs(8)
 
