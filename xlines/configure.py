@@ -36,6 +36,14 @@ def clearscreen():
     return True
 
 
+def _init_screen(height_percent=0.25):
+    """Initializes screen before configuration artifact display"""
+    clearscreen()
+    terminal_ht = int(terminal_size(height=True)[0])
+    print('\n' * int(terminal_ht * height_percent))
+    return True
+
+
 def section_header(section, tabspaces=12):
     """
     Prints section header title and function ("section") with border
@@ -100,9 +108,7 @@ def main_menupage(expath, exdirpath):
     def menu():
         border = bbl
         icolor = bbl
-        clearscreen()
-        terminal_ht = int(terminal_size(height=True)[0])
-        print('\n' * int(terminal_ht / 2 * 0.50))
+        _init_screen()
         print(border + '''
         ________________________________________________________________________________
         ''' + rst + '''
@@ -160,7 +166,7 @@ def _configure_add(expath, exdirpath):
 
         while loop:
 
-            clearscreen()
+            _init_screen()
             section_header('add')
             display_exclusions(expath, exdirpath)
             # query user input for new exclusions
