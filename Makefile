@@ -107,6 +107,7 @@ builddeb:     ## Build Debian distribution (.deb) os package
 
 .PHONY: buildrpm-rhel
 buildrpm-rhel:  artifacts   ## Build Redhat distribution (.rpm) os package
+	sudo sed -i '/env_reset/d' /etc/sudoers;
 	$(YUM_CALL) -y install epel-release which
 	$(YUM_CALL) -y install python36 python36-pip python36-setuptools python36-devel
 	sudo -H $(PIP3_CALL) install -U pip setuptools
