@@ -299,13 +299,13 @@ def _configure_remove(expath, exdirpath):
                             indent=offset_chars + adj,
                             prefix='FAIL'
                         )
+                        sleep(delay_seconds)
                     else:
                         stdout_message(
                             message='Successfully removed file type exclusion: {}'.format(deprecated),
                             indent=offset_chars + adj,
                             prefix='ok'
                         )
-                    sleep(delay_seconds)
 
                 else:
                     max_index = len(f2)
@@ -388,7 +388,7 @@ def _configure_hicount(expath, exdirpath):
                             indent=offset_chars + adj
                         )
                     loop = False
-                    return mainmenu_return(offset + tab4)
+                    return mainmenu_return(offset)
 
                 else:
                     stdout_message(
@@ -407,8 +407,8 @@ def _configure_hicount(expath, exdirpath):
 
 def mainmenu_return(offset):
     """Return control to configuration main menu"""
-    tab13 = '\t'.expandtabs(13)
-    answer = input(f'{offset}{tab13}Hit enter to return to main menu [enter] ')
+    tab = '\t'.expandtabs(17)
+    answer = input(f'{offset}{tab}Return to main menu [enter]: ')
     if not answer or answer in ('yes', 'Yes'):
         return True
     return False
