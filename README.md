@@ -112,7 +112,14 @@ xlines is not yet offered in native Debian Linux package format.
 
 The easiest way to install **xlines** on redhat-based Linux distributions is via the developer-tools package repository:
 
-1. Download and install the repo definition file
+
+1. Install the official epel package repository
+
+    ```
+    $ sudo yum install epel-release
+    ```
+
+2. Download and install the repo definition file
 
     ```
     $ sudo yum install wget
@@ -130,13 +137,14 @@ The easiest way to install **xlines** on redhat-based Linux distributions is via
     $ sudo mv developer-tools.repo /etc/yum.repos.d/  &&  sudo chown 0:0 developer-tools.repo
     ```
 
-2. Update local repository cache
+3. Update local repository cache
 
     ```
     $ sudo yum update -y
     ```
 
-3. Install **xlines** os package
+
+4. Install **xlines** os package
 
     ```
     $ sudo yum install xlines
@@ -150,7 +158,7 @@ The easiest way to install **xlines** on redhat-based Linux distributions is via
     [![rpm-install4](./assets/rpm-install-4.png)](http://d1qxyi0fawulzu.cloudfront.net/xlines/rpm-install-4.png)
 
 
-4. Verify Installation
+5. Verify Installation
 
     ```
     $ yum info xlines
