@@ -255,7 +255,7 @@ def _configure_remove(expath, exdirpath):
     Return:
         Succsss || Failure, TYPE: bool
     """
-    delay_seconds = 3
+    delay_seconds = 2
     tabspaces = 4
     tab4 = '\t'.expandtabs(tabspaces)
     loop = True
@@ -276,44 +276,48 @@ def _configure_remove(expath, exdirpath):
 
             answer = input(offset + tab4 + 'Pick the number of a file type to remove [done]: ')
 
-            if not answer:
-                loop = False
-                sys.stdout.write('\n')
-                return True
+            try:
+                if not answer:
+                    loop = False
+                    sys.stdout.write('\n')
+                    return True
 
-            elif int(answer) in range(1, len(f2) + 1):
-                # correct for f2 list index
-                answer = int(answer) - 1
-                # remove entry selected by user
-                deprecated = f2[answer]
-                f2.pop(int(answer))
+                elif int(answer) in range(1, len(f2) + 1):
+                    # correct for f2 list index
+                    answer = int(answer) - 1
+                    # remove entry selected by user
+                    deprecated = f2[answer]
+                    f2.pop(int(answer))
 
-                if not _configure_rewrite(expath, f2):
-                    return False
+                    if not _configure_rewrite(expath, f2):
+                        return False
 
-                # Acknowledge removal
-                if str(answer) in f2:
-                    stdout_message(
-                        message='Failure to remove {} - reason unknown'.format(f2[answer]),
-                        indent=offset_chars + adj,
-                        prefix='FAIL'
-                    )
+                    # Acknowledge removal
+                    if str(answer) in f2:
+                        stdout_message(
+                            message='Failure to remove {} - reason unknown'.format(f2[answer]),
+                            indent=offset_chars + adj,
+                            prefix='FAIL'
+                        )
+                    else:
+                        stdout_message(
+                            message='Successfully removed file type exclusion: {}'.format(deprecated),
+                            indent=offset_chars + adj,
+                            prefix='ok'
+                        )
+                    sleep(delay_seconds)
+
                 else:
+                    max_index = len(f2)
                     stdout_message(
-                        message='Successfully removed file type exclusion: {}'.format(deprecated),
-                        indent=offset_chars + adj,
-                        prefix='ok'
+                        message=f'You must pick a number between 1 and {max_index}',
+                        prefix='WARN',
+                        indent=offset_chars + adj
                     )
-                sleep(delay_seconds)
+                    sleep(delay_seconds)
+            except ValueError:
+                continue
 
-            else:
-                max_index = len(f2)
-                stdout_message(
-                    message=f'You must pick a number between 1 and {max_index}',
-                    prefix='WARN',
-                    indent=offset_chars + adj
-                )
-                sleep(delay_seconds)
     except OSError:
         stdout_message(
             message='Unable to modify local config file located at {}'.format(expath),
