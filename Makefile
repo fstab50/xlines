@@ -120,7 +120,8 @@ buildrpm-rhel:  artifacts   ## Build Redhat distribution (.rpm) os package
 buildrpm-aml:  artifacts  ## Build Amazon Linux 2 distribution (.rpm) os package
 	$(YUM_CALL) -y install python3 python3-devel python3-pip python3-setuptools which sudo rpm-build
 	sudo -H $(PIP3_CALL) install -U pip setuptools pygments
-	cp -r /usr/local/lib64/python3.*/site-packages/[p-P]ygments*  .
+	cp -r /usr/local/lib64/python3.*/site-packages/Pygments*  .
+	cp -r /usr/local/lib64/python3.*/site-packages/pygments*  .
 	$(PYTHON3_PATH) setup_rpm.py bdist_rpm --requires=$(AML_REQUIRES) --python='/usr/bin/python3'
 	# Fails:  pygments must be installed in /usr/local/lib64/python3.*/site-packages
 	# 		  either via postinstall script pip3 install or bundled and deployed specific location
