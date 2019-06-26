@@ -59,10 +59,11 @@ function _amazonlinux(){
 }
 
 
-#if _redhat_linux; then
+if _redhat_linux; then
 
-    yum -y install epel-release
+    wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+    rpm -Uvh epel-release-latest-7.noarch.rpm
 
-#fi
+fi
 
 exit 0
