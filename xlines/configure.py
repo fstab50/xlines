@@ -20,8 +20,7 @@ logger = logging.getLogger(__version__)
 logger.setLevel(logging.INFO)
 
 cm = ColorMap()
-default_width = 50
-pattern_default_offset = '\t'.expandtabs(default_width)
+default_width = 4
 
 bar = '''
 ________________________________________________________________________________
@@ -300,12 +299,6 @@ def _configure_remove(expath, exdirpath):
                             prefix='FAIL'
                         )
                         sleep(delay_seconds)
-                    else:
-                        stdout_message(
-                            message='Successfully removed file type exclusion: {}'.format(deprecated),
-                            indent=offset_chars + adj,
-                            prefix='ok'
-                        )
 
                 else:
                     max_index = len(f2)
