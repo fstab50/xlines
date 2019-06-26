@@ -8,6 +8,7 @@ import os
 import sys
 import inspect
 import logging
+from time import sleep
 from xlines.usermessage import stdout_message
 from xlines.common import terminal_size
 from xlines.colormap import ColorMap
@@ -19,7 +20,12 @@ logger = logging.getLogger(__version__)
 logger.setLevel(logging.INFO)
 
 cm = ColorMap()
-top = print('\n' * 20)
+default_width = 50
+pattern_default_offset = '\t'.expandtabs(default_width)
+
+bar = '''
+________________________________________________________________________________
+'''
 
 try:
 
@@ -51,33 +57,41 @@ def _init_screen(height_percent=0.25):
     return int(columns)
 
 
-def section_header(section, tabspaces=12):
+def section_header(section, width=80, tabspaces=14):
     """
-    Prints section header title and function ("section") with border
+        Prints section header title and function ("section") with border
+
+    Returns:
+        width of section header in chars, TYPE: int
     """
     if section.lower() in ('add', 'delete'):
         title = '{} File Type Exclusions Menu'.format(bdwt + section.title() + rst)
     else:
         title = 'high line count {} update'.format(bdwt + section + rst)
 
+    bar = '________________________________________________________________'
+    pattern_width = len(bar)
+    offset = '\t'.expandtabs(int((width / 2) - (pattern_width / 2)))
     border = bbl
     tab = '\t'.expandtabs(tabspaces)
     tab4 = '\t'.expandtabs(4)
-    print(border + tab4 + '____________________________________________\n' + rst)
-    print('{}{}'.format(tab, title))
-    print(border + tab4 + '____________________________________________\n' + rst)
-    return True
+    print(offset + border + bar + '\n' + rst)
+    print('{}{}{}'.format(offset, tab, title))
+    print(offset + border + bar + '\n' + rst)
+    return len(bar)
 
 
-def display_exclusions(expath, exdirpath):
+def display_exclusions(expath, exdirpath, offset_spaces=default_width):
     """
     Show list of all file type extensions which are excluded
     from line total calculations
     """
     tab = '\t'.expandtabs(15)
+    offset = '\t'.expandtabs(offset_spaces)
 
     # numbering
     div = cm.bpl + ')' + rst
+    adj = 10
 
     try:
 
@@ -85,10 +99,10 @@ def display_exclusions(expath, exdirpath):
             with open(expath) as f1:
                 exclusions = [x.strip() for x in f1.readlines()]
 
-        stdout_message(message='File types excluded from line counts:')
+        stdout_message(message='File types excluded from line counts:', indent=offset_spaces + adj)
 
         for index, ext in enumerate(exclusions):
-            print('{}{:>3}{}'.format(tab, index + 1, div + '  ' + ext))
+            print('{}{}{:>3}{}'.format(offset, tab, index + 1, div + '  ' + ext))
 
         sys.stdout.write('\n')
         return True
@@ -121,27 +135,23 @@ def main_menupage(expath, exdirpath):
         pattern_width = len(bar)
         width = _init_screen()
         offset = '\t'.expandtabs(int((width / 2) - (pattern_width / 2)))
-        _menu = (bar + rst + '''
-
-            ''' + bdwt + PACKAGE + rst + ''' configuration main menu:
-
-
-                  ''' + icolor + 'a' + rst + ''')  Add file type to exclusion list
-
-                  ''' + icolor + 'b' + rst + ''')  Remove file type from exclusion list
-
-                  ''' + icolor + 'c' + rst + ''')  Set high line count threshold (''' + acct + 'highlight' + rst + ''' file objects)
-
-                  ''' + icolor + 'd' + rst + ''')  quit
+        _menu = (bar + rst + '''\n\n
+            ''' + bdwt + PACKAGE + rst + ''' configuration main menu:\n\n
+                  ''' + icolor + 'a' + rst + ''')  Add file type to exclusion list\n\n
+                  ''' + icolor + 'b' + rst + ''')  Remove file type from exclusion list\n\n
+                  ''' + icolor + 'c' + rst + ''')  Set high line count threshold (''' + acct + 'highlight' + rst + ''' file objects)\n\n
+                  ''' + icolor + 'd' + rst + ''')  quit\n
         ''' + border + bar + rst)
-        print(_menu)
+        for line in _menu.split('\n'):
+            print('{}{}'.format(offset, line))
+        return offset
 
     loop = True
     tab8 = '\t'.expandtabs(8)
 
     while loop:
-        menu()
-        answer = input('\n{}Choose operation [quit]: '.format(tab8)).lower()
+        offset = menu()
+        answer = input('\n{}{}Choose operation [quit]: '.format(offset, tab8)).lower()
         sys.stdout.write('\n')
 
         if not answer or answer == 'd':
@@ -168,6 +178,7 @@ def _configure_add(expath, exdirpath):
     """
     tab4 = '\t'.expandtabs(4)
     loop = True
+    adj = 4
 
     try:
 
@@ -175,12 +186,15 @@ def _configure_add(expath, exdirpath):
             exclusions = [x.strip() for x in f1.readlines()]
 
         while loop:
-
-            _init_screen()
-            section_header('add')
-            display_exclusions(expath, exdirpath)
+            width = _init_screen()
+            pattern_width = section_header('add', width, tabspaces=16)
+            offset_chars = int((width / 2) - (pattern_width / 2)) + adj
+            offset = '\t'.expandtabs(offset_chars)
+            display_exclusions(expath, exdirpath, offset_chars)
             # query user input for new exclusions
-            response = input(tab4 + 'Enter file extension types separated by commas [done]: ')
+            msg = 'Enter file extension types separated by commas [done]: '
+            offset_msg = '\t'.expandtabs(int((width / 2) - (pattern_width / 2) + adj * 2))
+            response = input(f'{offset_msg}{msg}')
 
             if not response:
                 loop = False
@@ -225,6 +239,15 @@ def _configure_rewrite(expath, newlist):
     return True
 
 
+def continue_operation(offset_spaces):
+    offset = '\t'.expandtabs(offset_spaces)
+    msg = '{}Continue?  [quit]'.format(offset)
+    answer = input(msg)
+    if not answer or answer in ('quit', 'q', 'no', 'No'):
+        return False
+    return True
+
+
 def _configure_remove(expath, exdirpath):
     """
         Remove file type extension from exclusion list
@@ -232,8 +255,11 @@ def _configure_remove(expath, exdirpath):
     Return:
         Succsss || Failure, TYPE: bool
     """
-    tab4 = '\t'.expandtabs(4)
+    delay_seconds = 3
+    tabspaces = 4
+    tab4 = '\t'.expandtabs(tabspaces)
     loop = True
+    adj = tabspaces * 2
 
     try:
 
@@ -242,11 +268,13 @@ def _configure_remove(expath, exdirpath):
             f2 = [x.strip() for x in f1.readlines()]
 
         while loop:
-            _init_screen()
-            section_header('delete', tabspaces=10)
-            display_exclusions(expath, exdirpath)
+            width = _init_screen()
+            pattern_width = section_header('delete', width, tabspaces=14)
+            offset_chars = int((width / 2) - (pattern_width / 2)) + tabspaces
+            offset = '\t'.expandtabs(offset_chars)
+            display_exclusions(expath, exdirpath, offset_chars)
 
-            answer = input(tab4 + 'Pick the number of a file type to remove [done]: ')
+            answer = input(offset + tab4 + 'Pick the number of a file type to remove [done]: ')
 
             if not answer:
                 loop = False
@@ -267,22 +295,25 @@ def _configure_remove(expath, exdirpath):
                 if str(answer) in f2:
                     stdout_message(
                         message='Failure to remove {} - reason unknown'.format(f2[answer]),
-                        indent=16,
+                        indent=offset_chars + adj,
                         prefix='FAIL'
                     )
                 else:
                     stdout_message(
                         message='Successfully removed file type exclusion: {}'.format(deprecated),
-                        indent=16,
+                        indent=offset_chars + adj,
                         prefix='ok'
                     )
+                sleep(delay_seconds)
 
             else:
                 max_index = len(f2)
                 stdout_message(
                     message=f'You must pick a number between 1 and {max_index}',
-                    prefix='WARN'
+                    prefix='WARN',
+                    indent=offset_chars + adj
                 )
+                sleep(delay_seconds)
     except OSError:
         stdout_message(
             message='Unable to modify local config file located at {}'.format(expath),
@@ -305,13 +336,17 @@ def _configure_hicount(expath, exdirpath):
             return True
         return loop_break
 
+    tab4 = '\t'.expandtabs(4)
     tab13 = '\t'.expandtabs(13)
     loop = True
     local_linecount_file = local_config['CONFIG']['COUNT_HI_THRESHOLD_FILEPATH']
+    adj = 12
 
     try:
-        _init_screen()
-        section_header('threshold', tabspaces=10)
+        width = _init_screen()
+        pattern_width = section_header('threshold', width, tabspaces=14)
+        offset_chars = int((width / 2) - (pattern_width / 2))
+        offset = '\t'.expandtabs(offset_chars)
 
         while loop:
 
@@ -320,30 +355,43 @@ def _configure_hicount(expath, exdirpath):
                     threshold = int(f1.read().strip())
 
             stdout_message(
-                message='Current high line count threshold: {}{}{}'.format(bdwt, threshold, rst)
+                message='Current high line count threshold: {}{}{}'.format(bdwt, threshold, rst),
+                indent=offset_chars + adj
                 )
-            answer = input(f'{tab13}Enter high line count threshold [{threshold}]: ')
+            answer = input(f'{tab4}{offset}{tab13}Enter high line count threshold [{threshold}]: ')
 
             try:
                 if not answer:
-                    stdout_message(f'High line count threshold remains {threshold}', prefix='ok')
+                    stdout_message(
+                            f'High line count threshold remains {threshold}',
+                            prefix='ok',
+                            indent=offset_chars + adj
+                        )
                     loop = False
-                    return mainmenu_return()
+                    return mainmenu_return(offset)
 
                 elif 'q' in answer:
                     loop = False
-                    return mainmenu_return()
+                    return mainmenu_return(offset)
 
                 elif type(int(answer)) is int:
                     # rewrite threshold file on local filesystem
                     with open(local_linecount_file, 'w') as f1:
                         f1.write(str(answer) + '\n')
-                    stdout_message(message='high line count threshold set to {}'.format(answer), prefix='ok')
+                    stdout_message(
+                            message='high line count threshold set to {}'.format(answer),
+                            prefix='ok',
+                            indent=offset_chars + adj
+                        )
                     loop = False
-                    return mainmenu_return()
+                    return mainmenu_return(offset + tab4)
 
                 else:
-                    stdout_message(message='You must enter an integer number', prefix='INFO')
+                    stdout_message(
+                            message='You must enter an integer number',
+                            prefix='INFO',
+                            indent=offset_chars + adj
+                        )
             except ValueError:
                 pass
     except OSError:
@@ -353,10 +401,10 @@ def _configure_hicount(expath, exdirpath):
     return True
 
 
-def mainmenu_return():
+def mainmenu_return(offset):
     """Return control to configuration main menu"""
     tab13 = '\t'.expandtabs(13)
-    answer = input(f'{tab13}Return to configuration main menu [yes]: ')
+    answer = input(f'{offset}{tab13}Hit enter to return to main menu [enter] ')
     if not answer or answer in ('yes', 'Yes'):
         return True
     return False
