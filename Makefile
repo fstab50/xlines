@@ -174,7 +174,7 @@ rebuild-docs:   ## Regenerate sphinx documentation
 
 .PHONY: upload-images
 upload-images:   ## Upload README images to Amazon S3
-	bash $(CUR_DIR)/scripts/upload-s3-artifacts.sh
+	bash $(CUR_DIR)/scripts/s3upload.sh
 
 
 .PHONY: help
