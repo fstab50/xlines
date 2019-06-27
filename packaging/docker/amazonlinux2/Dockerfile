@@ -22,7 +22,7 @@ RUN yum -y update; yum clean all
 RUN yum -y groups mark convert
 RUN yum -y groupinstall "Development Tools"
 
-RUN yum install -y procps wget \
+RUN yum install -y procps wget mlocate \
                    highlight source-highlight \
                    git vim jq bc mlocate initscripts
 

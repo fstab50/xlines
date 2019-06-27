@@ -29,8 +29,8 @@ RUN yum install -y gcc gcc-c++ \
                    libtool libtool-ltdl \
                    make cmake \
                    git vim figlet \
-                   pkgconfig \
-                   sudo \
+                   pkgconfig mlocate \
+                   sudo wget \
                    automake autoconf \
                    yum-utils  && \
     yum clean all
