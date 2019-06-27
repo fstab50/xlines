@@ -4,6 +4,7 @@
 #   Manual creation of container assets for testing
 #
 
+container_name='xlinesCentOS'
 image='centos7:rpmbuildD'
 
 
@@ -34,11 +35,17 @@ source "$(_git_root)/scripts/colors.sh"
 
 if [ "$1" ]; then
     container="$1"
-else
+    std_message "Creating container $container" "OK"
+
+elif [ "$(docker ps -a | grep $container_name)" ]; then
     tab='          '
-    std_message "You must provide the name of a container to create as a parameter
+    std_message "Default container $container_name exists.  You must provide a unique name as a parameter
     ${tab}$ sh test-centos.sh 'xlinesCentOS'" "FAIL"
     exit 1
+
+else
+    container=$container_name
+    std_message "Creating default container name:  $container_name" "INFO"
 fi
 
 # working directory
