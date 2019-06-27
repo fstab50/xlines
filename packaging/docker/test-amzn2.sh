@@ -4,6 +4,7 @@
 #   Manual creation of container assets for testing
 #
 
+pkg=$(basename $0)
 container_name='AML2test'
 image='amazonlinux:rpmbuildD'
 
@@ -40,7 +41,7 @@ if [ "$1" ]; then
 elif [ "$(docker ps -a | grep $container_name)" ]; then
     tab='          '
     std_message "Default container $container_name exists.  You must provide a unique name as a parameter
-    ${tab}$ sh test-centos.sh 'AML2test2'" "FAIL"
+    \n${tab}$ sh $pkg 'AML2test2'" "FAIL"
     exit 1
 
 else

@@ -4,6 +4,7 @@
 #   Manual creation of container assets for testing
 #
 
+pkg=$(basename $0)
 container_name='xlinesCentOS'
 image='centos7:rpmbuildD'
 
@@ -39,8 +40,8 @@ if [ "$1" ]; then
 
 elif [ "$(docker ps -a | grep $container_name)" ]; then
     tab='          '
-    std_message "Default container $container_name exists.  You must provide a unique name as a parameter
-    ${tab}$ sh test-centos.sh 'xlinesCentOS'" "FAIL"
+    std_message "Default container $container_name exists.  You must provide a unique name as a parameter\n
+    ${tab}$ sh $pkg 'xlinesCentOS'" "FAIL"
     exit 1
 
 else
