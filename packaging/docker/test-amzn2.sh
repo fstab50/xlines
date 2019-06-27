@@ -5,7 +5,7 @@
 #
 
 pkg=$(basename $0)
-container_name='AML2test'
+container_default='AML2test'
 image='amazonlinux:rpmbuildD'
 
 
@@ -22,9 +22,9 @@ function container_started(){
     ##  check container status
     ##
     if [[ "$(docker ps | grep $container 2>/dev/null)" ]]; then
-        return 0
+        return 1    # scontainer running
     else
-        return 1
+        return 0    # container stopped
     fi
 }
 
@@ -38,15 +38,15 @@ if [ "$1" ]; then
     container="$1"
     std_message "Creating container $container" "OK"
 
-elif [ "$(docker ps -a | grep $container_name)" ]; then
+elif [ "$(docker ps -a | grep $container_default)" ]; then
     tab='          '
-    std_message "Default container $container_name exists.  You must provide a unique name as a parameter
+    std_message "Default container $container_default exists.  You must provide a unique name as a parameter
     \n${tab}$ sh $pkg 'AML2test2'" "FAIL"
     exit 1
 
 else
-    container=$container_name
-    std_message "Creating default container name:  $container_name" "INFO"
+    container=$container_default
+    std_message "Creating default container name:  $container_default" "INFO"
 fi
 
 # working directory
