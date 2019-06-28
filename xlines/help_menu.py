@@ -11,15 +11,18 @@ from xlines import Colors
 
 c = Colors()
 
-PKG_ACCENT = c.ORANGE
-PARAM_ACCENT = c.WHITE
+ACCENT = c.ORANGE               # orange accent highlight color
+wht = c.WHITE          # white only
+bdacct = c.ORANGE + c.BOLD      # bold orange
+bdbl = c.BLUE + c.BOLD          # bold blue
+bdwt = c.WHITE + c.BOLD         # bold white
 tab = '\t'.expandtabs(23)
 
 menu_title = '\n' + c.BOLD + tab + PACKAGE + c.RESET + ' help contents'
 
 synopsis_cmd = (
-    c.RESET + PKG_ACCENT + PACKAGE +
-    PARAM_ACCENT + ' --sum ' + c.RESET + ' <dir1> <dir2> <fname1> ... '
+    c.RESET + ACCENT + PACKAGE +
+    wht + ' --sum ' + c.RESET + ' <dir1> <dir2> <fname1> <fname2>... '
     )
 
 url_doc = c.URL + 'http://xlines.readthedocs.io' + c.RESET
@@ -66,5 +69,13 @@ menu_body = menu_title + c.BOLD + """
             objects,  but omit lines containing only whitespace
     """ + c.BOLD + """
         -V, --version""" + c.RESET + """: Print package version and copyright info
+    """ + c.BOLD + """
+  LEGEND""" + c.RESET + """
 
+          """ + bdbl + 'o' + c.RESET + """  |  Filesystem object counted (""" + bdbl + 'blue' + c.RESET + """)
+        ---------------------------------------------------------
+          """ + bdacct + 'o' + c.RESET + """  |  Line count above high count threshold (""" + bdacct + 'orange' + c.RESET + """)
+        ---------------------------------------------------------
+         """ + wht + '-->' + c.RESET + """ |  Truncated file path (""" + bdwt + 'white' + c.RESET + """)
+        
     """
