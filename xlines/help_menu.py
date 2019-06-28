@@ -39,11 +39,11 @@ menu_body = menu_title + c.BOLD + """
 
             """ + synopsis_cmd + """
 
-                        -s, --sum <value1>...
+                        -s, --sum
                        [-e, --exclusions ]
                        [-c, --configure  ]
-                       [-d, --debug    ]
-                       [-h, --help     ]
+                       [-d, --debug  ]
+                       [-h, --help   ]
                        [-m, --multiprocess  ]
                        [-w, --whitespace  ]
                        [-V, --version  ]
