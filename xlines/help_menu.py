@@ -13,32 +13,34 @@ from xlines.variables import *
 c = Colors()
 
 ACCENT = c.ORANGE               # orange accent highlight color
-wht = c.WHITE          # white only
 bdacct = c.ORANGE + c.BOLD      # bold orange
 bdbl = c.BLUE + c.BOLD          # bold blue
-#bdwt = c.WHITE + c.BOLD         # bold white
+lbrct = bbc + ' [ ' + rst        # left bracket
+rbrct = bbc + ' ]' + rst        # right bracket
+vdiv = bbc + ' | ' + rst
 tab = '\t'.expandtabs(23)
 
-menu_title = '\n' + c.BOLD + tab + PACKAGE + c.RESET + ' help contents'
+menu_title = '\n' + c.BOLD + tab + PACKAGE + rst + ' help contents'
 
 synopsis_cmd = (
-    c.RESET + ACCENT + PACKAGE +
-    wht + ' --sum ' + c.RESET + ' <dir1> <dir2> <fname1> <fname2>... '
+    rst + ACCENT + PACKAGE +
+    lbrct + '--sum <values>' + vdiv + '--whitespace' + vdiv +
+    '--configure' + rbrct
     )
 
-url_doc = c.URL + 'http://xlines.readthedocs.io' + c.RESET
-url_sc = c.URL + 'https://github.com/fstab50/xlines' + c.RESET
+url_doc = c.URL + 'http://xlines.readthedocs.io' + rst
+url_sc = c.URL + 'https://github.com/fstab50/xlines' + rst
 
 menu_body = menu_title + c.BOLD + """
 
-  DESCRIPTION""" + c.RESET + """
+  DESCRIPTION""" + rst + """
 
             Count lines of text: A utility for all code projects
             Source Code Repo:  """ + url_sc + """
     """ + c.BOLD + """
-  SYNOPSIS""" + c.RESET + """
+  SYNOPSIS""" + rst + """
 
-            """ + synopsis_cmd + """
+        $ """ + synopsis_cmd + """
 
                         -s, --sum
                        [-e, --exclusions ]
@@ -50,35 +52,33 @@ menu_body = menu_title + c.BOLD + """
                        [-V, --version  ]
     """ + c.BOLD + """
   OPTIONS
-        -s, --sum""" + c.RESET + """ (string): Sum the counts of all lines contained
+        -s, --sum""" + rst + """ (string): Sum the counts of all lines contained
             in filesystem objects referenced in the sum parameter
     """ + c.BOLD + """
-        -c, --configure""" + c.RESET + """:  Configure runtime parameter via the cli
+        -c, --configure""" + rst + """:  Configure runtime parameter via the cli
             menu. Change display format, color scheme, etc values
     """ + c.BOLD + """
-        -d, --debug""" + c.RESET + """: Print out additional debugging information
+        -d, --debug""" + rst + """: Print out additional debugging information
     """ + c.BOLD + """
-        -e, --exclusions""" + c.RESET + """:  Print out list of file type extensions
+        -e, --exclusions""" + rst + """:  Print out list of file type extensions
             and directories excluded from line count calculations
     """ + c.BOLD + """
-        -h, --help""" + c.RESET + """: Show this help message and exit
+        -h, --help""" + rst + """: Show this help message and exit
     """ + c.BOLD + """
-        -m, --multiprocess""" + c.RESET + """:  Use multiple cpu cores for counting
+        -m, --multiprocess""" + rst + """:  Use multiple cpu cores for counting
             lines of text in expansive filesystem directories
     """ + c.BOLD + """
-        -w, --whitespace""" + c.RESET + """:  Perform line counts of all filesystem
+        -w, --whitespace""" + rst + """:  Perform line counts of all filesystem
             objects,  but omit lines containing only whitespace
     """ + c.BOLD + """
-        -V, --version""" + c.RESET + """: Print package version and copyright info
+        -V, --version""" + rst + """: Print package version and copyright info
     """ + c.BOLD + """
-  LEGEND""" + c.RESET + """
+  LEGEND""" + rst + """
 
-        """ + c.BRIGHT_CYAN + 'o' + c.RESET + """  |  Filesystem object counted (""" + bbc + 'fname.txt' + c.RESET + """)
-      ----------------------------------------------------------
-        """ + text + 'o' + c.RESET + """  |  Filesystem path (""" + text + '/home/davdb/git' + c.RESET + """)
-      ----------------------------------------------------------
-        """ + bdacct + 'o' + c.RESET + """  |  Line count above high count threshold (""" + bdacct + 'fname.txt' + c.RESET + """)
-      ----------------------------------------------------------
-       """ + bdwt + '-->' + c.RESET + """ |  Truncated (shortened) file path (""" + bdwt + 'white' + c.RESET + """)
+           """ + bbc + 'o' + rst + """  |  Filesystem object counted (""" + bbc + 'cyan' + rst + """)
+        --------------------------------------------------------
+           """ + bdacct + 'o' + rst + """  |  Line count above high ct threshold (""" + bdacct + 'orange' + rst + """)
+        --------------------------------------------------------
+          """ + bwt + '->' + rst + """  |  Truncated (shortened) file path (""" + bdwt + 'white' + rst + """)
 
     """

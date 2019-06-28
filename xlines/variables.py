@@ -5,42 +5,45 @@
 from xlines.statics import local_config
 from xlines.colors import Colors
 
+c = Colors()
+
 try:
 
     from xlines.oscodes_unix import exit_codes
     os_type = 'Linux'
 
     # special colors - linux
-    acct = Colors.ORANGE
-    text = Colors.BRIGHT_PURPLE
-    TITLE = Colors.WHITE + Colors.BOLD
+    acct = c.ORANGE
+    text = c.BRIGHT_PURPLE
+    TITLE = c.WHITE + c.BOLD
 
 except Exception:
     from xlines.oscodes_win import exit_codes    # non-specific os-safe codes
     os_type = 'Windows'
 
     # special colors - windows
-    acct = Colors.CYAN
-    text = Colors.LT2GRAY
-    TITLE = Colors.WHITE + Colors.BOLD
+    acct = c.CYAN
+    text = c.LT2GRAY
+    TITLE = c.WHITE + c.BOLD
 
 
 # universal colors
-rd = Colors.RED + Colors.BOLD
-yl = Colors.YELLOW + Colors.BOLD
-fs = Colors.GOLD3
-bd = Colors.BOLD
-gn = Colors.BRIGHT_GREEN
-title = Colors.BRIGHT_WHITE + Colors.BOLD
-bbc = bd + Colors.BRIGHT_CYAN
-bbl = bd + Colors.BRIGHT_BLUE
-highlight = bd + Colors.BRIGHT_YELLOW2
+rd = c.RED + c.BOLD
+yl = c.YELLOW + c.BOLD
+fs = c.GOLD3
+bd = c.BOLD
+gn = c.BRIGHT_GREEN
+title = c.BRIGHT_WHITE + c.BOLD
+bcy = c.BRIGHT_CYAN
+bbc = bd + c.BRIGHT_CYAN
+bbl = bd + c.BRIGHT_BLUE
+highlight = bd + c.BRIGHT_YELLOW2
 frame = gn + bd
-btext = text + Colors.BOLD
-bwt = Colors.BRIGHT_WHITE
-bdwt = Colors.BOLD + Colors.BRIGHT_WHITE
-ub = Colors.UNBOLD
-rst = Colors.RESET
+btext = text + c.BOLD
+bwt = c.BRIGHT_WHITE
+bdwt = c.BOLD + c.BRIGHT_WHITE
+ub = c.UNBOLD
+rst = c.RESET
 
 # globals
 expath = local_config['EXCLUSIONS']['EX_EXT_PATH']
