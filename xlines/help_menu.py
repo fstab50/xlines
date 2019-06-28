@@ -8,6 +8,7 @@ Help Menu
 
 from xlines.statics import PACKAGE
 from xlines import Colors
+from xlines.variables import *
 
 c = Colors()
 
@@ -15,7 +16,7 @@ ACCENT = c.ORANGE               # orange accent highlight color
 wht = c.WHITE          # white only
 bdacct = c.ORANGE + c.BOLD      # bold orange
 bdbl = c.BLUE + c.BOLD          # bold blue
-bdwt = c.WHITE + c.BOLD         # bold white
+#bdwt = c.WHITE + c.BOLD         # bold white
 tab = '\t'.expandtabs(23)
 
 menu_title = '\n' + c.BOLD + tab + PACKAGE + c.RESET + ' help contents'
@@ -72,10 +73,12 @@ menu_body = menu_title + c.BOLD + """
     """ + c.BOLD + """
   LEGEND""" + c.RESET + """
 
-          """ + bdbl + 'o' + c.RESET + """  |  Filesystem object counted (""" + bdbl + 'blue' + c.RESET + """)
-        ---------------------------------------------------------
-          """ + bdacct + 'o' + c.RESET + """  |  Line count above high count threshold (""" + bdacct + 'orange' + c.RESET + """)
-        ---------------------------------------------------------
-         """ + bdwt + '-->' + c.RESET + """ |  Truncated (shortened) file path (""" + bdwt + 'white' + c.RESET + """)
+        """ + c.BRIGHT_CYAN + 'o' + c.RESET + """  |  Filesystem object counted (""" + bbc + 'fname.txt' + c.RESET + """)
+      ----------------------------------------------------------
+        """ + text + 'o' + c.RESET + """  |  Filesystem path (""" + text + '/home/davdb/git' + c.RESET + """)
+      ----------------------------------------------------------
+        """ + bdacct + 'o' + c.RESET + """  |  Line count above high count threshold (""" + bdacct + 'fname.txt' + c.RESET + """)
+      ----------------------------------------------------------
+       """ + bdwt + '-->' + c.RESET + """ |  Truncated (shortened) file path (""" + bdwt + 'white' + c.RESET + """)
 
     """
