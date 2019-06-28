@@ -75,10 +75,10 @@ menu_body = menu_title + c.BOLD + """
     """ + c.BOLD + """
   LEGEND""" + rst + """
 
-           """ + bdcy + 'o' + rst + """  |  Filesystem object counted (""" + bdcy + 'cyan' + rst + """)
+           """ + bbl + 'o' + rst + """  |  Filesystem object counted (""" + bcy + 'cyan' + rst + """)
         --------------------------------------------------------
-           """ + bdacct + 'o' + rst + """  |  Line count above high ct threshold (""" + bdacct + 'orange' + rst + """)
+           """ + bdacct + 'o' + rst + """  |  Line count above high ct threshold (""" + acct + 'orange' + rst + """)
         --------------------------------------------------------
-          """ + bwt + '->' + rst + """  |  Truncated (shortened) file path (""" + bdwt + 'white' + rst + """)
+          """ + bwt + '->' + rst + """  |  Truncated (shortened) file path (""" + bwt + 'white' + rst + """)
 
     """
