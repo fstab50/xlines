@@ -76,6 +76,6 @@ menu_body = menu_title + c.BOLD + """
         ---------------------------------------------------------
           """ + bdacct + 'o' + c.RESET + """  |  Line count above high count threshold (""" + bdacct + 'orange' + c.RESET + """)
         ---------------------------------------------------------
-         """ + wht + '-->' + c.RESET + """ |  Truncated file path (""" + bdwt + 'white' + c.RESET + """)
-        
+         """ + bdwt + '-->' + c.RESET + """ |  Truncated (shortened) file path (""" + bdwt + 'white' + c.RESET + """)
+
     """
