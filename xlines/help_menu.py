@@ -14,11 +14,11 @@ c = Colors()
 
 ACCENT = c.ORANGE               # orange accent highlight color
 bdacct = c.ORANGE + c.BOLD      # bold orange
-bdbl = c.BLUE + c.BOLD          # bold blue
+bdcy = c.CYAN + c.BOLD          # bold blue
 lbrct = bbc + ' [ ' + rst        # left bracket
 rbrct = bbc + ' ]' + rst        # right bracket
 vdiv = bbc + ' | ' + rst
-tab = '\t'.expandtabs(23)
+tab = '\t'.expandtabs(24)
 
 menu_title = '\n' + c.BOLD + tab + PACKAGE + rst + ' help contents'
 
@@ -75,7 +75,7 @@ menu_body = menu_title + c.BOLD + """
     """ + c.BOLD + """
   LEGEND""" + rst + """
 
-           """ + bbc + 'o' + rst + """  |  Filesystem object counted (""" + bbc + 'cyan' + rst + """)
+           """ + bdcy + 'o' + rst + """  |  Filesystem object counted (""" + bdcy + 'cyan' + rst + """)
         --------------------------------------------------------
            """ + bdacct + 'o' + rst + """  |  Line count above high ct threshold (""" + bdacct + 'orange' + rst + """)
         --------------------------------------------------------
