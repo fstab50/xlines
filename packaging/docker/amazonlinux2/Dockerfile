@@ -22,7 +22,7 @@ RUN yum -y update; yum clean all
 RUN yum -y groups mark convert
 RUN yum -y groupinstall "Development Tools"
 
-RUN yum install -y procps wget \
+RUN yum install -y procps wget mlocate \
                    highlight source-highlight \
                    git vim jq bc mlocate initscripts
 
@@ -86,9 +86,12 @@ ADD ./.gitconfig /home/USER2/.gitconfig
 
 # configure home for USER1
 RUN mkdir -p /home/$USER1/.config/bash
+RUN mkdir -p /home/$USER1/git
+RUN cd /home/$USER1/git; git clone 'https://github.com/fstab50/xlines.git'
 ADD ./colors.sh /home/$USER1/.config/bash/colors.sh
-ADD ./motd-amazonlinux2.sh /home/$USER1/.config/bash/motd.sh
+ADD ./motd-centos7.sh /home/$USER1/.config/bash/motd.sh
 ADD ./loadavg-flat-layout.sh /home/$USER1/.config/bash/loadavg-flat-layout.sh
+
 
 # completion actions
 RUN chown -R $USER1:$USER1 /home/$USER1

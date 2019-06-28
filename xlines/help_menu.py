@@ -8,53 +8,77 @@ Help Menu
 
 from xlines.statics import PACKAGE
 from xlines import Colors
+from xlines.variables import *
 
+c = Colors()
 
-PKG_ACCENT = Colors.ORANGE
-PARAM_ACCENT = Colors.WHITE
+ACCENT = c.ORANGE               # orange accent highlight color
+bdacct = c.ORANGE + c.BOLD      # bold orange
+bdcy = c.CYAN + c.BOLD          # bold blue
+lbrct = bbc + ' [ ' + rst        # left bracket
+rbrct = bbc + ' ]' + rst        # right bracket
+vdiv = bbc + ' | ' + rst
+tab = '\t'.expandtabs(24)
 
+menu_title = '\n' + c.BOLD + tab + PACKAGE + rst + ' help contents'
 
 synopsis_cmd = (
-    Colors.RESET + PKG_ACCENT + PACKAGE +
-    PARAM_ACCENT + ' --sum ' + Colors.RESET + ' <dir1> <dir2> <fname1> ... '
+    rst + ACCENT + PACKAGE +
+    lbrct + '--sum <values>' + vdiv + '--whitespace' + vdiv +
+    '--configure' + rbrct
     )
 
-url_doc = Colors.URL + 'http://xlines.readthedocs.io' + Colors.RESET
-url_sc = Colors.URL + 'https://github.com/fstab50/xlines' + Colors.RESET
+url_doc = c.URL + 'http://xlines.readthedocs.io' + rst
+url_sc = c.URL + 'https://github.com/fstab50/xlines' + rst
 
-menu_body = Colors.BOLD + """
-  DESCRIPTION""" + Colors.RESET + """
+menu_body = menu_title + c.BOLD + """
 
-            Count lines of text. Utility for code projects
-            Source Code:  """ + url_sc + """
-    """ + Colors.BOLD + """
-  SYNOPSIS""" + Colors.RESET + """
+  DESCRIPTION""" + rst + """
 
-            """ + synopsis_cmd + """
+            Count lines of text: A utility for all code projects
+            Source Code Repo:  """ + url_sc + """
+    """ + c.BOLD + """
+  SYNOPSIS""" + rst + """
 
-                        -s, --sum <value1>...
+        $ """ + synopsis_cmd + """
+
+                        -s, --sum
                        [-e, --exclusions ]
                        [-c, --configure  ]
-                       [-d, --debug    ]
-                       [-h, --help     ]
+                       [-d, --debug  ]
+                       [-h, --help   ]
                        [-m, --multiprocess  ]
                        [-w, --whitespace  ]
                        [-V, --version  ]
-    """ + Colors.BOLD + """
+    """ + c.BOLD + """
   OPTIONS
-        -s, --sum""" + Colors.RESET + """ (string): Sum the counts of all lines contained
+        -s, --sum""" + rst + """ (string): Sum the counts of all lines contained
             in filesystem objects referenced in the sum parameter
-    """ + Colors.BOLD + """
-        -c, --configure""" + Colors.RESET + """:  Configure runtime parameter via the cli
+    """ + c.BOLD + """
+        -c, --configure""" + rst + """:  Configure runtime parameter via the cli
             menu. Change display format, color scheme, etc values
-    """ + Colors.BOLD + """
-        -e, --exclusions""" + Colors.RESET + """:  Print out list of file type extensions
+    """ + c.BOLD + """
+        -d, --debug""" + rst + """: Print out additional debugging information
+    """ + c.BOLD + """
+        -e, --exclusions""" + rst + """:  Print out list of file type extensions
             and directories excluded from line count calculations
-    """ + Colors.BOLD + """
-        -d, --debug""" + Colors.RESET + """: Print out additional debugging information
-    """ + Colors.BOLD + """
-        -h, --help""" + Colors.RESET + """: Show this help message and exit
-    """ + Colors.BOLD + """
-        -V, --version""" + Colors.RESET + """: Print package version and copyright info
+    """ + c.BOLD + """
+        -h, --help""" + rst + """: Show this help message and exit
+    """ + c.BOLD + """
+        -m, --multiprocess""" + rst + """:  Use multiple cpu cores for counting
+            lines of text in expansive filesystem directories
+    """ + c.BOLD + """
+        -w, --whitespace""" + rst + """:  Perform line counts of all filesystem
+            objects,  but omit lines containing only whitespace
+    """ + c.BOLD + """
+        -V, --version""" + rst + """: Print package version and copyright info
+    """ + c.BOLD + """
+  LEGEND""" + rst + """
+
+           """ + bbl + 'o' + rst + """  |  Filesystem object counted (""" + bcy + 'cyan' + rst + """)
+        --------------------------------------------------------
+           """ + bdacct + 'o' + rst + """  |  Line count above high ct threshold (""" + acct + 'orange' + rst + """)
+        --------------------------------------------------------
+          """ + bwt + '->' + rst + """  |  Truncated (shortened) file path (""" + bwt + 'white' + rst + """)
 
     """

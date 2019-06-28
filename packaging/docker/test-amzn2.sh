@@ -4,6 +4,8 @@
 #   Manual creation of container assets for testing
 #
 
+pkg=$(basename $0)
+container_default='AML2test'
 image='amazonlinux:rpmbuildD'
 
 
@@ -20,9 +22,9 @@ function container_started(){
     ##  check container status
     ##
     if [[ "$(docker ps | grep $container 2>/dev/null)" ]]; then
-        return 0
+        return 1    # scontainer running
     else
-        return 1
+        return 0    # container stopped
     fi
 }
 
@@ -34,9 +36,17 @@ source "$(_git_root)/scripts/colors.sh"
 
 if [ "$1" ]; then
     container="$1"
-else
-    std_message "You must provide the name of a container to create as a parameter" "FAIL"
+    std_message "Creating container $container" "OK"
+
+elif [ "$(docker ps -a | grep $container_default)" ]; then
+    tab='          '
+    std_message "Default container $container_default exists.  You must provide a unique name as a parameter
+    \n${tab}$ sh $pkg 'AML2test2'" "FAIL"
     exit 1
+
+else
+    container=$container_default
+    std_message "Creating default container name:  $container_default" "INFO"
 fi
 
 # working directory

@@ -7,7 +7,7 @@
 
 Count the number of lines of text in a code project (or anything else)
 
-**Version**: 0.6.10
+**Version**: 0.6.11
 
 * * *
 
@@ -134,7 +134,7 @@ The easiest way to install **xlines** on redhat-based Linux distributions is via
     [![rpm-install2](./assets/rpm-install-2.png)](http://d1qxyi0fawulzu.cloudfront.net/xlines/rpm-install-2.png)
 
     ```
-    $ sudo mv developer-tools.repo /etc/yum.repos.d/  &&  sudo chown 0:0 developer-tools.repo
+    $ sudo chown 0:0 developer-tools.repo && sudo mv developer-tools.repo /etc/yum.repos.d/  
     ```
 
 3. Update local repository cache

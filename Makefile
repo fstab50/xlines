@@ -25,7 +25,7 @@ VERSION_FILE = $(CUR_DIR)/$(PROJECT)/_version.py
 
 # os package creation
 RHEL_REQUIRES = 'python36,python36-pip,python36-setuptools,python36-pygments,bash-completion'
-AML_REQUIRES = 'python3,python3-pip,python3-setuptools,bash-completion'
+AML_REQUIRES = 'python3,python3-pip,python3-setuptools,bash-completion,which'
 PRE_SCRIPT = $(SCRIPTS)/rpm_preinstall.py
 POST_SCRIPT = $(SCRIPTS)/rpm_postinstall.py
 YUM_CALL = sudo $(shell which yum)
@@ -113,14 +113,17 @@ buildrpm-rhel:  artifacts   ## Build Redhat distribution (.rpm) os package
 	sudo -H $(PIP3_CALL) install -U pip setuptools
 	sudo cp -r /usr/local/lib/python3.*/site-packages/setuptools* /usr/lib/python3.*/site-packages/
 	sudo cp -r /usr/local/lib/python3.*/site-packages/pkg_resources* /usr/lib/python3.*/site-packages/
-	$(PYTHON3_PATH) setup_rpm.py bdist_rpm --requires=$(RHEL_REQUIRES) --python='/usr/bin/python3'
+	$(PYTHON3_PATH) setup_rpm.py bdist_rpm --requires=$(RHEL_REQUIRES) --python='/usr/bin/python3' --post-install='scripts/rpm_postinstall.sh'
 
 
 .PHONY: buildrpm-aml
 buildrpm-aml:  artifacts  ## Build Amazon Linux 2 distribution (.rpm) os package
 	$(YUM_CALL) -y install python3 python3-devel python3-pip python3-setuptools which sudo rpm-build
 	sudo -H $(PIP3_CALL) install -U pip setuptools pygments
-	cp -r /usr/local/lib64/python3.*/site-packages/[p-P]ygments*  .
+	cp -r /usr/local/lib64/python3.*/site-packages/Pygments*  .
+	cp -r /usr/local/lib64/python3.*/site-packages/pygments*  .
+	sudo cp -r /usr/local/lib/python3.*/site-packages/setuptools* /usr/lib/python3.*/site-packages/
+	sudo cp -r /usr/local/lib/python3.*/site-packages/pkg_resources* /usr/lib/python3.*/site-packages/
 	$(PYTHON3_PATH) setup_rpm.py bdist_rpm --requires=$(AML_REQUIRES) --python='/usr/bin/python3'
 	# Fails:  pygments must be installed in /usr/local/lib64/python3.*/site-packages
 	# 		  either via postinstall script pip3 install or bundled and deployed specific location
@@ -171,7 +174,7 @@ rebuild-docs:   ## Regenerate sphinx documentation
 
 .PHONY: upload-images
 upload-images:   ## Upload README images to Amazon S3
-	bash $(CUR_DIR)/scripts/upload-s3-artifacts.sh
+	bash $(CUR_DIR)/scripts/s3upload.sh
 
 
 .PHONY: help

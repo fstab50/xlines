@@ -59,11 +59,10 @@ function _amazonlinux(){
 }
 
 
-if _redhat_linux; then
-
-    wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-    rpm -Uvh epel-release-latest-7.noarch.rpm
-
+if [ "$SUDO_USER" ]; then
+    chown -R $SUDO_USER:$SUDO_USER /home/$SUDO_USER/.config
+else
+    chown -R $USER:$USER /home/$USER/.config
 fi
 
 exit 0
