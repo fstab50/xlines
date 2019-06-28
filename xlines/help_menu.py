@@ -9,26 +9,30 @@ Help Menu
 from xlines.statics import PACKAGE
 from xlines import Colors
 
+c = Colors()
 
-PKG_ACCENT = Colors.ORANGE
-PARAM_ACCENT = Colors.WHITE
+PKG_ACCENT = c.ORANGE
+PARAM_ACCENT = c.WHITE
+tab = '\t'.expandtabs(23)
 
+menu_title = '\n' + c.BOLD + tab + PACKAGE + c.RESET + ' help contents'
 
 synopsis_cmd = (
-    Colors.RESET + PKG_ACCENT + PACKAGE +
-    PARAM_ACCENT + ' --sum ' + Colors.RESET + ' <dir1> <dir2> <fname1> ... '
+    c.RESET + PKG_ACCENT + PACKAGE +
+    PARAM_ACCENT + ' --sum ' + c.RESET + ' <dir1> <dir2> <fname1> ... '
     )
 
-url_doc = Colors.URL + 'http://xlines.readthedocs.io' + Colors.RESET
-url_sc = Colors.URL + 'https://github.com/fstab50/xlines' + Colors.RESET
+url_doc = c.URL + 'http://xlines.readthedocs.io' + c.RESET
+url_sc = c.URL + 'https://github.com/fstab50/xlines' + c.RESET
 
-menu_body = Colors.BOLD + """
-  DESCRIPTION""" + Colors.RESET + """
+menu_body = menu_title + c.BOLD + """
 
-            Count lines of text. Utility for code projects
-            Source Code:  """ + url_sc + """
-    """ + Colors.BOLD + """
-  SYNOPSIS""" + Colors.RESET + """
+  DESCRIPTION""" + c.RESET + """
+
+            Count lines of text: A utility for all code projects
+            Source Code Repo:  """ + url_sc + """
+    """ + c.BOLD + """
+  SYNOPSIS""" + c.RESET + """
 
             """ + synopsis_cmd + """
 
@@ -40,21 +44,27 @@ menu_body = Colors.BOLD + """
                        [-m, --multiprocess  ]
                        [-w, --whitespace  ]
                        [-V, --version  ]
-    """ + Colors.BOLD + """
+    """ + c.BOLD + """
   OPTIONS
-        -s, --sum""" + Colors.RESET + """ (string): Sum the counts of all lines contained
+        -s, --sum""" + c.RESET + """ (string): Sum the counts of all lines contained
             in filesystem objects referenced in the sum parameter
-    """ + Colors.BOLD + """
-        -c, --configure""" + Colors.RESET + """:  Configure runtime parameter via the cli
+    """ + c.BOLD + """
+        -c, --configure""" + c.RESET + """:  Configure runtime parameter via the cli
             menu. Change display format, color scheme, etc values
-    """ + Colors.BOLD + """
-        -e, --exclusions""" + Colors.RESET + """:  Print out list of file type extensions
+    """ + c.BOLD + """
+        -d, --debug""" + c.RESET + """: Print out additional debugging information
+    """ + c.BOLD + """
+        -e, --exclusions""" + c.RESET + """:  Print out list of file type extensions
             and directories excluded from line count calculations
-    """ + Colors.BOLD + """
-        -d, --debug""" + Colors.RESET + """: Print out additional debugging information
-    """ + Colors.BOLD + """
-        -h, --help""" + Colors.RESET + """: Show this help message and exit
-    """ + Colors.BOLD + """
-        -V, --version""" + Colors.RESET + """: Print package version and copyright info
+    """ + c.BOLD + """
+        -h, --help""" + c.RESET + """: Show this help message and exit
+    """ + c.BOLD + """
+        -m, --multiprocess""" + c.RESET + """:  Use multiple cpu cores for counting
+            lines of text in expansive filesystem directories
+    """ + c.BOLD + """
+        -w, --whitespace""" + c.RESET + """:  Perform line counts of all filesystem
+            objects,  but omit lines containing only whitespace
+    """ + c.BOLD + """
+        -V, --version""" + c.RESET + """: Print package version and copyright info
 
     """
