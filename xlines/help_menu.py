@@ -15,7 +15,7 @@ c = Colors()
 ACCENT = c.ORANGE               # orange accent highlight color
 bdacct = c.ORANGE + c.BOLD      # bold orange
 bdcy = c.CYAN + c.BOLD          # bold blue
-lbrct = bbc + ' [ ' + rst        # left bracket
+lbrct = bbc + '[ ' + rst        # left bracket
 rbrct = bbc + ' ]' + rst        # right bracket
 vdiv = bbc + ' | ' + rst
 tab = '\t'.expandtabs(24)
@@ -23,9 +23,8 @@ tab = '\t'.expandtabs(24)
 menu_title = '\n' + c.BOLD + tab + PACKAGE + rst + ' help contents'
 
 synopsis_cmd = (
-    rst + ACCENT + PACKAGE +
-    lbrct + '--sum <values>' + vdiv + '--whitespace' + vdiv +
-    '--configure' + rbrct
+        rst + ACCENT + PACKAGE + rst + ' --sum <values> ' +
+        lbrct + '--whitespace' + vdiv + '--multiprocess' + rbrct
     )
 
 url_doc = c.URL + 'http://xlines.readthedocs.io' + rst
