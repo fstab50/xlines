@@ -36,6 +36,13 @@ except Exception:
     TITLE = Colors.WHITE + Colors.BOLD
 
 
+def is_binary_external(filepath):
+    f = open(filepath, 'rb').read(1024)
+    textchars = bytearray({7,8,9,10,12,13,27} | set(range(0x20, 0x100)) - {0x7f})
+    fx = lambda bytes: bool(bytes.translate(None, textchars))
+    return fx(f)
+
+
 def is_text(path):
     """
         Checks filesystem object using *nix file application provided
@@ -106,6 +113,12 @@ def remove_illegal(d, illegal):
         with open(path) as f1:
             return [x.strip() for x in f1.readlines()]
 
+    def is_binary(filepath):
+        f = open(filepath, 'rb').read(1024)
+        textchars = bytearray({7,8,9,10,12,13,27} | set(range(0x20, 0x100)) - {0x7f})
+        fx = lambda bytes: bool(bytes.translate(None, textchars))
+        return fx(f)
+
     bad = []
 
     try:
@@ -119,14 +132,15 @@ def remove_illegal(d, illegal):
 
         fobject = os.path.split(fpath)[1]
 
-        # filter for illegal dirs
+
+        # filter for illegal dirs first, then files, then binary
         if list(filter(lambda x: x in fpath, illegal_dirs)):
             bad.append(fpath)
 
         elif ('.' in fobject) and ('.' + fobject.split('.')[1] in illegal):
             bad.append(fpath)
 
-        elif not is_text(fpath):
+        if is_binary(fpath):
             bad.append(fpath)
 
     return sorted(list(set(d) - set(bad)))
