@@ -35,7 +35,7 @@ from shutil import which
 from pathlib import Path
 from xlines import about, Colors, logger
 from xlines.usermessage import stdout_message
-from xlines.statics import PACKAGE, local_config
+from xlines.statics import local_config
 from xlines.help_menu import menu_body
 from xlines.mp import multiprocessing_main
 from xlines.core import linecount, locate_fileobjects, remove_illegal, print_footer, print_header
@@ -94,7 +94,7 @@ class ExcludedTypes():
 
 def sp_linecount(path, abspath, exclusions):
     """
-        Single threaded (sequentials processing) line count
+        Single threaded (sequential processing) line count
 
     Return:
         valid filesystem paths (str)
@@ -190,7 +190,7 @@ def longest_path(parameters, exclusions):
             width = mp.calc_maxpath(paths)
         except TypeError:
             stdout_message(message='Provided path appears to be invalid', prefix='WARN')
-            sys.exit(0)
+            sys.exit(exit_codes['EX_OSFILE']['Code'])
     return width
 
 
