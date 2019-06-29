@@ -5,9 +5,11 @@ Summary.
 
 """
 import os
+import sys
 import re
 import inspect
 import logging
+from shutil import which
 from xlines.colors import Colors
 from xlines.statics import local_config
 from xlines._version import __version__
@@ -32,6 +34,28 @@ except Exception:
     acct = Colors.CYAN
     text = Colors.LT2GRAY
     TITLE = Colors.WHITE + Colors.BOLD
+
+
+def is_text(filename):
+    """
+        Checks filesystem object using *nix file application provided
+        with most modern Unix and Linux systems.  Returns False if
+        file object cannot be read
+
+    Returns:
+        True || False, TYPE: bool
+
+    """
+    if not which('file'):
+        logger.warning(f'required dependency missing: Unix application "file". Exit')
+        sys.exit(exit_codes['E_DEPENDENCY']['Code'])
+
+    try:
+        f = os.popen('file -bi ' + filename, 'r')
+        contents = f.read()
+    except Exception:
+        return False
+    return contents.startswith('text')
 
 
 def linecount(path, whitespace=True):
@@ -68,8 +92,8 @@ def remove_illegal(d, illegal):
         Removes excluded file types
 
     Args:
-        :d (list): list of filesystem paths ending with object
-        :illegal (list):  list of file type extensions for ommission
+        :d (list): list of filesystem paths ending with a file object
+        :illegal (list):  list of file type extensions for to be excluded
 
     Returns:
         legal filesystem paths (str)
@@ -86,15 +110,18 @@ def remove_illegal(d, illegal):
     except KeyError:
         illegal_dirs = ['pycache', 'venv']
 
+    # filter for illegal file extensions
     for fpath in d:
 
-        # filter for illegal file extensions
         fobject = os.path.split(fpath)[1]
         if ('.' in fobject) and ('.' + fobject.split('.')[1] in illegal):
             bad.append(fpath)
 
         # filter for illegal dirs
         elif list(filter(lambda x: x in fpath, illegal_dirs)):
+            bad.append(fpath)
+
+        elif not is_text(fpath):
             bad.append(fpath)
     return sorted(list(set(d) - set(bad)))
 
