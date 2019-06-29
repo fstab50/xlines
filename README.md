@@ -81,7 +81,7 @@ To display the help menu:
 
 ### Pip Install
 
-xlines may be installed on Linux or Windows via [pip, python package installer](https://pypi.org/project/pip)
+xlines may be installed on Linux via [pip, python package installer](https://pypi.org/project/pip) in one of two methods:
 
 To install xlines for a single user:
 
