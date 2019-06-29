@@ -114,10 +114,13 @@ def remove_illegal(d, illegal):
             return [x.strip() for x in f1.readlines()]
 
     def is_binary(filepath):
-        f = open(filepath, 'rb').read(1024)
-        textchars = bytearray({7,8,9,10,12,13,27} | set(range(0x20, 0x100)) - {0x7f})
-        fx = lambda bytes: bool(bytes.translate(None, textchars))
-        return fx(f)
+        try:
+            f = open(filepath, 'rb').read(1024)
+            textchars = bytearray({7, 8, 9, 10, 12, 13, 27} | set(range(0x20, 0x100)) - {0x7f})
+            fx = lambda bytes: bool(bytes.translate(None, textchars))
+            return fx(f)
+        except Exception:
+            return True
 
     bad = []
 
