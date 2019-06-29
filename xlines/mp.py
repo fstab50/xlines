@@ -18,6 +18,20 @@ from xlines.export import export_json_object
 from xlines import local_config
 
 
+def cpu_cores(logical=True):
+    """
+        Finds number of physical and logical cores on machine
+        Defaults to logical cores unless logical set to False
+
+    Returns:
+        # of logical cores (int) || physical cores (int)
+    """
+    physical_cores = multiprocessing.cpu_count()
+    if logical:
+        return len(os.sched_getaffinity(0))
+    return physical_cores
+
+
 def longest_path_mp(object_list):
     longest = 0
     for path_dict in object_list:
@@ -26,33 +40,31 @@ def longest_path_mp(object_list):
     return longest
 
 
-def mp_linecount(path, exclusions):
+def mp_linecount(path_list, exclusions):
     """Multiprocessing line count"""
-    p = path
     try:
-        if os.path.isfile(path):
-            q.put(
-                    {
-                        'path': os.path.abspath(path),
-                        'count': linecount(path)
-                    }
-                )
+        for path in path_list:
+            if os.path.isfile(path):
+                q.put(
+                        {
+                            'path': os.path.abspath(path),
+                            'count': linecount(path)
+                        }
+                    )
 
-        elif os.path.isdir(path):
-            d = locate_fileobjects(path)
-            # remove paths to invalid objects in d
-            for p in remove_illegal(d, exclusions):
-                q.put({'path': p, 'count': linecount(p)})
+            elif os.path.isdir(path):
+                for p in path:
+                    q.put({'path': p, 'count': linecount(p)})
     except UnicodeDecodeError:
         q.put({'path': p, 'count': None})
         return
 
 
-def print_results(object_list):
+def print_results(object_list, width):
 
     tcount, tobjects = 0, 0
     io_fail = []
-    width = longest_path_mp(object_list)
+    #width = longest_path_mp(object_list)
 
     print_header(width)
     count_width = local_config['OUTPUT']['COUNT_COLUMN_WIDTH']
@@ -100,7 +112,25 @@ def print_results(object_list):
     return True
 
 
-def multiprocessing_main(container, exclusions, debug):
+def split_list(monolith, n):
+    """
+    Summary.
+
+        splits a list into equal parts as allowed, given n segments
+
+    Args:
+        :monolith (list):  a single list containing multiple elements
+        :n (int):  Number of segments in which to split the list
+
+    Returns:
+        generator object
+
+    """
+    k, m = divmod(len(monolith), n)
+    return (monolith[i * k + min(i, m):(i + 1) * k + min(i + 1, m)] for i in range(n))
+
+
+def multiprocessing_main(valid_paths, max_width, exclusions, debug):
     """
     Execute Operations using concurrency (multi-process) model
     """
@@ -116,26 +146,30 @@ def multiprocessing_main(container, exclusions, debug):
 
     if debug:
         stdout_message('Objects contained in container directories:', prefix='DEBUG')
-        for i in deconstruct(container):
+        for i in valid_paths:
             print(i)
 
     global q
     q = Queue()
 
+    cores = 4
+    a, b, c, d = [x for x in split_list(valid_paths, cores)]
+    #tupleoflists = [x for x in split_list(valid_paths, cpu_cores())]
+
     processes = []
-    for i in deconstruct(container):
+    for i in (a, b, c, d):
         t = multiprocessing.Process(target=mp_linecount, args=(i, exclusions.types))
         processes.append(t)
         t.start()
 
-    for one_process in processes:
-        one_process.join()
+    for p in processes:
+        p.join()
 
     results = []
     while not q.empty():
         results.append(q.get())
 
-    print_results(results)
+    print_results(results, max_width)
 
     if debug:
         export_json_object(results, logging=False)
