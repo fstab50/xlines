@@ -68,10 +68,10 @@ menu_body = menu_title + c.BOLD + """
         -m, --multiprocess""" + rst + """:  Use multiple  cpu cores for counting
             lines of text in expansive filesystem directories
     """ + c.BOLD + """
-        -w, --whitespace""" + rst + """:  Perform line counts of all filesystem
-            objects,  but omit lines containing only whitespace
+        -w, --whitespace""" + rst + """:  Omit lines containing  only whitespace
+            from total line counts for all objects
     """ + c.BOLD + """
-        -V, --version""" + rst + """: Print package version and copyright info
+        -V, --version""" + rst + """:  Print package version  and copyright info
     """ + c.BOLD + """
   LEGEND""" + rst + """
 
