@@ -11,6 +11,8 @@ try:
 
     from xlines.oscodes_unix import exit_codes
     os_type = 'Linux'
+    user_home = os.getenv('HOME')
+    splitchar = '/'                             # character for splitting paths (linux)
 
     # special colors - linux
     acct = c.ORANGE
@@ -20,7 +22,9 @@ try:
 except Exception:
     from xlines.oscodes_win import exit_codes    # non-specific os-safe codes
     os_type = 'Windows'
-
+    username = os.getenv('username')
+    splitchar = '\\'                            # character for splitting paths (windows)
+    user_home = 'Users' + splitchar + username
     # special colors - windows
     acct = c.CYAN
     text = c.LT2GRAY
