@@ -132,7 +132,6 @@ def remove_illegal(d, illegal):
 
         fobject = os.path.split(fpath)[1]
 
-
         # filter for illegal dirs first, then files, then binary
         if list(filter(lambda x: x in fpath, illegal_dirs)):
             bad.append(fpath)
