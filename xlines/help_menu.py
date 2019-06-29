@@ -58,14 +58,14 @@ menu_body = menu_title + c.BOLD + """
         -c, --configure""" + rst + """:  Configure runtime parameter via the cli
             menu. Change display format, color scheme, etc values
     """ + c.BOLD + """
-        -d, --debug""" + rst + """: Print out additional debugging information
+        -d, --debug""" + rst + """:  Print out additional  debugging information
     """ + c.BOLD + """
         -e, --exclusions""" + rst + """:  Print out list of file type extensions
             and directories excluded from line count calculations
     """ + c.BOLD + """
-        -h, --help""" + rst + """: Show this help message and exit
+        -h, --help""" + rst + """: Show this help message, symbol legend, & exit
     """ + c.BOLD + """
-        -m, --multiprocess""" + rst + """:  Use multiple cpu cores for counting
+        -m, --multiprocess""" + rst + """:  Use multiple  cpu cores for counting
             lines of text in expansive filesystem directories
     """ + c.BOLD + """
         -w, --whitespace""" + rst + """:  Perform line counts of all filesystem
