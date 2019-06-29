@@ -97,7 +97,7 @@ def sp_linecount(path, abspath, exclusions):
         Single threaded (sequential processing) line count
 
     Return:
-        valid filesystem paths (str)
+        valid filesystem paths, TYPE: list
 
     """
     try:
@@ -183,15 +183,17 @@ def longest_path(parameters, exclusions):
     """
     mp = MaxWidth()     # max path object
     abspath = absolute_paths(parameters)
+    container = []
 
     for i in parameters:
         try:
             paths = sp_linecount(i, abspath, exclusions.types)
             width = mp.calc_maxpath(paths)
+            container.extend(paths)
         except TypeError:
             stdout_message(message='Provided path appears to be invalid', prefix='WARN')
             sys.exit(exit_codes['EX_OSFILE']['Code'])
-    return width
+    return width, container
 
 
 class MaxWidth():
@@ -394,14 +396,12 @@ def init_cli():
 
             io_fail = []
             tcount, tobjects = 0, 0
-            width = longest_path(container, ex)
+            width, paths = longest_path(container, ex)
 
             print_header(width)
             count_width = local_config['OUTPUT']['COUNT_COLUMN_WIDTH']
 
             for i in container:
-
-                paths = sp_linecount(i, abspath, ex.types)
 
                 for path in paths:
 
