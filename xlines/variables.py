@@ -2,6 +2,7 @@
     Static assignments for universally used colors and variables
 
 """
+import os
 from xlines.statics import local_config
 from xlines.colors import Colors
 
