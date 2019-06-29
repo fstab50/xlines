@@ -36,7 +36,7 @@ except Exception:
     TITLE = Colors.WHITE + Colors.BOLD
 
 
-def is_text(filename):
+def is_text(path):
     """
         Checks filesystem object using *nix file application provided
         with most modern Unix and Linux systems.  Returns False if
@@ -47,11 +47,14 @@ def is_text(filename):
 
     """
     if not which('file'):
-        logger.warning(f'required dependency missing: Unix application "file". Exit')
+        logger.warning('required dependency missing: Unix application "file". Exit')
         sys.exit(exit_codes['E_DEPENDENCY']['Code'])
 
     try:
-        f = os.popen('file -bi ' + filename, 'r')
+        # correct for multple file objects in path
+        path = ' '.join(path.split()[:3])
+
+        f = os.popen('file -bi ' + path, 'r')
         contents = f.read()
     except Exception:
         return False
@@ -110,19 +113,22 @@ def remove_illegal(d, illegal):
     except KeyError:
         illegal_dirs = ['pycache', 'venv']
 
-    # filter for illegal file extensions
+
+    # filter for illegal or binary file object
     for fpath in d:
 
         fobject = os.path.split(fpath)[1]
-        if ('.' in fobject) and ('.' + fobject.split('.')[1] in illegal):
-            bad.append(fpath)
 
         # filter for illegal dirs
-        elif list(filter(lambda x: x in fpath, illegal_dirs)):
+        if list(filter(lambda x: x in fpath, illegal_dirs)):
+            bad.append(fpath)
+
+        elif ('.' in fobject) and ('.' + fobject.split('.')[1] in illegal):
             bad.append(fpath)
 
         elif not is_text(fpath):
             bad.append(fpath)
+
     return sorted(list(set(d) - set(bad)))
 
 
