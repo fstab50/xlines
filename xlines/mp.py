@@ -39,7 +39,7 @@ def longest_path_mp(object_list):
         the longest path in position [0] dict in the list.
 
     Args:
-        object_list (list):  Format:
+        :object_list (list):  Format:
             [
                 {
                     'path': '/var/lib/dpkg/info/xtrans-dev.list',
@@ -59,7 +59,7 @@ def longest_path_mp(object_list):
     return len(s[0]['path'])
 
 
-def mp_linecount(path_list, exclusions):
+def mp_linecount(path_list, exclusions, no_whitespace):
     """Multiprocessing line count"""
     try:
         for path in path_list:
@@ -67,13 +67,13 @@ def mp_linecount(path_list, exclusions):
                 q.put(
                         {
                             'path': os.path.abspath(path),
-                            'count': linecount(path)
+                            'count': linecount(path, no_whitespace)
                         }
                     )
 
             elif os.path.isdir(path):
                 for p in path:
-                    q.put({'path': p, 'count': linecount(p)})
+                    q.put({'path': p, 'count': linecount(p, no_whitespace)})
     except UnicodeDecodeError:
         q.put({'path': p, 'count': None})
         return
@@ -88,7 +88,7 @@ def print_results(object_list, width):
         processed separately by each cpu core
 
     Args:
-        object_list (list):  Format:
+        :object_list (list):  Format:
             [
                 {
                     'path': '/var/lib/dpkg/info/xtrans-dev.list',
@@ -99,16 +99,13 @@ def print_results(object_list, width):
                     'count': 249
                 },
             ]
-        width (int): width in characters of the output pattern
+        :width (int): width in characters of the output pattern
 
     Returns:
         True
     """
     tcount, tobjects = 0, 0
     io_fail = []
-    # still unsure why this is needed to produce accurate width calcs
-    # problem is will not dynamically reduce max size of output width if cli sreen changes
-    # why doesn't width passed in from cli.py module work? (gives too narrow width)
     #width = longest_path_mp(object_list)
 
     print_header(width)
@@ -176,9 +173,18 @@ def split_list(monolith, n):
     return (monolith[i * k + min(i, m):(i + 1) * k + min(i + 1, m)] for i in range(n))
 
 
-def multiprocessing_main(valid_paths, max_width, exclusions, debug):
+def multiprocessing_main(valid_paths, max_width, wspace, exclusions, debug):
     """
-    Execute Operations using concurrency (multi-process) model
+        Execute Operations using concurrency (multi-process) model
+
+    Args:
+        :valid_paths (list): list of filesystem paths (str) filtered for binary,
+            other uncountable objects
+        :max_width (int): width of output pattern, sans line count total column
+        :wspace (bool): when True, omit whitespace lines from count (DEFAULT:  False)
+        :exclusions (ex object): instance of ExcludedTypes
+        :debug (boot): debug flag
+
     """
     def deconstruct(alist):
         """Creates list of subdirs in all top-level directories"""
@@ -203,7 +209,7 @@ def multiprocessing_main(valid_paths, max_width, exclusions, debug):
 
     processes = []
     for i in (a, b, c, d):
-        t = multiprocessing.Process(target=mp_linecount, args=(i, exclusions.types))
+        t = multiprocessing.Process(target=mp_linecount, args=(i, exclusions.types, wspace))
         processes.append(t)
         t.start()
 
