@@ -39,6 +39,7 @@ from xlines.statics import local_config
 from xlines.help_menu import menu_body
 from xlines.mp import multiprocessing_main
 from xlines.core import linecount, locate_fileobjects, remove_illegal, print_footer, print_header
+from xlines.exclusions import ExcludedTypes
 from xlines.configure import display_exclusions, main_menupage
 from xlines.colormap import ColorMap
 from xlines.variables import *
@@ -68,28 +69,6 @@ def absolute_paths(path_list):
     if any(i.startswith(prefix) for i in path_list):
         return True
     return False
-
-
-class ExcludedTypes():
-    def __init__(self, ex_path, ex_container=[]):
-        self.types = ex_container
-        if not self.types:
-            self.types.extend(self.parse_exclusions(ex_path))
-
-    def excluded(self, path):
-        for i in self.types:
-            if i in path:
-                return True
-        return False
-
-    def parse_exclusions(self, path):
-        """
-        Parse persistent fs location store for file extensions to exclude
-        """
-        try:
-            return [x.strip() for x in open(path).readlines()]
-        except OSError:
-            return []
 
 
 def sp_linecount(path, abspath, exclusions):
@@ -391,7 +370,7 @@ def init_cli():
         if args.multiprocess:
             # --- run with concurrency --
             width, paths = longest_path(container, ex)
-            multiprocessing_main(paths, ex, args.debug)
+            multiprocessing_main(paths, width, ex, args.debug)
 
         elif not args.multiprocess:
 
@@ -429,7 +408,9 @@ def init_cli():
                             lpath = text + lpath + rst
                         else:
                             lpath = text + os.path.split(path)[0][:len(lpath) - cutoff - BUFFER] + rst + arrow
-                            tab = '\t'.expandtabs(width - len(lpath) - len(fname) + count_width + BUFFER + 18)
+                            tab = '\t'.expandtabs(
+                                    width - len(lpath) - len(fname) + count_width + BUFFER + cut_corr
+                                )
 
                         tab4 = '\t'.expandtabs(4)
                         fname = highlight + fname + rst
