@@ -34,9 +34,9 @@ def cpu_cores(logical=True):
 
 def longest_path_mp(object_list):
     """
-        Sorts a list of dict by a key value (path) in order
-        of descending length.  This allows easy extraction of
-        the longest path in position [0] dict in the list.
+        Multiprocessing version of longest_path() module function. Sorts a
+        list of dict by a key value (path) in order of descending length. Allows
+        easy extraction of the longest path in position [0] dict in the list.
 
     Args:
         :object_list (list):  Format:
@@ -62,7 +62,7 @@ def longest_path_mp(object_list):
 def mp_linecount(path_list, exclusions, no_whitespace):
     """Multiprocessing line count"""
     try:
-        
+
         for path in path_list:
             if os.path.isfile(path):
                 q.put(
