@@ -57,7 +57,7 @@ def mp_linecount(path_list, exclusions):
         return
 
 
-def print_results(object_list):
+def print_results(object_list, width):
     """
 
         Outputs paths and filesystem objects to which line counts
@@ -78,7 +78,10 @@ def print_results(object_list):
     """
     tcount, tobjects = 0, 0
     io_fail = []
-    width = longest_path_mp(object_list)
+    # still unsure why this is needed to produce accurate width calcs
+    # problem is will not dynamically reduce max size of output width if cli sreen changes
+    # why doesn't width passed in from cli.py module work? (gives too narrow width)
+    #width = longest_path_mp(object_list)
 
     print_header(width)
     count_width = local_config['OUTPUT']['COUNT_COLUMN_WIDTH']
@@ -109,8 +112,8 @@ def print_results(object_list):
             if cutoff == 0:
                 lpath = text + lpath + rst
             else:
-                lpath = text + os.path.split(path)[0][:len(lpath) - cutoff] + rst + arrow
-                tab = '\t'.expandtabs(width - len(lpath) - len(fname) - count_width + BUFFER)
+                lpath = text + os.path.split(path)[0][:len(lpath) - cutoff - BUFFER] + rst + arrow
+                tab = '\t'.expandtabs(width - len(lpath) - len(fname) + count_width + BUFFER + cut_corr)
 
             fname = highlight + fname + rst
 
@@ -145,7 +148,7 @@ def split_list(monolith, n):
     return (monolith[i * k + min(i, m):(i + 1) * k + min(i + 1, m)] for i in range(n))
 
 
-def multiprocessing_main(valid_paths, exclusions, debug):
+def multiprocessing_main(valid_paths, max_width, exclusions, debug):
     """
     Execute Operations using concurrency (multi-process) model
     """
@@ -183,7 +186,7 @@ def multiprocessing_main(valid_paths, exclusions, debug):
     while not q.empty():
         results.append(q.get())
 
-    print_results(results)
+    print_results(results, max_width)
 
     if debug:
         export_json_object(results, logging=False)
