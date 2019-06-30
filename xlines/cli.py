@@ -136,18 +136,6 @@ def main(**kwargs):
     return False
 
 
-def line_orchestrator(path):
-    io_fail = []
-    container = {}
-    try:
-        inc = linecount(path)
-        fname = path.split('/')[-1]
-        container[fname] = inc
-    except Exception:
-        io_fail.append(path)
-    return container, io_fail
-
-
 def longest_path(parameters, exclusions):
     """
         Traces all subdirectories of provided commandline paths
