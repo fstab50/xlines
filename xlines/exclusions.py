@@ -7,53 +7,21 @@ Summary.
 """
 import os
 import inspect
-#from veryprettytable import VeryPrettyTable
-from xlines.colors import Colors
-from xlines.colormap import ColorMap
-from xlines.statics import local_config
-
-cm = ColorMap()
-
-try:
-    from xlines.oscodes_unix import exit_codes
-    os_type = 'Linux'
-    user_home = os.getenv('HOME')
-    splitchar = '/'                             # character for splitting paths (linux)
-    acct = cm.accent
-    text = Colors.BRIGHT_PURPLE
-except Exception:
-    from xlines.oscodes_win import exit_codes    # non-specific os-safe codes
-    os_type = 'Windows'
-    user_home = os.getenv('username')
-    splitchar = '\\'                            # character for splitting paths (windows)
-    acct = cm.bbc
-    text = Colors.LT2GRAY
-
-
-# universal colors
-rd = Colors.RED + Colors.BOLD
-yl = Colors.YELLOW + Colors.BOLD
-fs = Colors.GOLD3
-bd = cm.bd
-gn = Colors.BRIGHT_GREEN
-title = Colors.BRIGHT_WHITE + Colors.BOLD
-bbc = bd + Colors.BRIGHT_CYAN
-frame = gn + bd
-btext = text + Colors.BOLD
-bwt = Colors.BRIGHT_WHITE
-bdwt = Colors.BOLD + Colors.BRIGHT_WHITE
-ub = Colors.UNBOLD
-rst = Colors.RESET
-
-# globals
-container = []
-config_dir = local_config['CONFIG']['CONFIG_PATH']
-expath = local_config['EXCLUSIONS']['EX_EXT_PATH']
-BUFFER = local_config['PROJECT']['BUFFER']
+from xlines import logger
 
 
 class ExcludedTypes():
+    """
+        Class for processing file type exclusions (exclusions.list)
+        File located in local configuration directory (~/.config/xlines)
+    """
     def __init__(self, ex_path, ex_container=[]):
+        """
+        Args:
+            ex_path (str): path to exclusions.list file
+            ex_container (list): in memory list of all file extensions
+                                 to be excluded from line counts
+        """
         self.types = ex_container
         if not self.types:
             self.types.extend(self.parse_exclusions(ex_path))
@@ -71,4 +39,7 @@ class ExcludedTypes():
         try:
             return [x.strip() for x in open(path).readlines()]
         except OSError:
+            exclusions = local_config['EXCLUSIONS']['EX_EXT_PATH']
+            fx = inspect.stack()[0][3]
+            logger.exception('{}: Problem parsing file type exclusions ({})'.format(fx, exclusions))
             return []
