@@ -423,14 +423,15 @@ def init_cli():
                             cutoff = 0
 
                         tab = '\t'.expandtabs(width - len(lpath) - len(fname) - count_width + BUFFER)
-                        tab4 = '\t'.expandtabs(4)
 
                         # with color codes added
                         if cutoff == 0:
                             lpath = text + lpath + rst
                         else:
-                            lpath = os.path.split(path)[0][:cutoff] + arrow
+                            lpath = text + os.path.split(path)[0][:len(lpath) - cutoff - BUFFER] + rst + arrow
+                            tab = '\t'.expandtabs(width - len(lpath) - len(fname) + count_width + BUFFER + 18)
 
+                        tab4 = '\t'.expandtabs(4)
                         fname = highlight + fname + rst
 
                         # incremental count formatting
