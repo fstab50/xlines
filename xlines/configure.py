@@ -327,7 +327,6 @@ def _configure_hicount(expath, exdirpath):
         leave = input('Exit? [quit]')
         if not leave or 'q' in leave:
             loop_break = False
-            return True
         return loop_break
 
     tab4 = '\t'.expandtabs(4)
@@ -349,8 +348,8 @@ def _configure_hicount(expath, exdirpath):
                     threshold = int(f1.read().strip())
 
             stdout_message(
-                message='Current high line count threshold: {}{}{}'.format(bdwt, threshold, rst),
-                indent=offset_chars + adj
+                    message='Current high line count threshold: {}{}{}'.format(bdwt, threshold, rst),
+                    indent=offset_chars + adj
                 )
             answer = input(f'{tab4}{offset}{tab13}Enter high line count threshold [{threshold}]: ')
 

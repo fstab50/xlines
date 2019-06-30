@@ -35,10 +35,11 @@ from shutil import which
 from pathlib import Path
 from xlines import about, Colors, logger
 from xlines.usermessage import stdout_message
-from xlines.statics import PACKAGE, local_config
+from xlines.statics import local_config
 from xlines.help_menu import menu_body
 from xlines.mp import multiprocessing_main
 from xlines.core import linecount, locate_fileobjects, remove_illegal, print_footer, print_header
+from xlines.exclusions import ExcludedTypes
 from xlines.configure import display_exclusions, main_menupage
 from xlines.colormap import ColorMap
 from xlines.variables import *
@@ -70,34 +71,12 @@ def absolute_paths(path_list):
     return False
 
 
-class ExcludedTypes():
-    def __init__(self, ex_path, ex_container=[]):
-        self.types = ex_container
-        if not self.types:
-            self.types.extend(self.parse_exclusions(ex_path))
-
-    def excluded(self, path):
-        for i in self.types:
-            if i in path:
-                return True
-        return False
-
-    def parse_exclusions(self, path):
-        """
-        Parse persistent fs location store for file extensions to exclude
-        """
-        try:
-            return [x.strip() for x in open(path).readlines()]
-        except OSError:
-            return []
-
-
 def sp_linecount(path, abspath, exclusions):
     """
-        Single threaded (sequentials processing) line count
+        Single threaded (sequential processing) line count
 
     Return:
-        valid filesystem paths (str)
+        valid filesystem paths, TYPE: list
 
     """
     try:
@@ -157,18 +136,6 @@ def main(**kwargs):
     return False
 
 
-def line_orchestrator(path):
-    io_fail = []
-    container = {}
-    try:
-        inc = linecount(path)
-        fname = path.split('/')[-1]
-        container[fname] = inc
-    except Exception:
-        io_fail.append(path)
-    return container, io_fail
-
-
 def longest_path(parameters, exclusions):
     """
         Traces all subdirectories of provided commandline paths
@@ -183,15 +150,17 @@ def longest_path(parameters, exclusions):
     """
     mp = MaxWidth()     # max path object
     abspath = absolute_paths(parameters)
+    container = []
 
     for i in parameters:
         try:
             paths = sp_linecount(i, abspath, exclusions.types)
             width = mp.calc_maxpath(paths)
+            container.extend(paths)
         except TypeError:
             stdout_message(message='Provided path appears to be invalid', prefix='WARN')
-            sys.exit(0)
-    return width
+            sys.exit(exit_codes['EX_OSFILE']['Code'])
+    return width, container
 
 
 class MaxWidth():
@@ -388,20 +357,19 @@ def init_cli():
 
         if args.multiprocess:
             # --- run with concurrency --
-            multiprocessing_main(container, ex, args.debug)
+            width, paths = longest_path(container, ex)
+            multiprocessing_main(paths, width, args.whitespace, ex, args.debug)
 
         elif not args.multiprocess:
 
             io_fail = []
             tcount, tobjects = 0, 0
-            width = longest_path(container, ex)
+            width, paths = longest_path(container, ex)
 
             print_header(width)
             count_width = local_config['OUTPUT']['COUNT_COLUMN_WIDTH']
 
             for i in container:
-
-                paths = sp_linecount(i, abspath, ex.types)
 
                 for path in paths:
 
@@ -422,14 +390,15 @@ def init_cli():
                             cutoff = 0
 
                         tab = '\t'.expandtabs(width - len(lpath) - len(fname) - count_width + BUFFER)
-                        tab4 = '\t'.expandtabs(4)
 
                         # with color codes added
                         if cutoff == 0:
                             lpath = text + lpath + rst
                         else:
-                            lpath = os.path.split(path)[0][:cutoff] + arrow
+                            lpath = text + os.path.split(path)[0][:len(lpath) - cutoff - BUFFER] + rst + arrow
+                            tab = '\t'.expandtabs(width - len(lpath) - len(fname) + count_width + BUFFER + cut_corr)
 
+                        tab4 = '\t'.expandtabs(4)
                         fname = highlight + fname + rst
 
                         # incremental count formatting

@@ -15,7 +15,7 @@ c = Colors()
 ACCENT = c.ORANGE               # orange accent highlight color
 bdacct = c.ORANGE + c.BOLD      # bold orange
 bdcy = c.CYAN + c.BOLD          # bold blue
-lbrct = bbc + ' [ ' + rst        # left bracket
+lbrct = bbc + '[ ' + rst        # left bracket
 rbrct = bbc + ' ]' + rst        # right bracket
 vdiv = bbc + ' | ' + rst
 tab = '\t'.expandtabs(24)
@@ -23,9 +23,8 @@ tab = '\t'.expandtabs(24)
 menu_title = '\n' + c.BOLD + tab + PACKAGE + rst + ' help contents'
 
 synopsis_cmd = (
-    rst + ACCENT + PACKAGE +
-    lbrct + '--sum <values>' + vdiv + '--whitespace' + vdiv +
-    '--configure' + rbrct
+        rst + ACCENT + PACKAGE + rst + ' --sum <values> ' +
+        lbrct + '--whitespace' + vdiv + '--multiprocess' + rbrct
     )
 
 url_doc = c.URL + 'http://xlines.readthedocs.io' + rst
@@ -58,27 +57,27 @@ menu_body = menu_title + c.BOLD + """
         -c, --configure""" + rst + """:  Configure runtime parameter via the cli
             menu. Change display format, color scheme, etc values
     """ + c.BOLD + """
-        -d, --debug""" + rst + """: Print out additional debugging information
+        -d, --debug""" + rst + """:  Print out additional  debugging information
     """ + c.BOLD + """
         -e, --exclusions""" + rst + """:  Print out list of file type extensions
             and directories excluded from line count calculations
     """ + c.BOLD + """
-        -h, --help""" + rst + """: Show this help message and exit
+        -h, --help""" + rst + """: Show this help message, symbol legend, & exit
     """ + c.BOLD + """
-        -m, --multiprocess""" + rst + """:  Use multiple cpu cores for counting
+        -m, --multiprocess""" + rst + """:  Use multiple  cpu cores for counting
             lines of text in expansive filesystem directories
     """ + c.BOLD + """
-        -w, --whitespace""" + rst + """:  Perform line counts of all filesystem
-            objects,  but omit lines containing only whitespace
+        -w, --whitespace""" + rst + """:  Omit lines containing  only whitespace
+            from total line counts for all objects
     """ + c.BOLD + """
-        -V, --version""" + rst + """: Print package version and copyright info
+        -V, --version""" + rst + """:  Print package version  and copyright info
     """ + c.BOLD + """
   LEGEND""" + rst + """
 
            """ + bbl + 'o' + rst + """  |  Filesystem object counted (""" + bcy + 'cyan' + rst + """)
-        --------------------------------------------------------
+        ---------------------------------------------------------
            """ + bdacct + 'o' + rst + """  |  Line count above high ct threshold (""" + acct + 'orange' + rst + """)
-        --------------------------------------------------------
+        ---------------------------------------------------------
           """ + bwt + '->' + rst + """  |  Truncated (shortened) file path (""" + bwt + 'white' + rst + """)
 
     """

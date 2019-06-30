@@ -5,9 +5,11 @@ Summary.
 
 """
 import os
+import sys
 import re
 import inspect
 import logging
+from shutil import which
 from xlines.colors import Colors
 from xlines.statics import local_config
 from xlines._version import __version__
@@ -32,6 +34,38 @@ except Exception:
     acct = Colors.CYAN
     text = Colors.LT2GRAY
     TITLE = Colors.WHITE + Colors.BOLD
+
+
+def is_binary_external(filepath):
+    f = open(filepath, 'rb').read(1024)
+    textchars = bytearray({7,8,9,10,12,13,27} | set(range(0x20, 0x100)) - {0x7f})
+    fx = lambda bytes: bool(bytes.translate(None, textchars))
+    return fx(f)
+
+
+def is_text(path):
+    """
+        Checks filesystem object using *nix file application provided
+        with most modern Unix and Linux systems.  Returns False if
+        file object cannot be read
+
+    Returns:
+        True || False, TYPE: bool
+
+    """
+    if not which('file'):
+        logger.warning('required dependency missing: Unix application "file". Exit')
+        sys.exit(exit_codes['E_DEPENDENCY']['Code'])
+
+    try:
+        # correct for multple file objects in path
+        path = ' '.join(path.split()[:3])
+
+        f = os.popen('file -bi ' + path, 'r')
+        contents = f.read()
+    except Exception:
+        return False
+    return contents.startswith('text')
 
 
 def linecount(path, whitespace=True):
@@ -68,8 +102,8 @@ def remove_illegal(d, illegal):
         Removes excluded file types
 
     Args:
-        :d (list): list of filesystem paths ending with object
-        :illegal (list):  list of file type extensions for ommission
+        :d (list): list of filesystem paths ending with a file object
+        :illegal (list):  list of file type extensions for to be excluded
 
     Returns:
         legal filesystem paths (str)
@@ -79,6 +113,15 @@ def remove_illegal(d, illegal):
         with open(path) as f1:
             return [x.strip() for x in f1.readlines()]
 
+    def is_binary(filepath):
+        try:
+            f = open(filepath, 'rb').read(1024)
+            textchars = bytearray({7, 8, 9, 10, 12, 13, 27} | set(range(0x20, 0x100)) - {0x7f})
+            fx = lambda bytes: bool(bytes.translate(None, textchars))
+            return fx(f)
+        except Exception:
+            return True
+
     bad = []
 
     try:
@@ -86,16 +129,21 @@ def remove_illegal(d, illegal):
     except KeyError:
         illegal_dirs = ['pycache', 'venv']
 
+    # filter for illegal or binary file object
     for fpath in d:
 
-        # filter for illegal file extensions
         fobject = os.path.split(fpath)[1]
-        if ('.' in fobject) and ('.' + fobject.split('.')[1] in illegal):
+
+        # filter for illegal dirs first, then files, then binary
+        if list(filter(lambda x: x in fpath, illegal_dirs)):
             bad.append(fpath)
 
-        # filter for illegal dirs
-        elif list(filter(lambda x: x in fpath, illegal_dirs)):
+        elif ('.' in fobject) and ('.' + fobject.split('.')[1] in illegal):
             bad.append(fpath)
+
+        if is_binary(fpath):
+            bad.append(fpath)
+
     return sorted(list(set(d) - set(bad)))
 
 
@@ -166,7 +214,7 @@ def locate_fileobjects(origin, abspath=True):
 
 
 def print_header(w):
-    total_width = w + local_config['OUTPUT']['COUNT_COLUMN_WIDTH']
+    total_width = w + local_config['OUTPUT']['COUNT_COLUMN_WIDTH'] + 1
     header_lhs = 'object'
     header_rhs = 'line count'
     tab = '\t'.expandtabs(total_width - len(header_lhs) - len(header_rhs))
@@ -180,7 +228,7 @@ def print_footer(total, object_count, w):
     """
     Print total number of objects and cumulative total line count
     """
-    total_width = w + local_config['OUTPUT']['COUNT_COLUMN_WIDTH']
+    total_width = w + local_config['OUTPUT']['COUNT_COLUMN_WIDTH'] + 1
 
     # add commas
     total_lines = '{:,}'.format(object_count)
