@@ -55,7 +55,7 @@ To display the help menu:
     $ xlines --help
 ```
 
-[![help](./assets/help-menu.png)](http://d1qxyi0fawulzu.cloudfront.net/xlines/help-menu.png)
+[![help](./assets/help-menu.png)](http://images.awspros.world/xlines/help-menu.png)
 
 
 [back to the top](#top)
@@ -69,7 +69,7 @@ To display the help menu:
     $ xlines --exclusions
 ```
 
-[![help](./assets/exclusions.png)](http://d1qxyi0fawulzu.cloudfront.net/xlines/exclusions.png)
+[![help](./assets/exclusions.png)](http://images.awspros.world/xlines/exclusions.png)
 
 
 [back to the top](#top)
@@ -125,13 +125,13 @@ The easiest way to install **xlines** on redhat-based Linux distributions is via
     $ sudo yum install wget
     ```
 
-    [![rpm-install1](./assets/rpm-install-1.png)](http://d1qxyi0fawulzu.cloudfront.net/xlines/rpm-install-1.png)
+    [![rpm-install1](./assets/rpm-install-1.png)](http://images.awspros.world/xlines/rpm-install-1.png)
 
     ```
     $ wget http://awscloud.center/rpm/developer-tools.repo
     ```
 
-    [![rpm-install2](./assets/rpm-install-2.png)](http://d1qxyi0fawulzu.cloudfront.net/xlines/rpm-install-2.png)
+    [![rpm-install2](./assets/rpm-install-2.png)](http://images.awspros.world/xlines/rpm-install-2.png)
 
     ```
     $ sudo chown 0:0 developer-tools.repo && sudo mv developer-tools.repo /etc/yum.repos.d/  
@@ -150,12 +150,12 @@ The easiest way to install **xlines** on redhat-based Linux distributions is via
     $ sudo yum install xlines
     ```
 
-    [![rpm-install3](./assets/rpm-install-3.png)](http://d1qxyi0fawulzu.cloudfront.net/xlines/rpm-install-3.png)
+    [![rpm-install3](./assets/rpm-install-3.png)](http://images.awspros.world/xlines/rpm-install-3.png)
 
 
     Answer "y":
 
-    [![rpm-install4](./assets/rpm-install-4.png)](http://d1qxyi0fawulzu.cloudfront.net/xlines/rpm-install-4.png)
+    [![rpm-install4](./assets/rpm-install-4.png)](http://images.awspros.world/xlines/rpm-install-4.png)
 
 
 5. Verify Installation
@@ -164,7 +164,7 @@ The easiest way to install **xlines** on redhat-based Linux distributions is via
     $ yum info xlines
     ```
 
-    [![rpm-install5](./assets/rpm-install-5.png)](http://d1qxyi0fawulzu.cloudfront.net/xlines/rpm-install-5.png)
+    [![rpm-install5](./assets/rpm-install-5.png)](http://images.awspros.world/xlines/rpm-install-5.png)
 
 --
 
@@ -179,7 +179,7 @@ Counting lines in large repository with long paths.
     $ xlines  --sum  git/AWSAMPLES/aws-serverless-workshops/
 ```
 
-[![repo1-1](./assets/repofinal.png)](http://d1qxyi0fawulzu.cloudfront.net/xlines/repofinal.png)
+[![repo1-1](./assets/repofinal.png)](http://images.awspros.world/xlines/repofinal.png)
 
 
 [back to the top](#top)
