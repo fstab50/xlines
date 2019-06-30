@@ -61,16 +61,33 @@ def mp_linecount(path_list, exclusions):
 
 
 def print_results(object_list, width):
+    """
 
+        Outputs paths and filesystem objects to which line counts
+        were calculated.  Single process operation combines output
+        from multiprocessing count by recombining lists of dict
+        processed separately by each cpu core
+
+    Args:
+        object_list (list):  Format:
+                {
+                    'path': '/var/lib/dpkg/info/xtrans-dev.list',
+                    'count': 531
+                }
+        width (int): width in characters of the output pattern
+
+    Returns:
+        True
+    """
     tcount, tobjects = 0, 0
     io_fail = []
-    #width = longest_path_mp(object_list)
+    width = longest_path_mp(object_list)
 
     print_header(width)
     count_width = local_config['OUTPUT']['COUNT_COLUMN_WIDTH']
     hicount_threshold = local_config['OUTPUT']['COUNT_HI_THRESHOLD']
 
-    for object_dict in object_list:
+    for object_dict in sorted(object_list, key=lambda x: x['path']):
 
         try:
             path = object_dict['path']
@@ -95,7 +112,7 @@ def print_results(object_list, width):
             if cutoff == 0:
                 lpath = text + lpath + rst
             else:
-                lpath = os.path.split(path)[0][:cutoff] + arrow
+                lpath = os.path.split(path)[0][:len(lpath) - cutoff] + arrow
 
             fname = highlight + fname + rst
 
@@ -153,7 +170,7 @@ def multiprocessing_main(valid_paths, max_width, exclusions, debug):
     q = Queue()
 
     cores = 4
-    a, b, c, d = [x for x in split_list(valid_paths, cores)]
+    a, b, c, d = sorted([x for x in split_list(valid_paths, cores)])
     #tupleoflists = [x for x in split_list(valid_paths, cpu_cores())]
 
     processes = []
