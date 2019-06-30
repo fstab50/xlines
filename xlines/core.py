@@ -129,7 +129,6 @@ def remove_illegal(d, illegal):
     except KeyError:
         illegal_dirs = ['pycache', 'venv']
 
-
     # filter for illegal or binary file object
     for fpath in d:
 

@@ -5,8 +5,9 @@ Summary.
     of objects to be excluded from line count totals
 
 """
-import os
+
 import inspect
+from xlines.statics import local_config
 from xlines import logger
 
 
