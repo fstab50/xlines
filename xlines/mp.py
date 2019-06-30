@@ -13,7 +13,7 @@ from multiprocessing import Queue
 from xlines.usermessage import stdout_message
 from xlines import Colors
 from xlines.core import BUFFER, acct, bwt, text, rst, arrow, div
-from xlines.core import locate_fileobjects, remove_illegal, linecount, print_header, print_footer
+from xlines.core import linecount, print_header, print_footer
 from xlines.export import export_json_object
 from xlines import local_config
 
@@ -33,6 +33,28 @@ def cpu_cores(logical=True):
 
 
 def longest_path_mp(object_list):
+    """
+        Sorts a list of dict by a key value (path) in order
+        of descending length.  This allows easy extraction of
+        the longest path in position [0] dict in the list.
+
+    Args:
+        object_list (list):  Format:
+            [
+                {
+                    'path': '/var/lib/dpkg/info/xtrans-dev.list',
+                    'count': 531
+                },
+                {
+                    'path': '/var/lib/dpkg/transitive.list',
+                    'count': 249
+                },
+            ]
+
+    Returns:
+        longest path (int)
+
+    """
     s = sorted(object_list, key=lambda x: len(x['path']), reverse=True)
     return len(s[0]['path'])
 
@@ -67,10 +89,16 @@ def print_results(object_list, width):
 
     Args:
         object_list (list):  Format:
+            [
                 {
                     'path': '/var/lib/dpkg/info/xtrans-dev.list',
                     'count': 531
-                }
+                },
+                {
+                    'path': '/var/lib/dpkg/transitive.list',
+                    'count': 249
+                },
+            ]
         width (int): width in characters of the output pattern
 
     Returns:
