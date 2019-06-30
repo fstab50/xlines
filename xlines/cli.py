@@ -396,9 +396,7 @@ def init_cli():
                             lpath = text + lpath + rst
                         else:
                             lpath = text + os.path.split(path)[0][:len(lpath) - cutoff - BUFFER] + rst + arrow
-                            tab = '\t'.expandtabs(
-                                    width - len(lpath) - len(fname) + count_width + BUFFER + cut_corr
-                                )
+                            tab = '\t'.expandtabs(width - len(lpath) - len(fname) + count_width + BUFFER + cut_corr)
 
                         tab4 = '\t'.expandtabs(4)
                         fname = highlight + fname + rst
