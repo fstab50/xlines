@@ -215,7 +215,7 @@ def locate_fileobjects(origin, abspath=True):
 
 
 def print_header(w):
-    total_width = w + local_config['OUTPUT']['COUNT_COLUMN_WIDTH']
+    total_width = w + local_config['OUTPUT']['COUNT_COLUMN_WIDTH'] + 1
     header_lhs = 'object'
     header_rhs = 'line count'
     tab = '\t'.expandtabs(total_width - len(header_lhs) - len(header_rhs))
@@ -229,7 +229,7 @@ def print_footer(total, object_count, w):
     """
     Print total number of objects and cumulative total line count
     """
-    total_width = w + local_config['OUTPUT']['COUNT_COLUMN_WIDTH']
+    total_width = w + local_config['OUTPUT']['COUNT_COLUMN_WIDTH'] + 1
 
     # add commas
     total_lines = '{:,}'.format(object_count)
