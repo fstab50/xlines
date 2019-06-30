@@ -38,7 +38,7 @@ except Exception:
 
 def is_binary_external(filepath):
     f = open(filepath, 'rb').read(1024)
-    textchars = bytearray({7,8,9,10,12,13,27} | set(range(0x20, 0x100)) - {0x7f})
+    textchars = bytearray({7, 8, 9, 10, 12, 13, 27} | set(range(0x20, 0x100)) - {0x7f})
     fx = lambda bytes: bool(bytes.translate(None, textchars))
     return fx(f)
 

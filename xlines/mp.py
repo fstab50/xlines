@@ -61,9 +61,8 @@ def longest_path_mp(object_list):
 
 def mp_linecount(path_list, exclusions, no_whitespace):
     """Multiprocessing line count"""
-    try:
-
-        for path in path_list:
+    for path in path_list:
+        try:
             if os.path.isfile(path):
                 q.put(
                         {
@@ -75,10 +74,8 @@ def mp_linecount(path_list, exclusions, no_whitespace):
             elif os.path.isdir(path):
                 for p in [os.path.join(path, x) for x in os.listdir(path)]:
                     q.put({'path': p, 'count': linecount(p, no_whitespace)})
-
-    except UnicodeDecodeError:
-        q.put({'path': p, 'count': None})
-        return
+        except UnicodeDecodeError:
+            continue
 
 
 def print_results(object_list, width):
