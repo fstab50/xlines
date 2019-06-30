@@ -33,11 +33,8 @@ def cpu_cores(logical=True):
 
 
 def longest_path_mp(object_list):
-    longest = 0
-    for path_dict in object_list:
-        if len(path_dict['path']) > longest:
-            longest = len(path_dict['path'])
-    return longest
+    s = sorted(object_list, key=lambda x: len(x['path']), reverse=True)
+    return len(s[0]['path'])
 
 
 def mp_linecount(path_list, exclusions):
@@ -60,7 +57,7 @@ def mp_linecount(path_list, exclusions):
         return
 
 
-def print_results(object_list, width):
+def print_results(object_list):
     """
 
         Outputs paths and filesystem objects to which line counts
@@ -101,7 +98,7 @@ def print_results(object_list, width):
             fname = os.path.split(path)[1]
 
             if width < (len(lpath) + len(fname)):
-                cutoff = (len(lpath) + len(fname)) - width
+                cutoff = (len(lpath) + len(fname) + BUFFER) - width
             else:
                 cutoff = 0
 
@@ -112,7 +109,8 @@ def print_results(object_list, width):
             if cutoff == 0:
                 lpath = text + lpath + rst
             else:
-                lpath = os.path.split(path)[0][:len(lpath) - cutoff] + arrow
+                lpath = text + os.path.split(path)[0][:len(lpath) - cutoff] + rst + arrow
+                tab = '\t'.expandtabs(width - len(lpath) - len(fname) - count_width + BUFFER)
 
             fname = highlight + fname + rst
 
@@ -147,7 +145,7 @@ def split_list(monolith, n):
     return (monolith[i * k + min(i, m):(i + 1) * k + min(i + 1, m)] for i in range(n))
 
 
-def multiprocessing_main(valid_paths, max_width, exclusions, debug):
+def multiprocessing_main(valid_paths, exclusions, debug):
     """
     Execute Operations using concurrency (multi-process) model
     """
@@ -171,7 +169,6 @@ def multiprocessing_main(valid_paths, max_width, exclusions, debug):
 
     cores = 4
     a, b, c, d = sorted([x for x in split_list(valid_paths, cores)])
-    #tupleoflists = [x for x in split_list(valid_paths, cpu_cores())]
 
     processes = []
     for i in (a, b, c, d):
@@ -186,7 +183,7 @@ def multiprocessing_main(valid_paths, max_width, exclusions, debug):
     while not q.empty():
         results.append(q.get())
 
-    print_results(results, max_width)
+    print_results(results)
 
     if debug:
         export_json_object(results, logging=False)
