@@ -391,9 +391,6 @@ def init_cli():
         if args.multiprocess:
             # --- run with concurrency --
             width, paths = longest_path(container, ex)
-            #print(f'width is {width}')
-            #for p in paths:
-            #    print(p)
             multiprocessing_main(paths, width, ex, args.debug)
 
         elif not args.multiprocess:
