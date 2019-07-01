@@ -144,7 +144,7 @@ def print_results(object_list, width):
             # incremental count formatting
             ct_format = acct if inc > hicount_threshold else bwt
 
-            output_str = f'{tab4}{lpath}{div}{fname}{tab}{ct_format}{"{:,}".format(inc):>7}{rst}'
+            output_str = f'{tab4}{lpath}{div}{fname}{tab}{ct_format}{"{:,}".format(inc):>10}{rst}'
             print(output_str)
         except Exception:
             io_fail.append(path)
