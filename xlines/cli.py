@@ -347,13 +347,15 @@ def init_cli():
         abspath = absolute_paths(container)
 
         if args.debug:
-            print('\nargs.sum:')
-            print(args.sum)
-            print('\nsys.argv contents:')
-            print(sys.argv)
-            print(f'\ncontainer is:\n {container}')
-            print(f'\nunknown object: {unknown}')
-            print('abspath bool is {}'.format(abspath))
+            stdout_message(f'xlines command line option parameter detail', prefix='DEBUG')
+            print('\targs.sum: {}'.format(args.sum))
+            print('\t' + args.sum)
+            print('\n\tsys.argv contents:\n')
+            for i in sys.argv:
+                print('\t\to  {}'.format(cm.bd + cm.yl + i + rst))
+            print(f'\n\tcontainer is:\t{container}')
+            print(f'\n\tunknown object:\t{unknown}')
+            print('\tabspath bool is {}\n'.format(abspath))
 
         if args.multiprocess:
             # --- run with concurrency --
@@ -421,8 +423,12 @@ def init_cli():
             if args.debug:
                 tab4 = '\t'.expandtabs(4)
                 print('\n' + tab4 + 'Skipped file objects:\n' + tab4 + ('-' * (width + count_width)))
-                for file in io_fail:
-                    print('\t{}'.format(file))   # Write this out to a file in /tmp for later viewing
+                if io_fail:
+                    for file in io_fail:
+                        print('\t{}'.format(file))   # Write this out to a file in /tmp for later viewing
+                else:
+                    print('\tNone')
+                sys.stdout.write('\n')
 
             sys.exit(exit_codes['EX_OK']['Code'])
 
