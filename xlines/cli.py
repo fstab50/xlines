@@ -407,7 +407,7 @@ def init_cli():
                         ct_format = acct if inc > _ct_threshold else bwt
 
                         # format tabular line totals with commas
-                        output_str = f'{tab4}{lpath}{div}{fname}{tab}{ct_format}{"{:,}".format(inc):>7}{rst}'
+                        output_str = f'{tab4}{lpath}{div}{fname}{tab}{ct_format}{"{:,}".format(inc):>10}{rst}'
                         print(output_str)
 
                         if args.debug:
