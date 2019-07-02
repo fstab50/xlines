@@ -9,7 +9,6 @@ Module Functions:
 """
 import os
 import multiprocessing
-from multiprocessing import Queue
 from xlines.usermessage import stdout_message
 from xlines import Colors
 from xlines.core import BUFFER, acct, bwt, text, rst, arrow, div
@@ -201,7 +200,7 @@ def multiprocessing_main(valid_paths, max_width, wspace, exclusions, debug):
             print(i)
 
     global q
-    q = Queue()
+    q = multiprocessing.Queue()
 
     cores = 4
     a, b, c, d = sorted([x for x in split_list(valid_paths, cores)])
