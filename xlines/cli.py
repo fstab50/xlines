@@ -395,7 +395,7 @@ def init_cli():
                     try:
 
                         inc = linecount(path, args.whitespace)
-                        highlight = cm.accent if inc > _ct_threshold else cm.aqu
+                        highlight = cm.bbg if inc > _ct_threshold else cm.aqu
                         tcount += inc    # total line count
                         tobjects += 1    # increment total number of objects
 

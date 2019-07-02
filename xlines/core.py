@@ -245,4 +245,4 @@ def print_footer(total, object_count, w):
     print(tab4 + (horiz * (total_width)))
 
     # ending summary stats line
-    print(f'{tab4}{msg}{tab}{highlight + "{:,}".format(total) + rst:>6}' + '\n')
+    print(f'{tab4}{msg}{tab}{highlight + "{:,}".format(total) + rst:>10}' + '\n')
