@@ -366,7 +366,7 @@ def init_cli():
         if args.debug:
             stdout_message(f'xlines command line option parameter detail', prefix='DEBUG')
             print('\targs.sum: {}'.format(args.sum))
-            print('\t' + args.sum)
+            print('\t' + str(args.sum))
             print('\n\tsys.argv contents:\n')
             for i in sys.argv:
                 print('\t\to  {}'.format(cm.bd + cm.yl + i + rst))
@@ -439,6 +439,7 @@ def init_cli():
 
             if args.debug:
                 tab4 = '\t'.expandtabs(4)
+                stdout_message(f'width is {width}', prefix='DBUG')
                 print('\n' + tab4 + 'Skipped file objects:\n' + tab4 + ('-' * (width + count_width)))
                 if io_fail:
                     for file in io_fail:
