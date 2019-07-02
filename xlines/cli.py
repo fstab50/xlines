@@ -65,6 +65,21 @@ container = []
 
 
 def absolute_paths(path_list):
+    """
+        Determines if filesystem paths are absolute or relative
+
+    Args:
+        :path_list (list):
+            [
+                '/usr/local/bin/python3',
+                '/home/user/myfile.txt',
+                '../myfile.txt'
+            ]
+
+    Returns:
+        True (absolute paths) || False (relative), TYPE: bool
+
+    """
     prefix = '/'
     if any(i.startswith(prefix) for i in path_list):
         return True
@@ -99,8 +114,8 @@ def filter_args(kwarg_dict, *args):
         arg, kwarg validity test
 
     Args:
-        kwarg_dict: kwargs passed in to calling method or func
-        args:  valid keywords for the caller
+        :kwarg_dict: kwargs passed in to calling method or func
+        :args:  valid keywords for the caller
 
     Returns:
         True if kwargs are valid; else raise exception
@@ -191,8 +206,10 @@ def options(parser, help_menu=False):
     """
     Summary:
         parse cli parameter options
+
     Returns:
         TYPE: argparse object, parser argument set
+
     """
     parser.add_argument("-e", "--exclusions", dest='exclusions', action='store_true', required=False)
     parser.add_argument("-C", "--configure", dest='configure', action='store_true', required=False)
@@ -243,7 +260,7 @@ def set_hicount_threshold():
 
 def precheck(user_exfiles, user_exdirs, debug):
     """
-    Pre-execution Dependency Check
+    Runtime Dependency Check
     """
     _os_configdir = module_dir() + '/' + local_config['PROJECT']['PACKAGE'] + '/config'
     _os_ex_fname = _os_configdir + '/' + local_config['EXCLUSIONS']['EX_FILENAME']
