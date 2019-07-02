@@ -395,7 +395,7 @@ def init_cli():
                     try:
 
                         inc = linecount(path, args.whitespace)
-                        highlight = cm.bbg if inc > _ct_threshold else cm.aqu
+                        highlight = acct if inc > _ct_threshold else cm.aqu
                         tcount += inc    # total line count
                         tobjects += 1    # increment total number of objects
 
@@ -403,8 +403,8 @@ def init_cli():
                         lpath = os.path.split(path)[0]
                         fname = os.path.split(path)[1]
 
-                        if width < (len(lpath) + len(fname)):
-                            cutoff = (len(lpath) + len(fname)) - width
+                        if width < (len(path) + BUFFER):
+                            cutoff = (len(path) + BUFFER * 2) - width
                         else:
                             cutoff = 0
 
