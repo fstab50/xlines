@@ -123,8 +123,8 @@ def print_results(object_list, width):
             lpath = os.path.split(path)[0]
             fname = os.path.split(path)[1]
 
-            if width < (len(lpath) + len(fname)):
-                cutoff = (len(lpath) + len(fname) + BUFFER) - width
+            if (len(lpath) + len(fname) + BUFFER * 2) > width:
+                cutoff = (len(lpath) + len(fname) + BUFFER * 2) - width
             else:
                 cutoff = 0
 

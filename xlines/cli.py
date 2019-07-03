@@ -406,7 +406,7 @@ def init_cli():
                         lpath = os.path.split(path)[0]
                         fname = os.path.split(path)[1]
 
-                        if width < (len(path) + BUFFER):
+                        if width < (len(path) + BUFFER * 2):
                             cutoff = (len(path) + BUFFER * 2) - width
                         else:
                             cutoff = 0
