@@ -3,6 +3,7 @@
 from xlines import Colors
 from xlines.variables import *
 
+
 c = Colors()
 
 ACCENT = c.ORANGE               # orange accent highlight color
@@ -15,25 +16,24 @@ tab = '\t'.expandtabs(24)
 tab6 = '\t'.expandtabs(8)
 
 
-legend =  """ """ + tab6 +  bbl + 'o' + rst + """  |  Filesystem object counted (""" + bcy + 'cyan' + rst + """)
-       --------------------------------------------------------
-          """ + bdacct + 'o' + rst + """  |  Line count above high ct threshold (""" + acct + 'orange' + rst + """)
-       --------------------------------------------------------
-         """ + bwt + '->' + rst + """  |  Truncated (shortened) file path (""" + bwt + 'white' + rst + """) """
+legend = [
+            bbl + ' o' + rst + '  |  Filesystem object counted (' + bcy + 'cyan' + rst + ')',
+            bdacct + ' o' + rst + '  |  Line count above high ct threshold (' + acct + 'orange' + rst + ')',
+            bwt + '->' + rst + '  |  Truncated (shortened) file path (' + bwt + 'white' + rst + ')'
+    ]
 
 
 
-
-def bordered(text):
-    lines = text.splitlines()
-    width = int(max(len(s) for s in lines) * .7)
+def border_list(text_list=legend):
+    width = 55
     res = ['┌' + '─' * width + '┐']
-    #print(res[0])
-    for s in lines:
-        res.append('│' + (s + ' ' * width)[:width] + '│')
+    for index, s in enumerate(text_list):
+        if index == 0:
+            res.append('│  ' + s + (' ' * int(width - 43)) + '  │')
+        if index == 1:
+            res.append('│  ' + s + (' ' * int(width - 54)) + '  │')
+        if index == 2:
+            res.append('│  ' + s + (' ' * int(width - 50)) + '  │')
 
     res.append('└' + '─' * width + '┘')
-    #print(res[2])
-    return [print(x) for x in res]
-
-bordered(legend )
+    return [print(tab6 + x) for x in res]

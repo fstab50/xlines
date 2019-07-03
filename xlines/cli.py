@@ -37,6 +37,7 @@ from xlines import about, Colors, logger
 from xlines.usermessage import stdout_message
 from xlines.statics import local_config
 from xlines.help_menu import menu_body
+from xlines.square import border_list
 from xlines.mp import multiprocessing_main
 from xlines.core import linecount, locate_fileobjects, remove_illegal, print_footer, print_header
 from xlines.exclusions import ExcludedTypes
@@ -137,6 +138,8 @@ def help_menu():
     Displays help menu contents
     """
     print(menu_body)
+    border_list()
+    sys.stdout.write('\n')
     return
 
 

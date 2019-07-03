@@ -10,6 +10,7 @@ from xlines.statics import PACKAGE
 from xlines import Colors
 from xlines.variables import *
 
+
 c = Colors()
 
 ACCENT = c.ORANGE               # orange accent highlight color
@@ -29,6 +30,19 @@ synopsis_cmd = (
 
 url_doc = c.URL + 'http://xlines.readthedocs.io' + rst
 url_sc = c.URL + 'https://github.com/fstab50/xlines' + rst
+
+
+footer = """
+       --------------------------------------------------------
+       |  """ + bbl + 'o' + rst + """  |  Filesystem object counted (""" + bcy + 'cyan' + rst + """)              |
+       --------------------------------------------------------
+       |  """ + bdacct + 'o' + rst + """  |  Line count above high ct threshold (""" + acct + 'orange' + rst + """)   |
+       --------------------------------------------------------
+       | """ + bwt + '->' + rst + """  |  Truncated (shortened) file path (""" + bwt + 'white' + rst + """)       |
+       --------------------------------------------------------
+
+  """
+
 
 menu_body = menu_title + c.BOLD + """
 
@@ -72,13 +86,4 @@ menu_body = menu_title + c.BOLD + """
     """ + c.BOLD + """
         -V, --version""" + rst + """:  Print package version  and copyright info
     """ + c.BOLD + """
-  LEGEND""" + rst + """
-         --------------------------------------------------------
-         |  """ + bbl + 'o' + rst + """  |  Filesystem object counted (""" + bcy + 'cyan' + rst + """)              |
-         --------------------------------------------------------
-         |  """ + bdacct + 'o' + rst + """  |  Line count above high ct threshold (""" + acct + 'orange' + rst + """)   |
-         --------------------------------------------------------
-         | """ + bwt + '->' + rst + """  |  Truncated (shortened) file path (""" + bwt + 'white' + rst + """)       |
-         --------------------------------------------------------
-
-    """
+  LEGEND""" + rst
