@@ -13,24 +13,26 @@ Count the number of lines of text in a code project (or anything else)
 
 ## Contents
 
-* [**DEPENDENCIES**](#dependencies)
+* [**Dependencies**](#dependencies)
 
-* [**USAGE**](#usage)
+* [**Options**](#options)
 
-* [**EXCLUSIONS**](#exclusions)
+* [**Configuration**](#configuration)
+
+* [**Exclusions**](#exclusions)
 
 * [**INSTALLATION**](#installation)
     * [Pip Install](#installation)
     * [Ubuntu, Linux Mint, Debian-based Distributions](#debian-distro-install)
     * [Redhat, CentOS, Fedora, Amazon Linux](#redhat-distro-install)
 
-* [**SCREENSHOTS**](#screenshots)
+* [**Screenshots**](#screenshots)
 
-* [**AUTHOR & COPYRIGHT**](#author--copyright)
+* [**Author & Copyright**](#author--copyright)
 
-* [**LICENSE**](#license)
+* [**License**](#license)
 
-* [**DISCLAIMER**](#disclaimer)
+* [**Disclaimer**](#disclaimer)
 
 --
 
@@ -47,7 +49,7 @@ Count the number of lines of text in a code project (or anything else)
 
 * * *
 
-## Usage
+## Options
 
 To display the help menu:
 
@@ -61,19 +63,35 @@ To display the help menu:
 [back to the top](#top)
 
 * * *
-## Exclusions
+## Configuration
 
-[xlines](https://github.com/fstab50/xlines) maintains a list of file types on the local filesystem that are excluded from line count totals.  To see this list of file types excluded from line count totals, type the following:
+[xlines](https://github.com/fstab50/xlines) runtime optinos may be configured by entering the configuration menu:
 
 ```bash
-    $ xlines --exclusions
+    $ xlines --configure
 ```
 
-[![help](./assets/exclusions.png)](http://images.awspros.world/xlines/exclusions.png)
+[![toc](./assets/configure_toc.png)](http://images.awspros.world/xlines/configure_toc.png)
 
+
+Option "A" (shown below) allows addition of file types to be excluded (skipped) from line totals
+
+[![option a](./assets/configure_a.png)](http://images.awspros.world/xlines/configure_a.png)
+
+
+Option "B" (shown below) allows deletion of file types to be excluded so that a specific type of file can again be included in total line counts:
+
+[![option b](./assets/configure_b.png)](http://images.awspros.world/xlines/configure_b.png)
+
+
+Option "C" (shown below) allows user-customization of files highlighted for containing a large number of lines of text:
+
+[![option c](./assets/configure_c.png)](http://images.awspros.world/xlines/configure_c.png)
+
+
+--
 
 [back to the top](#top)
-
 
 * * *
 ## Installation
