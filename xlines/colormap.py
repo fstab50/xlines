@@ -48,6 +48,7 @@ class ColorMap():
         self.bdwt = co.BOLD + co.BRIGHT_WHITE
         self.btext = co.BOLD + co.BRIGHT_CYAN
         self.byl = co.BOLD + co.BRIGHT_YELLOW
+        self.bbg = co.BOLD + co.BRIGHT_GREEN
         self.byg = co.BRIGHT_YELLOWGREEN
         self.dbl = co.DARK_BLUE
         self.dcy = co.DARK_CYAN

@@ -9,13 +9,12 @@ Module Functions:
 """
 import os
 import multiprocessing
-from multiprocessing import Queue
 from xlines.usermessage import stdout_message
 from xlines import Colors
 from xlines.core import BUFFER, acct, bwt, text, rst, arrow, div
 from xlines.core import linecount, print_header, print_footer
 from xlines.export import export_json_object
-from xlines import local_config
+from xlines import local_config, logger
 
 
 def cpu_cores(logical=True):
@@ -124,8 +123,8 @@ def print_results(object_list, width):
             lpath = os.path.split(path)[0]
             fname = os.path.split(path)[1]
 
-            if width < (len(lpath) + len(fname)):
-                cutoff = (len(lpath) + len(fname) + BUFFER) - width
+            if (len(lpath) + len(fname) + BUFFER * 2) > width:
+                cutoff = (len(lpath) + len(fname) + BUFFER * 2) - width
             else:
                 cutoff = 0
 
@@ -144,7 +143,7 @@ def print_results(object_list, width):
             # incremental count formatting
             ct_format = acct if inc > hicount_threshold else bwt
 
-            output_str = f'{tab4}{lpath}{div}{fname}{tab}{ct_format}{"{:,}".format(inc):>7}{rst}'
+            output_str = f'{tab4}{lpath}{div}{fname}{tab}{ct_format}{"{:,}".format(inc):>10}{rst}'
             print(output_str)
         except Exception:
             io_fail.append(path)
@@ -195,29 +194,31 @@ def multiprocessing_main(valid_paths, max_width, wspace, exclusions, debug):
                 d_list.append(i)
         return d_list
 
+    def queue_generator(q, p):
+        while p.is_alive():
+            p.join(timeout=1)
+            while not q.empty():
+                yield q.get(block=False)
+
     if debug:
         stdout_message('Objects contained in container directories:', prefix='DEBUG')
         for i in valid_paths:
             print(i)
 
     global q
-    q = Queue()
+    q = multiprocessing.Queue()
 
     cores = 4
     a, b, c, d = sorted([x for x in split_list(valid_paths, cores)])
 
-    processes = []
+    processes, results = [], []
     for i in (a, b, c, d):
         t = multiprocessing.Process(target=mp_linecount, args=(i, exclusions.types, wspace))
         processes.append(t)
         t.start()
 
-    for p in processes:
-        p.join()
-
-    results = []
-    while not q.empty():
-        results.append(q.get())
+        for result in queue_generator(q, t):
+            results.append(result)
 
     print_results(results, max_width)
 

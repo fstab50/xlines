@@ -16,7 +16,7 @@ try:
     splitchar = '/'                                     # character for splitting paths (linux)
 
     # special colors - linux
-    acct = c.ORANGE
+    acct = c.BOLD + c.BRIGHT_GREEN
     text = c.BRIGHT_PURPLE
     TITLE = c.WHITE + c.BOLD
 

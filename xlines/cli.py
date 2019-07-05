@@ -37,6 +37,7 @@ from xlines import about, Colors, logger
 from xlines.usermessage import stdout_message
 from xlines.statics import local_config
 from xlines.help_menu import menu_body
+from xlines.square import border_list
 from xlines.mp import multiprocessing_main
 from xlines.core import linecount, locate_fileobjects, remove_illegal, print_footer, print_header
 from xlines.exclusions import ExcludedTypes
@@ -65,6 +66,21 @@ container = []
 
 
 def absolute_paths(path_list):
+    """
+        Determines if filesystem paths are absolute or relative
+
+    Args:
+        :path_list (list):
+            [
+                '/usr/local/bin/python3',
+                '/home/user/myfile.txt',
+                '../myfile.txt'
+            ]
+
+    Returns:
+        True (absolute paths) || False (relative  paths), TYPE: bool
+
+    """
     prefix = '/'
     if any(i.startswith(prefix) for i in path_list):
         return True
@@ -99,8 +115,8 @@ def filter_args(kwarg_dict, *args):
         arg, kwarg validity test
 
     Args:
-        kwarg_dict: kwargs passed in to calling method or func
-        args:  valid keywords for the caller
+        :kwarg_dict: kwargs passed in to calling method or func
+        :args:  valid keywords for the caller
 
     Returns:
         True if kwargs are valid; else raise exception
@@ -122,6 +138,8 @@ def help_menu():
     Displays help menu contents
     """
     print(menu_body)
+    border_list()
+    sys.stdout.write('\n')
     return
 
 
@@ -191,8 +209,10 @@ def options(parser, help_menu=False):
     """
     Summary:
         parse cli parameter options
+
     Returns:
         TYPE: argparse object, parser argument set
+
     """
     parser.add_argument("-e", "--exclusions", dest='exclusions', action='store_true', required=False)
     parser.add_argument("-C", "--configure", dest='configure', action='store_true', required=False)
@@ -243,7 +263,7 @@ def set_hicount_threshold():
 
 def precheck(user_exfiles, user_exdirs, debug):
     """
-    Pre-execution Dependency Check
+    Runtime Dependency Check
     """
     _os_configdir = module_dir() + '/' + local_config['PROJECT']['PACKAGE'] + '/config'
     _os_ex_fname = _os_configdir + '/' + local_config['EXCLUSIONS']['EX_FILENAME']
@@ -347,13 +367,15 @@ def init_cli():
         abspath = absolute_paths(container)
 
         if args.debug:
-            print('\nargs.sum:')
-            print(args.sum)
-            print('\nsys.argv contents:')
-            print(sys.argv)
-            print(f'\ncontainer is:\n {container}')
-            print(f'\nunknown object: {unknown}')
-            print('abspath bool is {}'.format(abspath))
+            stdout_message(f'xlines command line option parameter detail', prefix='DEBUG')
+            print('\targs.sum: {}'.format(args.sum))
+            print('\t' + str(args.sum))
+            print('\n\tsys.argv contents:\n')
+            for i in sys.argv:
+                print('\t\to  {}'.format(cm.bd + cm.yl + i + rst))
+            print(f'\n\tcontainer is:\t{container}')
+            print(f'\n\tunknown object:\t{unknown}')
+            print('\tabspath bool is {}\n'.format(abspath))
 
         if args.multiprocess:
             # --- run with concurrency --
@@ -376,7 +398,7 @@ def init_cli():
                     try:
 
                         inc = linecount(path, args.whitespace)
-                        highlight = cm.accent if inc > _ct_threshold else cm.aqu
+                        highlight = acct if inc > _ct_threshold else cm.aqu
                         tcount += inc    # total line count
                         tobjects += 1    # increment total number of objects
 
@@ -384,8 +406,8 @@ def init_cli():
                         lpath = os.path.split(path)[0]
                         fname = os.path.split(path)[1]
 
-                        if width < (len(lpath) + len(fname)):
-                            cutoff = (len(lpath) + len(fname)) - width
+                        if (len(path) + BUFFER * 2) > width:
+                            cutoff = (len(path) + BUFFER * 2) - width
                         else:
                             cutoff = 0
 
@@ -405,7 +427,7 @@ def init_cli():
                         ct_format = acct if inc > _ct_threshold else bwt
 
                         # format tabular line totals with commas
-                        output_str = f'{tab4}{lpath}{div}{fname}{tab}{ct_format}{"{:,}".format(inc):>7}{rst}'
+                        output_str = f'{tab4}{lpath}{div}{fname}{tab}{ct_format}{"{:,}".format(inc):>10}{rst}'
                         print(output_str)
 
                         if args.debug:
@@ -420,9 +442,14 @@ def init_cli():
 
             if args.debug:
                 tab4 = '\t'.expandtabs(4)
+                stdout_message(f'width is {width}', prefix='DBUG')
                 print('\n' + tab4 + 'Skipped file objects:\n' + tab4 + ('-' * (width + count_width)))
-                for file in io_fail:
-                    print('\t{}'.format(file))   # Write this out to a file in /tmp for later viewing
+                if io_fail:
+                    for file in io_fail:
+                        print('\t{}'.format(file))   # Write this out to a file in /tmp for later viewing
+                else:
+                    print('\tNone')
+                sys.stdout.write('\n')
 
             sys.exit(exit_codes['EX_OK']['Code'])
 
