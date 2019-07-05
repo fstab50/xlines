@@ -14,7 +14,7 @@ from xlines import Colors
 from xlines.core import BUFFER, acct, bwt, text, rst, arrow, div
 from xlines.core import linecount, print_header, print_footer
 from xlines.export import export_json_object
-from xlines import local_config
+from xlines import local_config, logger
 
 
 def cpu_cores(logical=True):
@@ -194,6 +194,12 @@ def multiprocessing_main(valid_paths, max_width, wspace, exclusions, debug):
                 d_list.append(i)
         return d_list
 
+    def queue_generator(q, p):
+        while p.is_alive():
+            p.join(timeout=1)
+            while not q.empty():
+                yield q.get(block=False)
+
     if debug:
         stdout_message('Objects contained in container directories:', prefix='DEBUG')
         for i in valid_paths:
@@ -205,18 +211,14 @@ def multiprocessing_main(valid_paths, max_width, wspace, exclusions, debug):
     cores = 4
     a, b, c, d = sorted([x for x in split_list(valid_paths, cores)])
 
-    processes = []
+    processes, results = [], []
     for i in (a, b, c, d):
         t = multiprocessing.Process(target=mp_linecount, args=(i, exclusions.types, wspace))
         processes.append(t)
         t.start()
 
-    for p in processes:
-        p.join()
-
-    results = []
-    while not q.empty():
-        results.append(q.get())
+        for result in queue_generator(q, t):
+            results.append(result)
 
     print_results(results, max_width)
 
