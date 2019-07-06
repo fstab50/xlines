@@ -78,7 +78,7 @@ def mp_linecount(path_list, exclusions, no_whitespace):
             continue
 
 
-def print_results(object_list, width):
+def print_results(object_list, _ct_threshold, width):
     """
 
         Outputs paths and filesystem objects to which line counts
@@ -98,6 +98,8 @@ def print_results(object_list, width):
                     'count': 249
                 },
             ]
+        :_ct_threshold (int): path rec highlight color if object linecount
+            is at or above this threshold
         :width (int): width in characters of the output pattern
 
     Returns:
@@ -109,14 +111,13 @@ def print_results(object_list, width):
 
     print_header(width)
     count_width = local_config['OUTPUT']['COUNT_COLUMN_WIDTH']
-    hicount_threshold = local_config['OUTPUT']['COUNT_HI_THRESHOLD']
 
     for object_dict in sorted(object_list, key=lambda x: x['path']):
 
         try:
             path = object_dict['path']
             inc = object_dict['count']
-            highlight = acct if inc > hicount_threshold else Colors.AQUA
+            highlight = acct if inc > _ct_threshold else Colors.AQUA
             tcount += inc    # total line count
             tobjects += 1    # increment total number of objects
 
@@ -124,8 +125,8 @@ def print_results(object_list, width):
             lpath = os.path.split(path)[0]
             fname = os.path.split(path)[1]
 
-            if (len(lpath) + len(fname) + BUFFER * 2) > width:
-                cutoff = (len(lpath) + len(fname) + BUFFER * 2) - width
+            if (len(path) + BUFFER * 2) > width:
+                cutoff = (len(path) + BUFFER * 2) - width
             else:
                 cutoff = 0
 
@@ -142,7 +143,7 @@ def print_results(object_list, width):
             fname = highlight + fname + rst
 
             # incremental count formatting
-            ct_format = acct if inc > hicount_threshold else bwt
+            ct_format = acct if inc > _ct_threshold else bwt
 
             output_str = f'{tab4}{lpath}{div}{fname}{tab}{ct_format}{"{:,}".format(inc):>10}{rst}'
             print(output_str)
@@ -177,7 +178,7 @@ def get_varname(var):
     return [var_name for var_name, var_val in callers_local_vars if var_val is var]
 
 
-def multiprocessing_main(valid_paths, max_width, wspace, exclusions, debug):
+def multiprocessing_main(valid_paths, max_width, _threshold, wspace, exclusions, debug):
     """
         Execute Operations using concurrency (multi-process) model
 
@@ -185,6 +186,7 @@ def multiprocessing_main(valid_paths, max_width, wspace, exclusions, debug):
         :valid_paths (list): list of filesystem paths (str) filtered for binary,
             other uncountable objects
         :max_width (int): width of output pattern, sans line count total column
+        :_threshold (int): high line count threshold value (highlighted objects)
         :wspace (bool): when True, omit whitespace lines from count (DEFAULT:  False)
         :exclusions (ex object): instance of ExcludedTypes
         :debug (boot): debug flag
@@ -228,7 +230,7 @@ def multiprocessing_main(valid_paths, max_width, wspace, exclusions, debug):
         if debug:
             print('Just completed: list {}'.format(get_varname(i)))    # show progress
 
-    print_results(results, max_width)
+    print_results(results, _threshold, max_width)
 
     if debug:
         export_json_object(results, logging=False)

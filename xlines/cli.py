@@ -380,7 +380,7 @@ def init_cli():
         if args.multiprocess:
             # --- run with concurrency --
             width, paths = longest_path(container, ex)
-            multiprocessing_main(paths, width, args.whitespace, ex, args.debug)
+            multiprocessing_main(paths, width, _ct_threshold, args.whitespace, ex, args.debug)
 
         elif not args.multiprocess:
 
