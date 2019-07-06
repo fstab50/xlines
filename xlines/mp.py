@@ -9,6 +9,7 @@ Module Functions:
 """
 import os
 import multiprocessing
+import inspect
 from xlines.usermessage import stdout_message
 from xlines import Colors
 from xlines.core import BUFFER, acct, bwt, text, rst, arrow, div
@@ -171,6 +172,11 @@ def split_list(monolith, n):
     return (monolith[i * k + min(i, m):(i + 1) * k + min(i + 1, m)] for i in range(n))
 
 
+def get_varname(var):
+    callers_local_vars = inspect.currentframe().f_back.f_locals.items()
+    return [var_name for var_name, var_val in callers_local_vars if var_val is var]
+
+
 def multiprocessing_main(valid_paths, max_width, wspace, exclusions, debug):
     """
         Execute Operations using concurrency (multi-process) model
@@ -217,8 +223,10 @@ def multiprocessing_main(valid_paths, max_width, wspace, exclusions, debug):
         processes.append(t)
         t.start()
 
-        for result in queue_generator(q, t):
-            results.append(result)
+        results.extend([x for x in queue_generator(q, t)])
+
+        if debug:
+            print('Just completed: list {}'.format(get_varname(i)))    # show progress
 
     print_results(results, max_width)
 
