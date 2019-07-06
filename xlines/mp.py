@@ -155,22 +155,22 @@ def print_results(object_list, _ct_threshold, width):
     return True
 
 
-def split_list(monolith, n):
+def split_list(mlist, n):
     """
     Summary.
 
         splits a list into equal parts as allowed, given n segments
 
     Args:
-        :monolith (list):  a single list containing multiple elements
+        :mlist (list):  a single list containing multiple elements
         :n (int):  Number of segments in which to split the list
 
     Returns:
         generator object
 
     """
-    k, m = divmod(len(monolith), n)
-    return (monolith[i * k + min(i, m):(i + 1) * k + min(i + 1, m)] for i in range(n))
+    k, m = divmod(len(mlist), n)
+    return (mlist[i * k + min(i, m):(i + 1) * k + min(i + 1, m)] for i in range(n))
 
 
 def get_varname(var):
