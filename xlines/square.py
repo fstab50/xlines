@@ -31,13 +31,11 @@ res = [
 ]
 
 fallback = """
-            --------------------------------------------------------
-            |  """ + bbl + 'o' + rst + """  |  Filesystem object counted (""" + bcy + 'cyan' + rst + """)              |
-            --------------------------------------------------------
-            |  """ + bdacct + 'o' + rst + """  |  Line count above high ct threshold (""" + acct + 'orange' + rst + """)   |
-            --------------------------------------------------------
-            | """ + bwt + '->' + rst + """  |  Truncated (shortened) file path (""" + bwt + 'white' + rst + """)       |
-            --------------------------------------------------------
+             """ + bbl + 'o' + rst + """  |  Filesystem object counted (""" + bcy + 'cyan' + rst + """)
+           --------------------------------------------------------
+             """ + bdacct + 'o' + rst + """  |  Line count above high ct threshold (""" + acct + 'orange' + rst + """)
+           --------------------------------------------------------
+            """ + bwt + '->' + rst + """  |  Truncated (shortened) file path (""" + bwt + 'white' + rst + """)       
 """
 
 
