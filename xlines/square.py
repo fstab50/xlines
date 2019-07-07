@@ -66,7 +66,7 @@ def border_map(text_list=legend):
 
     except UnicodeEncodeError:
         # if problems handling unicode encoding
-        [print('\t'.expandtabs(10) + x) for x in text_list][0]
+        [print('\t'.expandtabs(8) + x) for x in text_list][0]
 
 
 def border_list(text_list=legend):
@@ -93,4 +93,4 @@ def border_list(text_list=legend):
 
     except UnicodeEncodeError:
         # if problems handling unicode encoding
-        [print('\t'.expandtabs(10) + x) for x in text_list][0]
+        [print('\t'.expandtabs(8) + x) for x in text_list][0]
