@@ -1,4 +1,15 @@
-#!/usr/bin/env python3
+"""
+Summary:
+    Module utilising unicode characters to create
+    a help menu legend surrounded by a border
+
+Module Funtions:
+    - _map (dict lookup for legend content)
+    - border_map (caller)
+
+Caller:
+    - cli.py module
+"""
 
 from xlines import Colors
 from xlines.variables import *
@@ -67,7 +78,7 @@ def border_map(text_list=legend_content):
     except UnicodeEncodeError:
         # if problems handling unicode encoding
         [print('\t'.expandtabs(8) + x) for x in text_list][0]
-        
+
     except Exception:
         # if any utf-8 handling host issues
         print(fallback)
