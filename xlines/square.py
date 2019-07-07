@@ -57,6 +57,7 @@ def border_map(text_list=legend):
     """
     for index, s in enumerate(text_list):
         res.append(_map(index, s))
+
     res.append(('└' + '─' * width + '┘').encode('utf-8'))
 
     try:
