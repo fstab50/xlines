@@ -16,19 +16,29 @@ tab = '\t'.expandtabs(24)
 tab6 = '\t'.expandtabs(8).encode('utf-8')
 
 
+width = 55      # legend overall width
+
 legend = [
-            bdcy + ' o' + rst + '  |  Filesystem object counted (' + bcy + 'cyan' + rst + ')',
-            bdacct + ' o' + rst + '  |  Line count above high ct threshold (' + bdacct + 'green' + rst + ')',
-            bwt + '->' + rst + '  |  Truncated (shortened) file path (' + bwt + 'white' + rst + ')'
+        bdcy + ' o' + rst + '  |  Filesystem object counted (' + bcy + 'cyan' + rst + ')',
+        bdacct + ' o' + rst + '  |  Line count above high ct threshold (' + bdacct + 'green' + rst + ')',
+        bwt + '->' + rst + '  |  Truncated (shortened) file path (' + bwt + 'white' + rst + ')'
     ]
 
-
-width = 55      # legend overall width
 res = [
 
     ('┌' + '─' * width + '┐').encode('utf-8')
 
 ]
+
+fallback = """
+       --------------------------------------------------------
+       |  """ + bbl + 'o' + rst + """  |  Filesystem object counted (""" + bcy + 'cyan' + rst + """)              |
+       --------------------------------------------------------
+       |  """ + bdacct + 'o' + rst + """  |  Line count above high ct threshold (""" + acct + 'orange' + rst + """)   |
+       --------------------------------------------------------
+       | """ + bwt + '->' + rst + """  |  Truncated (shortened) file path (""" + bwt + 'white' + rst + """)       |
+       --------------------------------------------------------
+    """
 
 
 def _map(index, content):
@@ -57,7 +67,8 @@ def border_map(text_list=legend):
 
     except UnicodeEncodeError:
         # if problems handling unicode encoding
-        [print('\t'.expandtabs(10) + x) for x in text_list][0]
+        #[print('\t'.expandtabs(10) + x) for x in text_list][0]
+        print(fallback)
 
 
 def border_list(text_list=legend):
