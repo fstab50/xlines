@@ -32,10 +32,10 @@ res = [
 
 fallback = """
           """ + bbl + 'o' + rst + """  |  Filesystem object counted (""" + bcy + 'cyan' + rst + """)
-           --------------------------------------------------------
+         --------------------------------------------------------
           """ + bdacct + 'o' + rst + """  |  Line count above high ct threshold (""" + acct + 'orange' + rst + """)
-           --------------------------------------------------------
-          """ + bwt + '->' + rst + """  |  Truncated (shortened) file path (""" + bwt + 'white' + rst + """)
+         --------------------------------------------------------
+         """ + bwt + '->' + rst + """  |  Truncated (shortened) file path (""" + bwt + 'white' + rst + """)
 """
 
 
@@ -65,8 +65,7 @@ def border_map(text_list=legend):
 
     except UnicodeEncodeError:
         # if problems handling unicode encoding
-        print(fallback)
-        #[print('\t'.expandtabs(10) + x) for x in text_list][0]
+        [print('\t'.expandtabs(10) + x) for x in text_list][0]
 
 
 def border_list(text_list=legend):
