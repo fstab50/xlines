@@ -63,7 +63,10 @@ def border_list(text_list=legend):
             res.append(('│  ' + s + (' ' * int(width - 50)) + '  │').encode('utf-8'))
 
     res.append(('└' + '─' * width + '┘').encode('utf-8'))
+
     try:
+
         return [print((tab6 + x).decode('utf-8')) for x in res]
+
     except UnicodeEncodeError:
-        [print('\t'.expandtabs(6) + x) for x in text_list][0]
+        [print('\t'.expandtabs(10) + x) for x in text_list][0]
