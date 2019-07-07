@@ -23,7 +23,7 @@ legend = [
     ]
 
 
-width = 55
+width = 55      # legend overall width
 res = [
 
     ('┌' + '─' * width + '┐').encode('utf-8')
@@ -33,27 +33,41 @@ res = [
 
 def _map(index, content):
     return {
-        0: res.append('│  ' + content + (' ' * int(width - 43)) + '  │'),
-        1: res.append('│  ' + content + (' ' * int(width - 53)) + '  │'),
-        2: res.append('│  ' + content + (' ' * int(width - 50)) + '  │')
+        0: ('│  ' + content + (' ' * int(width - 43)) + '  │').encode('utf-8'),
+        1: ('│  ' + content + (' ' * int(width - 53)) + '  │').encode('utf-8'),
+        2: ('│  ' + content + (' ' * int(width - 50)) + '  │').encode('utf-8')
     }.get(index)
 
 
 def border_map(text_list=legend):
+    """
+        Render help menu legend using dict lookup module function
+
+    Returns:
+        decoded utf-8 characters printed to stdout
+
+    """
     for index, s in enumerate(text_list):
-        _map(index, s)
-    res.append('└' + '─' * width + '┘')
-    return [print(tab6 + x) for x in res]
+        res.append(_map(index, s))
+    res.append(('└' + '─' * width + '┘').encode('utf-8'))
+
+    try:
+
+        return [print((tab6 + x).decode('utf-8')) for x in res]
+
+    except UnicodeEncodeError:
+        # if problems handling unicode encoding
+        [print('\t'.expandtabs(10) + x) for x in text_list][0]
 
 
 def border_list(text_list=legend):
-    width = 55
-    res = [
+    """
+        Original working version of help menu legend
 
-        ('┌' + '─' * width + '┐').encode('utf-8')
+    Returns:
+        decoded utf-8 characters printed to stdout
 
-    ]
-
+    """
     for index, s in enumerate(text_list):
         if index == 0:
             res.append(('│  ' + s + (' ' * int(width - 43)) + '  │').encode('utf-8'))
@@ -69,4 +83,5 @@ def border_list(text_list=legend):
         return [print((tab6 + x).decode('utf-8')) for x in res]
 
     except UnicodeEncodeError:
+        # if problems handling unicode encoding
         [print('\t'.expandtabs(10) + x) for x in text_list][0]
