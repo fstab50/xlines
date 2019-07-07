@@ -66,4 +66,4 @@ def border_list(text_list=legend):
     try:
         return [print((tab6 + x).decode('utf-8')) for x in res]
     except UnicodeEncodeError:
-        [print(x) for x in text_list][0]
+        [print(tab6 + x) for x in text_list][0]
