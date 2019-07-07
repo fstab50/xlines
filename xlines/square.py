@@ -67,30 +67,3 @@ def border_map(text_list=legend):
     except UnicodeEncodeError:
         # if problems handling unicode encoding
         [print('\t'.expandtabs(8) + x) for x in text_list][0]
-
-
-def border_list(text_list=legend):
-    """
-        Original working version of help menu legend
-
-    Returns:
-        decoded utf-8 characters printed to stdout
-
-    """
-    for index, s in enumerate(text_list):
-        if index == 0:
-            res.append(('│  ' + s + (' ' * int(width - 43)) + '  │').encode('utf-8'))
-        if index == 1:
-            res.append(('│  ' + s + (' ' * int(width - 53)) + '  │').encode('utf-8'))
-        if index == 2:
-            res.append(('│  ' + s + (' ' * int(width - 50)) + '  │').encode('utf-8'))
-
-    res.append(('└' + '─' * width + '┘').encode('utf-8'))
-
-    try:
-
-        return [print((tab6 + x).decode('utf-8')) for x in res]
-
-    except UnicodeEncodeError:
-        # if problems handling unicode encoding
-        [print('\t'.expandtabs(8) + x) for x in text_list][0]
