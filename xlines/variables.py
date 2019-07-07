@@ -6,6 +6,7 @@ import os
 from xlines.statics import local_config
 from xlines.colors import Colors
 
+
 c = Colors()
 
 try:
