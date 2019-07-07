@@ -18,7 +18,7 @@ tab6 = '\t'.expandtabs(8).encode('utf-8')
 
 width = 55      # legend overall width
 
-legend = [
+legend_content = [
         bdcy + ' o' + rst + '  |  Filesystem object counted (' + bcy + 'cyan' + rst + ')',
         bdacct + ' o' + rst + '  |  Line count above high ct threshold (' + bdacct + 'green' + rst + ')',
         bwt + '->' + rst + '  |  Truncated (shortened) file path (' + bwt + 'white' + rst + ')'
@@ -47,7 +47,7 @@ def _map(index, content):
     }.get(index)
 
 
-def border_map(text_list=legend):
+def border_map(text_list=legend_content):
     """
         Render help menu legend using dict lookup module function
 
@@ -67,3 +67,7 @@ def border_map(text_list=legend):
     except UnicodeEncodeError:
         # if problems handling unicode encoding
         [print('\t'.expandtabs(8) + x) for x in text_list][0]
+        
+    except Exception:
+        # if any utf-8 handling host issues
+        print(fallback)
