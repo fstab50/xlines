@@ -13,7 +13,7 @@ lbrct = bbc + '[ ' + rst        # left bracket
 rbrct = bbc + ' ]' + rst        # right bracket
 vdiv = bbc + ' | ' + rst
 tab = '\t'.expandtabs(24)
-tab6 = '\t'.expandtabs(8)
+tab6 = '\t'.expandtabs(8).encode('utf-8')
 
 
 legend = [
@@ -24,7 +24,12 @@ legend = [
 
 
 width = 55
-res = ['┌' + '─' * width + '┐']
+res = [
+
+    ('┌' + '─' * width + '┐').encode('utf-8')
+
+]
+
 
 def _map(index, content):
     return {
@@ -43,14 +48,19 @@ def border_map(text_list=legend):
 
 def border_list(text_list=legend):
     width = 55
-    res = ['┌' + '─' * width + '┐']
+    res = [
+
+        ('┌' + '─' * width + '┐').encode('utf-8')
+
+    ]
+
     for index, s in enumerate(text_list):
         if index == 0:
-            res.append('│  ' + s + (' ' * int(width - 43)) + '  │')
+            res.append(('│  ' + s + (' ' * int(width - 43)) + '  │').encode('utf-8'))
         if index == 1:
-            res.append('│  ' + s + (' ' * int(width - 53)) + '  │')
+            res.append(('│  ' + s + (' ' * int(width - 53)) + '  │').encode('utf-8'))
         if index == 2:
-            res.append('│  ' + s + (' ' * int(width - 50)) + '  │')
+            res.append(('│  ' + s + (' ' * int(width - 50)) + '  │').encode('utf-8'))
 
-    res.append('└' + '─' * width + '┘')
-    return [print(tab6 + x) for x in res]
+    res.append(('└' + '─' * width + '┘').encode('utf-8'))
+    return [print(tab6.decode('utf-8') + x.decode('utf-8')) for x in res]
