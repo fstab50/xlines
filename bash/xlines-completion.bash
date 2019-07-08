@@ -98,6 +98,47 @@ function _filedir(){
 }
 
 
+function _numargs(){
+    ##
+    ## Returns count of number of parameter args passed
+    ##
+    local parameters="$1"
+    local numargs
+
+    if [[ ! "$parameters" ]]; then
+        printf -- '%s\n' "0"
+    else
+        for i in $(echo $parameters); do
+            numargs=$(( $numargs + 1 ))
+        done
+        printf -- '%s\n' "$numargs"
+    fi
+    return 0
+    #
+    # <-- end function _numargs -->
+}
+
+
+function _parse_compwords(){
+    ##
+    ##  Interogate compwords to discover which of the  5 horsemen are missing
+    ##
+    compwords=("${!1}")
+    four=("${!2}")
+
+    declare -a missing_words
+
+    for key in "${four[@]}"; do
+        if [[ ! "$(echo "${compwords[@]}" | grep ${key##*-})" ]]; then
+            missing_words=( "${missing_words[@]}" "$key" )
+        fi
+    done
+    printf -- '%s\n' "${missing_words[@]}"
+    #
+    # <-- end function _parse_compwords -->
+}
+
+
 function _pathopt(){
     ##
     ##  bash v4.4 profile reference function
