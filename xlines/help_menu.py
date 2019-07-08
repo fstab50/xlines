@@ -61,7 +61,7 @@ menu_body = menu_title + c.BOLD + """
                        [-d, --debug  ]
                        [-h, --help   ]
                        [-m, --multiprocess  ]
-                       [-w, --no-whitespace  ]
+                       [-n, --no-whitespace  ]
                        [-V, --version  ]
     """ + c.BOLD + """
   OPTIONS

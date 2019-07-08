@@ -220,7 +220,7 @@ def options(parser, help_menu=False):
     parser.add_argument("-h", "--help", dest='help', action='store_true', required=False)
     parser.add_argument("-m", "--multiprocess", dest='multiprocess', default=False, action='store_true', required=False)
     parser.add_argument("-s", "--sum", dest='sum', nargs='*', default=os.getcwd(), required=False)
-    parser.add_argument("-w", "--no-whitespace", dest='whitespace', action='store_false', default=True, required=False)
+    parser.add_argument("-n", "--no-whitespace", dest='whitespace', action='store_false', default=True, required=False)
     parser.add_argument("-V", "--version", dest='version', action='store_true', required=False)
     return parser.parse_known_args()
 
