@@ -239,30 +239,54 @@ function _xlines_completions(){
     numargs=0
     numoptions=0
 
-    commands='--help --exclusions --configure --debug --multiprocess --sum --version --no-whitespace'
+    options='--help --exclusions --configure --version'
+    commands='--debug --multiprocess --sum --no-whitespace'
+
 
     case "${cur}" in
 
-        '--sum')
-            _pathopt
+        '--h')
+            COMPREPLY=( $(compgen -W '--help' -- ${cur}) )
             return 0
             ;;
 
-        '--' | '-')
-            ##
-            ##  Return compreply with any of the 5 comp_words that
-            ##  not already present on the command line
-            ##
-            declare -a horsemen
-            horsemen=(  ${commands} )
-            subcommands=$(_parse_compwords COMP_WORDS[@] horsemen[@])
-            numargs=$(_numargs "$subcommands")
+        '--c')
+            COMPREPLY=( $(compgen -W '--configure' -- ${cur}) )
+            return 0
+            ;;
 
-            if [ "$cur" = "" ] || [ "$cur" = "-" ] || [ "$cur" = "--" ] && (( "$numargs" > 2 )); then
-                _complete_4_horsemen_commands "${subcommands}"
-            else
-                COMPREPLY=( $(compgen -W "${subcommands}" -- ${cur}) )
-            fi
+        '--d')
+            COMPREPLY=( $(compgen -W '--debug' -- ${cur}) )
+            return 0
+            ;;
+
+        '--e')
+            COMPREPLY=( $(compgen -W '--exclusions' -- ${cur}) )
+            return 0
+            ;;
+
+        '--m')
+            COMPREPLY=( $(compgen -W '--multiprocess' -- ${cur}) )
+            return 0
+            ;;
+
+        '--no')
+            COMPREPLY=( $(compgen -W '--no-whitespace' -- ${cur}) )
+            return 0
+            ;;
+
+        '--s')
+            COMPREPLY=( $(compgen -W '--sum' -- ${cur}) )
+            return 0
+            ;;
+
+        '--v')
+            COMPREPLY=( $(compgen -W '--version' -- ${cur}) )
+            return 0
+            ;;
+
+        'xlin' | 'xline' | 'xlines')
+            COMPREPLY=( $(compgen -W "${commands} ${options}" -- ${cur}) )
             return 0
             ;;
 
@@ -274,12 +298,12 @@ function _xlines_completions(){
             return 0
             ;;
 
-        '--sum')
-            _pathopt
+        '--configure')
             return 0
             ;;
 
-        '--configure')
+        '--sum')
+            _pathopt
             return 0
             ;;
 
@@ -304,7 +328,7 @@ function _xlines_completions(){
         'xlines')
             if [ "$cur" = "" ] || [ "$cur" = "-" ] || [ "$cur" = "--" ]; then
 
-                _complete_xlines_commands "${commands}"
+                _complete_xlines_commands "${commands} ${options}"
                 return 0
 
             fi
