@@ -21,7 +21,7 @@ Count the number of lines of text in a code project (or anything else)
 
 * [**Exclusions**](#exclusions)
 
-* [**INSTALLATION**](#installation)
+* [**Installation**](#installation)
     * [Pip Install](#installation)
     * [Ubuntu, Linux Mint, Debian-based Distributions](#debian-distro-install)
     * [Redhat, CentOS, Fedora, Amazon Linux](#redhat-distro-install)

@@ -25,7 +25,7 @@ menu_title = '\n' + c.BOLD + tab + PACKAGE + rst + ' help contents'
 
 synopsis_cmd = (
         rst + ACCENT + PACKAGE + rst + ' --sum <values> ' +
-        lbrct + '--whitespace' + vdiv + '--multiprocess' + rbrct
+        lbrct + '--no-whitespace' + vdiv + '--multiprocess' + rbrct
     )
 
 url_doc = c.URL + 'http://xlines.readthedocs.io' + rst
@@ -61,7 +61,7 @@ menu_body = menu_title + c.BOLD + """
                        [-d, --debug  ]
                        [-h, --help   ]
                        [-m, --multiprocess  ]
-                       [-w, --whitespace  ]
+                       [-w, --no-whitespace  ]
                        [-V, --version  ]
     """ + c.BOLD + """
   OPTIONS
@@ -81,7 +81,7 @@ menu_body = menu_title + c.BOLD + """
         -m, --multiprocess""" + rst + """:  Use multiple  cpu cores for counting
             lines of text in expansive filesystem directories
     """ + c.BOLD + """
-        -w, --whitespace""" + rst + """:  Omit lines containing  only whitespace
+        -w, --no-whitespace""" + rst + """: Omit lines containing only whitespace
             from total line counts for all objects
     """ + c.BOLD + """
         -V, --version""" + rst + """:  Print package version  and copyright info

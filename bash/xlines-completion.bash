@@ -162,7 +162,7 @@ function _xlines_completions(){
     numargs=0
     numoptions=0
 
-    commands='--help --exclusions --configure --debug --multiprocess --sum --version --whitespace'
+    commands='--help --exclusions --configure --debug --multiprocess --sum --version --no-whitespace'
 
     case "${cur}" in
 
@@ -192,13 +192,13 @@ function _xlines_completions(){
             elif [[ $(echo "${COMP_WORDS[@]}" | grep '\-\-sum') ]] && \
                  [[ $(echo "${COMP_WORDS[@]}" | grep '\-\-multiprocess') ]] && \
                  [[ ! $(echo "${COMP_WORDS[@]}" | grep '\-\-whitespace') ]]; then
-                COMPREPLY=( $(compgen -W "--whitespace" -- ${cur}) )
+                COMPREPLY=( $(compgen -W "--no-whitespace" -- ${cur}) )
                 return 0
 
             elif [[ $(echo "${COMP_WORDS[@]}" | grep '\-\-sum') ]] && \
                  [[ ! $(echo "${COMP_WORDS[@]}" | grep '\-\-multiprocess') ]] && \
                  [[ ! $(echo "${COMP_WORDS[@]}" | grep '\-\-whitespace') ]]; then
-                COMPREPLY=( $(compgen -W "--multiprocess --whitespace" -- ${cur}) )
+                COMPREPLY=( $(compgen -W "--multiprocess --no-whitespace" -- ${cur}) )
                 return 0
             fi
             ;;
@@ -232,16 +232,16 @@ function _xlines_completions(){
 
             elif [[ $(echo "${COMP_WORDS[@]}" | grep '\-\-sum') ]] && \
                  [[ ! $(echo "${COMP_WORDS[@]}" | grep '\-\-whitespace') ]]; then
-                COMPREPLY=( $(compgen -W "--whitespace" -- ${cur}) )
+                COMPREPLY=( $(compgen -W "--no-whitespace" -- ${cur}) )
                 return 0
 
             else
-                COMPREPLY=( $(compgen -W "--sum --whitespace" -- ${cur}) )
+                COMPREPLY=( $(compgen -W "--sum --no-whitespace" -- ${cur}) )
                 return 0
             fi
             ;;
 
-        '--whitespace')
+        '--no-whitespace')
             if [[ $(echo "${COMP_WORDS[@]}" | grep '\-\-sum') ]] && \
                [[ $(echo "${COMP_WORDS[@]}" | grep '\-\-multiprocess') ]]; then
                 return 0
@@ -263,7 +263,7 @@ function _xlines_completions(){
             ;;
 
         'xlines')
-            if [ "$cur" = "" ] || [ "$cur" = "--" ]; then
+            if [ "$cur" = "" ] || [ "$cur" = "-" ] || [ "$cur" = "--" ]; then
 
                 _complete_xlines_commands "${commands}"
                 return 0
