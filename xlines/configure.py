@@ -187,6 +187,7 @@ def _configure_add(expath, exdirpath):
             offset_chars = int((width / 2) - (pattern_width / 2)) + adj
             offset = '\t'.expandtabs(offset_chars)
             display_exclusions(expath, exdirpath, offset_chars)
+
             # query user input for new exclusions
             msg = 'Enter file extension types separated by commas [done]: '
             offset_msg = '\t'.expandtabs(int((width / 2) - (pattern_width / 2) + adj * 2))
@@ -332,8 +333,8 @@ def _configure_hicount(expath, exdirpath):
     tab4 = '\t'.expandtabs(4)
     tab13 = '\t'.expandtabs(13)
     loop = True
-    local_linecount_file = local_config['CONFIG']['COUNT_HI_THRESHOLD_FILEPATH']
     adj = 12
+    local_linecount_file = local_config['CONFIG']['COUNT_HI_THRESHOLD_FILEPATH']
 
     try:
         width = _init_screen()
