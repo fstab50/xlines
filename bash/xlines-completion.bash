@@ -341,6 +341,27 @@ function _xlines_completions(){
                 return 0
                 ;;
         esac
+
+    elif [[ "$(echo "${COMP_WORDS[@]}" | grep '\-\-sum' 2>/dev/null)" ]]; then
+        case "${cur}" in
+            '--')
+                ##
+                ##  Return compreply with any of the 5 comp_words that
+                ##  not already present on the command line
+                ##
+                declare -a horsemen
+                horsemen=(  '--multiprocess' '--no-whitespace' '--sum' '--debug' )
+                subcommands=$(_parse_compwords COMP_WORDS[@] horsemen[@])
+                numargs=$(_numargs "$subcommands")
+
+                if [ "$cur" = "" ] || [ "$cur" = "-" ] || [ "$cur" = "--" ] && (( "$numargs" > 2 )); then
+                    _complete_4_horsemen_subcommands "${subcommands}"
+                else
+                    COMPREPLY=( $(compgen -W "${subcommands}" -- ${cur}) )
+                fi
+                return 0
+            ;;
+        esac
     fi
 
     case "${initcmd}" in
@@ -399,28 +420,6 @@ function _xlines_completions(){
             ;;
 
     esac
-
-    if [[ "$(echo "${COMP_WORDS[@]}" | grep '\-\-sum' 2>/dev/null)" ]]; then
-        case "${cur}" in
-            '--')
-                ##
-                ##  Return compreply with any of the 5 comp_words that
-                ##  not already present on the command line
-                ##
-                declare -a horsemen
-                horsemen=(  '--multiprocess' '--no-whitespace' '--sum' '--debug' )
-                subcommands=$(_parse_compwords COMP_WORDS[@] horsemen[@])
-                numargs=$(_numargs "$subcommands")
-
-                if [ "$cur" = "" ] || [ "$cur" = "-" ] || [ "$cur" = "--" ] && (( "$numargs" > 2 )); then
-                    _complete_4_horsemen_subcommands "${subcommands}"
-                else
-                    COMPREPLY=( $(compgen -W "${subcommands}" -- ${cur}) )
-                fi
-                return 0
-            ;;
-        esac
-    fi
 
     case "${prev}" in
 
