@@ -224,6 +224,27 @@ function _pathopt(){
 }
 
 
+function compword_autofilter(){
+    ##
+    ##  Return compreply with any of the comp_words that
+    ##  not already present on the command line
+    ##
+
+    declare -a compwords=("${!1}")
+    declare -a horsemen
+
+    horsemen=(  '--multiprocess' '--no-whitespace' '--sum' )
+    subcommands=$(_parse_compwords compwords[@] horsemen[@])
+    numargs=$(_numargs "$subcommands")
+    if [ "$cur" = "" ] || [ "$cur" = "-" ] || [ "$cur" = "--" ] && (( "$numargs" > 2 )); then
+        _complete_4_horsemen_subcommands "${subcommands}"
+    else
+        COMPREPLY=( $(compgen -W "${subcommands}" -- ${cur}) )
+    fi
+    return 0
+}
+
+
 function _xlines_completions(){
     ##
     ##  Completion structures for xlines exectuable
@@ -234,8 +255,6 @@ function _xlines_completions(){
     local cur                       #  completion word at index position 0 in COMP_WORDS array
     local prev                      #  completion word at index position -1 in COMP_WORDS array
     local initcmd                   #  completion word at index position -2 in COMP_WORDS array
-    local initprev                  #  completion word at index position -3 in COMP_WORDS array
-    local init0                     #  completion word at index position -4 in COMP_WORDS array
 
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
@@ -255,7 +274,11 @@ function _xlines_completions(){
        [[ ! "$(echo "${COMP_WORDS[@]}" | grep '\-\-no-whitespace' 2>/dev/null)" ]]; then
 
         case "${#COMP_WORDS[@]}" in
-            [7-9] | 1[0-9])
+            #6 | 7 | 8 | 9 | 1[0-9])
+            #    compword_autofilter COMP_WORDS[@]
+            #    ;;
+
+            6 | 7 | 8 | 9 | 1[0-9])
                 ##
                 ##  Return compreply with any of the comp_words that
                 ##  not already present on the command line
@@ -270,11 +293,10 @@ function _xlines_completions(){
                     COMPREPLY=( $(compgen -W "${subcommands}" -- ${cur}) )
                 fi
                 return 0
-                ;;
+            ;;
         esac
-    fi
 
-    if [[ "$(echo "${COMP_WORDS[@]}" | grep '\-\-sum' 2>/dev/null)" ]] && \
+    elif [[ "$(echo "${COMP_WORDS[@]}" | grep '\-\-sum' 2>/dev/null)" ]] && \
        [[ "$(echo "${COMP_WORDS[@]}" | grep '\-\-multiprocess' 2>/dev/null)" ]] && \
        [[ ! "$(echo "${COMP_WORDS[@]}" | grep '\-\-no-whitespace' 2>/dev/null)" ]]; then
 
@@ -296,9 +318,8 @@ function _xlines_completions(){
                 return 0
                 ;;
         esac
-    fi
 
-    if [[ "$(echo "${COMP_WORDS[@]}" | grep '\-\-sum' 2>/dev/null)" ]] && \
+    elif [[ "$(echo "${COMP_WORDS[@]}" | grep '\-\-sum' 2>/dev/null)" ]] && \
        [[ "$(echo "${COMP_WORDS[@]}" | grep '\-\-multiprocess' 2>/dev/null)" ]] && \
        [[ "$(echo "${COMP_WORDS[@]}" | grep '\-\-no-whitespace' 2>/dev/null)" ]]; then
 
