@@ -54,6 +54,24 @@ function _filter_objects(){
 }
 
 
+function _complete_4_horsemen_subcommands(){
+    local cmds="$1"
+    local split='3'       # times to split screen width
+    local ct="0"
+    local IFS=$' \t\n'
+    local formatted_cmds=( $(compgen -W "${cmds}" -- "${cur}") )
+
+    for i in "${!formatted_cmds[@]}"; do
+        formatted_cmds[$i]="$(printf '%*s' "-$(($COLUMNS/$split))"  "${formatted_cmds[$i]}")"
+    done
+
+    COMPREPLY=( "${formatted_cmds[@]}")
+    return 0
+    #
+    # <-- end function _complete_region_subcommands -->
+}
+
+
 function _complete_xlines_commands(){
     local cmds="$1"
     local split='6'       # times to split screen width
@@ -248,7 +266,7 @@ function _xlines_completions(){
 
     case "${prev}" in
 
-        '--help' | '--exclusions' | '--version' | '--debug')
+        '--help' | '--exclusions' | '--version')
             return 0
             ;;
 
@@ -261,46 +279,22 @@ function _xlines_completions(){
             return 0
             ;;
 
-        '--multiprocess')
-            if [[ $(echo "${COMP_WORDS[@]}" | grep '\-\-sum') ]] && \
-               [[ $(echo "${COMP_WORDS[@]}" | grep '\-\-whitespace') ]]; then
-                return 0
+        '--multiprocess' | '--no-whitespace' | '--debug')
+            ##
+            ##  Return compreply with any of the 5 comp_words that
+            ##  not already present on the command line
+            ##
+            declare -a horsemen
+            horsemen=(  '--multiprocess' '--no-whitespace' '--sum' '--debug' )
+            subcommands=$(_parse_compwords COMP_WORDS[@] horsemen[@])
+            numargs=$(_numargs "$subcommands")
 
-            elif [[ ! $(echo "${COMP_WORDS[@]}" | grep '\-\-sum') ]] && \
-                 [[ $(echo "${COMP_WORDS[@]}" | grep '\-\-whitespace') ]]; then
-                COMPREPLY=( $(compgen -W "--sum" -- ${cur}) )
-                return 0
-
-            elif [[ $(echo "${COMP_WORDS[@]}" | grep '\-\-sum') ]] && \
-                 [[ ! $(echo "${COMP_WORDS[@]}" | grep '\-\-whitespace') ]]; then
-                COMPREPLY=( $(compgen -W "--no-whitespace" -- ${cur}) )
-                return 0
-
+            if [ "$cur" = "" ] || [ "$cur" = "-" ] || [ "$cur" = "--" ] && (( "$numargs" > 2 )); then
+                _complete_4_horsemen_subcommands "${subcommands}"
             else
-                COMPREPLY=( $(compgen -W "--sum --no-whitespace" -- ${cur}) )
-                return 0
+                COMPREPLY=( $(compgen -W "${subcommands}" -- ${cur}) )
             fi
-            ;;
-
-        '--no-whitespace')
-            if [[ $(echo "${COMP_WORDS[@]}" | grep '\-\-sum') ]] && \
-               [[ $(echo "${COMP_WORDS[@]}" | grep '\-\-multiprocess') ]]; then
-                return 0
-
-            elif [[ ! $(echo "${COMP_WORDS[@]}" | grep '\-\-sum') ]] && \
-                 [[ $(echo "${COMP_WORDS[@]}" | grep '\-\-multiprocess') ]]; then
-                COMPREPLY=( $(compgen -W "--sum" -- ${cur}) )
-                return 0
-
-            elif [[ $(echo "${COMP_WORDS[@]}" | grep '\-\-sum') ]] && \
-                 [[ ! $(echo "${COMP_WORDS[@]}" | grep '\-\-multiprocess') ]]; then
-                COMPREPLY=( $(compgen -W "--multiprocess" -- ${cur}) )
-                return 0
-
-            else
-                COMPREPLY=( $(compgen -W "--sum --multiprocess" -- ${cur}) )
-                return 0
-            fi
+            return 0
             ;;
 
         'xlines')
