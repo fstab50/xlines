@@ -81,7 +81,7 @@ menu_body = menu_title + c.BOLD + """
         -m, --multiprocess""" + rst + """:  Use multiple  cpu cores for counting
             lines of text in expansive filesystem directories
     """ + c.BOLD + """
-        -w, --no-whitespace""" + rst + """: Omit lines containing only whitespace
+        -w, --no-whitespace""" + rst + """:  Exclude lines containing whitespace
             from total line counts for all objects
     """ + c.BOLD + """
         -V, --version""" + rst + """:  Print package version  and copyright info
