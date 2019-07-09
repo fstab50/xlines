@@ -204,6 +204,7 @@ def multiprocessing_main(valid_paths, max_width, _threshold, wspace, exclusions,
         return d_list
 
     def queue_generator(q, p):
+        """Generator which offloads a queue before full"""
         while p.is_alive():
             p.join(timeout=1)
             while not q.empty():
@@ -216,11 +217,11 @@ def multiprocessing_main(valid_paths, max_width, _threshold, wspace, exclusions,
 
     global q
     q = multiprocessing.Queue()
+    processes, results = [], []
 
-    cores = 4
+    cores = 4   # stub in for 4 logical cpus
     a, b, c, d = sorted([x for x in split_list(valid_paths, cores)])
 
-    processes, results = [], []
     for i in (a, b, c, d):
         t = multiprocessing.Process(target=mp_linecount, args=(i, exclusions.types, wspace))
         processes.append(t)
