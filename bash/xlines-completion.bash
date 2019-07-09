@@ -374,42 +374,42 @@ function _xlines_completions(){
     esac
     case "${cur}" in
 
-        '--h')
+        '--h'*)
             COMPREPLY=( $(compgen -W '--help' -- ${cur}) )
             return 0
             ;;
 
-        '--c')
+        '--c'*)
             COMPREPLY=( $(compgen -W '--configure' -- ${cur}) )
             return 0
             ;;
 
-        '--d')
+        '--d'*)
             COMPREPLY=( $(compgen -W '--debug' -- ${cur}) )
             return 0
             ;;
 
-        '--e')
+        '--e'*)
             COMPREPLY=( $(compgen -W '--exclusions' -- ${cur}) )
             return 0
             ;;
 
-        '--m')
+        '--m'*)
             COMPREPLY=( $(compgen -W '--multiprocess' -- ${cur}) )
             return 0
             ;;
 
-        '--no')
+        '--n'*)
             COMPREPLY=( $(compgen -W '--no-whitespace' -- ${cur}) )
             return 0
             ;;
 
-        '--s')
+        '--s'*)
             COMPREPLY=( $(compgen -W '--sum' -- ${cur}) )
             return 0
             ;;
 
-        '--v')
+        '--v'*)
             COMPREPLY=( $(compgen -W '--version' -- ${cur}) )
             return 0
             ;;
