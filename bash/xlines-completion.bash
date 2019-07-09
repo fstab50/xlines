@@ -108,7 +108,7 @@ function _complete_xlines_commands(){
 }
 
 
-function _filedir(){
+function _filedir_en(){
     local i IFS='
 ' xspec;
     _tilde "$cur" || return 0;
@@ -134,12 +134,90 @@ function _filedir(){
 }
 
 
+function _init_completion_en(){
+    local exclude= flag outx errx inx OPTIND=1;
+    while getopts "n:e:o:i:s" flag "$@"; do
+        case $flag in
+            n)
+                exclude+=$OPTARG
+            ;;
+            e)
+                errx=$OPTARG
+            ;;
+            o)
+                outx=$OPTARG
+            ;;
+            i)
+                inx=$OPTARG
+            ;;
+            s)
+                split=false;
+                exclude+==
+            ;;
+        esac;
+    done;
+    COMPREPLY=();
+    local redir="@(?([0-9])<|?([0-9&])>?(>)|>&)";
+    _get_comp_words_by_ref -n "$exclude<>&" cur prev words cword;
+    _variables && return 1;
+    if [[ $cur == $redir* || $prev == "$redir" ]]; then
+        local xspec;
+        case $cur in
+
+            2'>'*)
+                xspec=$errx
+                ;;
+
+            *'>'*)
+                xspec=$outx
+                ;;
+
+            *'<'*)
+                xspec=$inx
+                ;;
+
+            *)
+                case $prev in
+                    2'>'*)
+                        xspec=$errx
+                    ;;
+                    *'>'*)
+                        xspec=$outx
+                    ;;
+                    *'<'*)
+                        xspec=$inx
+                    ;;
+                esac
+                ;;
+        esac;
+        cur="${cur##$redir}";
+        _filedir_en $xspec;
+        return 1;
+    fi;
+    local i skip;
+    for ((i=1; i < ${#words[@]}; 1))
+    do
+        if [[ ${words[i]} == $redir* ]]; then
+            [[ ${words[i]} == "$redir" ]] && skip=2 || skip=1;
+            words=("${words[@]:0:i}" "${words[@]:i+skip}");
+            [[ $i -le $cword ]] && cword=$(( cword - skip ));
+        else
+            i=$(( ++i ));
+        fi;
+    done;
+    [[ $cword -le 0 ]] && return 1;
+    prev=${words[cword-1]};
+    [[ -n ${split-} ]] && _split_longopt_en && split=true;
+    return 0
+}
+
+
 function _numargs(){
     ##
     ## Returns count of number of parameter args passed
     ##
     local parameters="$1"
-    local numargs
+    local numargs=0
 
     if [[ ! "$parameters" ]]; then
         printf -- '%s\n' "0"
@@ -181,29 +259,29 @@ function _pathopt(){
     ##
     local cur prev words cword split;
 
-    _init_completion -s || return;
+    _init_completion_en -s || return;
 
     case "${prev,,}" in
         --help | --usage | --version)
             return
         ;;
         --*dir*)
-            _filedir -d;
+            _filedir_en -d;
             return
         ;;
         --*file* | --*path*)
-            _filedir;
+            _filedir_en;
             return
         ;;
         --+([-a-z0-9_]))
             local argtype=$( LC_ALL=C $1 --help 2>&1 | command sed -ne "s|.*$prev\[\{0,1\}=[<[]\{0,1\}\([-A-Za-z0-9_]\{1,\}\).*|\1|p" );
             case ${argtype,,} in
                 *dir*)
-                    _filedir -d;
+                    _filedir_en -d;
                     return
                 ;;
                 *file* | *path*)
-                    _filedir;
+                    _filedir_en;
                     return
                 ;;
             esac
@@ -215,10 +293,10 @@ function _pathopt(){
         [[ $COMPREPLY == *= ]] && compopt -o nospace;
     else
         if [[ "$1" == @(rmdir|chroot) ]]; then
-            _filedir -d;
+            _filedir_en -d;
         else
             [[ "$1" == mkdir ]] && compopt -o nospace;
-            _filedir;
+            _filedir_en;
         fi;
     fi
 }
@@ -242,6 +320,16 @@ function compword_autofilter(){
         COMPREPLY=( $(compgen -W "${subcommands}" -- ${cur}) )
     fi
     return 0
+}
+
+
+function _split_longopt_en(){
+    if [[ "$cur" == --?*=* ]]; then
+        prev="${cur%%?\(\\)=*}";
+        cur="${cur#*=}";
+        return 0;
+    fi;
+    return 1
 }
 
 
