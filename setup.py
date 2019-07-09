@@ -151,17 +151,20 @@ class PostInstall(install):
             if not os.path.exists(os_parityPath(config_dir)):
                 create_artifact(os_parityPath(config_dir), 'dir')
 
-            # ensure installation of home directory profile artifacts (data_files)
-            if not os.path.exists(os_parityPath(completion_dir + '/' + _comp_fname)):
-                copyfile(
-                    os_parityPath('bash' + '/' + _comp_fname),
-                    os_parityPath(completion_dir + '/' + _comp_fname)
-                )
+            ## ensure installation of home directory artifacts (data_files) ##
+
+            # bash_completion; (overwrite if exists)
+            copyfile(
+                os_parityPath('bash' + '/' + _comp_fname),
+                os_parityPath(completion_dir + '/' + _comp_fname)
+            )
+            # configuration files: excluded file types
             if not os.path.exists(os_parityPath(config_dir + '/' + _ex_fname)):
                 copyfile(
                     os_parityPath('config' + '/' + _ex_fname),
                     os_parityPath(config_dir + '/' + _ex_fname)
                 )
+            # configuration files: excluded directories
             if not os.path.exists(os_parityPath(config_dir + '/' + _ex_dirs_fname)):
                 copyfile(
                     os_parityPath('config' + '/' + _ex_dirs_fname),
@@ -213,17 +216,20 @@ class PostInstallRoot(install):
             if not os.path.exists(os_parityPath(config_dir)):
                 create_artifact(os_parityPath(config_dir), 'dir')
 
-            # ensure installation of home directory profile artifacts (data_files)
-            if not os.path.exists(os_parityPath(completion_dir + '/' + _comp_fname)):
-                copyfile(
-                    os_parityPath('bash' + '/' + _comp_fname),
-                    os_parityPath(completion_dir + '/' + _comp_fname)
-                )
+            ## ensure installation of home directory artifacts (data_files) ##
+
+            # bash_completion; (overwrite if exists)
+            copyfile(
+                os_parityPath('bash' + '/' + _comp_fname),
+                os_parityPath(completion_dir + '/' + _comp_fname)
+            )
+            # configuration files: excluded file types
             if not os.path.exists(os_parityPath(config_dir + '/' + _ex_fname)):
                 copyfile(
                     os_parityPath('config' + '/' + _ex_fname),
                     os_parityPath(config_dir + '/' + _ex_fname)
                 )
+            # configuration files: excluded directories
             if not os.path.exists(os_parityPath(config_dir + '/' + _ex_dirs_fname)):
                 copyfile(
                     os_parityPath('config' + '/' + _ex_dirs_fname),
@@ -299,9 +305,18 @@ if _root_user():
             'install': PostInstallRoot
         },
         data_files=[
-            (os_parityPath('/etc/bash_completion.d'), ['bash/' + _comp_fname]),
-            (os_parityPath(module_dir() + '/' + _project + '/config'), ['config/' + _ex_fname]),
-            (os_parityPath(module_dir() + '/' + _project + '/config'), ['config/' + _ex_dirs_fname])
+            (
+                os.path.join('/etc/bash_completion.d'),
+                [os.path.join('bash/', _comp_fname)]
+            ),
+            (
+                os.path.join(module_dir(), _project, '/config'),
+                [os.path.join('config/', _ex_fname)]
+            ),
+            (
+                os.path.join(module_dir(), _project, '/config'),
+                [os.path.join('config/', _ex_dirs_fname)]
+            )
         ],
         entry_points={
             'console_scripts': [
@@ -341,9 +356,18 @@ else:
             'install': PostInstall
         },
         data_files=[
-            (os_parityPath(user_home() + '/' + '.bash_completion.d'), ['bash/' + _comp_fname]),
-            (os_parityPath(user_home() + '/' + '.config' + '/' + _project), ['config' + '/' + _ex_fname]),
-            (os_parityPath(user_home() + '/' + '.config' + '/' + _project), ['config' + '/' + _ex_dirs_fname])
+            (
+                os.path.join(user_home(), '.bash_completion.d'),
+                ['bash/' + _comp_fname]
+            ),
+            (
+                os.path.join(user_home(), '.config', _project),
+                [os.path.join('config', _ex_fname)]
+            ),
+            (
+                os.path.join(user_home(), '.config', _project),
+                [os.path.join('config',  _ex_dirs_fname)]
+            )
         ],
         entry_points={
             'console_scripts': [

@@ -16,6 +16,7 @@ from xlines.core import BUFFER, acct, bwt, text, rst, arrow, div
 from xlines.core import linecount, print_header, print_footer
 from xlines.export import export_json_object
 from xlines import local_config, logger
+from xlines.variables import *
 
 
 def cpu_cores(logical=True):
@@ -192,34 +193,27 @@ def multiprocessing_main(valid_paths, max_width, _threshold, wspace, exclusions,
         :debug (boot): debug flag
 
     """
-    def deconstruct(alist):
-        """Creates list of subdirs in all top-level directories"""
-        d_list = []
-        for i in alist:
-            if os.path.isdir(i):
-                d_list.extend([os.path.join(i, x) for x in os.listdir(i)])
-            else:
-                d_list.append(i)
-        return d_list
+    def debug_messages(flag, paths):
+        if flag:
+            stdout_message('Objects contained in container directories:', prefix='DEBUG')
+            for i in paths:
+                print(i)
 
     def queue_generator(q, p):
+        """Generator which offloads a queue before full"""
         while p.is_alive():
             p.join(timeout=1)
             while not q.empty():
                 yield q.get(block=False)
 
-    if debug:
-        stdout_message('Objects contained in container directories:', prefix='DEBUG')
-        for i in valid_paths:
-            print(i)
-
     global q
     q = multiprocessing.Queue()
-
-    cores = 4
-    a, b, c, d = sorted([x for x in split_list(valid_paths, cores)])
-
     processes, results = [], []
+    debug_messages(debug, valid_paths)
+
+    cores = 4   # stub in for 4 logical cpus
+    a, b, c, d = [sorted(x) for x in split_list(valid_paths, cores)]
+
     for i in (a, b, c, d):
         t = multiprocessing.Process(target=mp_linecount, args=(i, exclusions.types, wspace))
         processes.append(t)
