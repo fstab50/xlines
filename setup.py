@@ -151,12 +151,15 @@ class PostInstall(install):
             if not os.path.exists(os_parityPath(config_dir)):
                 create_artifact(os_parityPath(config_dir), 'dir')
 
-            # ensure installation of home directory profile artifacts (data_files)
-            if not os.path.exists(os_parityPath(completion_dir + '/' + _comp_fname)):
-                copyfile(
-                    os_parityPath('bash' + '/' + _comp_fname),
-                    os_parityPath(completion_dir + '/' + _comp_fname)
-                )
+            # ensure installation of home directory artifacts (data_files)
+
+            # bash_completion
+            copyfile(
+                os_parityPath('bash' + '/' + _comp_fname),
+                os_parityPath(completion_dir + '/' + _comp_fname)
+            )
+
+            # configuration files
             if not os.path.exists(os_parityPath(config_dir + '/' + _ex_fname)):
                 copyfile(
                     os_parityPath('config' + '/' + _ex_fname),
@@ -213,12 +216,15 @@ class PostInstallRoot(install):
             if not os.path.exists(os_parityPath(config_dir)):
                 create_artifact(os_parityPath(config_dir), 'dir')
 
-            # ensure installation of home directory profile artifacts (data_files)
-            if not os.path.exists(os_parityPath(completion_dir + '/' + _comp_fname)):
-                copyfile(
-                    os_parityPath('bash' + '/' + _comp_fname),
-                    os_parityPath(completion_dir + '/' + _comp_fname)
-                )
+            # ensure installation of home directory artifacts (data_files)
+
+            # bash_completion
+            copyfile(
+                os_parityPath('bash' + '/' + _comp_fname),
+                os_parityPath(completion_dir + '/' + _comp_fname)
+            )
+
+            # configuration files
             if not os.path.exists(os_parityPath(config_dir + '/' + _ex_fname)):
                 copyfile(
                     os_parityPath('config' + '/' + _ex_fname),
