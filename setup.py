@@ -153,18 +153,18 @@ class PostInstall(install):
 
             # ensure installation of home directory artifacts (data_files)
 
-            # bash_completion
+            # bash_completion; (overwrite if exists)
             copyfile(
                 os_parityPath('bash' + '/' + _comp_fname),
                 os_parityPath(completion_dir + '/' + _comp_fname)
             )
-
-            # configuration files
+            # configuration files: excluded file types
             if not os.path.exists(os_parityPath(config_dir + '/' + _ex_fname)):
                 copyfile(
                     os_parityPath('config' + '/' + _ex_fname),
                     os_parityPath(config_dir + '/' + _ex_fname)
                 )
+            # configuration files: excluded directories
             if not os.path.exists(os_parityPath(config_dir + '/' + _ex_dirs_fname)):
                 copyfile(
                     os_parityPath('config' + '/' + _ex_dirs_fname),
@@ -218,18 +218,18 @@ class PostInstallRoot(install):
 
             # ensure installation of home directory artifacts (data_files)
 
-            # bash_completion
+            # bash_completion; (overwrite if exists)
             copyfile(
                 os_parityPath('bash' + '/' + _comp_fname),
                 os_parityPath(completion_dir + '/' + _comp_fname)
             )
-
-            # configuration files
+            # configuration files: excluded file types
             if not os.path.exists(os_parityPath(config_dir + '/' + _ex_fname)):
                 copyfile(
                     os_parityPath('config' + '/' + _ex_fname),
                     os_parityPath(config_dir + '/' + _ex_fname)
                 )
+            # configuration files: excluded directories
             if not os.path.exists(os_parityPath(config_dir + '/' + _ex_dirs_fname)):
                 copyfile(
                     os_parityPath('config' + '/' + _ex_dirs_fname),
