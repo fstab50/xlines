@@ -16,6 +16,7 @@ from xlines.core import BUFFER, acct, bwt, text, rst, arrow, div
 from xlines.core import linecount, print_header, print_footer
 from xlines.export import export_json_object
 from xlines import local_config, logger
+from xlines.variables import *
 
 
 def cpu_cores(logical=True):
