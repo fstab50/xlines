@@ -347,9 +347,15 @@ else:
             'install': PostInstall
         },
         data_files=[
-            (os_parityPath(user_home() + '/' + '.bash_completion.d'), ['bash/' + _comp_fname]),
-            (os_parityPath(user_home() + '/' + '.config' + '/' + _project), ['config' + '/' + _ex_fname]),
-            (os_parityPath(user_home() + '/' + '.config' + '/' + _project), ['config' + '/' + _ex_dirs_fname])
+            (
+                os.path.join(user_home(), '.bash_completion.d'), ['bash/' + _comp_fname]
+            ),
+            (
+                os.path.join(user_home(), '.config', _project), [os.path.join('config', _ex_fname)]
+            ),
+            (
+                os.path.join(user_home(), '.config', _project), [os.path.join('config',  _ex_dirs_fname)]
+            )
         ],
         entry_points={
             'console_scripts': [
