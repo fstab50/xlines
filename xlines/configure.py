@@ -38,19 +38,29 @@ def clearscreen():
     return True
 
 
-def _init_screen(height_percent=0.25):
+def _init_screen(starting_row='', height_percent=0.25):
     """
 
         Initializes screen before configuration artifact display
 
+    Args:
+        :starting_row (bool): return starting row from the top
+            in addition to columns
+        :height_percent (float): Decimal percentage of screen height
+
     Returns:
-        width in columns for centering artifacts on cli terminal
-        right to left, TYPE: int
+        - width in columns for centering artifacts on cli terminal
+          right to left, TYPE: int
+        - returns starting row (from top, optional), TYPE: int
+
     """
     clearscreen()
     rows, columns = terminal_size(height=True)
+    if starting_row:
+        print('\n' * int(starting_row))
+        return int(columns)
     print('\n' * int(int(rows) * height_percent))
-    return int(columns)
+    return int(columns), int(int(rows) * height_percent)
 
 
 def section_header(section, width=80, tabspaces=14):
@@ -109,13 +119,13 @@ def display_exclusions(expath, exdirpath, offset_spaces=default_width):
         return False
 
 
-def condition_map(letter, expath, exdirpath):
+def condition_map(letter, expath, exdirpath, srow):
     return {
         'a': _configure_add,
         'b': _configure_remove,
         'c': _configure_hicount,
         'd': lambda x, y: sys.exit
-    }.get(letter, lambda x, y: None)(expath, exdirpath)
+    }.get(letter, lambda x, y: None)(expath, exdirpath, srow)
 
 
 def main_menupage(expath, exdirpath):
@@ -129,7 +139,7 @@ def main_menupage(expath, exdirpath):
         ________________________________________________________________________________
         '''
         pattern_width = len(bar)
-        width = _init_screen()
+        width, srow = _init_screen()
         offset = '\t'.expandtabs(int((width / 2) - (pattern_width / 2)))
         _menu = (bar + rst + '''\n\n
             ''' + bdwt + PACKAGE + rst + ''' configuration main menu:\n\n
@@ -140,13 +150,13 @@ def main_menupage(expath, exdirpath):
         ''' + border + bar + rst)
         for line in _menu.split('\n'):
             print('{}{}'.format(offset, line))
-        return offset
+        return offset, srow
 
     loop = True
     tab8 = '\t'.expandtabs(8)
 
     while loop:
-        offset = menu()
+        offset, verticalstart = menu()
         answer = input('\n{}{}Choose operation [quit]: '.format(offset, tab8)).lower()
         sys.stdout.write('\n')
 
@@ -154,7 +164,7 @@ def main_menupage(expath, exdirpath):
             return True
 
         elif answer in ['a', 'b', 'c']:
-            condition_map(answer, expath, exdirpath)
+            condition_map(answer, expath, exdirpath, verticalstart)
 
         else:
             stdout_message(
@@ -165,7 +175,7 @@ def main_menupage(expath, exdirpath):
             sys.stdout.write('\n')
 
 
-def _configure_add(expath, exdirpath):
+def _configure_add(expath, exdirpath, startpt):
     """
         Add exclusions and update runtime constants
 
@@ -175,6 +185,7 @@ def _configure_add(expath, exdirpath):
     tab4 = '\t'.expandtabs(4)
     loop = True
     adj = 4
+    vert_adj = 2
 
     try:
 
@@ -182,11 +193,12 @@ def _configure_add(expath, exdirpath):
             exclusions = [x.strip() for x in f1.readlines()]
 
         while loop:
-            width = _init_screen()
+            width = _init_screen(starting_row=startpt + vert_adj)
             pattern_width = section_header('add', width, tabspaces=16)
             offset_chars = int((width / 2) - (pattern_width / 2)) + adj
             offset = '\t'.expandtabs(offset_chars)
             display_exclusions(expath, exdirpath, offset_chars)
+
             # query user input for new exclusions
             msg = 'Enter file extension types separated by commas [done]: '
             offset_msg = '\t'.expandtabs(int((width / 2) - (pattern_width / 2) + adj * 2))
@@ -244,7 +256,7 @@ def continue_operation(offset_spaces):
     return True
 
 
-def _configure_remove(expath, exdirpath):
+def _configure_remove(expath, exdirpath, startpt):
     """
         Remove file type extension from exclusion list
 
@@ -256,6 +268,7 @@ def _configure_remove(expath, exdirpath):
     tab4 = '\t'.expandtabs(tabspaces)
     loop = True
     adj = tabspaces * 2
+    vert_adj = 2
 
     try:
 
@@ -264,7 +277,7 @@ def _configure_remove(expath, exdirpath):
             f2 = [x.strip() for x in f1.readlines()]
 
         while loop:
-            width = _init_screen()
+            width = _init_screen(starting_row=startpt + vert_adj)
             pattern_width = section_header('delete', width, tabspaces=14)
             offset_chars = int((width / 2) - (pattern_width / 2)) + tabspaces
             offset = '\t'.expandtabs(offset_chars)
@@ -315,7 +328,7 @@ def _configure_remove(expath, exdirpath):
         return False
 
 
-def _configure_hicount(expath, exdirpath):
+def _configure_hicount(expath, exdirpath, startpt):
     """
         User update high line count threshold persisted on local filesystem
 
@@ -332,11 +345,12 @@ def _configure_hicount(expath, exdirpath):
     tab4 = '\t'.expandtabs(4)
     tab13 = '\t'.expandtabs(13)
     loop = True
-    local_linecount_file = local_config['CONFIG']['COUNT_HI_THRESHOLD_FILEPATH']
     adj = 12
+    vert_adj = 2
+    local_linecount_file = local_config['CONFIG']['COUNT_HI_THRESHOLD_FILEPATH']
 
     try:
-        width = _init_screen()
+        width = _init_screen(starting_row=startpt + vert_adj)
         pattern_width = section_header('threshold', width, tabspaces=14)
         offset_chars = int((width / 2) - (pattern_width / 2))
         offset = '\t'.expandtabs(offset_chars)

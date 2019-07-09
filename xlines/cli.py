@@ -37,7 +37,7 @@ from xlines import about, Colors, logger
 from xlines.usermessage import stdout_message
 from xlines.statics import local_config
 from xlines.help_menu import menu_body
-from xlines.square import border_list
+from xlines.square import border_map
 from xlines.mp import multiprocessing_main
 from xlines.core import linecount, locate_fileobjects, remove_illegal, print_footer, print_header
 from xlines.exclusions import ExcludedTypes
@@ -138,7 +138,7 @@ def help_menu():
     Displays help menu contents
     """
     print(menu_body)
-    border_list()
+    border_map()
     sys.stdout.write('\n')
     return
 
@@ -220,7 +220,7 @@ def options(parser, help_menu=False):
     parser.add_argument("-h", "--help", dest='help', action='store_true', required=False)
     parser.add_argument("-m", "--multiprocess", dest='multiprocess', default=False, action='store_true', required=False)
     parser.add_argument("-s", "--sum", dest='sum', nargs='*', default=os.getcwd(), required=False)
-    parser.add_argument("-w", "--whitespace", dest='whitespace', action='store_false', default=True, required=False)
+    parser.add_argument("-n", "--no-whitespace", dest='whitespace', action='store_false', default=True, required=False)
     parser.add_argument("-V", "--version", dest='version', action='store_true', required=False)
     return parser.parse_known_args()
 
@@ -380,7 +380,7 @@ def init_cli():
         if args.multiprocess:
             # --- run with concurrency --
             width, paths = longest_path(container, ex)
-            multiprocessing_main(paths, width, args.whitespace, ex, args.debug)
+            multiprocessing_main(paths, width, _ct_threshold, args.whitespace, ex, args.debug)
 
         elif not args.multiprocess:
 
