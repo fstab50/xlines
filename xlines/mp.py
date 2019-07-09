@@ -193,6 +193,12 @@ def multiprocessing_main(valid_paths, max_width, _threshold, wspace, exclusions,
         :debug (boot): debug flag
 
     """
+    def debug_messages(flag, paths):
+        if flag:
+            stdout_message('Objects contained in container directories:', prefix='DEBUG')
+            for i in paths:
+                print(i)
+
     def queue_generator(q, p):
         """Generator which offloads a queue before full"""
         while p.is_alive():
@@ -200,14 +206,10 @@ def multiprocessing_main(valid_paths, max_width, _threshold, wspace, exclusions,
             while not q.empty():
                 yield q.get(block=False)
 
-    if debug:
-        stdout_message('Objects contained in container directories:', prefix='DEBUG')
-        for i in valid_paths:
-            print(i)
-
     global q
     q = multiprocessing.Queue()
     processes, results = [], []
+    debug_messages(debug, valid_paths)
 
     cores = 4   # stub in for 4 logical cpus
     a, b, c, d = [sorted(x) for x in split_list(valid_paths, cores)]
