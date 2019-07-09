@@ -305,9 +305,18 @@ if _root_user():
             'install': PostInstallRoot
         },
         data_files=[
-            (os_parityPath('/etc/bash_completion.d'), ['bash/' + _comp_fname]),
-            (os_parityPath(module_dir() + '/' + _project + '/config'), ['config/' + _ex_fname]),
-            (os_parityPath(module_dir() + '/' + _project + '/config'), ['config/' + _ex_dirs_fname])
+            (
+                os.path.join('/etc/bash_completion.d'),
+                [os.path.join('bash/', _comp_fname)]
+            ),
+            (
+                os.path.join(module_dir(), _project, '/config'),
+                [os.path.join('config/', _ex_fname)]
+            ),
+            (
+                os.path.join(module_dir(), _project, '/config'),
+                [os.path.join('config/', _ex_dirs_fname)]
+            )
         ],
         entry_points={
             'console_scripts': [
@@ -348,13 +357,16 @@ else:
         },
         data_files=[
             (
-                os.path.join(user_home(), '.bash_completion.d'), ['bash/' + _comp_fname]
+                os.path.join(user_home(), '.bash_completion.d'),
+                ['bash/' + _comp_fname]
             ),
             (
-                os.path.join(user_home(), '.config', _project), [os.path.join('config', _ex_fname)]
+                os.path.join(user_home(), '.config', _project),
+                [os.path.join('config', _ex_fname)]
             ),
             (
-                os.path.join(user_home(), '.config', _project), [os.path.join('config',  _ex_dirs_fname)]
+                os.path.join(user_home(), '.config', _project),
+                [os.path.join('config',  _ex_dirs_fname)]
             )
         ],
         entry_points={
