@@ -193,16 +193,6 @@ def multiprocessing_main(valid_paths, max_width, _threshold, wspace, exclusions,
         :debug (boot): debug flag
 
     """
-    def deconstruct(alist):
-        """Creates list of subdirs in all top-level directories"""
-        d_list = []
-        for i in alist:
-            if os.path.isdir(i):
-                d_list.extend([os.path.join(i, x) for x in os.listdir(i)])
-            else:
-                d_list.append(i)
-        return d_list
-
     def queue_generator(q, p):
         """Generator which offloads a queue before full"""
         while p.is_alive():
