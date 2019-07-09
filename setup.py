@@ -151,7 +151,7 @@ class PostInstall(install):
             if not os.path.exists(os_parityPath(config_dir)):
                 create_artifact(os_parityPath(config_dir), 'dir')
 
-            # ensure installation of home directory artifacts (data_files)
+            ## ensure installation of home directory artifacts (data_files) ##
 
             # bash_completion; (overwrite if exists)
             copyfile(
@@ -216,7 +216,7 @@ class PostInstallRoot(install):
             if not os.path.exists(os_parityPath(config_dir)):
                 create_artifact(os_parityPath(config_dir), 'dir')
 
-            # ensure installation of home directory artifacts (data_files)
+            ## ensure installation of home directory artifacts (data_files) ##
 
             # bash_completion; (overwrite if exists)
             copyfile(
