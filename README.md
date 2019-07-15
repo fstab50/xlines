@@ -200,7 +200,7 @@ Counting lines in large repository with long paths.
 [![repo1-1](./assets/xlines-output-md.png)](http://images.awspros.world/xlines/xlines-output-large.png)
 
 <p align="center">
-    <a href="http://images.awspros.world/xlines/xlines-output-large.png"><img src="./assets/xlines-output-md.png" width="700" height="7500">
+    <a href="http://images.awspros.world/xlines/xlines-output-large.png"><img src="./assets/xlines-output-md.png" width="700">
 </p>
 
 
