@@ -197,8 +197,6 @@ Counting lines in large repository with long paths.
     $ xlines  --sum  git/AWSAMPLES/aws-serverless-workshops/
 ```
 
-[![repo1-1](./assets/xlines-output-md.png)](http://images.awspros.world/xlines/xlines-output-large.png)
-
 <p align="center">
     <a href="http://images.awspros.world/xlines/xlines-output-large.png"><img src="./assets/xlines-output-md.png" width="900">
 </p>
