@@ -198,7 +198,7 @@ Counting lines in large repository with long paths.
 ```
 
 <p align="center">
-    <a href="http://images.awspros.world/xlines/xlines-output-large.png"><img src="./assets/xlines-output-md.png" width="900">
+    <a href="http://images.awspros.world/xlines/xlines_output_large.png"><img src="./assets/xlines-output-md.png" width="900">
 </p>
 
 
