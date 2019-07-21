@@ -227,7 +227,10 @@ The easiest way to install **xlines** on redhat-based Linux distributions is via
     ```
 
 
-4. **IMPORTANT**: Prior to installing **xlines**, verify the python3 version installed.  If Python 3.7 is installed, _you must uninstall it and install Python 3.6_.  Although this change will not have any effect on the OS support applications themselves, you should evaluate if a small, but potential effect on custom applications running on the machine
+4. **IMPORTANT**: Prior to installing **xlines**, verify the python3 version installed.  
+
+    * If Python 3.7 is installed, _you must uninstall it and install Python 3.6_.  
+    * This change should not have any effect on the OS support applications themselves, you should evaluate the small chance that there is a potential effect on custom applications running on the machine.
 
     ```
     $ python3 --version
