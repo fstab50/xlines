@@ -1,10 +1,10 @@
-#-------------------------------------------------------------------------------------------------#
-#                                                                                                 #
-#	 - Makefile, version 1.7.3                                                                    #
-#	 - PROJECT:  keyup                                                                            #
-# 	 - copyright, Blake Huber.  All rights reserved.                                              #
-#                                                                                                 #
-#-------------------------------------------------------------------------------------------------#
+#---------------------------------------------------------------------------------------#
+#                                                                                       #
+#	 - Makefile, version 1.7.5                                                          #
+#	 - PROJECT:  xlines                                                                 #
+# 	 - copyright, Blake Huber.  All rights reserved.                                    #
+#                                                                                       #
+#---------------------------------------------------------------------------------------#
 
 
 PROJECT := xlines
@@ -56,8 +56,9 @@ pre-build:    ## Remove residual build artifacts
 	mkdir $(CUR_DIR)/dist
 
 
-.PHONY: setup-venv
-setup-venv:    ## Create and activiate python venv
+setup-venv: $(VENV_DIR)
+
+$(VENV_DIR):    ## Create and activiate python virtual package environment
 	$(PYTHON3_PATH) -m venv $(VENV_DIR)
 	. $(VENV_DIR)/bin/activate && $(PIP_CALL) install -U setuptools pip && \
 	$(PIP_CALL) install -r $(REQUIREMENT)
@@ -73,14 +74,30 @@ artifacts:	  ## Generate documentation build artifacts (*.rst)
 
 
 .PHONY: test
-test:     ## Run pytest unittests
-	if [ $(PDB) ]; then PDB = "true"; \
-	bash $(CUR_DIR)/scripts/make-test.sh $(CUR_DIR) $(VENV_DIR) $(MODULE_PATH) $(PDB); \
-	elif [ $(MODULE) ]; then PDB = "false"; \
-	bash $(CUR_DIR)/scripts/make-test.sh $(CUR_DIR) $(VENV_DIR) $(MODULE_PATH) $(PDB) $(MODULE); \
-	elif [ $(COMPLEXITY) ]; then COMPLEXITY = "run"; \
-	bash $(CUR_DIR)/scripts/make-test.sh $(CUR_DIR) $(VENV_DIR) $(MODULE_PATH) $(COMPLEXITY) $(MODULE); \
-	else bash $(CUR_DIR)/scripts/make-test.sh $(CUR_DIR) $(VENV_DIR) $(MODULE_PATH); fi
+test: setup-venv  ## Run pytest unittests. Optional Param: PDB, MODULE
+	if [ $(MODULE) ]; then \
+	bash $(CUR_DIR)/scripts/make-test.sh --package-path $(MODULE_PATH) --module $(MODULE); \
+	else bash $(CUR_DIR)/scripts/make-test.sh  --package-path $(MODULE_PATH); fi
+
+
+.PHONY: test-coverage
+test-coverage:  setup-venv  ## Run pytest unittests; generate coverage report
+	bash $(CUR_DIR)/scripts/make-test.sh  --package-path $(MODULE_PATH) --coverage
+
+
+.PHONY: test-complexity
+test-complexity:  setup-venv  ## Run pytest unittests; generate McCabe Complexity Report
+	bash $(CUR_DIR)/scripts/make-test.sh  --package-path $(MODULE_PATH) --complexity
+
+
+.PHONY: test-pdb
+test-pdb:  setup-venv  ## Run pytest unittests; generate McCabe Complexity Report
+	bash $(CUR_DIR)/scripts/make-test.sh  --package-path $(MODULE_PATH) --pdb
+
+
+.PHONY: test-help
+test-help: setup-venv  ## Print runtime options for running pytest unittests
+	bash $(CUR_DIR)/scripts/make-test.sh  --help
 
 
 docs: clean setup-venv    ## Generate sphinx documentation
