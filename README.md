@@ -24,7 +24,8 @@ Count the number of lines of text in a code project (or anything else)
 * [**Installation**](#installation)
     * [Pip Install](#installation)
     * [Ubuntu, Linux Mint, Debian-based Distributions](#debian-distro-install)
-    * [Redhat, CentOS, Fedora, Amazon Linux](#redhat-distro-install)
+    * [Redhat, CentOS, Fedora](#redhat-distro-install)
+    * [Amazon Linux 2](#amzn2-distro-install)
 
 * [**Screenshots**](#screenshots)
 
@@ -163,6 +164,84 @@ The easiest way to install **xlines** on redhat-based Linux distributions is via
 
 
 4. Install **xlines** os package
+
+    ```
+    $ sudo yum install xlines
+    ```
+
+    [![rpm-install3](./assets/rpm-install-3.png)](http://images.awspros.world/xlines/rpm-install-3.png)
+
+
+    Answer "y":
+
+    [![rpm-install4](./assets/rpm-install-4.png)](http://images.awspros.world/xlines/rpm-install-4.png)
+
+
+5. Verify Installation
+
+    ```
+    $ yum info xlines
+    ```
+
+    [![rpm-install5](./assets/rpm-install-5.png)](http://images.awspros.world/xlines/rpm-install-5.png)
+
+
+[back to the top](#top)
+
+* * *
+<a name="amzn2-distro-install"></a>
+### Amazon Linux 2
+
+The easiest way to install **xlines** on redhat-based Linux distributions is via the developer-tools [!][amzn2.awscloud.center](http://amzn2.awscloud.center) package repository:
+
+
+1. Install the official epel package repository
+
+    ```
+    $ sudo amazon-linux-extras install epel -y
+    ```
+
+
+2. Download and install the repo definition file
+
+    ```
+    $ sudo yum install wget
+    ```
+
+    [![rpm-install1](./assets/rpm-install-1.png)](http://images.awspros.world/xlines/rpm-install-1.png)
+
+    ```
+    $ wget http://awscloud.center/amzn2/developer-tools.repo
+    ```
+
+    [![rpm-install2](./assets/rpm-install-2.png)](http://images.awspros.world/xlines/rpm-install-2.png)
+
+    ```
+    $ sudo chown 0:0 developer-tools.repo && sudo mv developer-tools.repo /etc/yum.repos.d/  
+    ```
+
+3. Update local repository cache
+
+    ```
+    $ sudo yum update -y
+    ```
+
+
+4. **IMPORTANT**: Prior to installing **xlines**, verify the python3 version installed.  If Python 3.7 is installed:
+
+    ```
+    $ python3 --version
+    ```
+    ```
+    $ Python 3.7.3
+    ```
+    If Python 3.6.x is installed, or no Python 3.x is installed, continue with step 5 below.
+
+    ```
+    $ sudo yum erase -y python3 python3-libs
+
+
+5. Install **xlines** os package
 
     ```
     $ sudo yum install xlines
