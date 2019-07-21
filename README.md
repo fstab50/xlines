@@ -192,7 +192,7 @@ The easiest way to install **xlines** on redhat-based Linux distributions is via
 <a name="amzn2-distro-install"></a>
 ### Amazon Linux 2
 
-The easiest way to install **xlines** on redhat-based Linux distributions is via the developer-tools [!][amzn2.awscloud.center](http://amzn2.awscloud.center) package repository:
+The easiest way to install **xlines** on redhat-based Linux distribution Amazon Linux 2, is via the developer-tools [amzn2.awscloud.center](http://amzn2.awscloud.center) package repository:
 
 
 1. Install the official epel package repository
