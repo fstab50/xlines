@@ -6,6 +6,7 @@ Summary.
 
 """
 
+import os
 import inspect
 from xlines.statics import local_config
 from xlines import logger
@@ -44,3 +45,51 @@ class ExcludedTypes():
             fx = inspect.stack()[0][3]
             logger.exception('{}: Problem parsing file type exclusions ({})'.format(fx, exclusions))
             return []
+
+
+class ProcessExclusions():
+    """
+        Class definition for reading excluded file types from a
+        configuration file if exists.
+
+    Use:
+        >>> ex = ProcessExclusions()
+        >>> ex.get_exclusions('/path/to/configuration/file')
+        >>> ['.docx', '.pptx', '.png', '.tiff']
+
+    Returns:
+        exclusions (list) |  [] (empty) and creates new config
+        file if not found
+
+    """
+    def __init__(self, path):
+        """
+        Args:
+            :path (str): filesystem path to file object for parsing
+
+        """
+        self.path = path
+        self.basedir = os.path.dirname(path)
+        self.exclusions = self.get_exclusions(path)
+
+    def get_exclusions(self, path=None):
+        """
+        Read and parse local config file if exists
+        """
+        if (os.path.exists(self.path) if path is None else os.path.exists(path)):
+            try:
+                with open(path) as f1:
+                    return [x.strip() for x in f1.readlines()]
+            except OSError:
+                logger.info(f'path provided does not yet exist -- creating path')
+        return self._touch(self.path) if path is None else self._touch(path)
+
+    def _touch(self, path):
+        """If not exist, create new filesystem object"""
+        if not os.path.exists(path):
+            os.makedirs(path)
+        # below this line should copy stock config files from module installed
+        # location >> ~/.config/xlines
+        with open(path, 'a'):
+            os.utime(path, None)
+        return []
