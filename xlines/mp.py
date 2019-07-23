@@ -28,9 +28,7 @@ def cpu_cores(logical=True):
         # of logical cores (int) || physical cores (int)
     """
     physical_cores = multiprocessing.cpu_count()
-    if logical:
-        return len(os.sched_getaffinity(0))
-    return physical_cores
+    return len(os.sched_getaffinity(0)) if logical else physical_cores
 
 
 def longest_path_mp(object_list):
@@ -108,8 +106,7 @@ def print_results(object_list, _ct_threshold, width):
     """
     tcount, tobjects = 0, 0
     io_fail = []
-    #width = longest_path_mp(object_list)
-
+    
     print_header(width)
     count_width = local_config['OUTPUT']['COUNT_COLUMN_WIDTH']
 
