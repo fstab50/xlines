@@ -72,9 +72,6 @@ else:
     log_dir = os.path.join(user_home, 'logs')
     log_path = os.path.join(log_dir, log_filename)
 
-    if OS == 'Windows':
-        config_path = os_parityPath(config_path)
-        log_path = os_parityPath(log_path)
 
     seed_config = {
         "PROJECT": {
@@ -87,8 +84,8 @@ else:
             "CONFIG_FILENAME": config_filename,
             "CONFIG_DIR": config_dirpath,
             "CONFIG_SUBDIR": config_subdir,
-            "CONFIG_PATH": config_path,
-            "COUNT_HI_THRESHOLD_FILEPATH": os_parityPath(os.path.join(config_dirpath, threshold_filename))
+            "CONFIG_PATH": os_parityPath(config_path),
+            "HI_THRESHOLD_FILEPATH": os_parityPath(os.path.join(config_dirpath, threshold_filename))
         },
         "EXCLUSIONS": {
             "EX_FILENAME": ext_filename,
@@ -99,7 +96,7 @@ else:
         "LOGGING": {
             "ENABLE_LOGGING": enable_logging,
             "LOG_FILENAME": log_filename,
-            "LOG_PATH": log_path,
+            "LOG_PATH": os_parityPath(log_path),
             "LOG_MODE": log_mode,
             "SYSLOG_FILE": False
         },

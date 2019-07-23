@@ -197,13 +197,9 @@ class MaxWidth():
         return self.max_width if (self.max_width < self.term_width) else self.term_width
 
 
-def module_dir():
+def modules_location():
     """Filsystem location of Python3 modules"""
-    bin_path = which('python3.6') or which('python3.7')
-    bin = bin_path.split('/')[-1]
-    if 'local' in bin:
-        return '/usr/local/lib/' + bin + '/site-packages'
-    return '/usr/lib/' + bin + '/site-packages'
+    return os.path.split(os.path.abspath(__file__))[0]
 
 
 def options(parser, help_menu=False):
@@ -242,7 +238,7 @@ def set_hicount_threshold():
         high line count threshold || None
 
     """
-    local_linecount_file = local_config['CONFIG']['COUNT_HI_THRESHOLD_FILEPATH']
+    local_linecount_file = local_config['CONFIG']['HI_THRESHOLD_FILEPATH']
     reference_threshold = local_config['OUTPUT']['COUNT_HI_THRESHOLD']
 
     try:
@@ -266,9 +262,9 @@ def precheck(user_exfiles, user_exdirs, debug):
     """
     Runtime Dependency Check
     """
-    _os_configdir = module_dir() + '/' + local_config['PROJECT']['PACKAGE'] + '/config'
-    _os_ex_fname = _os_configdir + '/' + local_config['EXCLUSIONS']['EX_FILENAME']
-    _os_dir_fname = _os_configdir + '/' + local_config['EXCLUSIONS']['EX_DIR_FILENAME']
+    _os_configdir = os.path.join(modules_location, '/config')
+    _os_ex_fname = os.path.join(_os_configdir, local_config['EXCLUSIONS']['EX_FILENAME'])
+    _os_dir_fname = os.path.join(_os_configdir, local_config['EXCLUSIONS']['EX_DIR_FILENAME'])
     _config_dir = local_config['CONFIG']['CONFIG_DIR']
 
     if debug:
