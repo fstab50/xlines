@@ -2,12 +2,10 @@
 
 #export DH_VERBOSE=1
 export PYBUILD_NAME=xlines
-export PYBUILD_DESTDIR=$PWD
+export PYBUILD_DESTDIR=.
 
 # preinstall script
-export PYBUILD_INSTALL_ARGS_python3=--install-scripts=/usr/share/foo/
-
-# postinstall script
+#export PYBUILD_INSTALL_ARGS_python3=--install-scripts=/usr/share/foo/
 
 
 %:
