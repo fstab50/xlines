@@ -1078,7 +1078,8 @@ cp -r _root/config/*.list  _root/xlines/    # end up with xlines/config/director
 for i in  list(filter(lambda x: not x.endswith('.list'), os.listdir(_root/ + 'config'))):
     os.remove(i)
 
-# copy debian distribution archive artifacts to _root:
+# copy debian distribution archive artifacts to _buildroot (debian dir) as shown in the reference
+# checked into the repo _root/debian:
 copyfile(_root/packaging/deb/debian, _root/)
 
 # substitute any Build-depends packages into the _root/debian/control file --OR--
