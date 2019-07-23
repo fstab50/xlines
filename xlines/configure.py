@@ -138,7 +138,7 @@ def main_menupage(expath, exdirpath):
         bar = border + '''
         ________________________________________________________________________________
         '''
-        bar = '\n' + ('_' * 80) + '\n'
+        #bar = '\n' + ('_' * 80) + '\n'
         pattern_width = len(bar)
         width, srow = _init_screen()
         offset = '\t'.expandtabs(int((width / 2) - (pattern_width / 2)))
