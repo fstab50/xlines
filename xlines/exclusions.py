@@ -14,8 +14,11 @@ from xlines import logger
 
 module = os.path.basename(__file__)
 library_location = os.path.split(module)[0]
-excluded_types = os.path.join(library_location, local_config['EXCLUSIONS']['EX_FILENAME'])
-excluded_dirs = os.path.join(library_location, local_config['EXCLUSIONS']['EX_DIR_FILENAME'])
+types_fname = local_config['EXCLUSIONS']['EX_FILENAME']
+dirs_fname = local_config['EXCLUSIONS']['EX_DIR_FILENAME']
+excluded_types = os.path.join(library_location, types_fname)
+excluded_dirs = os.path.join(library_location, dirs_fname)
+config_location = local_config['CONFIG']['CONFIG_DIR']
 
 
 class ExcludedTypes():
@@ -94,9 +97,12 @@ class ProcessExclusions():
         """If not exist, create new filesystem object"""
         if not os.path.exists(path):
             os.makedirs(path)
-            copyfile(, dst)
-        # below this line should copy stock config files from module installed
-        # location >> ~/.config/xlines
-        with open(path, 'a'):
-            os.utime(path, None)
-        return []
+        return self.process_exclusions(os.path.join(config_location, types_fname))
+
+    def _create_ex_types(self, path):
+        """Create excluded file types file via reference"""
+        copyfile(excluded_types, os.path.join(config_location, types_fname))
+
+    def _create_ex_dirfile(self, path):
+        """Create excluded file types file via reference"""
+        copyfile(excluded_dirs, os.path.join(config_location, dirs_fname))
