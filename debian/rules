@@ -1,0 +1,11 @@
+#!/usr/bin/make -f
+
+#export DH_VERBOSE=1
+export PYBUILD_NAME=xlines
+export PYBUILD_DESTDIR=$(HOME)/Downloads/
+
+
+
+
+%:
+	dh $@ --with python2,python3 --buildsystem=pybuild
