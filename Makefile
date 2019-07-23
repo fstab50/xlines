@@ -218,7 +218,8 @@ clean-pkgbuild: clean-version   ## Remove build artifacts for documentation only
 	@echo "Clean post build package assempbly artifacts"
 	sudo rm -rf $(CUR_DIR)/.pybuild || true
 	sudo rm -rf $(CUR_DIR)/*.egg* || true
-	#sudo rm -f $(CUR_DIR)/packaging/completed/* || true
+	sudo rm -fr debian/.debhelper debian/files debian/xlines.postinst.debhelper 
+	sudo rm -fr debian/xlines.prerm.debhelper debian/xlines.substvars debian/xlines
 
 
 .PHONY: clean
