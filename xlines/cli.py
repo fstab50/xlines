@@ -262,16 +262,16 @@ def precheck(user_exfiles, user_exdirs, debug):
     """
     Runtime Dependency Check
     """
-    _os_configdir = os.path.join(modules_location, '/config')
+    _os_configdir = os.path.join(modules_location(), 'config')
     _os_ex_fname = os.path.join(_os_configdir, local_config['EXCLUSIONS']['EX_FILENAME'])
     _os_dir_fname = os.path.join(_os_configdir, local_config['EXCLUSIONS']['EX_DIR_FILENAME'])
     _config_dir = local_config['CONFIG']['CONFIG_DIR']
 
     if debug:
-        stdout_message(f'_os_configdir: {_os_configdir}: system py modules location', prefix='DBUG')
-        stdout_message(f'_os_ex_fname: {_os_ex_fname}: system exclusions.list path', prefix='DBUG')
-        stdout_message(f'_os_dir_fname: {_os_dir_fname}: system directories.list file path', prefix='DBUG')
-        stdout_message(f'_configdir: {_config_dir}: user home config file location', prefix='DBUG')
+        stdout_message(f'_os_configdir: {_os_configdir}: system py modules location', 'DBUG')
+        stdout_message(f'_os_ex_fname: {_os_ex_fname}: system exclusions.list path', 'DBUG')
+        stdout_message(f'_os_dir_fname: {_os_dir_fname}: system directories.list file path', 'DBUG')
+        stdout_message(f'_configdir: {_config_dir}: user home config file location', 'DBUG')
 
     try:
         # check if exists; copy
@@ -366,12 +366,11 @@ def init_cli():
         if args.debug:
             stdout_message(f'xlines command line option parameter detail', prefix='DEBUG')
             print('\targs.sum: {}'.format(args.sum))
-            print('\t' + str(args.sum))
             print('\n\tsys.argv contents:\n')
             for i in sys.argv:
-                print('\t\to  {}'.format(cm.bd + cm.yl + i + rst))
+                print('\t\to  {}'.format(i))
             print(f'\n\tcontainer is:\t{container}')
-            print(f'\n\tunknown object:\t{unknown}')
+            print(f'\n\tobject "unknown" is:\t{unknown}')
             print('\tabspath bool is {}\n'.format(abspath))
 
         if args.multiprocess:
@@ -439,7 +438,7 @@ def init_cli():
 
             if args.debug:
                 tab4 = '\t'.expandtabs(4)
-                stdout_message(f'width is {width}', prefix='DBUG')
+                stdout_message(f'cli screen columns variable, width: {cm.bdwt}{width}{cm.rst}', prefix='DBUG')
                 print('\n' + tab4 + 'Skipped file objects:\n' + tab4 + ('-' * (width + count_width)))
                 if io_fail:
                     for file in io_fail:
