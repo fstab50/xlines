@@ -78,7 +78,7 @@ def create_artifact(object_path, type):
 
 
 def _setup_path():
-     """Filsystem location of this module"""
+    """Filsystem location of this module"""
     return os.path.split(os.path.abspath(__file__))[0]
 
 
