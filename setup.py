@@ -77,13 +77,9 @@ def create_artifact(object_path, type):
         os.makedirs(object_path)
 
 
-def module_dir():
-    """Filsystem location of Python3 modules"""
-    bin_path = which('python3.6') or which('python3.7')
-    bin = bin_path.split('/')[-1]
-    if 'local' in bin:
-        return '/usr/local/lib/' + bin + '/site-packages'
-    return '/usr/lib/' + bin + '/site-packages'
+def _setup_path():
+     """Filsystem location of this module"""
+    return os.path.split(os.path.abspath(__file__))[0]
 
 
 def os_parityPath(path):
@@ -307,15 +303,15 @@ if _root_user():
         data_files=[
             (
                 os.path.join('/etc/bash_completion.d'),
-                [os.path.join('bash/', _comp_fname)]
+                [os.path.join('bash', _comp_fname)]
             ),
             (
-                os.path.join(module_dir(), _project, '/config'),
-                [os.path.join('config/', _ex_fname)]
+                os.path.join(_setup_path(), _project, 'config'),
+                [os.path.join('config', _ex_fname)]
             ),
             (
-                os.path.join(module_dir(), _project, '/config'),
-                [os.path.join('config/', _ex_dirs_fname)]
+                os.path.join(_setup_path(), _project, 'config'),
+                [os.path.join('config', _ex_dirs_fname)]
             )
         ],
         entry_points={
@@ -358,7 +354,7 @@ else:
         data_files=[
             (
                 os.path.join(user_home(), '.bash_completion.d'),
-                ['bash/' + _comp_fname]
+                [os.path.join('bash' + _comp_fname)]
             ),
             (
                 os.path.join(user_home(), '.config', _project),
