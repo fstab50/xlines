@@ -51,8 +51,8 @@ else:
     config_dir = '.config'
     config_subdir = PACKAGE
     config_filename = 'xlinesconf.json'
-    config_dirpath = user_home + '/' + config_dir + '/' + config_subdir
-    config_path = config_dirpath + '/' + config_filename
+    config_dirpath = os.path.join(user_home, config_dir, config_subdir)
+    config_path = os.path.join(config_dirpath, config_filename)
 
     # output dimensions
     count_column_width = 7                                    # characters
@@ -69,8 +69,8 @@ else:
     enable_logging = False
     log_mode = 'FILE'
     log_filename = 'xlines.log'
-    log_dir = user_home + '/' + 'logs'
-    log_path = log_dir + '/' + log_filename
+    log_dir = os.path.join(user_home, 'logs')
+    log_path = os.path.join(log_dir, log_filename)
 
     if OS == 'Windows':
         config_path = os_parityPath(config_path)
@@ -88,13 +88,13 @@ else:
             "CONFIG_DIR": config_dirpath,
             "CONFIG_SUBDIR": config_subdir,
             "CONFIG_PATH": config_path,
-            "COUNT_HI_THRESHOLD_FILEPATH": config_dirpath + '/' + threshold_filename
+            "COUNT_HI_THRESHOLD_FILEPATH": os_parityPath(os.path.join(config_dirpath, threshold_filename))
         },
         "EXCLUSIONS": {
             "EX_FILENAME": ext_filename,
             "EX_DIR_FILENAME": dir_filename,
-            "EX_EXT_PATH": config_dirpath + '/' + ext_filename,
-            "EX_DIR_PATH": config_dirpath + '/' + dir_filename
+            "EX_EXT_PATH": os_parityPath(os.path.join(config_dirpath, ext_filename)),
+            "EX_DIR_PATH": os_parityPath(os.path.join(config_dirpath, dir_filename))
         },
         "LOGGING": {
             "ENABLE_LOGGING": enable_logging,
