@@ -1,0 +1,14 @@
+#!/usr/bin/make -f
+
+#export DH_VERBOSE=1
+export PYBUILD_NAME=xlines
+export PYBUILD_DESTDIR=$PWD
+
+# preinstall script
+export PYBUILD_INSTALL_ARGS_python3=--install-scripts=/usr/share/foo/
+
+# postinstall script
+
+
+%:
+	dh $@ --with python2,python3 --buildsystem=pybuild
