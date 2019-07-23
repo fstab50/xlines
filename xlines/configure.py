@@ -9,6 +9,7 @@ import sys
 import inspect
 import logging
 from time import sleep
+from xlines.exclusions import ProcessExclusions
 from xlines.usermessage import stdout_message
 from xlines.common import terminal_size
 from xlines.colormap import ColorMap
@@ -101,9 +102,8 @@ def display_exclusions(expath, exdirpath, offset_spaces=default_width):
 
     try:
 
-        if os.path.exists(expath):
-            with open(expath) as f1:
-                exclusions = [x.strip() for x in f1.readlines()]
+        ex = ProcessExclusions(expath)
+        exclusions = ex.exclusions
 
         stdout_message(message='File types excluded from line counts:', indent=offset_spaces + adj)
 
@@ -138,10 +138,11 @@ def main_menupage(expath, exdirpath):
         bar = border + '''
         ________________________________________________________________________________
         '''
+        bar = '\n' + ('_' * 80) + '\n'
         pattern_width = len(bar)
         width, srow = _init_screen()
         offset = '\t'.expandtabs(int((width / 2) - (pattern_width / 2)))
-        _menu = (bar + rst + '''\n\n
+        _menu = (border + bar + rst + '''\n\n
             ''' + bdwt + PACKAGE + rst + ''' configuration main menu:\n\n
                   ''' + icolor + 'a' + rst + ''')  Add file type to exclusion list\n\n
                   ''' + icolor + 'b' + rst + ''')  Remove file type from exclusion list\n\n

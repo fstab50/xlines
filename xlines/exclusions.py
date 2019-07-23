@@ -79,7 +79,7 @@ class ProcessExclusions():
         """
         self.path = path
         self.basedir = os.path.dirname(path)
-        self.exclusions = self.get_exclusions(path)
+        self.exclusions = self.process_exclusions(path)
 
     def process_exclusions(self, path=None):
         """
@@ -97,6 +97,8 @@ class ProcessExclusions():
         """If not exist, create new filesystem object"""
         if not os.path.exists(path):
             os.makedirs(path)
+            # self._create_ex_types(path)
+            # self._create_ex_dirs(path)
         return self.process_exclusions(os.path.join(config_location, types_fname))
 
     def _create_ex_types(self, path):
