@@ -63,6 +63,7 @@ except Exception:
 
 # globals
 container = []
+module = os.path.basename(__file__)
 
 
 def absolute_paths(path_list):

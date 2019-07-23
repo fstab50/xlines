@@ -8,8 +8,14 @@ Summary.
 
 import os
 import inspect
+from shutil import copy2 as copyfile
 from xlines.statics import local_config
 from xlines import logger
+
+module = os.path.basename(__file__)
+library_location = os.path.split(module)[0]
+excluded_types = os.path.join(library_location, local_config['EXCLUSIONS']['EX_FILENAME'])
+excluded_dirs = os.path.join(library_location, local_config['EXCLUSIONS']['EX_DIR_FILENAME'])
 
 
 class ExcludedTypes():
@@ -72,7 +78,7 @@ class ProcessExclusions():
         self.basedir = os.path.dirname(path)
         self.exclusions = self.get_exclusions(path)
 
-    def get_exclusions(self, path=None):
+    def process_exclusions(self, path=None):
         """
         Read and parse local config file if exists
         """
@@ -88,6 +94,7 @@ class ProcessExclusions():
         """If not exist, create new filesystem object"""
         if not os.path.exists(path):
             os.makedirs(path)
+            copyfile(, dst)
         # below this line should copy stock config files from module installed
         # location >> ~/.config/xlines
         with open(path, 'a'):
