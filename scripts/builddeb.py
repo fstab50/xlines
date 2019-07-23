@@ -1060,12 +1060,33 @@ def valid_version(parameter, min=0, max=100):
 """
 builddeb script functionality from testing:
 
+# increment version
++1 xlines/_version.py
+
+# make source-install
+install into local venv
+
+# generate bytecode
+
+# copy any components needed (libtools) to _root/
+
+# copy exclusions files into package distribution:
 cp -r _root/config/*.list  _root/xlines/    # end up with xlines/config/directories.list
                                                           xlines/config/exclusions.list
 
 ## rm -f xlines/config/anything that is not *.list
 for i in  list(filter(lambda x: not x.endswith('.list'), os.listdir(_root/ + 'config'))):
     os.remove(i)
+
+# copy debian distribution archive artifacts to _root:
+copyfile(_root/packaging/deb/debian, _root/)
+
+# substitute any Build-depends packages into the _root/debian/control file --OR--
+copy the entire module folder from venv _root/  (next to debian dir)
+
+# build pkg
+sudo dpkg-buildpackage -us -uc
+
 """
 
 def init_cli():
