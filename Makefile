@@ -132,7 +132,6 @@ buildrpm-rhel: clean-version artifacts   ## Build Redhat distribution (.rpm) os 
 	sudo cp -r /usr/local/lib/python3.*/site-packages/pkg_resources* /usr/lib/python3.*/site-packages/
 	$(PYTHON3_PATH) setup_rpm.py bdist_rpm --requires=$(RHEL_REQUIRES) --python='/usr/bin/python3' --post-install='scripts/rpm_postinstall.sh'
 else
-buildrpm-exit:
    @echo "Redhat-based Linux not detected. Exit."
    exit 1
 endif
