@@ -123,10 +123,9 @@ builddeb: setup-venv clean-version ## Build Debian distribution (.deb) os packag
 buildrpm-rhel: clean-version artifacts   ## Build Redhat distribution (.rpm) os package
 ifeq "$(_redhat_sys)" "CentOS"
 	$(YUM_CALL) install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm;
-	$(YUM_CALL) -y update; fi;
-	sudo sed -i '/env_reset/d' /etc/sudoers;
-	$(YUM_CALL) -y install epel-release which
-	$(YUM_CALL) -y install python36 python36-pip python36-setuptools python36-devel
+	$(YUM_CALL) -y update && sudo sed -i '/env_reset/d' /etc/sudoers;
+	$(YUM_CALL) -y install epel-release which;
+	$(YUM_CALL) -y install python36 python36-pip python36-setuptools python36-devel;
 	sudo -H $(PIP3_CALL) install -U pip setuptools
 	sudo cp -r /usr/local/lib/python3.*/site-packages/setuptools* /usr/lib/python3.*/site-packages/
 	sudo cp -r /usr/local/lib/python3.*/site-packages/pkg_resources* /usr/lib/python3.*/site-packages/
