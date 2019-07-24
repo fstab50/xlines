@@ -157,13 +157,13 @@ def main_menupage(expath, exdirpath):
 
     while loop:
         offset, verticalstart = menu()
-        answer = input('\n{}{}Choose operation [quit]: '.format(offset, tab1))
+        answer = input('\n{}{}Choose operation [quit]: '.format(offset, tab1)).lower()
         sys.stdout.write('\n')
 
         if not answer or answer == 'd':
             return True
 
-        elif answer.lower() in ['a', 'b', 'c']:
+        elif answer in ['a', 'b', 'c']:
             condition_map(answer, expath, exdirpath, verticalstart)
 
         else:
@@ -182,6 +182,7 @@ def _configure_add(expath, exdirpath, startpt):
     Returns:
         Success | Failure, TYPE: bool
     """
+    add_list = None
     tab4 = '\t'.expandtabs(4)
     loop = True
     adj = 4
@@ -189,8 +190,8 @@ def _configure_add(expath, exdirpath, startpt):
 
     try:
 
-        with open(expath) as f1:
-            exclusions = [x.strip() for x in f1.readlines()]
+        ex = ProcessExclusions(expath)
+        exclusions = ex.exclusions
 
         while loop:
             width = _init_screen(starting_row=startpt + vert_adj)
