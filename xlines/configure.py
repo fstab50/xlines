@@ -215,9 +215,9 @@ def _configure_add(expath, exdirpath, startpt):
                 # add new extensions to existing
                 exclusions.extend([x if x.startswith('.') else '.' + x for x in add_list])
 
-                # write out new exclusions config file
-                with open(expath, 'w') as f2:
-                    f2.writelines([x + '\n' for x in exclusions])
+            # exit loop; write out new exclusions config file
+            with open(expath, 'w') as f2:
+                f2.writelines([x + '\n' for x in exclusions])
 
     except OSError:
         stdout_message(
@@ -348,7 +348,7 @@ def _configure_hicount(expath, exdirpath, startpt):
     loop = True
     adj = 12
     vert_adj = 2
-    local_linecount_file = local_config['CONFIG']['COUNT_HI_THRESHOLD_FILEPATH']
+    local_linecount_file = local_config['CONFIG']['HI_THRESHOLD_FILEPATH']
 
     try:
         width = _init_screen(starting_row=startpt + vert_adj)
