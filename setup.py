@@ -216,20 +216,20 @@ class PostInstallRoot(install):
 
             # bash_completion; (overwrite if exists)
             copyfile(
-                os_parityPath('bash' + '/' + _comp_fname),
-                os_parityPath(completion_dir + '/' + _comp_fname)
+                os_parityPath(os.path.join('bash', _comp_fname)),
+                os_parityPath(os.path.join(completion_dir, _comp_fname))
             )
             # configuration files: excluded file types
-            if not os.path.exists(os_parityPath(config_dir + '/' + _ex_fname)):
+            if not os.path.exists(os_parityPath(os.path.join(config_dir,  _ex_fname))):
                 copyfile(
-                    os_parityPath('config' + '/' + _ex_fname),
-                    os_parityPath(config_dir + '/' + _ex_fname)
+                    os_parityPath(os.path.join('config', _ex_fname)),
+                    os_parityPath(os.path.join(config_dir, _ex_fname))
                 )
             # configuration files: excluded directories
-            if not os.path.exists(os_parityPath(config_dir + '/' + _ex_dirs_fname)):
+            if not os.path.exists(os_parityPath(os.path.join(config_dir, _ex_dirs_fname))):
                 copyfile(
-                    os_parityPath('config' + '/' + _ex_dirs_fname),
-                    os_parityPath(config_dir + '/' + _ex_dirs_fname)
+                    os_parityPath(os.path.join('config', _ex_dirs_fname)),
+                    os_parityPath(os.path.join(config_dir, _ex_dirs_fname))
                 )
         install.run(self)
 
