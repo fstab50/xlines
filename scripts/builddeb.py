@@ -29,6 +29,7 @@ OS Support:
 Dependencies:
     - Requires python3, developed and tested under python3.6
 """
+
 import argparse
 import os
 import sys
@@ -51,6 +52,51 @@ try:
     from pyaws.core.oscodes_unix import exit_codes
 except Exception:
     from pyaws.core.oscodes_win import exit_codes    # non-specific os-safe codes
+
+"""
+REFERENCES:
+    - https://wiki.debian.org/Python/Pybuild
+    - https://wiki.debian.org/Python/LibraryStyleGuide
+    - https://packaging.python.org/overview
+
+---
+
+CONTAINER:
+apt install debhelper dh-python python-all python-setuptools python3-all python3-setuptools
+
+----
+
+builddeb script functionality from testing:
+
+# increment version
++1 xlines/_version.py
+
+# make source-install
+install into local venv
+
+# generate bytecode
+
+# copy any components needed (libtools) to _root/
+
+# copy exclusions files into package distribution:
+cp -r _root/config/*.list  _root/xlines/    # end up with xlines/config/directories.list
+                                                          xlines/config/exclusions.list
+
+## rm -f xlines/config/anything that is not *.list
+for i in  list(filter(lambda x: not x.endswith('.list'), os.listdir(_root/ + 'config'))):
+    os.remove(i)
+
+# copy debian distribution archive artifacts to _buildroot (debian dir) as shown in the reference
+# checked into the repo _root/debian:
+copyfile(_root/packaging/deb/debian, _root/)
+
+# substitute any Build-depends packages into the _root/debian/control file --OR--
+copy the entire module folder from venv _root/  (next to debian dir)
+
+# build pkg
+sudo dpkg-buildpackage -us -uc
+
+"""
 
 
 # globals
@@ -1057,38 +1103,6 @@ def valid_version(parameter, min=0, max=100):
         return False
     return True
 
-"""
-builddeb script functionality from testing:
-
-# increment version
-+1 xlines/_version.py
-
-# make source-install
-install into local venv
-
-# generate bytecode
-
-# copy any components needed (libtools) to _root/
-
-# copy exclusions files into package distribution:
-cp -r _root/config/*.list  _root/xlines/    # end up with xlines/config/directories.list
-                                                          xlines/config/exclusions.list
-
-## rm -f xlines/config/anything that is not *.list
-for i in  list(filter(lambda x: not x.endswith('.list'), os.listdir(_root/ + 'config'))):
-    os.remove(i)
-
-# copy debian distribution archive artifacts to _buildroot (debian dir) as shown in the reference
-# checked into the repo _root/debian:
-copyfile(_root/packaging/deb/debian, _root/)
-
-# substitute any Build-depends packages into the _root/debian/control file --OR--
-copy the entire module folder from venv _root/  (next to debian dir)
-
-# build pkg
-sudo dpkg-buildpackage -us -uc
-
-"""
 
 def init_cli():
     """Collect parameters and call main """
