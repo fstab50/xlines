@@ -55,12 +55,12 @@ class ExcludedTypes():
 
 class ProcessExclusions():
     """
-        Class definition for reading excluded file types from a
-        configuration file if exists.
+        Class definition for reading excluded file and directory
+        types from a configuration file if exists.
 
     Use:
-        >>> ex = ProcessExclusions()
-        >>> ex.get_exclusions('/path/to/configuration/file')
+        >>> pex = ProcessExclusions()
+        >>> pex.get_exclusions('/path/to/configuration/file')
         >>> ['.docx', '.pptx', '.png', '.tiff']
 
     Returns:
@@ -82,20 +82,24 @@ class ProcessExclusions():
         """
         Read and parse local config file if exists
         """
-        if (os.path.exists(self.path) if path is None else os.path.exists(path)):
+        valid_path = self.path if path is None else path
+        if os.path.exists(valid_path):
             try:
-                with open(path) as f1:
+                with open(valid_path) as f1:
                     return [x.strip() for x in f1.readlines()]
             except OSError:
                 logger.info(f'path provided does not yet exist -- creating path')
         return self._touch(self.path) if path is None else self._touch(path)
 
     def _touch(self, path):
-        """If not exist, create new filesystem object"""
+        """
+        If not exist, create new filesystem objects to hold
+            excluded fs patterns
+        """
         if not os.path.exists(path):
             os.makedirs(path)
-            # self._create_ex_types(path)
-            # self._create_ex_dirs(path)
+            self._create_ex_types(excluded_types)
+            self._create_ex_dirs(excluded_dirs)
         return self.process_exclusions(os.path.join(config_location, types_fname))
 
     def _create_ex_types(self, path):
