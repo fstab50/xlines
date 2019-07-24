@@ -135,10 +135,8 @@ def main_menupage(expath, exdirpath):
     def menu():
         border = bbl
         icolor = bbl
-        bar = border + '''
-        ________________________________________________________________________________
-        '''
-        #bar = '\n' + ('_' * 80) + '\n'
+        bar = '\n' + ('_' * 80) + '\n'
+
         pattern_width = len(bar)
         width, srow = _init_screen()
         offset = '\t'.expandtabs(int((width / 2) - (pattern_width / 2)))
@@ -154,11 +152,11 @@ def main_menupage(expath, exdirpath):
         return offset, srow
 
     loop = True
-    tab8 = '\t'.expandtabs(8)
+    tab1 = '\t'.expandtabs(1)
 
     while loop:
         offset, verticalstart = menu()
-        answer = input('\n{}{}Choose operation [quit]: '.format(offset, tab8)).lower()
+        answer = input('\n{}{}Choose operation [quit]: '.format(offset, tab1)).lower()
         sys.stdout.write('\n')
 
         if not answer or answer == 'd':
