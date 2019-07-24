@@ -4,6 +4,7 @@ Summary.
     Configuration Module -- configure run time parameters & exclusions
 
 """
+
 import os
 import sys
 import inspect
@@ -156,13 +157,13 @@ def main_menupage(expath, exdirpath):
 
     while loop:
         offset, verticalstart = menu()
-        answer = input('\n{}{}Choose operation [quit]: '.format(offset, tab1)).lower()
+        answer = input('\n{}{}Choose operation [quit]: '.format(offset, tab1))
         sys.stdout.write('\n')
 
         if not answer or answer == 'd':
             return True
 
-        elif answer in ['a', 'b', 'c']:
+        elif answer.lower() in ['a', 'b', 'c']:
             condition_map(answer, expath, exdirpath, verticalstart)
 
         else:
