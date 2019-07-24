@@ -30,7 +30,7 @@ PRE_SCRIPT = $(SCRIPTS)/rpm_preinstall.py
 POST_SCRIPT = $(SCRIPTS)/rpm_postinstall.py
 YUM_CALL = sudo $(shell which yum)
 PIP3_CALL = $(shell which pip3)
-_redhat_sys = $(shell $(shell cat /etc/redhat-release 2>/dev/null) | awk '{print $1}')
+_redhat_sys = $(shell $(shell cat /etc/redhat-release 2>/dev/null) | awk '{print $(1)}')
 
 
 # --- rollup targets  ------------------------------------------------------------------------------
