@@ -136,9 +136,9 @@ class PostInstall(install):
         """
         if self.valid_os_shell():
 
-            completion_file = user_home() + '/.bash_completion'
-            completion_dir = user_home() + '/.bash_completion.d'
-            config_dir = user_home() + '/.config/' + _project
+            completion_file = os.path.join(user_home(), '.bash_completion')
+            completion_dir = os.path.join(user_home(), '.bash_completion.d')
+            config_dir = os.path.join(user_home(), '.config', _project)
 
             if not os.path.exists(os_parityPath(completion_file)):
                 create_artifact(os_parityPath(completion_file), 'file')
@@ -151,20 +151,20 @@ class PostInstall(install):
 
             # bash_completion; (overwrite if exists)
             copyfile(
-                os_parityPath('bash' + '/' + _comp_fname),
-                os_parityPath(completion_dir + '/' + _comp_fname)
+                os_parityPath(os.path.join('bash', _comp_fname)),
+                os_parityPath(os.path.join(completion_dir, _comp_fname))
             )
             # configuration files: excluded file types
-            if not os.path.exists(os_parityPath(config_dir + '/' + _ex_fname)):
+            if not os.path.exists(os_parityPath(os.path.join(config_dir, _ex_fname))):
                 copyfile(
-                    os_parityPath('config' + '/' + _ex_fname),
-                    os_parityPath(config_dir + '/' + _ex_fname)
+                    os_parityPath(os.path.join('config', _ex_fname)),
+                    os_parityPath(os.path.join(config_dir, _ex_fname))
                 )
             # configuration files: excluded directories
-            if not os.path.exists(os_parityPath(config_dir + '/' + _ex_dirs_fname)):
+            if not os.path.exists(os_parityPath(os.path.join(config_dir, _ex_dirs_fname))):
                 copyfile(
-                    os_parityPath('config' + '/' + _ex_dirs_fname),
-                    os_parityPath(config_dir + '/' + _ex_dirs_fname)
+                    os_parityPath(os.path.join('config', _ex_dirs_fname)),
+                    os_parityPath(os.path.join(config_dir, _ex_dirs_fname))
                 )
         install.run(self)
 
