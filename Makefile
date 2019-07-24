@@ -134,10 +134,10 @@ buildrpm-rhel: clean-version artifacts   ## Build Redhat distribution (.rpm) os 
 else
 .PHONY: exittarget
 exittarget:
-   @echo "Redhat-based Linux not detected. Exit."
    exit 1
 endif
 
+   	#@echo "Redhat-based Linux not detected. Exit."
 
 .PHONY: buildrpm-aml
 buildrpm-aml: clean-version artifacts  ## Build Amazon Linux 2 distribution (.rpm) os package
