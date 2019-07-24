@@ -30,7 +30,7 @@ PRE_SCRIPT = $(SCRIPTS)/rpm_preinstall.py
 POST_SCRIPT = $(SCRIPTS)/rpm_postinstall.py
 YUM_CALL = sudo $(shell which yum)
 PIP3_CALL = $(shell which pip3)
-_redhat_sys = $(shell cat /etc/redhat-release | awk '{print $1}')
+_redhat_sys = $(shell cat /etc/redhat-release 2>/dev/null | awk '{print $1}')
 
 
 # --- rollup targets  ------------------------------------------------------------------------------
@@ -121,7 +121,7 @@ builddeb: setup-venv clean-version ## Build Debian distribution (.deb) os packag
 
 .PHONY: buildrpm-rhel
 buildrpm-rhel: clean-version artifacts   ## Build Redhat distribution (.rpm) os package
-	ifeq $(_redhat_sys, CentOS)
+	ifeq $(_redhat_sys) "CentOS"
 		$(YUM_CALL) install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm;
 		$(YUM_CALL) -y update; fi;
 		sudo sed -i '/env_reset/d' /etc/sudoers;
