@@ -38,7 +38,7 @@ class ExcludedTypes():
             self.types.extend(self.parse_exclusions(ex_path))
 
     def excluded(self, path):
-        return (True if list(filter(lambda x: x in path, ex.types)) else False)
+        return (True if list(filter(lambda x: x in path, self.types)) else False)
 
     def parse_exclusions(self, path):
         """
