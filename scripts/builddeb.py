@@ -63,6 +63,7 @@ REFERENCES:
 
 CONTAINER:
 apt install debhelper dh-python python-all python-setuptools python3-all python3-setuptools
+apt install dh-virtualenv python3-venv fakeroot devscripts
 
 ----
 
