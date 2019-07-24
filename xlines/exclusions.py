@@ -88,7 +88,7 @@ class ProcessExclusions():
                 with open(valid_path) as f1:
                     return [x.strip() for x in f1.readlines()]
             except OSError:
-                logger.info(f'path provided does not yet exist -- creating path')
+                logger.info(f'path provided does not yet exist -- creating')
         return self._touch(self.path) if path is None else self._touch(path)
 
     def _touch(self, path):
@@ -96,11 +96,16 @@ class ProcessExclusions():
         If not exist, create new filesystem objects to hold
             excluded fs patterns
         """
+        if not os.path.exists(config_location):
+            os.makedirs(config_location)
         if not os.path.exists(path):
-            os.makedirs(path)
-            self._create_ex_types(excluded_types)
-            self._create_ex_dirs(excluded_dirs)
+            self._create_ex_generic(path)
         return self.process_exclusions(os.path.join(config_location, types_fname))
+
+    def _create_ex_generic(self, path):
+        """Create excluded file types file via reference"""
+        _fname = os.path.split(path)[1]
+        copyfile(excluded_types, os.path.join(config_location, _fname))
 
     def _create_ex_types(self, path):
         """Create excluded file types file via reference"""
