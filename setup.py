@@ -45,6 +45,12 @@ _ex_dirs_fname = 'directories.list'
 _comp_fname = 'xlines-completion.bash'
 
 
+def _git_root():
+    """Returns root directory of git repository"""
+    cmd = 'git rev-parse --show-toplevel 2>/dev/null'
+    return subprocess.getoutput(cmd).strip()
+
+
 def _root_user():
     """
     Checks localhost root or sudo access.  Returns bool
@@ -358,11 +364,7 @@ else:
             ),
             (
                 os.path.join(_install_root(), 'config'),
-                [os.path.join('config', _ex_fname)]
-            ),
-            (
-                os.path.join(_install_root(), 'config'),
-                [os.path.join('config', _ex_dirs_fname)]
+                [os.path.join('config', _ex_fname), os.path.join('config', _ex_dirs_fname)]
             ),
             (
                 os.path.join(user_home(), '.config', _project),
