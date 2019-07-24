@@ -121,7 +121,7 @@ builddeb: setup-venv clean-version ## Build Debian distribution (.deb) os packag
 
 .PHONY: buildrpm-rhel
 buildrpm-rhel: clean-version artifacts   ## Build Redhat distribution (.rpm) os package
-	ifeq $(_redhat_sys) "CentOS"
+	ifeq "$(_redhat_sys)" "CentOS"
 		$(YUM_CALL) install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm;
 		$(YUM_CALL) -y update; fi;
 		sudo sed -i '/env_reset/d' /etc/sudoers;
