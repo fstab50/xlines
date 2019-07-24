@@ -1,0 +1,4 @@
+venv
+_env
+pycache
+.eggs
