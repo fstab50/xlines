@@ -77,9 +77,9 @@ def create_artifact(object_path, type):
         os.makedirs(object_path)
 
 
-def _setup_path():
-    """Filsystem location of this module"""
-    return os.path.split(os.path.abspath(__file__))[0]
+def _install_root():
+    """Filsystem installed location of program modules"""
+    return os.path.abspath(os.path.dirname(xlines.common.__file__))
 
 
 def os_parityPath(path):
@@ -207,7 +207,7 @@ class PostInstallRoot(install):
         if self.valid_os_shell():
 
             completion_dir = '/etc/bash_completion.d'
-            config_dir = os.path.join(_setup_path(), _project, 'config')
+            config_dir = os.path.join(__install_root(), 'config')
 
             if not os.path.exists(os_parityPath(config_dir)):
                 create_artifact(os_parityPath(config_dir), 'dir')
@@ -306,11 +306,11 @@ if _root_user():
                 [os.path.join('bash', _comp_fname)]
             ),
             (
-                os.path.join(_setup_path(), _project, 'config'),
+                os.path.join(_install_root(), 'config'),
                 [os.path.join('config', _ex_fname)]
             ),
             (
-                os.path.join(_setup_path(), _project, 'config'),
+                os.path.join(_install_root(), 'config'),
                 [os.path.join('config', _ex_dirs_fname)]
             )
         ],
@@ -355,6 +355,14 @@ else:
             (
                 os.path.join(user_home(), '.bash_completion.d'),
                 [os.path.join('bash', _comp_fname)]
+            ),
+            (
+                os.path.join(_install_root(), 'config'),
+                [os.path.join('config', _ex_fname)]
+            ),
+            (
+                os.path.join(_install_root(), 'config'),
+                [os.path.join('config', _ex_dirs_fname)]
             ),
             (
                 os.path.join(user_home(), '.config', _project),
