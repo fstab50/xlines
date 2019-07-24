@@ -30,6 +30,7 @@ PRE_SCRIPT = $(SCRIPTS)/rpm_preinstall.py
 POST_SCRIPT = $(SCRIPTS)/rpm_postinstall.py
 YUM_CALL = sudo $(shell which yum)
 PIP3_CALL = $(shell which pip3)
+_redhat_sys = $(shell cat /etc/redhat-release | awk '{print $1}')
 
 
 # --- rollup targets  ------------------------------------------------------------------------------
@@ -65,9 +66,6 @@ $(VENV_DIR):    ## Create and activiate python virtual package environment
 
 .PHONY: artifacts
 artifacts:	  ## Generate documentation build artifacts (*.rst)
-	if [ $(shell $(shell rpm -qi epel-release) | grep -i not) ]; then \
-	$(YUM_CALL) install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm; \
-	$(YUM_CALL) -y update; fi
 	$(YUM_CALL) install -y pandoc
 	$(PANDOC_CALL) --from=markdown --to=rst README.md --output=README.rst
 
@@ -107,7 +105,7 @@ docs: clean setup-venv    ## Generate sphinx documentation
 
 
 .PHONY: build
-build: pre-build setup-venv   ## Build dist, increment version || force version (VERSION=X.Y)
+build: pre-build setup-venv artifacts  ## Build dist, increment version || force version (VERSION=X.Y)
 	if [ $(VERSION) ]; then bash $(SCRIPTS)/version_update.sh $(VERSION); \
 	else bash $(SCRIPTS)/version_update.sh; fi && . $(VENV_DIR)/bin/activate && \
 	cd $(CUR_DIR) && $(PYTHON3_PATH) setup.py sdist
@@ -123,13 +121,20 @@ builddeb: setup-venv clean-version ## Build Debian distribution (.deb) os packag
 
 .PHONY: buildrpm-rhel
 buildrpm-rhel: clean-version artifacts   ## Build Redhat distribution (.rpm) os package
-	sudo sed -i '/env_reset/d' /etc/sudoers;
-	$(YUM_CALL) -y install epel-release which
-	$(YUM_CALL) -y install python36 python36-pip python36-setuptools python36-devel
-	sudo -H $(PIP3_CALL) install -U pip setuptools
-	sudo cp -r /usr/local/lib/python3.*/site-packages/setuptools* /usr/lib/python3.*/site-packages/
-	sudo cp -r /usr/local/lib/python3.*/site-packages/pkg_resources* /usr/lib/python3.*/site-packages/
-	$(PYTHON3_PATH) setup_rpm.py bdist_rpm --requires=$(RHEL_REQUIRES) --python='/usr/bin/python3' --post-install='scripts/rpm_postinstall.sh'
+	ifeq $(_redhat_sys, CentOS)
+		$(YUM_CALL) install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm;
+		$(YUM_CALL) -y update; fi;
+		sudo sed -i '/env_reset/d' /etc/sudoers;
+		$(YUM_CALL) -y install epel-release which
+		$(YUM_CALL) -y install python36 python36-pip python36-setuptools python36-devel
+		sudo -H $(PIP3_CALL) install -U pip setuptools
+		sudo cp -r /usr/local/lib/python3.*/site-packages/setuptools* /usr/lib/python3.*/site-packages/
+		sudo cp -r /usr/local/lib/python3.*/site-packages/pkg_resources* /usr/lib/python3.*/site-packages/
+		$(PYTHON3_PATH) setup_rpm.py bdist_rpm --requires=$(RHEL_REQUIRES) --python='/usr/bin/python3' --post-install='scripts/rpm_postinstall.sh'
+	else
+	   @echo "Redhat-based Linux not detected. Exit."
+	   exit 1
+	endif
 
 
 .PHONY: buildrpm-aml
