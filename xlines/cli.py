@@ -265,7 +265,7 @@ def precheck(user_exfiles, user_exdirs, debug):
     Runtime Dependency Checks: postinstall artifacts, environment
     """
     def set_environment():
-        exitcode = 1; lanaguage = None
+        exitcode = 1; lanaguage = 'undefined'
         if os.getenv('LANG') is None:
             lanaguge =  'export LANG=en_US.UTF-8'
         elif 'UTF-8' not in subprocess.getoutput('echo $LANG'):
@@ -285,7 +285,7 @@ def precheck(user_exfiles, user_exdirs, debug):
         stdout_message(f'_os_dir_fname: {_os_dir_fname}: system directories.list file path', 'DBUG')
         stdout_message(f'_configdir: {_config_dir}: user home config file location', 'DBUG')
         stdout_message(f'Environment setup status: {_environment_setup}')
-        stdout_message('{}Add the following code to your .bashrc file:\n{}{}'.format(tab, tab, str(language)))
+        stdout_message('{}Add the following code to your .bashrc file:\n{}{}'.format(tab, tab, language))
     try:
         # check if exists; copy
         if not os.path.exists(_config_dir):
