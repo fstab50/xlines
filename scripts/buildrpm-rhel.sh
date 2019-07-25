@@ -36,7 +36,7 @@ _PYTHON3_PATH=$(which python3)
 _YUM=$(which yum)
 _SED=$(which sed)
 _PIP=$(_pip_exec)
-_POSTINSTALL=${ROOT}/pacaging/rpm/rpm_postinstall.sh
+_POSTINSTALL=${ROOT}/packaging/rpm/rpm_postinstall.sh
 RHEL_REQUIRES='python36,python36-pip,python36-setuptools,python36-pygments,bash-completion'
 
 # colors; functions
