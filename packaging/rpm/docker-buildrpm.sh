@@ -293,14 +293,6 @@ function std_error_exit(){
 }
 
 
-function _git_root(){
-    ##
-    ##  determines full path to current git project root
-    ##
-    echo "$(git rev-parse --show-toplevel 2>/dev/null)"
-}
-
-
 function _pip_exec(){
     ##
     ##  Finds pip executable for python3 regardless of upgrade
@@ -327,13 +319,11 @@ _PIP=$(_pip_exec)
 _POSTINSTALL='rpm_postinstall.sh'
 RHEL_REQUIRES='python36,python36-pip,python36-setuptools,python36-pygments,bash-completion'
 
-# colors; functions
-. ./'colors.sh'
-. ./'std_functions.sh'
 
 depcheck $LOG_DIR $LOG_FILE
 
 cd ~
+
 
 if lsb_release -sirc | grep -i centos >/dev/null 2>&1; then
 
