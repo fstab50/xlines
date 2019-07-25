@@ -121,7 +121,7 @@ builddeb: setup-venv clean-version ## Build Debian distribution (.deb) os packag
 
 .PHONY: buildrpm-rhel
 buildrpm-rhel: clean-version artifacts   ## Build Redhat distribution (.rpm) os package
-ifeq "$(_redhat_sys)" "CentOS"
+if [ "$(_redhat_sys)" = "CentOS" ]; then
 	$(YUM_CALL) install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm;
 	$(YUM_CALL) -y update && sudo sed -i '/env_reset/d' /etc/sudoers;
 	$(YUM_CALL) -y install epel-release which;
@@ -135,7 +135,7 @@ else
 exittarget:
 	@echo "Redhat-based Linux not detected. Exit."
 	exit 1
-endif
+fi;
 
 
 .PHONY: buildrpm-aml
