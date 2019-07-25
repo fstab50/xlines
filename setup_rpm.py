@@ -208,19 +208,18 @@ setup(
         'install': PostInstallRoot
     },
     data_files=[
-            (
-                os.path.join('/etc/bash_completion.d'),
-                [os.path.join('bash', _comp_fname)]
-            ),
-            (
-                os.path.join(_install_root(), 'config'),
-                [os.path.join('config', _ex_fname)]
-            ),
-            (
-                os.path.join(_install_root(), 'config'),
-                [os.path.join('config', _ex_dirs_fname)]
-            )
-        ],
+        (
+            os.path.join('/etc/bash_completion.d'),
+            [os.path.join('bash', _comp_fname)]
+        ),
+        (
+            os.path.join(_install_root(), 'config'),
+            [os.path.join('config', _ex_fname)]
+        ),
+        (
+            os.path.join(_install_root(), 'config'),
+            [os.path.join('config', _ex_dirs_fname)]
+        )
     ],
     entry_points={
         'console_scripts': [
