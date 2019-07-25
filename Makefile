@@ -127,8 +127,8 @@ buildrpm-rhel: clean-version artifacts   ## Build Redhat distribution (.rpm) os 
 	$(YUM_CALL) -y install epel-release which; \
 	$(YUM_CALL) -y install python36 python36-pip python36-setuptools python36-devel; \
 	sudo -H $(PIP3_CALL) install -U pip setuptools; \
-	sudo cp -r /usr/local/lib/python3.*/site-packages/setuptools* /usr/lib/python3.*/site-packages/
-	sudo cp -r /usr/local/lib/python3.*/site-packages/pkg_resources* /usr/lib/python3.*/site-packages/
+	sudo cp -r /usr/local/lib/python3.*/site-packages/setuptools* /usr/lib/python3.*/site-packages/ ; \
+	sudo cp -r /usr/local/lib/python3.*/site-packages/pkg_resources* /usr/lib/python3.*/site-packages/ ; \
 	$(PYTHON3_PATH) setup_rpm.py bdist_rpm --requires=$(RHEL_REQUIRES) --python='/usr/bin/python3' --post-install='scripts/rpm_postinstall.sh'
 	else $(MAKE) exittarget; fi
 
