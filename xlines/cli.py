@@ -264,20 +264,19 @@ def precheck(user_exfiles, user_exdirs, debug):
     """
     Runtime Dependency Checks: postinstall artifacts, environment
     """
-    lang = 'undefined'
     def set_environment():
-        exitcode = 1
         if os.getenv('LANG') is None:
             lang = 'export LANG=en_US.UTF-8'
         elif 'UTF-8' not in subprocess.getoutput('echo $LANG'):
             lang = 'export LANG=$LANG.UTF-8'
-        return int(exitcode)
+        return lang
 
     _os_configdir = os.path.join(modules_location(), 'config')
     _os_ex_fname = os.path.join(_os_configdir, local_config['EXCLUSIONS']['EX_FILENAME'])
     _os_dir_fname = os.path.join(_os_configdir, local_config['EXCLUSIONS']['EX_DIR_FILENAME'])
     _config_dir = local_config['CONFIG']['CONFIG_DIR']
-    _environment_setup = 'success' if set_environment() == 0 else 'fail'
+    language = set_environment() or 'undefined'
+    _environment_setup = 'success' if 'UTF-8' in language else 'fail'
 
     if debug:
         tab = '\t'.expandtabs(8)
@@ -286,7 +285,7 @@ def precheck(user_exfiles, user_exdirs, debug):
         stdout_message(f'_os_dir_fname: {_os_dir_fname}: system directories.list file path', 'DBUG')
         stdout_message(f'_configdir: {_config_dir}: user home config file location', 'DBUG')
         stdout_message(f'Environment setup status: {_environment_setup}')
-        stdout_message('{}Add the following code to your .bashrc file:\n{}{}'.format(tab, tab, lang))
+        stdout_message('{}Add the following code to your .bashrc file:\n{}{}'.format(tab, tab, language))
     try:
         # check if exists; copy
         if not os.path.exists(_config_dir):
