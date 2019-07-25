@@ -65,7 +65,7 @@ $(VENV_DIR):    ## Create and activiate python virtual package environment
 
 .PHONY: artifacts
 artifacts:	  ## Generate documentation build artifacts (*.rst)
-	$(PIP_CALL) install -y pandoc
+	. $(VENV_DIR)/bin/activate  &&  $(PIP_CALL) install -y pandoc; \
 	$(PANDOC_CALL) --from=markdown --to=rst README.md --output=README.rst
 
 
