@@ -46,12 +46,13 @@ RHEL_REQUIRES='python36,python36-pip,python36-setuptools,python36-pygments,bash-
 
 if lsb_release -sirc | grep -i centos >/dev/null 2>&1; then
 
-    std_message "install epel package repository" "INFO"
-    $_YUM install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-    $_YUM -y update
+    std_message "Dependency check: validate epel package repository installed" "INFO"
 
     if [[ $(${_YUM} repolist 2>/dev/null | grep epel) ]]; then
-        std_message "epel package repo installed" "OK"
+        std_message "epel Redhat extras packages repository installed." "OK"
+    else
+        std_message "ERROR: epel Redhat extras packages repository NOT installed. Exit" "WARN"
+        exit 1
     fi
 
     # strip out sudo path restrictions
