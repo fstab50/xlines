@@ -265,17 +265,18 @@ def precheck(user_exfiles, user_exdirs, debug):
     Runtime Dependency Checks: postinstall artifacts, environment
     """
     def set_environment():
+        lang = 'undefined'
         if os.getenv('LANG') is None:
-            lang = 'export LANG={}en_US.UTF-8{}'.format(bdwt, rst)
+            lang = '{}export LANG={}en_US.UTF-8{}'.format(bwt, rd, rst)
         elif 'UTF-8' not in subprocess.getoutput('echo $LANG'):
-            lang = 'export LANG={}$LANG.UTF-8{}'.format(bdwt, rst)
+            lang = '{}export LANG={}$LANG.UTF-8{}'.format(bwt, rd, rst)
         return lang
 
     _os_configdir = os.path.join(modules_location(), 'config')
     _os_ex_fname = os.path.join(_os_configdir, local_config['EXCLUSIONS']['EX_FILENAME'])
     _os_dir_fname = os.path.join(_os_configdir, local_config['EXCLUSIONS']['EX_DIR_FILENAME'])
     _config_dir = local_config['CONFIG']['CONFIG_DIR']
-    language = set_environment() or 'undefined'
+    language = set_environment()
     _environment_setup = 'fail' if 'UTF-8' in language else 'success'
 
     if debug:
