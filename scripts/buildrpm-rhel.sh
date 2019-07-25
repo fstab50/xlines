@@ -44,7 +44,7 @@ RHEL_REQUIRES='python36,python36-pip,python36-setuptools,python36-pygments,bash-
 . "$ROOT/scripts/std_functions.sh"
 
 
-if [[ -f /etc/redhat-release 2>/dev/null ]]; then
+if lsb_release -sirc | grep -i centos >/dev/null 2>&1; then
 
     std_message "install epel package repository" "INFO"
     $_YUM install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
