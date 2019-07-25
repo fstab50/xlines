@@ -4,6 +4,7 @@
 #   Document: Build script
 #   Distribution:  Redhat Enterprise Linux, CentOS 7
 #   Author: Blake Huber
+#
 #   Copyright 2019, Blake Huber
 #
 
@@ -43,7 +44,7 @@ RHEL_REQUIRES='python36,python36-pip,python36-setuptools,python36-pygments,bash-
 . "$ROOT/scripts/std_functions.sh"
 
 
-if [[ -f /etc/redhat-release ]]; then
+if [[ -f /etc/redhat-release 2>/dev/null ]]; then
 
     std_message "install epel package repository" "INFO"
     $_YUM install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
@@ -70,10 +71,9 @@ if [[ -f /etc/redhat-release ]]; then
     sudo cp -r /usr/local/lib/python3.*/site-packages/pkg_resources* /usr/lib/python3.*/site-packages/
 
     # python3 build process
-    $_PYTHON3_PATH setup_rpm.py bdist_rpm \
-            --requires=${RHEL_REQUIRES} \
-            --python='/usr/bin/python3' \
-            --post-install=${_POSTINSTALL}
+    $_PYTHON3_PATH setup_rpm.py bdist_rpm --requires=${RHEL_REQUIRES} \
+                                          --python='/usr/bin/python3' \
+                                          --post-install=${_POSTINSTALL}
 
 else
     std_message "Not a Redhat-based Linux distribution. Exit" "WARN"
