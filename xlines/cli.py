@@ -265,7 +265,9 @@ def precheck(user_exfiles, user_exdirs, debug):
     """
     def set_environment():
         exitcode = 1
-        if 'UTF-8' not in subprocess.getoutput('echo $LANG'):
+        if not subprocess.getoutput('echo $LANG'):
+            exitcode = subprocess.getoutput('export LANG=en_US.UTF-8; echo $?')
+        elif 'UTF-8' not in subprocess.getoutput('echo $LANG'):
             exitcode = subprocess.getoutput('export LANG=$LANG.UTF-8; echo $?')
         return int(exitcode)
 
