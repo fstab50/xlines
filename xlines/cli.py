@@ -266,11 +266,10 @@ def precheck(user_exfiles, user_exdirs, debug):
     """
     def set_environment():
         exitcode = 1
-        #if not subprocess.getoutput('echo $LANG'):
-            #exitcode = subprocess.getoutput('export LANG=en_US.UTF-8; echo $?')
-        #elif 'UTF-8' not in subprocess.getoutput('echo $LANG'):
-        #    exitcode = subprocess.getoutput('export LANG=$LANG.UTF-8; echo $?')
-        #os.environ['LANG'] = 'en_US.UTF-8'
+        if not os.getenv('LANG'):
+            lanaguge =  'export LANG=en_US.UTF-8'
+        elif 'UTF-8' not in subprocess.getoutput('echo $LANG'):
+            language =  'export LANG=$LANG.UTF-8'
         exitcode = subprocess.getoutput(f'. {iloc}/language.bash; echo $?')
         return int(exitcode)
 
@@ -281,11 +280,13 @@ def precheck(user_exfiles, user_exdirs, debug):
     _environment_setup = 'success' if set_environment() == 0 else 'fail'
 
     if debug:
+        tab = '\t'.expandtabs(8)
         stdout_message(f'_os_configdir: {_os_configdir}: system py modules location', 'DBUG')
         stdout_message(f'_os_ex_fname: {_os_ex_fname}: system exclusions.list path', 'DBUG')
         stdout_message(f'_os_dir_fname: {_os_dir_fname}: system directories.list file path', 'DBUG')
         stdout_message(f'_configdir: {_config_dir}: user home config file location', 'DBUG')
-        stdout_message(f'Environment setup is: {_environment_setup} ')
+        stdout_message(f'Environment setup is: {_environment_setup}
+            {tab}Add the following lanuage statement to your .bashrc file:\n{tab}{language}')
     try:
         # check if exists; copy
         if not os.path.exists(_config_dir):
