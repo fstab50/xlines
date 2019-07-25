@@ -267,9 +267,9 @@ def precheck(user_exfiles, user_exdirs, debug):
     def set_environment():
         lang = 'undefined'
         if os.getenv('LANG') is None:
-            lang = '{}export LANG={}en_US.UTF-8{}'.format(bwt, rd, rst)
+            lang = 'export LANG{}={}en_US.UTF-8'.format(rd, rst)
         elif 'UTF-8' not in subprocess.getoutput('echo $LANG'):
-            lang = '{}export LANG={}$LANG.UTF-8{}'.format(bwt, rd, rst)
+            lang = 'export LANG{}={}$LANG.UTF-8'.format(rd, rst)
         return lang
 
     _os_configdir = os.path.join(modules_location(), 'config')
@@ -288,7 +288,7 @@ def precheck(user_exfiles, user_exdirs, debug):
         stdout_message(f'Environment setup status: {_environment_setup}')
 
         if _environment_setup is 'fail':
-            stdout_message('Add the following code to your .bashrc file:\n\n{}{}'.format(tab, _language))
+            stdout_message('Add the following code to your .bashrc file: {}'.format(_language))
 
     try:
         # check if exists; copy
