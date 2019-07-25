@@ -210,7 +210,7 @@ def _configure_add(expath, exdirpath, startpt):
                 sys.stdout.write('\n')
                 return True
             else:
-                add_list = response.split(',')
+                add_list = [x.strip() for x in response.split(',')]
 
                 # add new extensions to existing
                 exclusions.extend([x if x.startswith('.') else '.' + x for x in add_list])
@@ -237,7 +237,7 @@ def _configure_rewrite(expath, newlist):
     try:
         # write new exclusion list to local disk
         with open(expath, 'w') as f1:
-            list(filter(lambda x: f1.write(x + '\n'), newlist))
+            list(filter(lambda x: f1.write(x.strip() + '\n'), newlist))
 
     except OSError as e:
         fx = inspect.stack()[0][3]
