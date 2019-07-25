@@ -265,7 +265,7 @@ def precheck(user_exfiles, user_exdirs, debug):
     Runtime Dependency Checks: postinstall artifacts, environment
     """
     def set_environment():
-        exitcode = 1; lanaguage = 'undefined'
+        exitcode = 1; language = 'undefined'
         if os.getenv('LANG') is None:
             language =  'export LANG=en_US.UTF-8'
         elif 'UTF-8' not in subprocess.getoutput('echo $LANG'):
