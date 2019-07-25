@@ -268,7 +268,7 @@ def precheck(user_exfiles, user_exdirs, debug):
         lang = 'undefined'
         if os.getenv('LANG') is None:
             lang = '{}export LANG=en_US.UTF-8{}'.format(yl, rst)
-        elif 'UTF-8' not in subprocess.getoutput('echo $LANG'):
+        elif 'UTF-8' not in os.getenv('LANG'):
             lang = '{}export LANG=$LANG.UTF-8{}'.format(yl, rst)
         return lang
 
@@ -285,7 +285,7 @@ def precheck(user_exfiles, user_exdirs, debug):
         stdout_message(f'_os_ex_fname: {_os_ex_fname}: system exclusions.list path', 'DBUG')
         stdout_message(f'_os_dir_fname: {_os_dir_fname}: system directories.list file path', 'DBUG')
         stdout_message(f'_configdir: {_config_dir}: user home config file location', 'DBUG')
-        stdout_message(f'Environment setup status: {_environment_setup.upper()}', prefix='WARN')
+        stdout_message(f'Environment setup status: {_environment_setup.upper()}')
 
         if _environment_setup.upper() == 'FAIL':
             _env = _environment_setup.upper()
