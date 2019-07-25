@@ -267,9 +267,9 @@ def precheck(user_exfiles, user_exdirs, debug):
     def set_environment():
         lang = 'undefined'
         if os.getenv('LANG') is None:
-            lang = 'export LANG{}={}en_US.UTF-8'.format(rd, rst)
+            lang = '{}export LANG=en_US.UTF-8{}'.format(yl, rst)
         elif 'UTF-8' not in subprocess.getoutput('echo $LANG'):
-            lang = 'export LANG{}={}$LANG.UTF-8'.format(rd, rst)
+            lang = '{}export LANG=$LANG.UTF-8{}'.format(yl, rst)
         return lang
 
     _os_configdir = os.path.join(modules_location(), 'config')
