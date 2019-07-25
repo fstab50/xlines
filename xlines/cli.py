@@ -53,18 +53,19 @@ try:
     from xlines.oscodes_unix import exit_codes
     os_type = 'Linux'
     user_home = os.getenv('HOME')
-    splitchar = '/'                             # character for splitting paths (linux)
+    splitchar = '/'                                   # character for splitting paths (linux)
 
 except Exception:
-    from xlines.oscodes_win import exit_codes    # non-specific os-safe codes
+    from xlines.oscodes_win import exit_codes         # non-specific os-safe codes
     os_type = 'Windows'
     user_home = os.getenv('username')
-    splitchar = '\\'                            # character for splitting paths (windows)
+    splitchar = '\\'                                  # character for splitting paths (windows)
 
 
 # globals
 container = []
 module = os.path.basename(__file__)
+iloc = os.path.abspath(os.path.dirname(__file__))     # installed location of modules
 
 
 def absolute_paths(path_list):
