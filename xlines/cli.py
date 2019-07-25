@@ -30,6 +30,7 @@ import re
 import json
 import inspect
 import argparse
+import subprocess
 from shutil import copy2 as copyfile
 from shutil import which
 from pathlib import Path
@@ -260,19 +261,26 @@ def set_hicount_threshold():
 
 def precheck(user_exfiles, user_exdirs, debug):
     """
-    Runtime Dependency Check
+    Runtime Dependency Checks: postinstall artifacts, environment
     """
+    def set_environment():
+        exitcode = 1
+        if 'UTF-8' not in subprocess.getoutput('echo $LANG'):
+            exitcode = subprocess.getoutput('export LANG=$LANG.UTF-8; echo $?')
+        return int(exitcode)
+
     _os_configdir = os.path.join(modules_location(), 'config')
     _os_ex_fname = os.path.join(_os_configdir, local_config['EXCLUSIONS']['EX_FILENAME'])
     _os_dir_fname = os.path.join(_os_configdir, local_config['EXCLUSIONS']['EX_DIR_FILENAME'])
     _config_dir = local_config['CONFIG']['CONFIG_DIR']
+    _environment_setup = 'success' if set_environment() == 0 else 'fail'
 
     if debug:
         stdout_message(f'_os_configdir: {_os_configdir}: system py modules location', 'DBUG')
         stdout_message(f'_os_ex_fname: {_os_ex_fname}: system exclusions.list path', 'DBUG')
         stdout_message(f'_os_dir_fname: {_os_dir_fname}: system directories.list file path', 'DBUG')
         stdout_message(f'_configdir: {_config_dir}: user home config file location', 'DBUG')
-
+        stdout_message(f'Environment setup is: {_environment_setup} ')
     try:
         # check if exists; copy
         if not os.path.exists(_config_dir):
