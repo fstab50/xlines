@@ -270,7 +270,7 @@ def precheck(user_exfiles, user_exdirs, debug):
             #exitcode = subprocess.getoutput('export LANG=en_US.UTF-8; echo $?')
         #elif 'UTF-8' not in subprocess.getoutput('echo $LANG'):
         #    exitcode = subprocess.getoutput('export LANG=$LANG.UTF-8; echo $?')
-        return os.envion['LANG=en_US.UTF-8']
+        return os.environ['LANG=en_US.UTF-8']
         #return int(exitcode)
 
     _os_configdir = os.path.join(modules_location(), 'config')
