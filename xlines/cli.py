@@ -287,9 +287,10 @@ def precheck(user_exfiles, user_exdirs, debug):
         stdout_message(f'_configdir: {_config_dir}: user home config file location', 'DBUG')
         stdout_message(f'Environment setup status: {_environment_setup}')
 
-        if _environment_setup is 'fail':
-            msg = 'Environment setting is FAIL. Add the following code in your .bashrc file'
-            stdout_message('{}:  {}'.format(msg, _language))
+        if _environment_setup.upper() is 'FAIL':
+            _env = _environment_setup.upper()
+            msg = f'Environment setting is {_env}. Add the following code in your .bashrc file'
+            stdout_message('{}:  {}'.format(msg, _language), prefix='WARN')
 
     try:
         # check if exists; copy
