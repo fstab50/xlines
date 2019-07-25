@@ -266,11 +266,12 @@ def precheck(user_exfiles, user_exdirs, debug):
     """
     def set_environment():
         exitcode = 1
-        if not subprocess.getoutput('echo $LANG'):
-            exitcode = subprocess.getoutput('export LANG=en_US.UTF-8; echo $?')
-        elif 'UTF-8' not in subprocess.getoutput('echo $LANG'):
-            exitcode = subprocess.getoutput('export LANG=$LANG.UTF-8; echo $?')
-        return int(exitcode)
+        #if not subprocess.getoutput('echo $LANG'):
+            #exitcode = subprocess.getoutput('export LANG=en_US.UTF-8; echo $?')
+        #elif 'UTF-8' not in subprocess.getoutput('echo $LANG'):
+        #    exitcode = subprocess.getoutput('export LANG=$LANG.UTF-8; echo $?')
+        return os.envion['LANG=en_US.UTF-8']
+        #return int(exitcode)
 
     _os_configdir = os.path.join(modules_location(), 'config')
     _os_ex_fname = os.path.join(_os_configdir, local_config['EXCLUSIONS']['EX_FILENAME'])
