@@ -265,13 +265,13 @@ def precheck(user_exfiles, user_exdirs, debug):
     Runtime Dependency Checks: postinstall artifacts, environment
     """
     def set_environment():
-        exitcode = 1
+        exitcode = 0
         #if not subprocess.getoutput('echo $LANG'):
             #exitcode = subprocess.getoutput('export LANG=en_US.UTF-8; echo $?')
         #elif 'UTF-8' not in subprocess.getoutput('echo $LANG'):
         #    exitcode = subprocess.getoutput('export LANG=$LANG.UTF-8; echo $?')
-        return os.environ['LANG'] = 'en_US.UTF-8'
-        #return int(exitcode)
+        os.environ['LANG'] = 'en_US.UTF-8'
+        return int(exitcode)
 
     _os_configdir = os.path.join(modules_location(), 'config')
     _os_ex_fname = os.path.join(_os_configdir, local_config['EXCLUSIONS']['EX_FILENAME'])
