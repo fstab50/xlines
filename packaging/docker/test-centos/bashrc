@@ -76,6 +76,8 @@ if [ -f /etc/bashrc ]; then
 	. /etc/bashrc
 fi
 
+# language (required for unicode chars)
+export LANG=en_US.UTF-8
 
 # cheat
 export CHEAT_EDITOR="/usr/bin/vim"

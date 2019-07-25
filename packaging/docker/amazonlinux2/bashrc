@@ -140,13 +140,15 @@ if [ -f /etc/bashrc ]; then
 	. /etc/bashrc
 fi
 
+# language (required for unicode chars)
+export LANG=en_US.UTF-8
 
 # cheat
 export CHEAT_EDITOR="/usr/bin/vim"
 export CHEATCOLORS=true
 
 # display motd
-motd 
+motd
 
 # AWS Marketplace Owner IDs
 export UBUNTU=099720109477
@@ -195,7 +197,6 @@ export PATH=$PATH:$HOME/.local/bin
 export PATH=$PATH:$HOME/bin
 export PATH=$PATH:$EC2_REPO
 export PATH=$PATH:$PYTHON
-export PATH=$PATH:$HOME/git/gcreds
 
 
 #-------------------------------------------------------------------------------

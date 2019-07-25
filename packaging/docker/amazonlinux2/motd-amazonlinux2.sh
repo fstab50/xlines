@@ -34,7 +34,7 @@ BOLD=`tput bold`
 UNBOLD=`tput sgr0`
 
 echo ""
-echo -e "${reset}====================================================================${reset}" | indent02
+echo -e "${reset}========================================================================${reset}" | indent02
 echo ""
 echo  "       $W HOST   : ${BOLD}${blue}Docker $HOSTNAME${reset}${UNBOLD} "
 echo  "       $R ARCH   : ${cyan}$ARCH${reset}        "
@@ -44,7 +44,7 @@ echo  "       $R Uptime : ${cyan}$UTIME${reset}       "
 echo ""
 sh "$CONFIG_DIR/loadavg-flat-layout.sh"  "C" 8 8; echo -e "${orange}${BOLD}"
 echo -e "       "Amazon Linux" "$ID | figlet -f small
-echo  -e "${reset}====================================================================${reset}" | indent02
+echo  -e "${reset}========================================================================${reset}" | indent02
 echo ""
 
 
