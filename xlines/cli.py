@@ -276,7 +276,7 @@ def precheck(user_exfiles, user_exdirs, debug):
     _os_dir_fname = os.path.join(_os_configdir, local_config['EXCLUSIONS']['EX_DIR_FILENAME'])
     _config_dir = local_config['CONFIG']['CONFIG_DIR']
     language = set_environment() or 'undefined'
-    _environment_setup = 'success' if 'UTF-8' in language else 'fail'
+    _environment_setup = 'fail' if 'UTF-8' in language else 'success'
 
     if debug:
         tab = '\t'.expandtabs(8)
