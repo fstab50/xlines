@@ -120,7 +120,7 @@ builddeb: setup-venv clean-version ## Build Debian distribution (.deb) os packag
 
 .PHONY: buildrpm-rhel
 buildrpm-rhel: clean-version artifacts   ## Build Redhat distribution (.rpm) os package
-	bash $(SCRIPTS)/build-rhel-centos.sh
+	bash $(SCRIPTS)/buildrpm-rhel.sh
 
 
 .PHONY: buildrpm-aml
