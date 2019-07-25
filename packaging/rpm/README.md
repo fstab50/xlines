@@ -1,8 +1,23 @@
+* * *
 # RPM Construction README
+* * *
+## Linux Distribution Targets
+
+* Redhat Enterprise Linux 7
+* Redhat Enterprise Linux 8
+* CentOS 7
+* CentOS 8
 
 * * *
+## Contents
 
-# Steps
+* Docker build artifacts
+* Injected into container @ runtime
+* Changing, or modifiable assets
+* Unchanging, static assets part of the Docker container build process (../docker)
+
+* * *
+## Proceddural Steps
 
 **(1)** Create build directory and tgz archive:
 
@@ -98,4 +113,4 @@ $ rpmbuild -ba SPECS/xlines.spec
 
 # References
 
-* https://tecadmin.net/create-rpm-of-your-own-script-in-centosredhat/
+* buildpy project, https://bitbucket.org/blakeca00/buildpython3
