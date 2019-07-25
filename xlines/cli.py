@@ -266,11 +266,10 @@ def precheck(user_exfiles, user_exdirs, debug):
     """
     def set_environment():
         exitcode = 1
-        if not os.getenv('LANG'):
+        if os.getenv('LANG') is None:
             lanaguge =  'export LANG=en_US.UTF-8'
         elif 'UTF-8' not in subprocess.getoutput('echo $LANG'):
             language =  'export LANG=$LANG.UTF-8'
-        exitcode = subprocess.getoutput(f'. {iloc}/language.bash; echo $?')
         return int(exitcode)
 
     _os_configdir = os.path.join(modules_location(), 'config')
