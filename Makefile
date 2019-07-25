@@ -121,7 +121,7 @@ builddeb: setup-venv clean-version ## Build Debian distribution (.deb) os packag
 
 .PHONY: buildrpm-rhel
 buildrpm-rhel: clean-version artifacts   ## Build Redhat distribution (.rpm) os package
-if [ "$(_redhat_sys)" = "CentOS" ]; then
+	if [ "$(_redhat_sys)" = "CentOS" ]; then
 	$(YUM_CALL) install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm;
 	$(YUM_CALL) -y update && sudo sed -i '/env_reset/d' /etc/sudoers;
 	$(YUM_CALL) -y install epel-release which;
@@ -130,12 +130,13 @@ if [ "$(_redhat_sys)" = "CentOS" ]; then
 	sudo cp -r /usr/local/lib/python3.*/site-packages/setuptools* /usr/lib/python3.*/site-packages/
 	sudo cp -r /usr/local/lib/python3.*/site-packages/pkg_resources* /usr/lib/python3.*/site-packages/
 	$(PYTHON3_PATH) setup_rpm.py bdist_rpm --requires=$(RHEL_REQUIRES) --python='/usr/bin/python3' --post-install='scripts/rpm_postinstall.sh'
-else
+	else $(MAKE) exittarget; fi
+
+
 .PHONY: exittarget
 exittarget:
 	@echo "Redhat-based Linux not detected. Exit."
 	exit 1
-fi;
 
 
 .PHONY: buildrpm-aml
