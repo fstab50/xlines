@@ -287,9 +287,7 @@ def precheck(user_exfiles, user_exdirs, debug):
         stdout_message(f'Environment setup status: {_environment_setup}')
 
         if _environment_setup is 'fail':
-            stdout_message(
-                'Add the following code to your .bashrc file: {}'.format(bdwt + language + rst)
-            )
+            stdout_message('Add the following code to your .bashrc file: {}'.format(language))
 
     try:
         # check if exists; copy
