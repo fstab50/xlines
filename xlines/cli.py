@@ -276,11 +276,11 @@ def precheck(user_exfiles, user_exdirs, debug):
     _os_ex_fname = os.path.join(_os_configdir, local_config['EXCLUSIONS']['EX_FILENAME'])
     _os_dir_fname = os.path.join(_os_configdir, local_config['EXCLUSIONS']['EX_DIR_FILENAME'])
     _config_dir = local_config['CONFIG']['CONFIG_DIR']
-    language = set_environment()
-    _environment_setup = 'fail' if 'UTF-8' in language else 'success'
+    _language = set_environment()
+    _environment_setup = 'fail' if 'UTF-8' in _language else 'success'
 
     if debug:
-        tab = '\t'.expandtabs(8)
+        tab = '\t'.expandtabs(16)
         stdout_message(f'_os_configdir: {_os_configdir}: system py modules location', 'DBUG')
         stdout_message(f'_os_ex_fname: {_os_ex_fname}: system exclusions.list path', 'DBUG')
         stdout_message(f'_os_dir_fname: {_os_dir_fname}: system directories.list file path', 'DBUG')
@@ -288,7 +288,7 @@ def precheck(user_exfiles, user_exdirs, debug):
         stdout_message(f'Environment setup status: {_environment_setup}')
 
         if _environment_setup is 'fail':
-            stdout_message('Add the following code to your .bashrc file: {}'.format(language))
+            stdout_message('Add the following code to your .bashrc file:\n\n{}{}'.format(tab, _language))
 
     try:
         # check if exists; copy
