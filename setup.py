@@ -45,6 +45,12 @@ _ex_dirs_fname = 'directories.list'
 _comp_fname = 'xlines-completion.bash'
 
 
+def _git_root():
+    """Returns root directory of git repository"""
+    cmd = 'git rev-parse --show-toplevel 2>/dev/null'
+    return subprocess.getoutput(cmd).strip()
+
+
 def _root_user():
     """
     Checks localhost root or sudo access.  Returns bool
@@ -77,13 +83,9 @@ def create_artifact(object_path, type):
         os.makedirs(object_path)
 
 
-def module_dir():
-    """Filsystem location of Python3 modules"""
-    bin_path = which('python3.6') or which('python3.7')
-    bin = bin_path.split('/')[-1]
-    if 'local' in bin:
-        return '/usr/local/lib/' + bin + '/site-packages'
-    return '/usr/lib/' + bin + '/site-packages'
+def _install_root():
+    """Filsystem installed location of program modules"""
+    return os.path.abspath(os.path.dirname(xlines.common.__file__))
 
 
 def os_parityPath(path):
@@ -140,9 +142,9 @@ class PostInstall(install):
         """
         if self.valid_os_shell():
 
-            completion_file = user_home() + '/.bash_completion'
-            completion_dir = user_home() + '/.bash_completion.d'
-            config_dir = user_home() + '/.config/' + _project
+            completion_file = os.path.join(user_home(), '.bash_completion')
+            completion_dir = os.path.join(user_home(), '.bash_completion.d')
+            config_dir = os.path.join(user_home(), '.config', _project)
 
             if not os.path.exists(os_parityPath(completion_file)):
                 create_artifact(os_parityPath(completion_file), 'file')
@@ -155,20 +157,20 @@ class PostInstall(install):
 
             # bash_completion; (overwrite if exists)
             copyfile(
-                os_parityPath('bash' + '/' + _comp_fname),
-                os_parityPath(completion_dir + '/' + _comp_fname)
+                os_parityPath(os.path.join('bash', _comp_fname)),
+                os_parityPath(os.path.join(completion_dir, _comp_fname))
             )
             # configuration files: excluded file types
-            if not os.path.exists(os_parityPath(config_dir + '/' + _ex_fname)):
+            if not os.path.exists(os_parityPath(os.path.join(config_dir, _ex_fname))):
                 copyfile(
-                    os_parityPath('config' + '/' + _ex_fname),
-                    os_parityPath(config_dir + '/' + _ex_fname)
+                    os_parityPath(os.path.join('config', _ex_fname)),
+                    os_parityPath(os.path.join(config_dir, _ex_fname))
                 )
             # configuration files: excluded directories
-            if not os.path.exists(os_parityPath(config_dir + '/' + _ex_dirs_fname)):
+            if not os.path.exists(os_parityPath(os.path.join(config_dir, _ex_dirs_fname))):
                 copyfile(
-                    os_parityPath('config' + '/' + _ex_dirs_fname),
-                    os_parityPath(config_dir + '/' + _ex_dirs_fname)
+                    os_parityPath(os.path.join('config', _ex_dirs_fname)),
+                    os_parityPath(os.path.join(config_dir, _ex_dirs_fname))
                 )
         install.run(self)
 
@@ -211,7 +213,7 @@ class PostInstallRoot(install):
         if self.valid_os_shell():
 
             completion_dir = '/etc/bash_completion.d'
-            config_dir = module_dir() + _project + '/config'
+            config_dir = os.path.join(__install_root(), 'config')
 
             if not os.path.exists(os_parityPath(config_dir)):
                 create_artifact(os_parityPath(config_dir), 'dir')
@@ -220,20 +222,20 @@ class PostInstallRoot(install):
 
             # bash_completion; (overwrite if exists)
             copyfile(
-                os_parityPath('bash' + '/' + _comp_fname),
-                os_parityPath(completion_dir + '/' + _comp_fname)
+                os_parityPath(os.path.join('bash', _comp_fname)),
+                os_parityPath(os.path.join(completion_dir, _comp_fname))
             )
             # configuration files: excluded file types
-            if not os.path.exists(os_parityPath(config_dir + '/' + _ex_fname)):
+            if not os.path.exists(os_parityPath(os.path.join(config_dir,  _ex_fname))):
                 copyfile(
-                    os_parityPath('config' + '/' + _ex_fname),
-                    os_parityPath(config_dir + '/' + _ex_fname)
+                    os_parityPath(os.path.join('config', _ex_fname)),
+                    os_parityPath(os.path.join(config_dir, _ex_fname))
                 )
             # configuration files: excluded directories
-            if not os.path.exists(os_parityPath(config_dir + '/' + _ex_dirs_fname)):
+            if not os.path.exists(os_parityPath(os.path.join(config_dir, _ex_dirs_fname))):
                 copyfile(
-                    os_parityPath('config' + '/' + _ex_dirs_fname),
-                    os_parityPath(config_dir + '/' + _ex_dirs_fname)
+                    os_parityPath(os.path.join('config', _ex_dirs_fname)),
+                    os_parityPath(os.path.join(config_dir, _ex_dirs_fname))
                 )
         install.run(self)
 
@@ -307,15 +309,15 @@ if _root_user():
         data_files=[
             (
                 os.path.join('/etc/bash_completion.d'),
-                [os.path.join('bash/', _comp_fname)]
+                [os.path.join('bash', _comp_fname)]
             ),
             (
-                os.path.join(module_dir(), _project, '/config'),
-                [os.path.join('config/', _ex_fname)]
+                os.path.join(_install_root(), 'config'),
+                [os.path.join('config', _ex_fname)]
             ),
             (
-                os.path.join(module_dir(), _project, '/config'),
-                [os.path.join('config/', _ex_dirs_fname)]
+                os.path.join(_install_root(), 'config'),
+                [os.path.join('config', _ex_dirs_fname)]
             )
         ],
         entry_points={
@@ -358,7 +360,11 @@ else:
         data_files=[
             (
                 os.path.join(user_home(), '.bash_completion.d'),
-                ['bash/' + _comp_fname]
+                [os.path.join('bash', _comp_fname)]
+            ),
+            (
+                os.path.join(_install_root(), 'config'),
+                [os.path.join('config', _ex_fname), os.path.join('config', _ex_dirs_fname)]
             ),
             (
                 os.path.join(user_home(), '.config', _project),

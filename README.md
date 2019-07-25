@@ -7,7 +7,7 @@
 
 Count the number of lines of text in a code project (or anything else)
 
-**Version**: 0.7.4
+**Version**: 0.7.5
 
 * * *
 
@@ -72,7 +72,7 @@ To display the help menu:
     $ xlines --configure
 ```
 
-[![toc](./assets/configure_toc.png)](http://images.awspros.world/xlines/configure_toc.png)
+[![toc](./assets/configure_toc.png)](http://images.awspros.world/xlines/configure_toc.png)&nbsp;
 
 
 Option "A" (shown below) allows addition of file types to be excluded (skipped) from line totals
@@ -82,7 +82,7 @@ Option "A" (shown below) allows addition of file types to be excluded (skipped) 
 
 Option "B" (shown below) allows deletion of file types to be excluded so that a specific type of file can again be included in total line counts:
 
-[![option b](./assets/configure_b.png)](http://images.awspros.world/xlines/configure_b.png)
+[![option b](./assets/configure_b.png)](http://images.awspros.world/xlines/configure_b.png)&nbsp;
 
 
 Option "C" (shown below) allows user-customization of files highlighted for containing a large number of lines of text:

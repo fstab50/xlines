@@ -4,11 +4,13 @@ Summary.
     Configuration Module -- configure run time parameters & exclusions
 
 """
+
 import os
 import sys
 import inspect
 import logging
 from time import sleep
+from xlines.exclusions import ProcessExclusions
 from xlines.usermessage import stdout_message
 from xlines.common import terminal_size
 from xlines.colormap import ColorMap
@@ -101,9 +103,8 @@ def display_exclusions(expath, exdirpath, offset_spaces=default_width):
 
     try:
 
-        if os.path.exists(expath):
-            with open(expath) as f1:
-                exclusions = [x.strip() for x in f1.readlines()]
+        ex = ProcessExclusions(expath)
+        exclusions = ex.exclusions
 
         stdout_message(message='File types excluded from line counts:', indent=offset_spaces + adj)
 
@@ -135,13 +136,12 @@ def main_menupage(expath, exdirpath):
     def menu():
         border = bbl
         icolor = bbl
-        bar = border + '''
-        ________________________________________________________________________________
-        '''
+        bar = '\n' + ('_' * 80) + '\n'
+
         pattern_width = len(bar)
         width, srow = _init_screen()
         offset = '\t'.expandtabs(int((width / 2) - (pattern_width / 2)))
-        _menu = (bar + rst + '''\n\n
+        _menu = (border + bar + rst + '''\n\n
             ''' + bdwt + PACKAGE + rst + ''' configuration main menu:\n\n
                   ''' + icolor + 'a' + rst + ''')  Add file type to exclusion list\n\n
                   ''' + icolor + 'b' + rst + ''')  Remove file type from exclusion list\n\n
@@ -153,11 +153,11 @@ def main_menupage(expath, exdirpath):
         return offset, srow
 
     loop = True
-    tab8 = '\t'.expandtabs(8)
+    tab1 = '\t'.expandtabs(1)
 
     while loop:
         offset, verticalstart = menu()
-        answer = input('\n{}{}Choose operation [quit]: '.format(offset, tab8)).lower()
+        answer = input('\n{}{}Choose operation [quit]: '.format(offset, tab1)).lower()
         sys.stdout.write('\n')
 
         if not answer or answer == 'd':
@@ -182,6 +182,7 @@ def _configure_add(expath, exdirpath, startpt):
     Returns:
         Success | Failure, TYPE: bool
     """
+    add_list = None
     tab4 = '\t'.expandtabs(4)
     loop = True
     adj = 4
@@ -189,8 +190,8 @@ def _configure_add(expath, exdirpath, startpt):
 
     try:
 
-        with open(expath) as f1:
-            exclusions = [x.strip() for x in f1.readlines()]
+        ex = ProcessExclusions(expath)
+        exclusions = ex.exclusions
 
         while loop:
             width = _init_screen(starting_row=startpt + vert_adj)
@@ -214,9 +215,9 @@ def _configure_add(expath, exdirpath, startpt):
                 # add new extensions to existing
                 exclusions.extend([x if x.startswith('.') else '.' + x for x in add_list])
 
-                # write out new exclusions config file
-                with open(expath, 'w') as f2:
-                    f2.writelines([x + '\n' for x in exclusions])
+            # exit loop; write out new exclusions config file
+            with open(expath, 'w') as f2:
+                f2.writelines([x + '\n' for x in exclusions])
 
     except OSError:
         stdout_message(
@@ -347,7 +348,7 @@ def _configure_hicount(expath, exdirpath, startpt):
     loop = True
     adj = 12
     vert_adj = 2
-    local_linecount_file = local_config['CONFIG']['COUNT_HI_THRESHOLD_FILEPATH']
+    local_linecount_file = local_config['CONFIG']['HI_THRESHOLD_FILEPATH']
 
     try:
         width = _init_screen(starting_row=startpt + vert_adj)

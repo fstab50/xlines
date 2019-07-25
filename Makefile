@@ -1,6 +1,6 @@
 #---------------------------------------------------------------------------------------#
 #                                                                                       #
-#	 - Makefile, version 1.7.5                                                          #
+#	 - Makefile, version 1.7.6                                                          #
 #	 - PROJECT:  xlines                                                                 #
 # 	 - copyright, Blake Huber.  All rights reserved.                                    #
 #                                                                                       #
@@ -29,7 +29,6 @@ AML_REQUIRES = 'python3,python3-pip,python3-setuptools,bash-completion,which'
 PRE_SCRIPT = $(SCRIPTS)/rpm_preinstall.py
 POST_SCRIPT = $(SCRIPTS)/rpm_postinstall.py
 YUM_CALL = sudo $(shell which yum)
-ALIEN_CALL = sudo $(shell which alien)
 PIP3_CALL = $(shell which pip3)
 
 
@@ -66,10 +65,7 @@ $(VENV_DIR):    ## Create and activiate python virtual package environment
 
 .PHONY: artifacts
 artifacts:	  ## Generate documentation build artifacts (*.rst)
-	if [ $(shell $(shell rpm -qi epel-release) | grep -i not) ]; then \
-	$(YUM_CALL) install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm; \
-	$(YUM_CALL) -y update; fi
-	$(YUM_CALL) install -y pandoc
+	. $(VENV_DIR)/bin/activate  &&  $(PIP_CALL) install -y pandoc; \
 	$(PANDOC_CALL) --from=markdown --to=rst README.md --output=README.rst
 
 
@@ -91,7 +87,7 @@ test-complexity:  setup-venv  ## Run pytest unittests; generate McCabe Complexit
 
 
 .PHONY: test-pdb
-test-pdb:  setup-venv  ## Run pytest unittests; generate McCabe Complexity Report
+test-pdb:  setup-venv  ## Run pytest unittests with debugging output on
 	bash $(CUR_DIR)/scripts/make-test.sh  --package-path $(MODULE_PATH) --pdb
 
 
@@ -108,33 +104,27 @@ docs: clean setup-venv    ## Generate sphinx documentation
 
 
 .PHONY: build
-build: pre-build setup-venv   ## Build dist, increment version || force version (VERSION=X.Y)
+build: pre-build setup-venv artifacts  ## Build dist, increment version || force version (VERSION=X.Y)
 	if [ $(VERSION) ]; then bash $(SCRIPTS)/version_update.sh $(VERSION); \
 	else bash $(SCRIPTS)/version_update.sh; fi && . $(VENV_DIR)/bin/activate && \
 	cd $(CUR_DIR) && $(PYTHON3_PATH) setup.py sdist
 
 
 .PHONY: builddeb
-builddeb:     ## Build Debian distribution (.deb) os package
-	@echo "Building Debian package format of $(PROJECT)"; \
-	$(YUM_CALL) install -y epel-release
-	$(YUM_CALL) install -y alien
-	$(ALIEN_CALL) --to-deb dist/xlines-*.noarch.rpm
+builddeb: setup-venv clean-version ## Build Debian distribution (.deb) os package
+	@echo "Building Debian package format of $(PROJECT)";
+	if [ $(VERSION) ]; then . $(VENV_DIR)/bin/activate && \
+	$(PYTHON3_PATH) $(SCRIPT_DIR)/builddeb.py --build --set-version $(VERSION); \
+	else cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && $(PYTHON3_PATH) $(SCRIPT_DIR)/builddeb.py --build; fi
 
 
 .PHONY: buildrpm-rhel
-buildrpm-rhel:  artifacts   ## Build Redhat distribution (.rpm) os package
-	sudo sed -i '/env_reset/d' /etc/sudoers;
-	$(YUM_CALL) -y install epel-release which
-	$(YUM_CALL) -y install python36 python36-pip python36-setuptools python36-devel
-	sudo -H $(PIP3_CALL) install -U pip setuptools
-	sudo cp -r /usr/local/lib/python3.*/site-packages/setuptools* /usr/lib/python3.*/site-packages/
-	sudo cp -r /usr/local/lib/python3.*/site-packages/pkg_resources* /usr/lib/python3.*/site-packages/
-	$(PYTHON3_PATH) setup_rpm.py bdist_rpm --requires=$(RHEL_REQUIRES) --python='/usr/bin/python3' --post-install='scripts/rpm_postinstall.sh'
+buildrpm-rhel: clean build artifacts   ## Build Redhat distribution (.rpm) os package
+	bash $(SCRIPTS)/buildrpm-rhel.sh
 
 
 .PHONY: buildrpm-aml
-buildrpm-aml:  artifacts  ## Build Amazon Linux 2 distribution (.rpm) os package
+buildrpm-aml: clean-version artifacts  ## Build Amazon Linux 2 distribution (.rpm) os package
 	$(YUM_CALL) -y install python3 python3-devel python3-pip python3-setuptools which sudo rpm-build
 	sudo -H $(PIP3_CALL) install -U pip setuptools pygments
 	cp -r /usr/local/lib64/python3.*/site-packages/Pygments*  .
@@ -205,12 +195,26 @@ help:   ## Print help index
 .PHONY: clean-docs
 clean-docs:    ## Remove build artifacts for documentation only
 	@echo "Clean docs build directory"
-	if [ -e $(VENV_DIR) ]; then . $(VENV_DIR)/bin/activate && \
-	cd $(DOC_PATH) && $(MAKE) clean || true; fi
+	cd $(DOC_PATH) && $(VENV_DIR)/bin/activate && $(MAKE) clean || true
+
+
+.PHONY: clean-version
+clean-version:    ## Remove build artifacts for documentation only
+	@echo "RESET version to committed version num"; \
+	$(GIT) checkout $(VERSION_FILE);
+
+
+.PHONY: clean-pkgbuild
+clean-pkgbuild: clean-version   ## Remove build artifacts for documentation only
+	@echo "Clean post build package assempbly artifacts"
+	sudo rm -rf $(CUR_DIR)/.pybuild || true
+	sudo rm -rf $(CUR_DIR)/*.egg* || true
+	sudo rm -fr debian/.debhelper debian/files debian/xlines.postinst.debhelper
+	sudo rm -fr debian/xlines.prerm.debhelper debian/xlines.substvars debian/xlines
 
 
 .PHONY: clean
-clean:  clean-docs  ## Remove all build artifacts generated by make
+clean: clean-docs clean-version ## Remove all build artifacts generated by make
 	@echo "Clean project directories"
 	rm -rf $(VENV_DIR) || true
 	rm -rf $(CUR_DIR)/dist || true

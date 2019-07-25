@@ -1,0 +1,11 @@
+Package: xlines
+Version: 0.7.4
+Architecture: amd64
+Maintainer: Blake Huber <blakeca00@gmail.com>
+Installed-Size: 150
+Pre-Depends: dpkg (>= 1.16.1), python3.6-minimal | python3.7-minimal
+Depends: python3-pygments, python3:any (>= 3.3.2-2~)
+Section: python
+Priority: extra
+Description: Count the number of lines of code in a project
+ Count the number of lines of code in a project
