@@ -413,6 +413,6 @@ def mainmenu_return(offset):
     """Return control to configuration main menu"""
     tab = '\t'.expandtabs(17)
     answer = input(f'{offset}{tab}Return to main menu [enter]: ')
-    if not answer or answer in ('yes', 'Yes'):
+    if not answer or answer.lower() in ('yes', 'y'):
         return True
     return False

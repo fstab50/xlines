@@ -27,7 +27,7 @@ VERSION_FILE = $(CUR_DIR)/$(PROJECT)/_version.py
 RHEL_REQUIRES = 'python36,python36-pip,python36-setuptools,python36-pygments,bash-completion'
 AML_REQUIRES = 'python3,python3-pip,python3-setuptools,bash-completion,which'
 PRE_SCRIPT = $(SCRIPTS)/rpm_preinstall.py
-POST_SCRIPT = $(SCRIPTS)/rpm_postinstall.py
+_POSTINSTALL = $(CUR_DIR)/packaging/rpm/amzn2_postinstall.sh
 YUM_CALL = sudo $(shell which yum)
 PIP3_CALL = $(shell which pip3)
 
@@ -131,7 +131,7 @@ buildrpm-aml: clean-version artifacts  ## Build Amazon Linux 2 distribution (.rp
 	cp -r /usr/local/lib64/python3.*/site-packages/pygments*  .
 	sudo cp -r /usr/local/lib/python3.*/site-packages/setuptools* /usr/lib/python3.*/site-packages/
 	sudo cp -r /usr/local/lib/python3.*/site-packages/pkg_resources* /usr/lib/python3.*/site-packages/
-	$(PYTHON3_PATH) setup_rpm.py bdist_rpm --requires=$(AML_REQUIRES) --python='/usr/bin/python3'
+	$(PYTHON3_PATH) setup_rpm.py bdist_rpm --requires=$(AML_REQUIRES) --python='/usr/bin/python3' --post-install=$(_POSTINSTALL)
 	# Fails:  pygments must be installed in /usr/local/lib64/python3.*/site-packages
 	# 		  either via postinstall script pip3 install or bundled and deployed specific location
 
