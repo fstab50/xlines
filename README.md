@@ -229,20 +229,9 @@ The easiest way to install **xlines** on redhat-based Linux distribution Amazon 
 
 4. **IMPORTANT**: Prior to installing **xlines**, verify the python3 version installed.  
 
-    * If Python 3.7 is installed, _you must uninstall it and install Python 3.6_.  
+    * If Python 3.6 is installed, _installing xlines will install Amazon Linux 2 base python3, which is Python 3.7_.  
     * This change should not have any effect on the OS support applications themselves.
     * You should evaluate the small chance that there is a potential effect on custom applications running on the machine.
-
-    ```
-    $ python3 --version
-    ```
-    ```
-    $ Python 3.7.3
-    ```
-    If Python 3.6.x is installed, or no Python 3.x is installed, continue with step 5 below.
-
-    ```
-    $ sudo yum erase -y python3 python3-libs
 
 
 5. Install **xlines** os package
@@ -266,6 +255,14 @@ The easiest way to install **xlines** on redhat-based Linux distribution Amazon 
     ```
 
     [![rpm-install5](./assets/rpm-install-5.png)](http://images.awspros.world/xlines/rpm-install-5.png)
+
+    A check of python3 should point to Python 3.7:
+    ```
+    $ python3 --version
+    ```
+    ```
+    $ Python 3.7.X
+    ```
 
 --
 
