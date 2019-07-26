@@ -59,8 +59,8 @@ RUN yum -y install figlet
 RUN yum -y update; yum clean all
 
 # install python3.7 (requires epel)
-RUN yum -y install python3 python3-pip python3-setuptools
-RUN pip3 install -U pip setuptools
+#RUN yum -y install python3 python3-pip python3-setuptools
+#RUN pip3 install -U pip setuptools
 
 # mount volume here to cp completed rpm to on the host
 RUN mkdir /mnt/rpm

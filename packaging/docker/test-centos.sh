@@ -22,7 +22,7 @@ function container_started(){
     ##  check container status
     ##
     if [[ "$(docker ps | grep $container 2>/dev/null)" ]]; then
-        return 1    # scontainer running
+        return 1    # container running
     else
         return 0    # container stopped
     fi
