@@ -380,30 +380,82 @@ function _xlines_completions(){
     commands_options=$(echo ${commands}${options})
 
 
-    if [[ "$(echo "${COMP_WORDS[@]}" | grep '\-\-sum' 2>/dev/null)" ]] || \
-       [[ "$(echo "${COMP_WORDS[@]}" | grep '\-\-multiprocess' 2>/dev/null)" ]] || \
+    if [[ "$(echo "${COMP_WORDS[@]}" | grep '\-\-sum' 2>/dev/null)" ]] && \
+       [[ ! "$(echo "${COMP_WORDS[@]}" | grep '\-\-multiprocess' 2>/dev/null)" ]] && \
+       [[ ! "$(echo "${COMP_WORDS[@]}" | grep '\-\-no-whitespace' 2>/dev/null)" ]]; then
+
+        case "$numargs" in
+            #6 | 7 | 8 | 9 | 1[0-9])
+            #    compword_autofilter COMP_WORDS[@]
+            #    ;;
+
+            6 | 7 | 8 | 9 | 1[0-9])
+                ##
+                ##  Return compreply with any of the comp_words that
+                ##  not already present on the command line
+                ##
+                declare -a horsemen
+                horsemen=(  '--multiprocess' '--no-whitespace' '--sum' '--debug' )
+                subcommands=$(_parse_compwords COMP_WORDS[@] horsemen[@])
+                numargs=$(_numargs "$subcommands")
+                if [ "$cur" = "" ] || [ "$cur" = "-" ] || [ "$cur" = "--" ] && (( "$numargs" > 2 )); then
+                    _complete_4_horsemen_subcommands "${subcommands}"
+                else
+                    COMPREPLY=( $(compgen -W "${subcommands}" -- ${cur}) )
+                fi
+                return 0
+            ;;
+        esac
+
+    elif [[ "$(echo "${COMP_WORDS[@]}" | grep '\-\-sum' 2>/dev/null)" ]] && \
+       [[ "$(echo "${COMP_WORDS[@]}" | grep '\-\-multiprocess' 2>/dev/null)" ]] && \
+       [[ ! "$(echo "${COMP_WORDS[@]}" | grep '\-\-no-whitespace' 2>/dev/null)" ]]; then
+
+        case "$numargs" in
+            [8-9] | 1[0-9])
+                ##
+                ##  Return compreply with any of the comp_words that
+                ##  not already present on the command line
+                ##
+                declare -a horsemen
+                horsemen=(  '--multiprocess' '--no-whitespace' '--sum' '--debug' )
+                subcommands=$(_parse_compwords COMP_WORDS[@] horsemen[@])
+                numargs=$(_numargs "$subcommands")
+                if [ "$cur" = "" ] || [ "$cur" = "-" ] || [ "$cur" = "--" ] && (( "$numargs" > 2 )); then
+                    _complete_4_horsemen_subcommands "${subcommands}"
+                else
+                    COMPREPLY=( $(compgen -W "${subcommands}" -- ${cur}) )
+                fi
+                return 0
+                ;;
+        esac
+
+    elif [[ "$(echo "${COMP_WORDS[@]}" | grep '\-\-sum' 2>/dev/null)" ]] && \
+       [[ "$(echo "${COMP_WORDS[@]}" | grep '\-\-multiprocess' 2>/dev/null)" ]] && \
        [[ "$(echo "${COMP_WORDS[@]}" | grep '\-\-no-whitespace' 2>/dev/null)" ]]; then
-        ##
-        ##  Return compreply with any of the comp_words that
-        ##  not already present on the command line
-        ##
-        declare -a horsemen
-        horsemen=(  '--multiprocess' '--no-whitespace' '--sum' '--debug' )
-        subcommands=$(_parse_compwords COMP_WORDS[@] horsemen[@])
-        numargs=$(_numargs "$subcommands")
 
-        if [ "$cur" = "-" ] || [ "$cur" = "--" ] && (( "$numargs" > 2 )); then
-            _complete_4_horsemen_subcommands "${subcommands}"
-        else
-            COMPREPLY=( $(compgen -W "${subcommands}" -- ${cur}) )
-        fi
-        return 0
-    fi
+        case "$numargs" in
+            9 | 1[0-9])
+                ##
+                ##  Return compreply with any of the comp_words that
+                ##  not already present on the command line
+                ##
+                declare -a horsemen
+                horsemen=(  '--multiprocess' '--no-whitespace' '--sum' '--debug' )
+                subcommands=$(_parse_compwords COMP_WORDS[@] horsemen[@])
+                numargs=$(_numargs "$subcommands")
+                if [ "$cur" = "" ] || [ "$cur" = "-" ] || [ "$cur" = "--" ] && (( "$numargs" > 2 )); then
+                    _complete_4_horsemen_subcommands "${subcommands}"
+                else
+                    COMPREPLY=( $(compgen -W "${subcommands}" -- ${cur}) )
+                fi
+                return 0
+                ;;
+        esac
 
-    case "${initcmd}" in
-
-        '--sum')
-            if { [ "$cur" = "-" ] || [ "$cur" = "--" ]; } && (( "$numargs" >= 2 )); then
+    elif [[ "$(echo "${COMP_WORDS[@]}" | grep '\-\-sum' 2>/dev/null)" ]]; then
+        case "${cur}" in
+            '--')
                 ##
                 ##  Return compreply with any of the 5 comp_words that
                 ##  not already present on the command line
@@ -412,11 +464,20 @@ function _xlines_completions(){
                 horsemen=(  '--multiprocess' '--no-whitespace' '--sum' '--debug' )
                 subcommands=$(_parse_compwords COMP_WORDS[@] horsemen[@])
                 numargs=$(_numargs "$subcommands")
-                #_complete_4_horsemen_subcommands "${subcommands}"
-                COMPREPLY=( $(compgen -W "${subcommands}" -- ${cur}) )
-            else
-                _pathopt
-            fi
+
+                if [ "$cur" = "" ] || [ "$cur" = "-" ] || [ "$cur" = "--" ] && (( "$numargs" > 2 )); then
+                    _complete_4_horsemen_subcommands "${subcommands}"
+                else
+                    COMPREPLY=( $(compgen -W "${subcommands}" -- ${cur}) )
+                fi
+                return 0
+            ;;
+        esac
+    fi
+    case "${initcmd}" in
+
+        '--sum')
+            _pathopt
             return 0
             ;;
 
