@@ -5,7 +5,7 @@
 #   Target:  test
 #
 
-pkg='xlines'
+PROJECT='xlines'
 ROOT=$(git rev-parse --show-toplevel 2>/dev/null)
 pkg_path=$(cd "$(dirname $0)"; pwd -P)
 CUR_DIR="$ROOT"
@@ -58,7 +58,7 @@ function help_menu(){
 
   ${title}SYNOPSIS${btext}
 
-      $ ${bin}$pkg${reset} -p ${bbc}<${btext}value${bbc}>${btext} ${bbc}[${btext} --complexity ${bbc}|${btext} --coverage ${bbc}|${btext} --mccabe ${bbc}]${btext}
+      $ ${bin}$PROJECT${reset} -p ${bbc}<${btext}value${bbc}>${btext} ${bbc}[${btext} --complexity ${bbc}|${btext} --coverage ${bbc}|${btext} --mccabe ${bbc}]${btext}
 
                         [-r | --root <value>  ]
                         -v | --venv <value>
