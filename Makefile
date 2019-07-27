@@ -92,7 +92,7 @@ test-pdb:  setup-venv  ## Run pytest unittests with debugging output on
 
 
 .PHONY: test-help
-test-help: setup-venv  ## Print runtime options for running pytest unittests
+test-help:   ## Print runtime options for running pytest unittests
 	bash $(CUR_DIR)/scripts/make-test.sh  --help
 
 
