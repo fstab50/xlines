@@ -15,7 +15,7 @@ from xlines.usermessage import stdout_message
 from xlines.common import terminal_size
 from xlines.colormap import ColorMap
 from xlines._version import __version__
-from xlines.statics import PACKAGE, local_config
+from xlines.statics import PACKAGE, local_config, exit_keywords, affirm_keywords
 from xlines.variables import *
 
 logger = logging.getLogger(__version__)
@@ -23,7 +23,7 @@ logger.setLevel(logging.INFO)
 
 cm = ColorMap()
 default_width = 4
-
+exit_keywords =
 
 try:
 
@@ -160,7 +160,7 @@ def main_menupage(expath, exdirpath):
         answer = input('\n{}{}Choose operation [quit]: '.format(offset, tab1)).lower()
         sys.stdout.write('\n')
 
-        if (not answer) or (answer.lower() in ('d', 'quit', 'q', 'exit')):
+        if (not answer) or (answer.lower() in exit_keywords):
             return True
 
         elif answer in ['a', 'b', 'c']:
@@ -413,6 +413,6 @@ def mainmenu_return(offset):
     """Return control to configuration main menu"""
     tab = '\t'.expandtabs(17)
     answer = input(f'{offset}{tab}Return to main menu [enter]: ')
-    if (not answer) or (answer.lower() in ('yes', 'y')) or (answer is True):
+    if (not answer) or (answer.lower() in (affirmative_keywords + exit_keywords)):
         return True
     return False

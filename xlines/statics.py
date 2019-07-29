@@ -72,6 +72,9 @@ else:
     log_dir = os.path.join(user_home, 'logs')
     log_path = os.path.join(log_dir, log_filename)
 
+    # responses
+    exit_keywords = ('d', 'quit', 'q', 'exit', 'true')
+    affirm_keywords = ('yes', 'y', 'true')
 
     seed_config = {
         "PROJECT": {
