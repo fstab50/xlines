@@ -160,7 +160,7 @@ def main_menupage(expath, exdirpath):
         answer = input('\n{}{}Choose operation [quit]: '.format(offset, tab1)).lower()
         sys.stdout.write('\n')
 
-        if not answer or answer == 'd':
+        if (not answer) or (answer.lower() in ('d', 'quit', 'q', 'exit')):
             return True
 
         elif answer in ['a', 'b', 'c']:
