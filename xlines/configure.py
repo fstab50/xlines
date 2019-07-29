@@ -372,7 +372,7 @@ def _configure_hicount(expath, exdirpath, startpt):
                 if not answer:
                     stdout_message(
                             f'High line count threshold remains {threshold}',
-                            prefix='ok',
+                            prefix='INFO',
                             indent=offset_chars + adj
                         )
                     loop = False
