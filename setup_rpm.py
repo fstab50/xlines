@@ -88,6 +88,15 @@ def _install_root():
     return os.path.abspath(os.path.dirname(xlines.common.__file__))
 
 
+def module_dir():
+    """Filsystem location of Python3 modules"""
+    bin_path = which('python3.6') or which('python3.7')
+    bin = bin_path.split('/')[-1]
+    if 'local' in bin:
+        return '/usr/local/lib/' + bin + '/site-packages'
+    return '/usr/lib/' + bin + '/site-packages'
+
+
 def os_parityPath(path):
     """
     Converts unix paths to correct windows equivalents.
@@ -144,7 +153,7 @@ class PostInstallRoot(install):
         if self.valid_os_shell():
 
             completion_dir = '/etc/bash_completion.d'
-            config_dir = os.path.join(__install_root(), 'config')
+            config_dir = os.path.join(module_dir(), 'config')
 
             if not os.path.exists(os_parityPath(config_dir)):
                 create_artifact(os_parityPath(config_dir), 'dir')
@@ -210,11 +219,11 @@ setup(
             [os.path.join('bash', _comp_fname)]
         ),
         (
-            os.path.join(_install_root(), 'config'),
+            os.path.join(module_dir(), 'config'),
             [os.path.join('config', _ex_fname)]
         ),
         (
-            os.path.join(_install_root(), 'config'),
+            os.path.join(module_dir(), 'config'),
             [os.path.join('config', _ex_dirs_fname)]
         )
     ],
