@@ -213,9 +213,6 @@ setup(
     include_package_data=True,
     install_requires=requires,
     python_requires='>=3.6, <4',
-    cmdclass={
-        'install': PostInstallRoot
-    },
     data_files=[
         (
             os.path.join('/etc/bash_completion.d'),
