@@ -1,6 +1,6 @@
 #---------------------------------------------------------------------------------------#
 #                                                                                       #
-#	 - Makefile, version 1.7.6                                                          #
+#	 - Makefile, version 1.8.1                                                          #
 #	 - PROJECT:  xlines                                                                 #
 # 	 - copyright, Blake Huber.  All rights reserved.                                    #
 #                                                                                       #
