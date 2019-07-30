@@ -67,8 +67,6 @@ Type the following to display the available [make targets](https://www.gnu.org/s
     $  make help
 ```
 
-[![make-help](./assets/make-help.png)](http://images.awspros.world/xlines/make-help.png)
-
 <p align="center">
     <a href="http://images.awspros.world/xlines/make-help.png" target="_blank"><img src="./assets/make-help.png">
 </p>
