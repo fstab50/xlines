@@ -104,7 +104,7 @@ docs: clean setup-venv    ## Generate sphinx documentation
 
 
 .PHONY: build
-build: artifacts  ## Build dist, increment version || force version (VERSION=X.Y)
+build: artifacts  ## Build dist artifact and increment version
 	if [ $(VERSION) ]; then bash $(SCRIPTS)/version_update.sh $(VERSION); \
 	else bash $(SCRIPTS)/version_update.sh; fi && . $(VENV_DIR)/bin/activate && \
 	cd $(CUR_DIR) && $(PYTHON3_PATH) setup.py sdist
@@ -189,7 +189,7 @@ help:   ## Print help index
 	@printf "\n\033[0m %-15s\033[0m %-13s\u001b[37;1m%-15s\u001b[0m\n\n" " " "make targets: " $(PROJECT)
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {sub("\\\\n",sprintf("\n%22c"," "), $$2);printf "\033[0m%-2s\033[36m%-20s\033[33m %-8s\033[0m%-5s\n\n"," ", $$1, "-->", $$2}' $(MAKEFILE_LIST)
 	@printf "\u001b[37;0m%-2s\u001b[37;0m%-2s\n\n" " " "$(shell printf "%0.s_" {1..85})"
-	@printf "\u001b[37;1m%-6s\u001b[37;1m%-3s\033[0m %-6s\u001b[44;1m%-9s\u001b[37;0m%-15s\n\n" " " "  make" "deploy-[test|prod] " "VERSION=x.y" " to deploy specific version"
+	@printf "\u001b[37;1m%-7s\u001b[37;1m%-3s\033[0m %-6s\u001b[44;1m%-9s\u001b[37;0m%-15s\n\n" " " "  make" "deploy-[test|prod] " "VERSION=x.y" " to deploy specific version"
 
 
 .PHONY: clean-docs
