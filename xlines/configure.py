@@ -23,7 +23,6 @@ logger.setLevel(logging.INFO)
 
 cm = ColorMap()
 default_width = 4
-exit_keywords =
 
 try:
 
