@@ -50,7 +50,7 @@ Count the number of lines of text in a code project (or anything else)
 
 * * *
 
-## Options
+## Program Options
 
 To display the **xlines** help menu:
 
@@ -58,10 +58,14 @@ To display the **xlines** help menu:
     $ xlines --help
 ```
 
-[![help](./assets/help-menu.png)](http://images.awspros.world/xlines/help-menu.png)
+<p align="center">
+    <a href="http://images.awspros.world/xlines/help-menu.png" target="_blank"><img src="./assets/help-menu.png">
+</p>
 
+* * *
+## Build options
 
-Type the following to display the available [make targets](https://www.gnu.org/software/make) from the root of the project:
+**[GNU Make](https://www.gnu.org/software/make) Targets**.  Type the following to display the available make targets from the root of the project:
 
 ```bash
     $  make help
