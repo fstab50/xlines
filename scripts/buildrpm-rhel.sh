@@ -8,18 +8,6 @@
 #   Copyright 2019, Blake Huber
 #
 
-ROOT=$(_git_root)
-_PYTHON3_PATH=$(which python3)
-_YUM=$(which yum)
-_SED=$(which sed)
-_PIP=$(_pip_exec)
-_POSTINSTALL=${ROOT}/packaging/rpm/rpm_postinstall.sh
-RHEL_REQUIRES='python36,python36-pip,python36-setuptools,python36-pygments,bash-completion'
-
-# colors; functions
-. "$ROOT/scripts/colors.sh"
-. "$ROOT/scripts/std_functions.sh"
-
 
 # --- declarations ------------------------------------------------------------
 
@@ -51,16 +39,35 @@ function export_package(){
     ##
     ##  Copy newly created rpm package out of container
     ##
-    local package="xlines-[0-9].[0-9].[0-9]-[0-9].noarch.rpm"
+    local package
     local external='/mnt/rpm'
 
     cd "$(_git_root)/dist"
+
+    package=$(find . -name "xlines-[0-9].[0-9].[0-9]-[0-9].noarch.rpm")
+
     sudo cp $package $external/$package
     if [[ -f $external/$package ]]; then
         return 0
     fi
     return 1
 }
+
+
+# --- main --------------------------------------------------------------------
+
+
+ROOT=$(_git_root)
+_PYTHON3_PATH=$(which python3)
+_YUM=$(which yum)
+_SED=$(which sed)
+_PIP=$(_pip_exec)
+_POSTINSTALL=${ROOT}/packaging/rpm/rpm_postinstall.sh
+RHEL_REQUIRES='python36,python36-pip,python36-setuptools,python36-pygments,bash-completion'
+
+# colors; functions
+. "$ROOT/scripts/colors.sh"
+. "$ROOT/scripts/std_functions.sh"
 
 
 if lsb_release -sirc | grep -i centos >/dev/null 2>&1; then
@@ -95,7 +102,6 @@ if lsb_release -sirc | grep -i centos >/dev/null 2>&1; then
                                           --python='/usr/bin/python3' \
                                           --post-install=${_POSTINSTALL}
 
-    exit 0
     if export_package; then
         exit 0
     else
