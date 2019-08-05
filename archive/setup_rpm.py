@@ -26,9 +26,8 @@ import subprocess
 from shutil import which
 from shutil import copy2 as copyfile
 from setuptools import setup, find_packages
-from setuptools.command.develop import develop
-from setuptools.command.install import install
 import getpass
+from pathlib import Path
 from codecs import open
 import xlines
 
@@ -43,12 +42,6 @@ _root = os.path.abspath(os.path.dirname(__file__))
 _ex_fname = 'exclusions.list'
 _ex_dirs_fname = 'directories.list'
 _comp_fname = 'xlines-completion.bash'
-
-
-def _git_root():
-    """Returns root directory of git repository"""
-    cmd = 'git rev-parse --show-toplevel 2>/dev/null'
-    return subprocess.getoutput(cmd).strip()
 
 
 def _root_user():
@@ -83,11 +76,6 @@ def create_artifact(object_path, type):
         os.makedirs(object_path)
 
 
-def _install_root():
-    """Filsystem installed location of program modules"""
-    return os.path.abspath(os.path.dirname(xlines.common.__file__))
-
-
 def module_dir():
     """Filsystem location of Python3 modules"""
     bin_path = which('python3.6') or which('python3.7')
@@ -108,78 +96,6 @@ def os_parityPath(path):
     return path
 
 
-class PostInstallDevelop(develop):
-    """ post-install, development """
-    def run(self):
-        subprocess.check_call("bash scripts/post-install-dev.sh".split())
-        develop.run(self)
-
-
-class PostInstallRoot(install):
-    """
-    Summary.
-
-        Postinstall script to place bash completion artifacts
-        on local filesystem
-
-    """
-    def valid_os_shell(self):
-        """
-        Summary.
-
-            Validates install environment for Linux and Bash shell
-
-        Returns:
-            Success | Failure, TYPE bool
-
-        """
-        if platform.system() == 'Windows':
-            return False
-        elif which('bash'):
-            return True
-        elif 'bash' in subprocess.getoutput('echo $SHELL'):
-            return True
-        return False
-
-    def run(self):
-        """
-        Summary.
-
-            Executes post installation configuration only if correct
-            environment detected
-
-        """
-        # bash shell + root user
-        if self.valid_os_shell():
-
-            completion_dir = '/etc/bash_completion.d'
-            config_dir = os.path.join(module_dir(), 'config')
-
-            if not os.path.exists(os_parityPath(config_dir)):
-                create_artifact(os_parityPath(config_dir), 'dir')
-
-            ## ensure installation of home directory artifacts (data_files) ##
-
-            # bash_completion; (overwrite if exists)
-            copyfile(
-                os_parityPath(os.path.join('bash', _comp_fname)),
-                os_parityPath(os.path.join(completion_dir, _comp_fname))
-            )
-            # configuration files: excluded file types
-            if not os.path.exists(os_parityPath(os.path.join(config_dir,  _ex_fname))):
-                copyfile(
-                    os_parityPath(os.path.join('config', _ex_fname)),
-                    os_parityPath(os.path.join(config_dir, _ex_fname))
-                )
-            # configuration files: excluded directories
-            if not os.path.exists(os_parityPath(os.path.join(config_dir, _ex_dirs_fname))):
-                copyfile(
-                    os_parityPath(os.path.join('config', _ex_dirs_fname)),
-                    os_parityPath(os.path.join(config_dir, _ex_dirs_fname))
-                )
-        install.run(self)
-
-
 def preclean(dst):
     if os.path.exists(dst):
         os.remove(dst)
@@ -189,6 +105,15 @@ def preclean(dst):
 def read(fname):
     basedir = os.path.dirname(sys.argv[0])
     return open(os.path.join(basedir, fname)).read()
+
+
+def sourcefile_content():
+    sourcefile = """
+    for bcfile in ~/.bash_completion.d/* ; do
+        [ -f "$bcfile" ] && . $bcfile
+    done\n
+    """
+    return sourcefile
 
 
 setup(
@@ -202,7 +127,7 @@ setup(
     license='GPL-3.0',
     classifiers=[
         'Topic :: Software Development :: Build Tools',
-        'Development Status :: 4 - Beta',
+        'Development Status :: 3 - Alpha',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
@@ -214,18 +139,9 @@ setup(
     install_requires=requires,
     python_requires='>=3.6, <4',
     data_files=[
-        (
-            os.path.join('/etc/bash_completion.d'),
-            [os.path.join('bash', _comp_fname)]
-        ),
-        (
-            os.path.join(module_dir(), _project, 'config'),
-            [os.path.join('config', _ex_fname)]
-        ),
-        (
-            os.path.join(module_dir(), _project, 'config'),
-            [os.path.join('config', _ex_dirs_fname)]
-        )
+        (os_parityPath('/etc/bash_completion.d'), ['bash/' + _comp_fname]),
+        (os_parityPath(module_dir() + '/' + _project + '/config/'), ['config/' + _ex_fname]),
+        (os_parityPath(module_dir() +  '/' + _project + '/config/'), ['config/' + _ex_dirs_fname])
     ],
     entry_points={
         'console_scripts': [

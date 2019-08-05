@@ -12,14 +12,11 @@ Caller:
 """
 
 from xlines import Colors
-from xlines.variables import *
+from xlines.variables import c, acct, gn, bbl, bbc, bcy, bdcy, bwt, rst
 
 
 c = Colors()
 
-ACCENT = c.ORANGE               # orange accent highlight color
-bdacct = c.BRIGHT_GREEN + c.BOLD      # bold orange
-bdcy = c.CYAN + c.BOLD          # bold blue
 lbrct = bbc + '[ ' + rst        # left bracket
 rbrct = bbc + ' ]' + rst        # right bracket
 vdiv = bbc + ' | ' + rst
@@ -30,21 +27,23 @@ tab6 = '\t'.expandtabs(8).encode('utf-8')
 width = 55      # legend overall width
 
 legend_content = [
-        bdcy + ' o' + rst + '  |  Filesystem object counted (' + bcy + 'cyan' + rst + ')',
-        bdacct + ' o' + rst + '  |  Line count above high ct threshold (' + bdacct + 'green' + rst + ')',
+        bdcy + '==' + rst + '  |  Filesystem object counted (' + bcy + 'cyan' + rst + ')',
+        acct + '==' + rst + '  |  Line count above high ct threshold (' + gn + 'green' + rst + ')',
         bwt + '->' + rst + '  |  Truncated (shortened) file path (' + bwt + 'white' + rst + ')'
     ]
 
+legend_width = 57
+legend_bar_top = ('_' * legend_width) + '\n'
+legend_bar_bottom = ('_' * legend_width)
+
 res = [
-
     ('┌' + '─' * width + '┐').encode('utf-8')
-
 ]
 
 fallback = """
          """ + bbl + 'o' + rst + """  |  Filesystem object counted (""" + bcy + 'cyan' + rst + """)
        ----------------------------------------------------------
-         """ + bdacct + 'o' + rst + """  |  Line count above high ct threshold (""" + acct + 'orange' + rst + """)
+         """ + acct + 'o' + rst + """  |  Line count above high ct threshold (""" + acct + 'green' + rst + """)
        ----------------------------------------------------------
         """ + bwt + '->' + rst + """  |  Truncated (shortened) file path (""" + bwt + 'white' + rst + """)
 """
@@ -77,7 +76,11 @@ def border_map(text_list=legend_content):
 
     except UnicodeEncodeError:
         # if problems handling unicode encoding
-        [print('\t'.expandtabs(12) + x) for x in text_list][0]
+        text_list.insert(0, legend_bar_top)
+        text_list.insert(len(text_list), legend_bar_bottom)
+        print('\t'.expandtabs(8) + text_list[0])
+        [print('\t'.expandtabs(10) + x) for x in text_list[1:-1]][0]
+        print('\t'.expandtabs(8) + text_list[-1])
 
     except Exception:
         # if any utf-8 handling host issues

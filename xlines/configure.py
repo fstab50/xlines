@@ -15,7 +15,7 @@ from xlines.usermessage import stdout_message
 from xlines.common import terminal_size
 from xlines.colormap import ColorMap
 from xlines._version import __version__
-from xlines.statics import PACKAGE, local_config
+from xlines.statics import PACKAGE, local_config, exit_keywords, affirm_keywords
 from xlines.variables import *
 
 logger = logging.getLogger(__version__)
@@ -23,7 +23,6 @@ logger.setLevel(logging.INFO)
 
 cm = ColorMap()
 default_width = 4
-
 
 try:
 
@@ -160,7 +159,7 @@ def main_menupage(expath, exdirpath):
         answer = input('\n{}{}Choose operation [quit]: '.format(offset, tab1)).lower()
         sys.stdout.write('\n')
 
-        if not answer or answer == 'd':
+        if (not answer) or (answer.lower() in exit_keywords):
             return True
 
         elif answer in ['a', 'b', 'c']:
@@ -210,7 +209,7 @@ def _configure_add(expath, exdirpath, startpt):
                 sys.stdout.write('\n')
                 return True
             else:
-                add_list = response.split(',')
+                add_list = [x.strip() for x in response.split(',')]
 
                 # add new extensions to existing
                 exclusions.extend([x if x.startswith('.') else '.' + x for x in add_list])
@@ -237,7 +236,7 @@ def _configure_rewrite(expath, newlist):
     try:
         # write new exclusion list to local disk
         with open(expath, 'w') as f1:
-            list(filter(lambda x: f1.write(x + '\n'), newlist))
+            list(filter(lambda x: f1.write(x.strip() + '\n'), newlist))
 
     except OSError as e:
         fx = inspect.stack()[0][3]
@@ -372,7 +371,7 @@ def _configure_hicount(expath, exdirpath, startpt):
                 if not answer:
                     stdout_message(
                             f'High line count threshold remains {threshold}',
-                            prefix='ok',
+                            prefix='INFO',
                             indent=offset_chars + adj
                         )
                     loop = False
@@ -413,6 +412,6 @@ def mainmenu_return(offset):
     """Return control to configuration main menu"""
     tab = '\t'.expandtabs(17)
     answer = input(f'{offset}{tab}Return to main menu [enter]: ')
-    if not answer or answer in ('yes', 'Yes'):
+    if (not answer) or (answer.lower() in (affirmative_keywords + exit_keywords)):
         return True
     return False

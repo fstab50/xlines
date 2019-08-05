@@ -65,4 +65,10 @@ else
     chown -R $USER:$USER /home/$USER/.config
 fi
 
+# generate bytecode artifacts
+if which py3compile >/dev/null; then
+    py3compile --package xlines
+fi
+
+
 exit 0

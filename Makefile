@@ -1,6 +1,6 @@
 #---------------------------------------------------------------------------------------#
 #                                                                                       #
-#	 - Makefile, version 1.7.6                                                          #
+#	 - Makefile, version 1.8.1                                                          #
 #	 - PROJECT:  xlines                                                                 #
 # 	 - copyright, Blake Huber.  All rights reserved.                                    #
 #                                                                                       #
@@ -27,7 +27,7 @@ VERSION_FILE = $(CUR_DIR)/$(PROJECT)/_version.py
 RHEL_REQUIRES = 'python36,python36-pip,python36-setuptools,python36-pygments,bash-completion'
 AML_REQUIRES = 'python3,python3-pip,python3-setuptools,bash-completion,which'
 PRE_SCRIPT = $(SCRIPTS)/rpm_preinstall.py
-POST_SCRIPT = $(SCRIPTS)/rpm_postinstall.py
+_POSTINSTALL = $(CUR_DIR)/packaging/rpm/amzn2_postinstall.sh
 YUM_CALL = sudo $(shell which yum)
 PIP3_CALL = $(shell which pip3)
 
@@ -57,15 +57,15 @@ pre-build:    ## Remove residual build artifacts
 
 setup-venv: $(VENV_DIR)
 
-$(VENV_DIR):    ## Create and activiate python virtual package environment
+$(VENV_DIR): pre-build  ## Create and activiate python virtual package environment
 	$(PYTHON3_PATH) -m venv $(VENV_DIR)
 	. $(VENV_DIR)/bin/activate && $(PIP_CALL) install -U setuptools pip && \
 	$(PIP_CALL) install -r $(REQUIREMENT)
 
 
 .PHONY: artifacts
-artifacts:	  ## Generate documentation build artifacts (*.rst)
-	. $(VENV_DIR)/bin/activate  &&  $(PIP_CALL) install -y pandoc; \
+artifacts: setup-venv  ## Generate documentation build artifacts (*.rst)
+	. $(VENV_DIR)/bin/activate  &&  $(PIP_CALL) install pandoc && \
 	$(PANDOC_CALL) --from=markdown --to=rst README.md --output=README.rst
 
 
@@ -92,7 +92,7 @@ test-pdb:  setup-venv  ## Run pytest unittests with debugging output on
 
 
 .PHONY: test-help
-test-help: setup-venv  ## Print runtime options for running pytest unittests
+test-help:   ## Print runtime options for running pytest unittests
 	bash $(CUR_DIR)/scripts/make-test.sh  --help
 
 
@@ -104,7 +104,7 @@ docs: clean setup-venv    ## Generate sphinx documentation
 
 
 .PHONY: build
-build: pre-build setup-venv artifacts  ## Build dist, increment version || force version (VERSION=X.Y)
+build: artifacts  ## Build dist artifact and increment version
 	if [ $(VERSION) ]; then bash $(SCRIPTS)/version_update.sh $(VERSION); \
 	else bash $(SCRIPTS)/version_update.sh; fi && . $(VENV_DIR)/bin/activate && \
 	cd $(CUR_DIR) && $(PYTHON3_PATH) setup.py sdist
@@ -119,7 +119,7 @@ builddeb: setup-venv clean-version ## Build Debian distribution (.deb) os packag
 
 
 .PHONY: buildrpm-rhel
-buildrpm-rhel: clean build artifacts   ## Build Redhat distribution (.rpm) os package
+buildrpm-rhel: clean build  ## Build Redhat distribution (.rpm) os package
 	bash $(SCRIPTS)/buildrpm-rhel.sh
 
 
@@ -131,7 +131,7 @@ buildrpm-aml: clean-version artifacts  ## Build Amazon Linux 2 distribution (.rp
 	cp -r /usr/local/lib64/python3.*/site-packages/pygments*  .
 	sudo cp -r /usr/local/lib/python3.*/site-packages/setuptools* /usr/lib/python3.*/site-packages/
 	sudo cp -r /usr/local/lib/python3.*/site-packages/pkg_resources* /usr/lib/python3.*/site-packages/
-	$(PYTHON3_PATH) setup_rpm.py bdist_rpm --requires=$(AML_REQUIRES) --python='/usr/bin/python3'
+	$(PYTHON3_PATH) setup_rpm.py bdist_rpm --requires=$(AML_REQUIRES) --python='/usr/bin/python3' --post-install=$(_POSTINSTALL)
 	# Fails:  pygments must be installed in /usr/local/lib64/python3.*/site-packages
 	# 		  either via postinstall script pip3 install or bundled and deployed specific location
 
@@ -188,8 +188,8 @@ upload-images:   ## Upload README images to Amazon S3
 help:   ## Print help index
 	@printf "\n\033[0m %-15s\033[0m %-13s\u001b[37;1m%-15s\u001b[0m\n\n" " " "make targets: " $(PROJECT)
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {sub("\\\\n",sprintf("\n%22c"," "), $$2);printf "\033[0m%-2s\033[36m%-20s\033[33m %-8s\033[0m%-5s\n\n"," ", $$1, "-->", $$2}' $(MAKEFILE_LIST)
-	@printf "\u001b[37;0m%-2s\u001b[37;0m%-2s\n\n" " " "___________________________________________________________________"
-	@printf "\u001b[37;1m%-3s\u001b[37;1m%-3s\033[0m %-6s\u001b[44;1m%-9s\u001b[37;0m%-15s\n\n" " " "  make" "deploy-[test|prod] " "VERSION=X" " to deploy specific version"
+	@printf "\u001b[37;0m%-2s\u001b[37;0m%-2s\n\n" " " "$(shell printf "%0.s_" {1..85})"
+	@printf "\u001b[37;1m%-7s\u001b[37;1m%-3s\033[0m %-6s\u001b[44;1m%-9s\u001b[37;0m%-15s\n\n" " " "  make" "deploy-[test|prod] " "VERSION=x.y" " to deploy specific version"
 
 
 .PHONY: clean-docs
@@ -199,13 +199,13 @@ clean-docs:    ## Remove build artifacts for documentation only
 
 
 .PHONY: clean-version
-clean-version:    ## Remove build artifacts for documentation only
-	@echo "RESET version to committed version num"; \
+clean-version:    ## Reset version back to committed version number
+	@echo "RESET version to committed version number"; \
 	$(GIT) checkout $(VERSION_FILE);
 
 
 .PHONY: clean-pkgbuild
-clean-pkgbuild: clean-version   ## Remove build artifacts for documentation only
+clean-pkgbuild: clean-version   ## Remove os packaging build artifacts
 	@echo "Clean post build package assempbly artifacts"
 	sudo rm -rf $(CUR_DIR)/.pybuild || true
 	sudo rm -rf $(CUR_DIR)/*.egg* || true
@@ -214,7 +214,7 @@ clean-pkgbuild: clean-version   ## Remove build artifacts for documentation only
 
 
 .PHONY: clean
-clean: clean-docs clean-version ## Remove all build artifacts generated by make
+clean: clean-docs clean-version ## Remove generic build artifacts
 	@echo "Clean project directories"
 	rm -rf $(VENV_DIR) || true
 	rm -rf $(CUR_DIR)/dist || true

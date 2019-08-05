@@ -30,6 +30,7 @@ import re
 import json
 import inspect
 import argparse
+import subprocess
 from shutil import copy2 as copyfile
 from shutil import which
 from pathlib import Path
@@ -52,18 +53,19 @@ try:
     from xlines.oscodes_unix import exit_codes
     os_type = 'Linux'
     user_home = os.getenv('HOME')
-    splitchar = '/'                             # character for splitting paths (linux)
+    splitchar = '/'                                   # character for splitting paths (linux)
 
 except Exception:
-    from xlines.oscodes_win import exit_codes    # non-specific os-safe codes
+    from xlines.oscodes_win import exit_codes         # non-specific os-safe codes
     os_type = 'Windows'
     user_home = os.getenv('username')
-    splitchar = '\\'                            # character for splitting paths (windows)
+    splitchar = '\\'                                  # character for splitting paths (windows)
 
 
 # globals
 container = []
 module = os.path.basename(__file__)
+iloc = os.path.abspath(os.path.dirname(__file__))     # installed location of modules
 
 
 def absolute_paths(path_list):
@@ -260,18 +262,35 @@ def set_hicount_threshold():
 
 def precheck(user_exfiles, user_exdirs, debug):
     """
-    Runtime Dependency Check
+    Runtime Dependency Checks: postinstall artifacts, environment
     """
+    def set_environment():
+        lang = 'undefined'
+        if os.getenv('LANG') is None:
+            lang = '{}export LANG=en_US.UTF-8{}'.format(yl, rst)
+        elif 'UTF-8' not in os.getenv('LANG'):
+            lang = '{}export LANG=$LANG.UTF-8{}'.format(yl, rst)
+        return lang
+
     _os_configdir = os.path.join(modules_location(), 'config')
     _os_ex_fname = os.path.join(_os_configdir, local_config['EXCLUSIONS']['EX_FILENAME'])
     _os_dir_fname = os.path.join(_os_configdir, local_config['EXCLUSIONS']['EX_DIR_FILENAME'])
     _config_dir = local_config['CONFIG']['CONFIG_DIR']
+    _language = set_environment()
+    _environment_setup = 'fail' if 'UTF-8' in _language else 'success'
 
     if debug:
+        tab = '\t'.expandtabs(16)
         stdout_message(f'_os_configdir: {_os_configdir}: system py modules location', 'DBUG')
         stdout_message(f'_os_ex_fname: {_os_ex_fname}: system exclusions.list path', 'DBUG')
         stdout_message(f'_os_dir_fname: {_os_dir_fname}: system directories.list file path', 'DBUG')
         stdout_message(f'_configdir: {_config_dir}: user home config file location', 'DBUG')
+        stdout_message(f'Environment setup status: {_environment_setup.upper()}')
+
+        if _environment_setup.upper() == 'FAIL':
+            _env = _environment_setup.upper()
+            msg = f'Environment setting is {_env}. Add the following code in your .bashrc file'
+            stdout_message('{}:  {}'.format(msg, _language))
 
     try:
         # check if exists; copy
