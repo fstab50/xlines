@@ -51,7 +51,7 @@ function export_package(){
     ##
     ##  Copy newly created rpm package out of container
     ##
-    local package="$1"
+    local package="xlines-[0-9].[0-9].[0-9]-[0-9].noarch.rpm"
     local external='/mnt/rpm'
 
     cd "$(_git_root)/dist"
@@ -95,7 +95,8 @@ if lsb_release -sirc | grep -i centos >/dev/null 2>&1; then
                                           --python='/usr/bin/python3' \
                                           --post-install=${_POSTINSTALL}
 
-    if export_package "xlines-[0-9].[0-9].[0-9]-[0-9].noarch.rpm"; then
+    exit 0
+    if export_package; then
         exit 0
     else
         exit 1
