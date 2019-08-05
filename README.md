@@ -7,7 +7,7 @@
 
 Count the number of lines of text in a code project (or anything else)
 
-**Version**: 0.7.5
+**Version**: 0.7.6
 
 * * *
 
@@ -50,16 +50,30 @@ Count the number of lines of text in a code project (or anything else)
 
 * * *
 
-## Options
+## Program Options
 
-To display the help menu:
+To display the **xlines** help menu:
 
 ```bash
     $ xlines --help
 ```
 
-[![help](./assets/help-menu.png)](http://images.awspros.world/xlines/help-menu.png)
+<p align="center">
+    <a href="http://images.awspros.world/xlines/help-menu.png" target="_blank"><img src="./assets/help-menu.png">
+</p>
 
+* * *
+## Build options
+
+**[GNU Make](https://www.gnu.org/software/make) Targets**.  Type the following to display the available make targets from the root of the project:
+
+```bash
+    $  make help
+```
+
+<p align="center">
+    <a href="http://images.awspros.world/xlines/make-help.png" target="_blank"><img src="./assets/make-help.png">
+</p>
 
 [back to the top](#top)
 
@@ -100,15 +114,15 @@ Option "C" (shown below) allows user-customization of files highlighted for cont
 
 ### Pip Install
 
-xlines may be installed on Linux via [pip, python package installer](https://pypi.org/project/pip) in one of two methods:
+**xlines** may be installed on Linux via [pip, python package installer](https://pypi.org/project/pip) in one of two methods:
 
-To install xlines for a single user:
+To install **xlines** for a single user:
 
 ```
 $  pip3 install xlines --user
 ```
 
-To install xlines for all users (Linux):
+To install **xlines** for all users (Linux):
 
 ```
 $  sudo -H pip3 install xlines
@@ -120,7 +134,7 @@ $  sudo -H pip3 install xlines
 <a name="debian-distro-install"></a>
 ### Ubuntu, Linux Mint, Debian variants
 
-xlines is not yet offered in native Debian Linux package format.
+**xlines** is not yet offered in native Debian Linux package format.
 
 
 [back to the top](#top)
@@ -153,7 +167,7 @@ The easiest way to install **xlines** on redhat-based Linux distributions is via
     [![rpm-install2](./assets/rpm-install-2.png)](http://images.awspros.world/xlines/rpm-install-2.png)
 
     ```
-    $ sudo chown 0:0 developer-tools.repo && sudo mv developer-tools.repo /etc/yum.repos.d/  
+    $ sudo chown 0:0 developer-tools.repo && sudo mv developer-tools.repo /etc/yum.repos.d/
     ```
 
 3. Update local repository cache
@@ -217,7 +231,7 @@ The easiest way to install **xlines** on redhat-based Linux distribution Amazon 
     [![rpm-install2](./assets/rpm-install-2.png)](http://images.awspros.world/xlines/rpm-install-2.png)
 
     ```
-    $ sudo chown 0:0 developer-tools.repo && sudo mv developer-tools.repo /etc/yum.repos.d/  
+    $ sudo chown 0:0 developer-tools.repo && sudo mv developer-tools.repo /etc/yum.repos.d/
     ```
 
 3. Update local repository cache
@@ -227,9 +241,9 @@ The easiest way to install **xlines** on redhat-based Linux distribution Amazon 
     ```
 
 
-4. **IMPORTANT**: Prior to installing **xlines**, verify the python3 version installed.  
+4. **IMPORTANT**: Prior to installing **xlines**, verify the python3 version installed.
 
-    * If Python 3.6 is installed, _installing xlines will install Amazon Linux 2 base python3, which is Python 3.7_.  
+    * If Python 3.6 is installed, _installing xlines will install Amazon Linux 2 base python3, which is Python 3.7_.
     * This change should not have any effect on the OS support applications themselves.
     * You should evaluate the small chance that there is a potential effect on custom applications running on the machine.
 
