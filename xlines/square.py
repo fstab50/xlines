@@ -12,14 +12,11 @@ Caller:
 """
 
 from xlines import Colors
-from xlines.variables import *
+from xlines.variables import c, acct, gn, bbl, bbc, bcy, bdcy, bwt, rst
 
 
 c = Colors()
 
-ACCENT = c.ORANGE               # orange accent highlight color
-bdacct = c.BRIGHT_GREEN + c.BOLD      # bold orange
-bdcy = c.CYAN + c.BOLD          # bold blue
 lbrct = bbc + '[ ' + rst        # left bracket
 rbrct = bbc + ' ]' + rst        # right bracket
 vdiv = bbc + ' | ' + rst
@@ -30,8 +27,8 @@ tab6 = '\t'.expandtabs(8).encode('utf-8')
 width = 55      # legend overall width
 
 legend_content = [
-        bdcy + ' o' + rst + '  |  Filesystem object counted (' + bcy + 'cyan' + rst + ')',
-        bdacct + ' o' + rst + '  |  Line count above high ct threshold (' + bdacct + 'green' + rst + ')',
+        bdcy + '==' + rst + '  |  Filesystem object counted (' + bcy + 'cyan' + rst + ')',
+        acct + '==' + rst + '  |  Line count above high ct threshold (' + gn + 'green' + rst + ')',
         bwt + '->' + rst + '  |  Truncated (shortened) file path (' + bwt + 'white' + rst + ')'
     ]
 
@@ -46,7 +43,7 @@ res = [
 fallback = """
          """ + bbl + 'o' + rst + """  |  Filesystem object counted (""" + bcy + 'cyan' + rst + """)
        ----------------------------------------------------------
-         """ + bdacct + 'o' + rst + """  |  Line count above high ct threshold (""" + acct + 'orange' + rst + """)
+         """ + acct + 'o' + rst + """  |  Line count above high ct threshold (""" + acct + 'green' + rst + """)
        ----------------------------------------------------------
         """ + bwt + '->' + rst + """  |  Truncated (shortened) file path (""" + bwt + 'white' + rst + """)
 """

@@ -41,6 +41,7 @@ bd = c.BOLD
 gn = c.BRIGHT_GREEN
 title = c.BRIGHT_WHITE + c.BOLD
 bcy = c.BRIGHT_CYAN
+bdcy = c.CYAN + c.BOLD          # bold blue
 bbc = bd + c.BRIGHT_CYAN
 bbl = bd + c.BRIGHT_BLUE
 highlight = bd + c.BRIGHT_BLUE
