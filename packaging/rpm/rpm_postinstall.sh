@@ -66,7 +66,9 @@ else
 fi
 
 # generate bytecode artifacts
-py3compile --package xlines
+if which py3compile >/dev/null; then
+    py3compile --package xlines
+fi
 
 
 exit 0
