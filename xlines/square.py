@@ -35,8 +35,9 @@ legend_content = [
         bwt + '->' + rst + '  |  Truncated (shortened) file path (' + bwt + 'white' + rst + ')'
     ]
 
-legend_bar_top = ('_' * width) + '\n'
-legend_bar_bottom = ('_' * width)
+legend_width = 57
+legend_bar_top = ('_' * legend_width) + '\n'
+legend_bar_bottom = ('_' * legend_width)
 
 res = [
     ('┌' + '─' * width + '┐').encode('utf-8')
