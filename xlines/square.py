@@ -35,10 +35,11 @@ legend_content = [
         bwt + '->' + rst + '  |  Truncated (shortened) file path (' + bwt + 'white' + rst + ')'
     ]
 
+legend_bar_top = ('_' * width) + '\n'
+legend_bar_bottom = ('_' * width)
+
 res = [
-
     ('┌' + '─' * width + '┐').encode('utf-8')
-
 ]
 
 fallback = """
@@ -77,7 +78,11 @@ def border_map(text_list=legend_content):
 
     except UnicodeEncodeError:
         # if problems handling unicode encoding
-        [print('\t'.expandtabs(12) + x) for x in text_list][0]
+        text_list.insert(0, legend_bar_top)
+        text_list.insert(len(text_list), legend_bar_bottom)
+        print('\t'.expandtabs(8) + text_list[0])
+        [print('\t'.expandtabs(10) + x) for x in text_list[1:-1]][0]
+        print('\t'.expandtabs(8) + text_list[-1])
 
     except Exception:
         # if any utf-8 handling host issues
