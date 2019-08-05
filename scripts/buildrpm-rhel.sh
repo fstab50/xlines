@@ -8,6 +8,21 @@
 #   Copyright 2019, Blake Huber
 #
 
+ROOT=$(_git_root)
+_PYTHON3_PATH=$(which python3)
+_YUM=$(which yum)
+_SED=$(which sed)
+_PIP=$(_pip_exec)
+_POSTINSTALL=${ROOT}/packaging/rpm/rpm_postinstall.sh
+RHEL_REQUIRES='python36,python36-pip,python36-setuptools,python36-pygments,bash-completion'
+
+# colors; functions
+. "$ROOT/scripts/colors.sh"
+. "$ROOT/scripts/std_functions.sh"
+
+
+# --- declarations ------------------------------------------------------------
+
 
 function _git_root(){
     ##
@@ -31,17 +46,21 @@ function _pip_exec(){
     return 1
 }
 
-ROOT=$(_git_root)
-_PYTHON3_PATH=$(which python3)
-_YUM=$(which yum)
-_SED=$(which sed)
-_PIP=$(_pip_exec)
-_POSTINSTALL=${ROOT}/packaging/rpm/rpm_postinstall.sh
-RHEL_REQUIRES='python36,python36-pip,python36-setuptools,python36-pygments,bash-completion'
 
-# colors; functions
-. "$ROOT/scripts/colors.sh"
-. "$ROOT/scripts/std_functions.sh"
+function export_package(){
+    ##
+    ##  Copy newly created rpm package out of container
+    ##
+    local package="$1"
+    local external='/mnt/rpm'
+
+    cd "$(_git_root)/dist"
+    sudo cp $package $external/$package
+    if [[ -f $external/$package ]]; then
+        return 0
+    fi
+    return 1
+}
 
 
 if lsb_release -sirc | grep -i centos >/dev/null 2>&1; then
@@ -76,6 +95,11 @@ if lsb_release -sirc | grep -i centos >/dev/null 2>&1; then
                                           --python='/usr/bin/python3' \
                                           --post-install=${_POSTINSTALL}
 
+    if export_package "xlines-[0-9].[0-9].[0-9]-[0-9].noarch.rpm"; then
+        exit 0
+    else
+        exit 1
+    fi
 else
     std_message "Not a Redhat-based Linux distribution. Exit" "WARN"
     exit 1
