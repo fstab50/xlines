@@ -172,16 +172,18 @@ def longest_path(parameters, exclusions):
     mp = MaxWidth()     # max path object
     abspath = absolute_paths(parameters)
     container = []
+    max_width = 0
 
     for i in parameters:
         try:
             paths = sp_linecount(i, abspath, exclusions.types)
             width = mp.calc_maxpath(paths)
+            max_width = width if (width > max_width) else max_width
             container.extend(paths)
         except TypeError:
             stdout_message(message='Provided path appears to be invalid', prefix='WARN')
             sys.exit(exit_codes['EX_OSFILE']['Code'])
-    return width, container
+    return max_width, container
 
 
 class MaxWidth():
