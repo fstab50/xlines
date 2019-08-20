@@ -36,6 +36,28 @@ except Exception:
     TITLE = Colors.WHITE + Colors.BOLD
 
 
+def absolute_paths(path_list):
+    """
+        Determines if filesystem paths are absolute or relative
+
+    Args:
+        :path_list (list):
+            [
+                '/usr/local/bin/python3',
+                '/home/user/myfile.txt',
+                '../myfile.txt'
+            ]
+
+    Returns:
+        True (absolute paths) || False (relative  paths), TYPE: bool
+
+    """
+    prefix = '/'
+    if any(i.startswith(prefix) for i in path_list):
+        return True
+    return False
+
+
 def is_binary_external(filepath):
     try:
         f = open(filepath, 'rb').read(1024)
