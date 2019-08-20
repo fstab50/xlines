@@ -26,6 +26,7 @@ def cpu_cores(logical=True):
 
     Returns:
         # of logical cores (int) || physical cores (int)
+
     """
     physical_cores = multiprocessing.cpu_count()
     return len(os.sched_getaffinity(0)) if logical else physical_cores
@@ -102,11 +103,12 @@ def print_results(object_list, _ct_threshold, width):
         :width (int): width in characters of the output pattern
 
     Returns:
-        True
+        True | False, TYPE: bool
+
     """
     tcount, tobjects = 0, 0
     io_fail = []
-    
+
     print_header(width)
     count_width = local_config['OUTPUT']['COUNT_COLUMN_WIDTH']
 
@@ -120,8 +122,7 @@ def print_results(object_list, _ct_threshold, width):
             tobjects += 1    # increment total number of objects
 
             # truncation
-            lpath = os.path.split(path)[0]
-            fname = os.path.split(path)[1]
+            lpath, fname = os.path.split(path)
 
             if (len(path) + BUFFER * 2) > width:
                 cutoff = (len(path) + BUFFER * 2) - width

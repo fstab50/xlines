@@ -418,8 +418,7 @@ def init_cli():
                         tobjects += 1    # increment total number of objects
 
                         # truncation
-                        lpath = os.path.split(path)[0]
-                        fname = os.path.split(path)[1]
+                        lpath, fname = os.path.split(path)
 
                         if (len(path) + BUFFER * 2) > width:
                             cutoff = (len(path) + BUFFER * 2) - width

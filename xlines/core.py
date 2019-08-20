@@ -46,31 +46,6 @@ def is_binary_external(filepath):
     return fx(f)
 
 
-def is_text(path):
-    """
-        Checks filesystem object using *nix file application provided
-        with most modern Unix and Linux systems.  Returns False if
-        file object cannot be read
-
-    Returns:
-        True || False, TYPE: bool
-
-    """
-    if not which('file'):
-        logger.warning('required dependency missing: Unix application "file". Exit')
-        sys.exit(exit_codes['E_DEPENDENCY']['Code'])
-
-    try:
-        # correct for multple file objects in path
-        path = ' '.join(path.split()[:3])
-
-        f = os.popen('file -bi ' + path, 'r')
-        contents = f.read()
-    except Exception:
-        return False
-    return contents.startswith('text')
-
-
 def linecount(path, whitespace=True):
     if whitespace:
         return len(open(path).readlines())
