@@ -80,7 +80,7 @@ To display the **xlines** help menu:
 * * *
 ## Configuration
 
-[xlines](https://github.com/fstab50/xlines) runtime optinos may be configured by entering the configuration menu:
+Configure [xlines](https://github.com/fstab50/xlines) runtime options by entering the configuration menu:
 
 ```bash
     $ xlines --configure
