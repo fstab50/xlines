@@ -27,7 +27,7 @@ copyright_range = '2017-' + str(current_year)
 
 # python version number header
 python_version = sys.version.split(' ')[0]
-python_header = 'python' + Colors.RESET + ' ' + python_version
+python_header = 'python'.title() + Colors.RESET + ' ' + python_version
 
 # formatted package header
 package_name = Colors.BOLD + PACKAGE + Colors.RESET

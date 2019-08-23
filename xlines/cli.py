@@ -40,7 +40,8 @@ from xlines.statics import local_config
 from xlines.help_menu import menu_body
 from xlines.square import border_map
 from xlines.mp import multiprocessing_main
-from xlines.core import linecount, locate_fileobjects, remove_illegal, print_footer, print_header
+from xlines.core import absolute_paths, linecount, locate_fileobjects
+from xlines.core import remove_illegal, print_footer, print_header
 from xlines.exclusions import ExcludedTypes
 from xlines.configure import display_exclusions, main_menupage
 from xlines.colormap import ColorMap
@@ -66,28 +67,6 @@ except Exception:
 container = []
 module = os.path.basename(__file__)
 iloc = os.path.abspath(os.path.dirname(__file__))     # installed location of modules
-
-
-def absolute_paths(path_list):
-    """
-        Determines if filesystem paths are absolute or relative
-
-    Args:
-        :path_list (list):
-            [
-                '/usr/local/bin/python3',
-                '/home/user/myfile.txt',
-                '../myfile.txt'
-            ]
-
-    Returns:
-        True (absolute paths) || False (relative  paths), TYPE: bool
-
-    """
-    prefix = '/'
-    if any(i.startswith(prefix) for i in path_list):
-        return True
-    return False
 
 
 def sp_linecount(path, abspath, exclusions):
@@ -172,16 +151,18 @@ def longest_path(parameters, exclusions):
     mp = MaxWidth()     # max path object
     abspath = absolute_paths(parameters)
     container = []
+    max_width = 0
 
     for i in parameters:
         try:
             paths = sp_linecount(i, abspath, exclusions.types)
             width = mp.calc_maxpath(paths)
+            max_width = width if (width > max_width) else max_width
             container.extend(paths)
         except TypeError:
             stdout_message(message='Provided path appears to be invalid', prefix='WARN')
             sys.exit(exit_codes['EX_OSFILE']['Code'])
-    return width, container
+    return max_width, container
 
 
 class MaxWidth():
@@ -418,8 +399,7 @@ def init_cli():
                         tobjects += 1    # increment total number of objects
 
                         # truncation
-                        lpath = os.path.split(path)[0]
-                        fname = os.path.split(path)[1]
+                        lpath, fname = os.path.split(path)
 
                         if (len(path) + BUFFER * 2) > width:
                             cutoff = (len(path) + BUFFER * 2) - width

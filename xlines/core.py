@@ -36,6 +36,28 @@ except Exception:
     TITLE = Colors.WHITE + Colors.BOLD
 
 
+def absolute_paths(path_list):
+    """
+        Determines if filesystem paths are absolute or relative
+
+    Args:
+        :path_list (list):
+            [
+                '/usr/local/bin/python3',
+                '/home/user/myfile.txt',
+                '../myfile.txt'
+            ]
+
+    Returns:
+        True (absolute paths) || False (relative  paths), TYPE: bool
+
+    """
+    prefix = '/'
+    if any(i.startswith(prefix) for i in path_list):
+        return True
+    return False
+
+
 def is_binary_external(filepath):
     try:
         f = open(filepath, 'rb').read(1024)
@@ -44,31 +66,6 @@ def is_binary_external(filepath):
     except Exception:
         return True
     return fx(f)
-
-
-def is_text(path):
-    """
-        Checks filesystem object using *nix file application provided
-        with most modern Unix and Linux systems.  Returns False if
-        file object cannot be read
-
-    Returns:
-        True || False, TYPE: bool
-
-    """
-    if not which('file'):
-        logger.warning('required dependency missing: Unix application "file". Exit')
-        sys.exit(exit_codes['E_DEPENDENCY']['Code'])
-
-    try:
-        # correct for multple file objects in path
-        path = ' '.join(path.split()[:3])
-
-        f = os.popen('file -bi ' + path, 'r')
-        contents = f.read()
-    except Exception:
-        return False
-    return contents.startswith('text')
 
 
 def linecount(path, whitespace=True):

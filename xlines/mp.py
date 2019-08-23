@@ -13,7 +13,7 @@ import inspect
 from xlines.usermessage import stdout_message
 from xlines import Colors
 from xlines.core import BUFFER, acct, bwt, text, rst, arrow, div
-from xlines.core import linecount, print_header, print_footer
+from xlines.core import absolute_paths, linecount, print_header, print_footer
 from xlines.export import export_json_object
 from xlines import local_config, logger
 from xlines.variables import *
@@ -26,6 +26,7 @@ def cpu_cores(logical=True):
 
     Returns:
         # of logical cores (int) || physical cores (int)
+
     """
     physical_cores = multiprocessing.cpu_count()
     return len(os.sched_getaffinity(0)) if logical else physical_cores
@@ -63,9 +64,12 @@ def mp_linecount(path_list, exclusions, no_whitespace):
     for path in path_list:
         try:
             if os.path.isfile(path):
+
+                path_value = os.path.abspath(path) if path.startswith('/') else ('./' + os.path.relpath(path))
+
                 q.put(
                         {
-                            'path': os.path.abspath(path),
+                            'path': path_value,
                             'count': linecount(path, no_whitespace)
                         }
                     )
@@ -73,6 +77,7 @@ def mp_linecount(path_list, exclusions, no_whitespace):
             elif os.path.isdir(path):
                 for p in [os.path.join(path, x) for x in os.listdir(path)]:
                     q.put({'path': p, 'count': linecount(p, no_whitespace)})
+
         except UnicodeDecodeError:
             continue
 
@@ -102,11 +107,12 @@ def print_results(object_list, _ct_threshold, width):
         :width (int): width in characters of the output pattern
 
     Returns:
-        True
+        True | False, TYPE: bool
+
     """
     tcount, tobjects = 0, 0
     io_fail = []
-    
+
     print_header(width)
     count_width = local_config['OUTPUT']['COUNT_COLUMN_WIDTH']
 
@@ -120,8 +126,7 @@ def print_results(object_list, _ct_threshold, width):
             tobjects += 1    # increment total number of objects
 
             # truncation
-            lpath = os.path.split(path)[0]
-            fname = os.path.split(path)[1]
+            lpath, fname = os.path.split(path)
 
             if (len(path) + BUFFER * 2) > width:
                 cutoff = (len(path) + BUFFER * 2) - width
