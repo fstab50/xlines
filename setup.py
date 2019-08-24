@@ -86,9 +86,9 @@ def create_artifact(object_path, type):
 
 def _install_root():
     """Filsystem installed location of program modules"""
-    if _root_user():
-        return inspect.getsourcefile(setup).split('setuptools')[0]
-    return os.path.abspath(os.path.dirname(xlines.__file__))
+    if not _root_user():
+        return os.path.abspath(os.path.dirname(xlines.__file__))
+    return os.path.join(inspect.getsourcefile(setup).split('setuptools')[0], _project)
 
 
 def module_src():
