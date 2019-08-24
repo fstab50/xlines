@@ -23,6 +23,7 @@ import os
 import sys
 import platform
 import subprocess
+import inspect
 from shutil import which
 from shutil import copy2 as copyfile
 from setuptools import setup, find_packages
@@ -85,7 +86,18 @@ def create_artifact(object_path, type):
 
 def _install_root():
     """Filsystem installed location of program modules"""
-    return os.path.abspath(os.path.dirname(xlines.common.__file__))
+    if not _root_user():
+        return os.path.abspath(os.path.dirname(xlines.__file__))
+    return os.path.join(inspect.getsourcefile(setup).split('setuptools')[0], _project)
+
+
+def module_src():
+    """Alt method of finding filsystem location of Python3 modules"""
+    bin_path = which('python3.6') or which('python3.7')
+    bin = os.path.split(bin_path)[1]
+    if 'local' in bin_path:
+        return '/usr/local/lib/' + bin + '/site-packages'
+    return '/usr/lib/' + bin + '/site-packages'
 
 
 def os_parityPath(path):
@@ -213,7 +225,7 @@ class PostInstallRoot(install):
         if self.valid_os_shell():
 
             completion_dir = '/etc/bash_completion.d'
-            config_dir = os.path.join(__install_root(), 'config')
+            config_dir = os.path.join(_install_root(), 'config')
 
             if not os.path.exists(os_parityPath(config_dir)):
                 create_artifact(os_parityPath(config_dir), 'dir')

@@ -327,10 +327,14 @@ class RelpathProcessing():
 def init_cli():
     ex_files = local_config['EXCLUSIONS']['EX_EXT_PATH']
     ex_dirs = local_config['EXCLUSIONS']['EX_DIR_PATH']
+
+    # process commandline args
     parser = argparse.ArgumentParser(add_help=False)
 
     try:
+
         args, unknown = options(parser)
+
     except Exception as e:
         help_menu()
         stdout_message(str(e), 'ERROR')
