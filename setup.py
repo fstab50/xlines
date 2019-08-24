@@ -85,7 +85,16 @@ def create_artifact(object_path, type):
 
 def _install_root():
     """Filsystem installed location of program modules"""
-    return os.path.abspath(os.path.dirname(xlines.common.__file__))
+    return os.path.abspath(os.path.dirname(xlines.__file__))
+
+
+def module_src():
+    """Filsystem location of Python3 modules"""
+    bin_path = which('python3.6') or which('python3.7')
+    bin = os.path.split(bin_path)[1]
+    if 'local' in bin_path:
+        return '/usr/local/lib/' + bin + '/site-packages'
+    return '/usr/lib/' + bin + '/site-packages'
 
 
 def os_parityPath(path):
@@ -213,7 +222,7 @@ class PostInstallRoot(install):
         if self.valid_os_shell():
 
             completion_dir = '/etc/bash_completion.d'
-            config_dir = os.path.join(__install_root(), 'config')
+            config_dir = os.path.join(_install_root(), 'config')
 
             if not os.path.exists(os_parityPath(config_dir)):
                 create_artifact(os_parityPath(config_dir), 'dir')
@@ -310,6 +319,14 @@ if _root_user():
             (
                 os.path.join('/etc/bash_completion.d'),
                 [os.path.join('bash', _comp_fname)]
+            ),
+            (
+                os.path.join(_install_root(), 'config'),
+                [os.path.join('config', _ex_fname)]
+            ),
+            (
+                os.path.join(_install_root(), 'config'),
+                [os.path.join('config', _ex_dirs_fname)]
             )
         ],
         entry_points={
