@@ -23,6 +23,7 @@ import os
 import sys
 import platform
 import subprocess
+import inspect
 from shutil import which
 from shutil import copy2 as copyfile
 from setuptools import setup, find_packages
@@ -85,11 +86,13 @@ def create_artifact(object_path, type):
 
 def _install_root():
     """Filsystem installed location of program modules"""
+    if _root_user():
+        return inspect.getsourcefile(setup).split('setuptools')[0]
     return os.path.abspath(os.path.dirname(xlines.__file__))
 
 
 def module_src():
-    """Filsystem location of Python3 modules"""
+    """Alt method of finding filsystem location of Python3 modules"""
     bin_path = which('python3.6') or which('python3.7')
     bin = os.path.split(bin_path)[1]
     if 'local' in bin_path:
