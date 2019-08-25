@@ -103,6 +103,10 @@ if lsb_release -sirc | grep -i amazon >/dev/null 2>&1; then
     std_message "Coping pkg_resources lib from /usr/local/lib to /usr/lib/" "INFO"
     sudo cp -r /usr/local/lib/python3.*/site-packages/pkg_resources* /usr/lib/python3.*/site-packages/
 
+    std_message "Coping pygments from /usr/local/lib64 to git_root" "INFO"
+    sudo cp -r /usr/local/lib64/python3.*/site-packages/Pygments*  .
+	sudo cp -r /usr/local/lib64/python3.*/site-packages/pygments*  .
+
     # python3 build process
     $_PYTHON3_PATH setup_rpm.py bdist_rpm --requires=${_REQUIRES} \
                                           --python='/usr/bin/python3' \
