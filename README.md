@@ -43,9 +43,9 @@ Count the number of lines of text in a code project (or anything else)
 
 ## Dependencies
 
-[xlines](https://github.com/fstab50/xlines) requires [Python 3.6 or later](https://docs.python.org/3/).
+[xlines](https://github.com/fstab50/xlines) requires [Python 3.6+](https://docs.python.org/3/).
 
-If your environment has Python 3.5 or older or is missing Python 3 altogether, consider using [nlines](https://github.com/fstab50/nlines) as an excellent alternative for Linux development environments.
+If your environment has Python 3.5 or older or is missing Python 3 altogether, consider using <a href="https://github.com/fstab50/nlines" target="_blank">nlines</a> as an excellent alternative for any Linux-based development environments.
 
 
 [back to the top](#top)
