@@ -4,3 +4,4 @@ pygments
 libtools
 setuptools
 twine
+ipdb
