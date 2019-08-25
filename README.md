@@ -45,7 +45,7 @@ Count the number of lines of text in a code project (or anything else)
 
 [xlines](https://github.com/fstab50/xlines) requires [Python 3.6+](https://docs.python.org/3/).
 
-If your environment has Python 3.5 or older or is missing Python 3 altogether, consider using <a href="https://github.com/fstab50/nlines" target="_blank">nlines</a> as an excellent alternative for any Linux-based development environments.
+If your environment has Python 3.5 or older or is missing Python 3 altogether, consider using <a href="https://github.com/fstab50/nlines" target="_blank">nlines</a> as an excellent alternative compatible with virtually any Linux-based development environment.  [nlines](https://github.com/fstab50/nlines) is a bash implementation of project-level line counter.
 
 
 [back to the top](#top)
