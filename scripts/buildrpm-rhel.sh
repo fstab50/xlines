@@ -47,6 +47,7 @@ function export_package(){
     package=$(find . -name "xlines-[0-9].[0-9].[0-9]-[0-9].noarch.rpm")
 
     # prefix package name with python3 version
+    package=$(echo $package | cut -c 3-30)
     p3_package="python36-$package"
 
     mv "$package" "$p3_package"
