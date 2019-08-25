@@ -69,7 +69,7 @@ _YUM=$(which yum)
 _SED=$(which sed)
 _PIP=$(_pip_exec)
 _POSTINSTALL=${ROOT}/packaging/rpm/rpm_postinstall.sh
-AML_REQUIRES='python3,python3-pip,python3-setuptools,bash-completion,which'
+_REQUIRES='python3,python3-pip,python3-setuptools,bash-completion,which'
 
 # colors; functions
 . "$ROOT/scripts/colors.sh"
@@ -92,7 +92,7 @@ if lsb_release -sirc | grep -i amazon >/dev/null 2>&1; then
 
     std_message "Installing packages" "INFO"
     $_YUM -y install epel-release which
-    $_YUM -y install python36 python36-pip python36-setuptools python36-devel
+    $_YUM -y install python3 python3-pip python3-setuptools python3-devel
 
     std_message "Upgrade pip, setuptools" "INFO"
     sudo -H $_PIP install -U pip setuptools
@@ -104,7 +104,7 @@ if lsb_release -sirc | grep -i amazon >/dev/null 2>&1; then
     sudo cp -r /usr/local/lib/python3.*/site-packages/pkg_resources* /usr/lib/python3.*/site-packages/
 
     # python3 build process
-    $_PYTHON3_PATH setup_rpm.py bdist_rpm --requires=${RHEL_REQUIRES} \
+    $_PYTHON3_PATH setup_rpm.py bdist_rpm --requires=${_REQUIRES} \
                                           --python='/usr/bin/python3' \
                                           --post-install=${_POSTINSTALL}
 
