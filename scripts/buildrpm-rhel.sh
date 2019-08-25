@@ -46,8 +46,13 @@ function export_package(){
 
     package=$(find . -name "xlines-[0-9].[0-9].[0-9]-[0-9].noarch.rpm")
 
-    sudo cp $package $external/$package
-    if [[ -f $external/$package ]]; then
+    # prefix package name with python3 version
+    p3_package="python36-$package"
+
+    mv "$package" "$p3_package"
+    sudo cp "$p3_package" "$external/$p3_package"
+
+    if [[ -f "$external/$p3_package" ]]; then
         return 0
     fi
     return 1
