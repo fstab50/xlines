@@ -42,6 +42,7 @@ RUN yum install -y gcc gcc-c++ \
 
 # rpmbuild tools
 RUN yum -y install rpm-build rpmdevtools
+RUN yum -y install system-lsb
 
 # user operations
 ENV USER1 'builder'
