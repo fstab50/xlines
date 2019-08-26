@@ -91,11 +91,14 @@ if lsb_release -sirc | grep -i amazon >/dev/null 2>&1; then
     sudo $_SED -i '/env_reset/d' /etc/sudoers
 
     std_message "Installing packages" "INFO"
-    $_YUM -y install epel-release which
+    $_YUM -y install epel-release which sudo rpm-build
     $_YUM -y install python3 python3-pip python3-setuptools python3-devel
 
     std_message "Upgrade pip, setuptools" "INFO"
     sudo -H $_PIP install -U pip setuptools
+
+    std_message "pip install pygments" "INFO"
+    sudo -H $_PIP install -U pygments
 
     std_message "Coping setuptools lib from /usr/local/lib to /usr/lib/" "INFO"
     sudo cp -r /usr/local/lib/python3.*/site-packages/setuptools* /usr/lib/python3.*/site-packages/
