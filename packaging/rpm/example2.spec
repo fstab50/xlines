@@ -1,9 +1,9 @@
-%global srcname example
+%global srcname xlines
 
 Name:           python3-%{srcname}
-Version:        1.2.3
-Release:        2%{?dist}
-Summary:        An example Python tool
+Version:        0.7.9
+Release:        1%{?dist}
+Summary:        A line counter for code projects
 
 License:        MIT
 URL:            https://pypi.org/project/%{srcname}
@@ -24,7 +24,7 @@ Requires:       python3-other-module
 %{?python_provide:%python_provide python3-%{srcname}}
 
 %description -n python3-%{srcname}
-A Python tool which provides a convenient example.
+A line counting tool for code projects
 
 
 %prep
