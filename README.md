@@ -110,7 +110,7 @@ Option "A" (shown below) allows addition of file types to be excluded (skipped) 
 
 --
 
-Option "B" (shown below) allows deletion of file types to be excluded so that a specific type of file can again be included in total line counts:
+Option "B" (shown below) allows deletion of file types from the exclusion list so that a specific file extension will be included in total line counts:
 
 [![option b](./assets/configure_b.png)](http://images.awspros.world/xlines/configure_b.png)&nbsp;
 
