@@ -98,21 +98,31 @@ Configure [xlines](https://github.com/fstab50/xlines) runtime options by enterin
 
 [![toc](./assets/configure_toc.png)](http://images.awspros.world/xlines/configure_toc.png)&nbsp;
 
+--
+
+[back to the top](#top)
 
 Option "A" (shown below) allows addition of file types to be excluded (skipped) from line totals
 
 [![option a](./assets/configure_a.png)](http://images.awspros.world/xlines/configure_a.png)
 
 
+--
+
+[back to the top](#top)
+
 Option "B" (shown below) allows deletion of file types to be excluded so that a specific type of file can again be included in total line counts:
 
 [![option b](./assets/configure_b.png)](http://images.awspros.world/xlines/configure_b.png)&nbsp;
 
 
+--
+
+[back to the top](#top)
+
 Option "C" (shown below) allows user-customization of files highlighted for containing a large number of lines of text:
 
 [![option c](./assets/configure_c.png)](http://images.awspros.world/xlines/configure_c.png)
-
 
 --
 
