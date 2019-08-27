@@ -13,28 +13,26 @@ Count the number of lines of text in a code project (or anything else)
 
 ## Contents
 
-* [**Dependencies**](#dependencies)
+<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 
-* [**Options**](#options)
+- [xlines](#xlines)
+	- [Summary](#summary)
+	- [Contents](#contents)
+	- [Dependencies](#dependencies)
+	- [Program Options](#program-options)
+	- [Build options](#build-options)
+	- [Configuration](#configuration)
+	- [Installation](#installation)
+		- [Pip Install](#pip-install)
+		- [Ubuntu, Linux Mint, Debian variants](#ubuntu-linux-mint-debian-variants)
+		- [Redhat, CentOS, Fedora](#redhat-centos-fedora)
+		- [Amazon Linux 2](#amazon-linux-2)
+	- [Screenshots](#screenshots)
+	- [Author & Copyright](#author-copyright)
+	- [License](#license)
+	- [Disclaimer](#disclaimer)
 
-* [**Configuration**](#configuration)
-
-* [**Exclusions**](#exclusions)
-
-* [**Installation**](#installation)
-    * [Pip Install](#installation)
-    * [Ubuntu, Linux Mint, Debian-based Distributions](#debian-distro-install)
-    * [Redhat, CentOS, Fedora](#redhat-distro-install)
-    * [Amazon Linux 2](#amzn2-distro-install)
-
-* [**Screenshots**](#screenshots)
-
-* [**Author & Copyright**](#author--copyright)
-
-* [**License**](#license)
-
-* [**Disclaimer**](#disclaimer)
-
+<!-- /TOC -->
 --
 
 [back to the top](#top)
