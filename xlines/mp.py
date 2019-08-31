@@ -13,7 +13,7 @@ import inspect
 from xlines.usermessage import stdout_message
 from xlines import Colors
 from xlines.core import BUFFER, acct, bwt, text, rst, arrow, div
-from xlines.core import absolute_paths, linecount, print_header, print_footer
+from xlines.core import linecount, print_header, print_footer
 from xlines.export import export_json_object
 from xlines import local_config, logger
 from xlines.variables import *
