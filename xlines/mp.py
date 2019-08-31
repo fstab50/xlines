@@ -224,7 +224,7 @@ def multiprocessing_main(valid_paths, max_width, _threshold, wspace, exclusions,
         results.extend([x for x in queue_generator(q, t)])
 
         if debug:
-            print('Just completed: list {}'.format(get_varname(i)))    # show progress
+            print('Completed: list {}'.format(get_varname(i)))    # show progress
 
     print_results(results, _threshold, max_width)
 
