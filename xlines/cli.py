@@ -393,52 +393,51 @@ def init_cli():
             print_header(width)
             count_width = local_config['OUTPUT']['COUNT_COLUMN_WIDTH']
 
-            for i in container:
+            #for i in container:
 
-                for path in paths:
+            for path in paths:
 
-                    ipdb.set_trace()
-                    try:
+                try:
 
-                        inc = linecount(path, args.whitespace)
-                        highlight = acct if inc > _ct_threshold else cm.aqu
-                        tcount += inc    # total line count
-                        tobjects += 1    # increment total number of objects
+                    inc = linecount(path, args.whitespace)
+                    highlight = acct if inc > _ct_threshold else cm.aqu
+                    tcount += inc    # total line count
+                    tobjects += 1    # increment total number of objects
 
-                        # truncation
-                        lpath, fname = os.path.split(path)
+                    # truncation
+                    lpath, fname = os.path.split(path)
 
-                        if (len(path) + BUFFER * 2) > width:
-                            cutoff = (len(path) + BUFFER * 2) - width
-                        else:
-                            cutoff = 0
+                    if (len(path) + BUFFER * 2) > width:
+                        cutoff = (len(path) + BUFFER * 2) - width
+                    else:
+                        cutoff = 0
 
-                        tab = '\t'.expandtabs(width - len(lpath) - len(fname) - count_width + BUFFER)
+                    tab = '\t'.expandtabs(width - len(lpath) - len(fname) - count_width + BUFFER)
 
-                        # with color codes added
-                        if cutoff == 0:
-                            lpath = text + lpath + rst
-                        else:
-                            lpath = text + os.path.split(path)[0][:len(lpath) - cutoff - BUFFER] + rst + arrow
-                            tab = '\t'.expandtabs(width - len(lpath) - len(fname) + count_width + BUFFER + cut_corr)
+                    # with color codes added
+                    if cutoff == 0:
+                        lpath = text + lpath + rst
+                    else:
+                        lpath = text + os.path.split(path)[0][:len(lpath) - cutoff - BUFFER] + rst + arrow
+                        tab = '\t'.expandtabs(width - len(lpath) - len(fname) + count_width + BUFFER + cut_corr)
 
-                        tab4 = '\t'.expandtabs(4)
-                        fname = highlight + fname + rst
+                    tab4 = '\t'.expandtabs(4)
+                    fname = highlight + fname + rst
 
-                        # incremental count formatting
-                        ct_format = acct if inc > _ct_threshold else bwt
+                    # incremental count formatting
+                    ct_format = acct if inc > _ct_threshold else bwt
 
-                        # format tabular line totals with commas
-                        output_str = f'{tab4}{lpath}{div}{fname}{tab}{ct_format}{"{:,}".format(inc):>10}{rst}'
-                        print(output_str)
+                    # format tabular line totals with commas
+                    output_str = f'{tab4}{lpath}{div}{fname}{tab}{ct_format}{"{:,}".format(inc):>10}{rst}'
+                    print(output_str)
 
-                        if args.debug:
-                            print(tab4*2 + 'lpath is {}'.format(lpath))
-                            print(tab4*2 + 'fname is {}\n'.format(fname))
+                    if args.debug:
+                        print(tab4*2 + 'lpath is {}'.format(lpath))
+                        print(tab4*2 + 'fname is {}\n'.format(fname))
 
-                    except Exception:
-                        io_fail.append(path)
-                        continue
+                except Exception:
+                    io_fail.append(path)
+                    continue
 
             print_footer(tcount, tobjects, width)
 

@@ -92,6 +92,9 @@ def print_results(object_list, _ct_threshold, width):
 
     Args:
         :object_list (list):  Format:
+
+        .. code: json
+
             [
                 {
                     'path': '/var/lib/dpkg/info/xtrans-dev.list',
@@ -102,6 +105,7 @@ def print_results(object_list, _ct_threshold, width):
                     'count': 249
                 },
             ]
+
         :_ct_threshold (int): path rec highlight color if object linecount
             is at or above this threshold
         :width (int): width in characters of the output pattern
