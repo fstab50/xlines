@@ -213,10 +213,11 @@ def multiprocessing_main(valid_paths, max_width, _threshold, wspace, exclusions,
     processes, results = [], []
     debug_messages(debug, valid_paths)
 
-    cores = 4   # stub in for 4 logical cpus
-    a, b, c, d = [sorted(x) for x in split_list(valid_paths, cores)]
+    # maximum cores is 4 due to i/o contention single drive systems
+    cores = 4 if cpu_cores() >= 4 else cpu_cores()
+    equal_lists = [sorted(x) for x in split_list(valid_paths, cores)]
 
-    for i in (a, b, c, d):
+    for i in equal_lists:
         t = multiprocessing.Process(target=mp_linecount, args=(i, exclusions.types, wspace))
         processes.append(t)
         t.start()
