@@ -46,7 +46,7 @@ from xlines.exclusions import ExcludedTypes
 from xlines.configure import display_exclusions, main_menupage
 from xlines.colormap import ColorMap
 from xlines.variables import *
-
+import ipdb
 
 cm = ColorMap()
 
@@ -376,6 +376,7 @@ def init_cli():
             print(f'\n\tcontainer is:\t{container}')
             print(f'\n\tobject "unknown" is:\t{unknown}')
             print('\tabspath bool is {}\n'.format(abspath))
+            print('\tmultiprocess bool is {}\n'.format(args.multiprocess))
 
         if args.multiprocess:
             # --- run with concurrency --
@@ -383,6 +384,7 @@ def init_cli():
             multiprocessing_main(paths, width, _ct_threshold, args.whitespace, ex, args.debug)
 
         elif not args.multiprocess:
+
 
             io_fail = []
             tcount, tobjects = 0, 0
@@ -395,6 +397,7 @@ def init_cli():
 
                 for path in paths:
 
+                    ipdb.set_trace()
                     try:
 
                         inc = linecount(path, args.whitespace)
