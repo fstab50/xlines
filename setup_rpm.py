@@ -219,11 +219,11 @@ setup(
             [os.path.join('bash', _comp_fname)]
         ),
         (
-            os.path.join(_install_root(), 'config'),
+            os.path.join(module_dir(), 'config'),
             [os.path.join('config', _ex_fname)]
         ),
         (
-            os.path.join(_install_root(), 'config'),
+            os.path.join(module_dir(), 'config'),
             [os.path.join('config', _ex_dirs_fname)]
         )
     ],
