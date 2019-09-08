@@ -267,8 +267,14 @@ The easiest way to install **xlines** on redhat-based Linux distribution Amazon 
 
 4. **IMPORTANT**: Prior to installing **xlines**, verify the python3 version installed.
 
+    * Verify Python version installed:
+
+    ```
+    $ which python3
+    ```
+
     * If Python 3.6 is installed or no Python3 version is currently installed on your machine, you may install the **python36-xlines** rpm package.
-    * If you have Python 3.7 installed, or which to upgrade to Python 3.7, use [pip to install xlines](#installation).  Python 3.7 is currently supported only via pip install of xlines instead of via an rpm package.
+    * If you have Python 3.7 installed, or which to upgrade to Python 3.7, [use pip to install xlines](#installation).  Python 3.7 is currently supported only via pip install of xlines instead of via an rpm package.
 
 
 5. Install **xlines** os package
