@@ -72,7 +72,7 @@ ADD ./.gitconfig /home/$USER1/.gitconfig
 RUN mkdir -p /home/$USER1/.config/bash
 RUN mkdir -p /home/$USER1/git
 RUN cd /home/$USER1/git; git clone 'https://github.com/fstab50/xlines.git'
-RUN cd /home/$USER1/git/xlines && git checkout develop
+RUN cd /home/$USER1/git/xlines && git pull && git checkout develop
 
 # bash shell configuration
 ADD ./colors.sh /home/$USER1/.config/bash/colors.sh
