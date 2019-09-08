@@ -105,8 +105,10 @@ docs: clean setup-venv    ## Generate sphinx documentation
 
 .PHONY: build
 build: artifacts  ## Build dist artifact and increment version
-	if [ $(VERSION) ]; then bash $(SCRIPTS)/version_update.sh $(VERSION); \
-	else bash $(SCRIPTS)/version_update.sh; fi && . $(VENV_DIR)/bin/activate && \
+	if [ $(VERSION) ]; then . $(VENV_DIR)/bin/activate && \
+	$(PYTHON3_PATH) $(SCRIPTS)/version_update.py $(VERSION); \
+	else . $(VENV_DIR)/bin/activate && \
+	$(PYTHON3_PATH) $(SCRIPTS)/version_update.py; fi && . $(VENV_DIR)/bin/activate && \
 	cd $(CUR_DIR) && $(PYTHON3_PATH) setup.py sdist
 
 
