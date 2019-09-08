@@ -46,7 +46,6 @@ from xlines.exclusions import ExcludedTypes
 from xlines.configure import display_exclusions, main_menupage
 from xlines.colormap import ColorMap
 from xlines.variables import *
-import ipdb
 
 cm = ColorMap()
 

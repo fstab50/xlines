@@ -84,7 +84,6 @@ def mp_linecount(path_list, exclusions, no_whitespace):
 
 def print_results(object_list, _ct_threshold, width):
     """
-
         Outputs paths and filesystem objects to which line counts
         were calculated.  Single process operation combines output
         from multiprocessing count by recombining lists of dict
