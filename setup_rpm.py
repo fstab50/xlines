@@ -51,6 +51,12 @@ def _git_root():
     return subprocess.getoutput(cmd).strip()
 
 
+def _project_root(projectname):
+    if projectname.startswith('python'):
+        return projectname.split('-')[1]
+    return projectname
+
+
 def _root_user():
     """
     Checks localhost root or sudo access.  Returns bool
@@ -219,11 +225,11 @@ setup(
             [os.path.join('bash', _comp_fname)]
         ),
         (
-            os.path.join(module_dir(), 'config'),
+            os.path.join(module_dir(), _project_root(_project), 'config'),
             [os.path.join('config', _ex_fname)]
         ),
         (
-            os.path.join(module_dir(), 'config'),
+            os.path.join(module_dir(), _project_root(_project), 'config'),
             [os.path.join('config', _ex_dirs_fname)]
         )
     ],
