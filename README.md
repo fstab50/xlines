@@ -164,7 +164,11 @@ $  sudo -H pip3 install xlines
 The easiest way to install **xlines** on redhat-based Linux distributions is via the developer-tools package repository:
 
 
-1. Install the official epel package repository
+1. Open a command line terminal.
+
+    [![rpm-install0](./assets/rpm-install-0.png)](http://images.awspros.world/xlines/rpm-install-0.png)
+
+2. Install the official epel package repository
 
     ```
     $ sudo yum install epel-release
