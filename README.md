@@ -188,9 +188,10 @@ The easiest way to install **xlines** on redhat-based Linux distributions is via
     $ sudo chown 0:0 developer-tools.repo && sudo mv developer-tools.repo /etc/yum.repos.d/
     ```
 
-3. Update local repository cache
+3. Delete the local repository cache, then Update the cache with new package references
 
     ```
+    $ sudo rm -fr /var/cache/yum
     $ sudo yum update -y
     ```
 
@@ -198,7 +199,7 @@ The easiest way to install **xlines** on redhat-based Linux distributions is via
 4. Install **xlines** os package
 
     ```
-    $ sudo yum install xlines
+    $ sudo yum install python36-xlines
     ```
 
     [![rpm-install3](./assets/rpm-install-3.png)](http://images.awspros.world/xlines/rpm-install-3.png)
