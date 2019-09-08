@@ -91,8 +91,8 @@ if lsb_release -sirc | grep -i centos >/dev/null 2>&1; then
     sudo $_SED -i '/env_reset/d' /etc/sudoers
 
     std_message "Installing packages" "INFO"
-    $_YUM -y install epel-release which
-    $_YUM -y install python36 python36-pip python36-setuptools python36-devel
+    sudo $_YUM -y install epel-release which
+    sudo $_YUM -y install python36 python36-pip python36-setuptools python36-devel
 
     std_message "Upgrade pip, setuptools" "INFO"
     sudo -H $_PIP install -U pip setuptools
