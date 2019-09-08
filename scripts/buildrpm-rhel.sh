@@ -44,16 +44,16 @@ function export_package(){
 
     cd "$(_git_root)/dist"
 
-    package=$(find . -name "xlines-[0-9].[0-9].[0-9]-[0-9].noarch.rpm")
+    package=$(find . -name "python36-xlines-[0-9].[0-9].[0-9]-[0-9].noarch.rpm")
 
     # prefix package name with python3 version
-    package=$(echo $package | cut -c 3-30)
-    p3_package="python36-$package"
+    #package=$(echo $package | cut -c 3-30)
+    #p3_package="python36-$package"
+    #mv "$package" "$p3_package"
 
-    mv "$package" "$p3_package"
-    sudo cp "$p3_package" "$external/$p3_package"
+    sudo cp "$package" "$external/$package"
 
-    if [[ -f "$external/$p3_package" ]]; then
+    if [[ -f "$external/$package" ]]; then
         return 0
     fi
     return 1
