@@ -217,7 +217,7 @@ The easiest way to install **xlines** on redhat-based Linux distributions is via
 5. Verify Installation
 
     ```
-    $ yum info xlines
+    $ yum info python36-xlines
     ```
 
     [![rpm-install5](./assets/rpm-install-5.png)](http://images.awspros.world/xlines/rpm-install-5.png)
@@ -294,7 +294,7 @@ The easiest way to install **xlines** on redhat-based Linux distribution Amazon 
 5. Verify Installation
 
     ```
-    $ yum info xlines
+    $ yum info python36-xlines
     ```
 
     [![rpm-install5](./assets/rpm-install-5.png)](http://images.awspros.world/xlines/rpm-install-5.png)
