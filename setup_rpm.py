@@ -38,7 +38,7 @@ requires = [
 ]
 
 
-_project = 'xlines'
+_project = 'python36-xlines'
 _root = os.path.abspath(os.path.dirname(__file__))
 _ex_fname = 'exclusions.list'
 _ex_dirs_fname = 'directories.list'
