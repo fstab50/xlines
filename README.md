@@ -7,7 +7,7 @@
 
 Count the number of lines of text in a code project (or anything else)
 
-**Version**: 0.7.8
+**Version**: 0.7.9
 
 * * *
 
@@ -15,7 +15,9 @@ Count the number of lines of text in a code project (or anything else)
 
 * [**Dependencies**](#dependencies)
 
-* [**Options**](#options)
+* [**Program Options**](#program-options)
+
+* [**Build Options**](#build-options)
 
 * [**Configuration**](#configuration)
 
@@ -45,7 +47,7 @@ Count the number of lines of text in a code project (or anything else)
 
 [xlines](https://github.com/fstab50/xlines) requires [Python 3.6+](https://docs.python.org/3/).
 
-If your environment has Python 3.5 or older or is missing Python 3 altogether, consider using <a href="https://github.com/fstab50/nlines" target="_blank">nlines</a> as an excellent alternative compatible with virtually any Linux-based development environment.  
+If your environment has Python 3.5 or older or is missing Python 3 altogether, consider using <a href="https://github.com/fstab50/nlines" target="_blank">nlines</a> as an excellent alternative. nlines [bash](https://www.gnu.org/software/bash) implementation line counter is compatible with virtually any Linux-based development environment.
 
 
 [back to the top](#top)
@@ -64,6 +66,10 @@ To display the **xlines** help menu:
     <a href="http://images.awspros.world/xlines/help-menu.png" target="_blank"><img src="./assets/help-menu.png">
 </p>
 
+--
+
+[back to the top](#top)
+
 * * *
 ## Build options
 
@@ -76,6 +82,8 @@ To display the **xlines** help menu:
 <p align="center">
     <a href="http://images.awspros.world/xlines/make-help.png" target="_blank"><img src="./assets/make-help.png">
 </p>
+
+--
 
 [back to the top](#top)
 
@@ -90,21 +98,29 @@ Configure [xlines](https://github.com/fstab50/xlines) runtime options by enterin
 
 [![toc](./assets/configure_toc.png)](http://images.awspros.world/xlines/configure_toc.png)&nbsp;
 
+[back to the top](#top)
+
+--
 
 Option "A" (shown below) allows addition of file types to be excluded (skipped) from line totals
 
 [![option a](./assets/configure_a.png)](http://images.awspros.world/xlines/configure_a.png)
 
+[back to the top](#top)
 
-Option "B" (shown below) allows deletion of file types to be excluded so that a specific type of file can again be included in total line counts:
+--
+
+Option "B" (shown below) allows deletion of file types from the exclusion list so that a specific file extension will be included in total line counts:
 
 [![option b](./assets/configure_b.png)](http://images.awspros.world/xlines/configure_b.png)&nbsp;
 
+[back to the top](#top)
+
+--
 
 Option "C" (shown below) allows user-customization of files highlighted for containing a large number of lines of text:
 
 [![option c](./assets/configure_c.png)](http://images.awspros.world/xlines/configure_c.png)
-
 
 --
 
@@ -148,7 +164,11 @@ $  sudo -H pip3 install xlines
 The easiest way to install **xlines** on redhat-based Linux distributions is via the developer-tools package repository:
 
 
-1. Install the official epel package repository
+1. Open a command line terminal.
+
+    [![rpm-install0](./assets/rpm-install-0.png)](http://images.awspros.world/xlines/rpm-install-0.png)
+
+2. Install the official epel package repository
 
     ```
     $ sudo yum install epel-release
@@ -172,9 +192,10 @@ The easiest way to install **xlines** on redhat-based Linux distributions is via
     $ sudo chown 0:0 developer-tools.repo && sudo mv developer-tools.repo /etc/yum.repos.d/
     ```
 
-3. Update local repository cache
+3. Delete the local repository cache, then Update the cache with new package references
 
     ```
+    $ sudo rm -fr /var/cache/yum
     $ sudo yum update -y
     ```
 
@@ -182,7 +203,7 @@ The easiest way to install **xlines** on redhat-based Linux distributions is via
 4. Install **xlines** os package
 
     ```
-    $ sudo yum install xlines
+    $ sudo yum install python36-xlines
     ```
 
     [![rpm-install3](./assets/rpm-install-3.png)](http://images.awspros.world/xlines/rpm-install-3.png)
@@ -196,7 +217,7 @@ The easiest way to install **xlines** on redhat-based Linux distributions is via
 5. Verify Installation
 
     ```
-    $ yum info xlines
+    $ yum info python36-xlines
     ```
 
     [![rpm-install5](./assets/rpm-install-5.png)](http://images.awspros.world/xlines/rpm-install-5.png)
@@ -236,24 +257,30 @@ The easiest way to install **xlines** on redhat-based Linux distribution Amazon 
     $ sudo chown 0:0 developer-tools.repo && sudo mv developer-tools.repo /etc/yum.repos.d/
     ```
 
-3. Update local repository cache
+3. Delete the local repository cache, then Update the cache with new package references
 
     ```
+    $ sudo rm -fr /var/cache/yum
     $ sudo yum update -y
     ```
 
 
 4. **IMPORTANT**: Prior to installing **xlines**, verify the python3 version installed.
 
-    * If Python 3.6 is installed, _installing xlines will install Amazon Linux 2 base python3, which is Python 3.7_.
-    * This change should not have any effect on the OS support applications themselves.
-    * You should evaluate the small chance that there is a potential effect on custom applications running on the machine.
+    * Verify Python version installed:
+
+    ```
+    $ which python3
+    ```
+
+    * If Python 3.6 is installed or no Python3 version is currently installed on your machine, you may install the **python36-xlines** rpm package. Proceed with Step 5 (below).
+    * If you have Python 3.7 installed, or which to upgrade to Python 3.7, [use pip to install xlines](#installation).  Python 3.7 is currently supported only via pip install of xlines instead of via an rpm package.
 
 
 5. Install **xlines** os package
 
     ```
-    $ sudo yum install xlines
+    $ sudo yum install python36-xlines
     ```
 
     [![rpm-install3](./assets/rpm-install-3.png)](http://images.awspros.world/xlines/rpm-install-3.png)
@@ -267,17 +294,17 @@ The easiest way to install **xlines** on redhat-based Linux distribution Amazon 
 5. Verify Installation
 
     ```
-    $ yum info xlines
+    $ yum info python36-xlines
     ```
 
     [![rpm-install5](./assets/rpm-install-5.png)](http://images.awspros.world/xlines/rpm-install-5.png)
 
-    A check of python3 should point to Python 3.7:
+    A check of python3 should point to Python 3.6:
     ```
     $ python3 --version
     ```
     ```
-    $ Python 3.7.X
+    $ Python 3.6.X
     ```
 
 --

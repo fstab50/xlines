@@ -38,7 +38,7 @@ requires = [
 ]
 
 
-_project = 'xlines'
+_project = 'python36-xlines'
 _root = os.path.abspath(os.path.dirname(__file__))
 _ex_fname = 'exclusions.list'
 _ex_dirs_fname = 'directories.list'
@@ -49,6 +49,12 @@ def _git_root():
     """Returns root directory of git repository"""
     cmd = 'git rev-parse --show-toplevel 2>/dev/null'
     return subprocess.getoutput(cmd).strip()
+
+
+def _project_root(projectname):
+    if projectname.startswith('python'):
+        return projectname.split('-')[1]
+    return projectname
 
 
 def _root_user():
@@ -219,11 +225,11 @@ setup(
             [os.path.join('bash', _comp_fname)]
         ),
         (
-            os.path.join(module_dir(), _project, 'config'),
+            os.path.join(module_dir(), _project_root(_project), 'config'),
             [os.path.join('config', _ex_fname)]
         ),
         (
-            os.path.join(module_dir(), _project, 'config'),
+            os.path.join(module_dir(), _project_root(_project), 'config'),
             [os.path.join('config', _ex_dirs_fname)]
         )
     ],

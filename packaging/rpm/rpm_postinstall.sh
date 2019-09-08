@@ -48,13 +48,10 @@ function _amazonlinux(){
     if [[ -f /etc/redhat-release ]]; then
         return 0
 
-    elif [[ $(grep -i centos /etc/os-release) ]]; then
+    elif [[ $(grep -i 'amazon linux 2' /etc/os-release) ]]; then
         return 0
 
-    elif [[ $(grep -i redhat /etc/os-release) ]]; then
-        return 0
     fi
-
     return 1
 }
 
@@ -63,6 +60,11 @@ if [ "$SUDO_USER" ]; then
     chown -R $SUDO_USER:$SUDO_USER /home/$SUDO_USER/.config
 else
     chown -R $USER:$USER /home/$USER/.config
+fi
+
+if _amazonlinux; then
+    # install pygments
+    pip3 install pygments
 fi
 
 # generate bytecode artifacts

@@ -42,6 +42,7 @@ RUN yum install -y gcc gcc-c++ \
 
 # rpmbuild tools
 RUN yum -y install rpm-build rpmdevtools
+RUN yum -y install system-lsb
 
 # user operations
 ENV USER1 'builder'
@@ -82,6 +83,8 @@ ADD ./.gitconfig /home/$USER1/.gitconfig
 RUN mkdir -p /home/$USER1/.config/bash
 RUN mkdir -p /home/$USER1/git
 RUN cd /home/$USER1/git; git clone 'https://github.com/fstab50/xlines.git'
+RUN cd /home/$USER1/git/xlines && git pull && git checkout develop
+
 ADD ./colors.sh /home/$USER1/.config/bash/colors.sh
 ADD ./motd-amazonlinux2.sh /home/$USER1/.config/bash/motd.sh
 ADD ./loadavg-flat-layout.sh /home/$USER1/.config/bash/loadavg-flat-layout.sh

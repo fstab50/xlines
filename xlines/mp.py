@@ -13,7 +13,7 @@ import inspect
 from xlines.usermessage import stdout_message
 from xlines import Colors
 from xlines.core import BUFFER, acct, bwt, text, rst, arrow, div
-from xlines.core import absolute_paths, linecount, print_header, print_footer
+from xlines.core import linecount, print_header, print_footer
 from xlines.export import export_json_object
 from xlines import local_config, logger
 from xlines.variables import *
@@ -84,7 +84,6 @@ def mp_linecount(path_list, exclusions, no_whitespace):
 
 def print_results(object_list, _ct_threshold, width):
     """
-
         Outputs paths and filesystem objects to which line counts
         were calculated.  Single process operation combines output
         from multiprocessing count by recombining lists of dict
@@ -92,6 +91,9 @@ def print_results(object_list, _ct_threshold, width):
 
     Args:
         :object_list (list):  Format:
+
+        .. code: json
+
             [
                 {
                     'path': '/var/lib/dpkg/info/xtrans-dev.list',
@@ -102,6 +104,7 @@ def print_results(object_list, _ct_threshold, width):
                     'count': 249
                 },
             ]
+
         :_ct_threshold (int): path rec highlight color if object linecount
             is at or above this threshold
         :width (int): width in characters of the output pattern
@@ -213,10 +216,11 @@ def multiprocessing_main(valid_paths, max_width, _threshold, wspace, exclusions,
     processes, results = [], []
     debug_messages(debug, valid_paths)
 
-    cores = 4   # stub in for 4 logical cpus
-    a, b, c, d = [sorted(x) for x in split_list(valid_paths, cores)]
+    # maximum cores is 4 due to i/o contention single drive systems
+    cores = 4 if cpu_cores() >= 4 else cpu_cores()
+    equal_lists = [sorted(x) for x in split_list(valid_paths, cores)]
 
-    for i in (a, b, c, d):
+    for i in equal_lists:
         t = multiprocessing.Process(target=mp_linecount, args=(i, exclusions.types, wspace))
         processes.append(t)
         t.start()
@@ -224,7 +228,7 @@ def multiprocessing_main(valid_paths, max_width, _threshold, wspace, exclusions,
         results.extend([x for x in queue_generator(q, t)])
 
         if debug:
-            print('Just completed: list {}'.format(get_varname(i)))    # show progress
+            print('Completed: list {}'.format(get_varname(i)))    # show progress
 
     print_results(results, _threshold, max_width)
 
