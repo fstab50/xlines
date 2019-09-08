@@ -23,6 +23,7 @@ import os
 import sys
 import platform
 import subprocess
+import inspect
 from shutil import which
 from shutil import copy2 as copyfile
 from setuptools import setup, find_packages
@@ -38,7 +39,7 @@ requires = [
 ]
 
 
-_project = 'xlines'
+_project = 'python36-xlines'
 _root = os.path.abspath(os.path.dirname(__file__))
 _ex_fname = 'exclusions.list'
 _ex_dirs_fname = 'directories.list'
@@ -85,7 +86,9 @@ def create_artifact(object_path, type):
 
 def _install_root():
     """Filsystem installed location of program modules"""
-    return os.path.abspath(os.path.dirname(xlines.common.__file__))
+    if not _root_user():
+        return os.path.abspath(os.path.dirname(xlines.__file__))
+    return os.path.join(inspect.getsourcefile(setup).split('setuptools')[0], _project)
 
 
 def module_dir():
@@ -153,7 +156,7 @@ class PostInstallRoot(install):
         if self.valid_os_shell():
 
             completion_dir = '/etc/bash_completion.d'
-            config_dir = os.path.join(module_dir(), 'config')
+            config_dir = os.path.join(_install_root(), 'config')
 
             if not os.path.exists(os_parityPath(config_dir)):
                 create_artifact(os_parityPath(config_dir), 'dir')
@@ -178,6 +181,7 @@ class PostInstallRoot(install):
                     os_parityPath(os.path.join(config_dir, _ex_dirs_fname))
                 )
         install.run(self)
+
 
 
 def preclean(dst):
@@ -213,17 +217,20 @@ setup(
     include_package_data=True,
     install_requires=requires,
     python_requires='>=3.6, <4',
+    cmdclass={
+        'install': PostInstallRoot
+    },
     data_files=[
         (
             os.path.join('/etc/bash_completion.d'),
             [os.path.join('bash', _comp_fname)]
         ),
         (
-            os.path.join(module_dir(), _project, 'config'),
+            os.path.join(_install_root(), 'config'),
             [os.path.join('config', _ex_fname)]
         ),
         (
-            os.path.join(module_dir(), _project, 'config'),
+            os.path.join(_install_root(), 'config'),
             [os.path.join('config', _ex_dirs_fname)]
         )
     ],
