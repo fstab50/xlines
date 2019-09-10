@@ -24,7 +24,6 @@ REQUIREMENT = $(CUR_DIR)/requirements.txt
 VERSION_FILE = $(CUR_DIR)/$(PROJECT)/_version.py
 
 # os package creation
-RHEL_REQUIRES = 'python36,python36-pip,python36-setuptools,python36-pygments,bash-completion'
 AML_REQUIRES = 'python3,python3-pip,python3-setuptools,bash-completion,which'
 PRE_SCRIPT = $(SCRIPTS)/rpm_preinstall.py
 _POSTINSTALL = $(CUR_DIR)/packaging/rpm/amzn2_postinstall.sh
@@ -125,8 +124,8 @@ buildrpm-rhel: clean  ## Build Redhat distribution (.rpm) os package
 	bash $(SCRIPTS)/buildrpm-rhel.sh
 
 
-.PHONY: buildrpm-amzn2
-buildrpm-amzn2: clean  ## Build Amazon Linux 2 distribution (.rpm) os package
+.PHONY: buildrpm-amzn
+buildrpm-amzn: clean  ## Build Amazon Linux 2 distribution (.rpm) os package
 	bash $(SCRIPTS)/buildrpm-amzn2.sh
 
 
