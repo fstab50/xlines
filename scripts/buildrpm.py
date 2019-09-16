@@ -732,11 +732,12 @@ def docker_init(src, builddir, osimage, param_dict, debug):
     """
     imagename = osimage + ':' + param_dict['DockerImage']        # image name
     cname = param_dict['DockerContainer']                    # container id
+    _root = param_dict['RepositoryRoot']                     # git repository root
+    _target = param_dict['MakeTarget']                       # Makefile target to execute
     host_mnt = VOLMNT                                        # host volume mount point
     container_mnt = CONTAINER_VOLMNT                         # container volume internal mnt pt
     docker_user = 'builder'
     bash_cmd = '/bin/sleep 30'
-    buildscript = 'docker-buildrpm.sh'
 
     try:
 
@@ -806,7 +807,9 @@ def docker_init(src, builddir, osimage, param_dict, debug):
                     )
 
         # exec rpmbuild script
-        cmd = f'docker exec -i {container.name} sh -c \'cd ~ && bash {buildscript}\''
+        cmd = f'docker exec -i {container.name} sh -c \'cd {_root} && git pull\''
+        stdout_message(subprocess.getoutput(cmd))
+        cmd = f'docker exec -i {container.name} sh -c \'make {_target}\''
         stdout_message(subprocess.getoutput(cmd))
 
         if container_running(container.name):
@@ -873,19 +876,8 @@ def main(setVersion, environment, package_configpath, force=False, debug=False):
     if debug:
         print(json.dumps(vars, indent=True, sort_keys=True))
 
-    r_struture = builddir_structure(vars, VERSION)
-    r_updates = builddir_content_updates(vars, environment, VERSION, debug)
-
-    # create tar archive
-    target_archive = BUILD_ROOT + '/' + PROJECT_BIN + '-' + VERSION + '.tar.gz'
-    source_dir = BUILD_ROOT + '/' + BUILDDIRNAME
-    r_tarfile = tar_archive(target_archive, source_dir, debug)
-
     # launch docker container and execute final build steps
-    if r_struture and r_updates and r_tarfile:
-        # status
-        msg = yl + BUILD_ROOT + '/' + target_archive + rst
-        stdout_message('tgz archive built: %s' % msg)
+    if vars and VERSION_FILE:
 
         # trigger docker build based on environment:
         container = docker_init(

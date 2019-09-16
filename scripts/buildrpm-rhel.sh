@@ -78,6 +78,10 @@ RHEL_REQUIRES='python36,python36-pip,python36-setuptools,python36-pygments,bash-
 
 if lsb_release -sirc | grep -i centos >/dev/null 2>&1; then
 
+    # prerun update
+    cd $ROOT || exit 1
+    git pull
+
     std_message "Dependency check: validate epel package repository installed" "INFO"
 
     if [[ $(${_YUM} repolist 2>/dev/null | grep epel) ]]; then
