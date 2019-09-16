@@ -58,8 +58,12 @@ docker build  -t  $image .
 
 # create container
 std_message "Creating and running container ($container) -- START" "INFO"
-docker run  --name=$container  -d -v /tmp/rpm:/mnt/rpm  -ti   $image  tail -f /dev/null &
-
+docker run  \
+    --name=$container  \
+    --user='builder' \
+    -d -v /tmp/rpm:/mnt/rpm  \
+    -ti  $image  tail -f /dev/null &
+    
 if container_started; then
     std_message "Container ${container} started successfully" "OK"
 else
