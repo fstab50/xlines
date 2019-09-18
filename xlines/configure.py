@@ -215,8 +215,7 @@ def _configure_add(expath, exdirpath, startpt):
                 exclusions.extend([x if x.startswith('.') else '.' + x for x in add_list])
 
             # exit loop; write out new exclusions config file
-            with open(expath, 'w') as f2:
-                f2.writelines([x + '\n' for x in exclusions])
+            _configure_rewrite(expath, exclusions)
 
     except OSError:
         stdout_message(
