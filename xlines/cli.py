@@ -384,7 +384,6 @@ def init_cli():
 
         elif not args.multiprocess:
 
-
             io_fail = []
             tcount, tobjects = 0, 0
             width, paths = longest_path(container, ex)

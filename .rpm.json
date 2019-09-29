@@ -20,7 +20,9 @@
     "DockerImage": "rpmbuildF",
     "DockerContainer": "buildxlines",
     "DockerUser": "builder",
-    "DockerBuildScript": "docker-buildrpm.sh",
+    "RepositoryRoot": "/home/builder/git/xlines",
+    "MakeTarget": "buildrpm-rhel",
+    "DockerBuildScript": "buildrpm-rhel.sh",
     "BashCompletion": "xlines-completion.bash",
     "SpecFile": {
         "Name": "xlines.spec",

@@ -18,15 +18,14 @@ PANDOC_CALL := $(shell which pandoc)
 ACTIVATE = $(shell . $(VENV_DIR)/bin/activate)
 MAKE = $(shell which make)
 MODULE_PATH := $(CUR_DIR)/$(PROJECT)
-SCRIPTS := $(CUR_DIR)/scripts
+SCRIPT_DIR := $(CUR_DIR)/scripts
 DOC_PATH := $(CUR_DIR)/docs
 REQUIREMENT = $(CUR_DIR)/requirements.txt
 VERSION_FILE = $(CUR_DIR)/$(PROJECT)/_version.py
 
 # os package creation
-RHEL_REQUIRES = 'python36,python36-pip,python36-setuptools,python36-pygments,bash-completion'
 AML_REQUIRES = 'python3,python3-pip,python3-setuptools,bash-completion,which'
-PRE_SCRIPT = $(SCRIPTS)/rpm_preinstall.py
+PRE_SCRIPT = $(SCRIPT_DIR)/rpm_preinstall.py
 _POSTINSTALL = $(CUR_DIR)/packaging/rpm/amzn2_postinstall.sh
 YUM_CALL = sudo $(shell which yum)
 PIP3_CALL = $(shell which pip3)
@@ -106,9 +105,9 @@ docs: clean setup-venv    ## Generate sphinx documentation
 .PHONY: build
 build: artifacts  ## Build dist artifact and increment version
 	if [ $(VERSION) ]; then . $(VENV_DIR)/bin/activate && \
-	$(PYTHON3_PATH) $(SCRIPTS)/version_update.py $(VERSION); \
+	$(PYTHON3_PATH) $(SCRIPT_DIR)/version_update.py $(VERSION); \
 	else . $(VENV_DIR)/bin/activate && \
-	$(PYTHON3_PATH) $(SCRIPTS)/version_update.py; fi && . $(VENV_DIR)/bin/activate && \
+	$(PYTHON3_PATH) $(SCRIPT_DIR)/version_update.py; fi && . $(VENV_DIR)/bin/activate && \
 	cd $(CUR_DIR) && $(PYTHON3_PATH) setup.py sdist
 
 
@@ -121,13 +120,17 @@ builddeb: setup-venv clean-version ## Build Debian distribution (.deb) os packag
 
 
 .PHONY: buildrpm-rhel
-buildrpm-rhel: clean  ## Build Redhat distribution (.rpm) os package
-	bash $(SCRIPTS)/buildrpm-rhel.sh
+buildrpm-rhel: clean setup-venv   ## Build Redhat distribution (.rpm) os package
+	@echo "Building RPM package format of $(PROJECT)";
+	if [ $(VERSION) ]; then cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
+	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py --build --set-version $(VERSION); elif [ $(RETAIN) ]; then \
+	. $(VENV_DIR)/bin/activate && $(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py --build --container; else \
+	cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && $(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py --build; fi
 
 
-.PHONY: buildrpm-amzn2
-buildrpm-amzn2: clean  ## Build Amazon Linux 2 distribution (.rpm) os package
-	bash $(SCRIPTS)/buildrpm-amzn2.sh
+.PHONY: buildrpm-amzn
+buildrpm-amzn: clean  ## Build Amazon Linux 2 distribution (.rpm) os package
+	bash $(SCRIPT_DIR)/buildrpm-amzn2.sh
 
 
 .PHONY: testpypi

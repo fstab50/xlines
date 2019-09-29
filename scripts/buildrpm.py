@@ -108,6 +108,7 @@ def help_menu():
 
                          -b, --build
                          -d, --distro  <value>
+                        [-c, --container  ]
                         [-D, --debug  ]
                         [-f, --force  ]
                         [-h, --help   ]
@@ -117,6 +118,9 @@ def help_menu():
         ''' + bd + '''-b''' + rst + ''', ''' + bd + '''--build''' + rst + ''':  Build Operating System package ( *.rpm, Redhat systems )
             When given without the --set-version parameter switch, build ver-
             sion is extracted from the project repository information
+
+        ''' + bd + '''-c''' + rst + ''', ''' + bd + '''--container''' + rst + ''':  Leave container running after rpm build; do not halt
+            or remove.
 
         ''' + bd + '''-d''' + rst + ''', ''' + bd + '''--debug''' + rst + ''': Debug mode, verbose output.
 
@@ -368,7 +372,7 @@ def builddir_structure(param_dict, force):
     # full paths
     rpm_src = root + '/packaging/rpm'
     builddir_path = build_root + '/' + builddir
-    lib_path = root + '/' + 'core'
+    lib_path = root + '/' + PROJECT
 
     try:
 
@@ -673,7 +677,7 @@ def display_package_contents(rpm_path, contents):
     """
     tab = '\t'.expandtabs(2)
     tab4 = '\t'.expandtabs(4)
-    width = 90
+    width = 120
     package = os.path.split(rpm_path)[1]
     path, discard = os.path.split(contents)
     pwd = os.getcwd()
@@ -690,6 +694,7 @@ def display_package_contents(rpm_path, contents):
     print(subheader)
 
     # divider line
+    print('  ', end='')
     list(filter(lambda x: print('-', end=''), range(0, width + 1))), print('\r')
 
     # content
@@ -722,7 +727,7 @@ def docker_daemon_up():
     return False
 
 
-def docker_init(src, builddir, osimage, param_dict, debug):
+def docker_init(src, builddir, _version, osimage, param_dict, debug):
     """
     Summary:
         Creates docker image and container
@@ -730,12 +735,14 @@ def docker_init(src, builddir, osimage, param_dict, debug):
     Returns:
         Container id (Name) | Failure (None)
     """
-    imagename = osimage + ':' + param_dict['DockerImage']        # image name
+    imagename = osimage + ':' + param_dict['DockerImage']    # image name
     cname = param_dict['DockerContainer']                    # container id
+    _root = param_dict['RepositoryRoot']                     # git repository root
+    _buildscript = param_dict['DockerBuildScript'].strip()   # container-resident script to build rpm
     host_mnt = VOLMNT                                        # host volume mount point
     container_mnt = CONTAINER_VOLMNT                         # container volume internal mnt pt
-    bash_cmd = '/bin/sleep 30'
-    buildscript = 'docker-buildrpm.sh'
+    docker_user = 'builder'
+    bash_cmd = '/bin/sleep 300'
 
     try:
 
@@ -765,6 +772,8 @@ def docker_init(src, builddir, osimage, param_dict, debug):
                 image=imagename,
                 command=bash_cmd,
                 volumes={host_mnt: {'bind': container_mnt, 'mode': 'rw'}},
+                user=docker_user,
+                security_opt=['label:disable'],
                 detach=True
             )
 
@@ -781,7 +790,7 @@ def docker_init(src, builddir, osimage, param_dict, debug):
 
         buildfile_list = list(
             filter(
-                lambda x: x.endswith('.tar.gz') or x.endswith('.spec'), os.listdir('.')
+                lambda x: x.endswith('.tar.gz') or x.endswith('.spec') or x.endswith('.sh'), os.listdir('.')
             )
         )
 
@@ -791,20 +800,12 @@ def docker_init(src, builddir, osimage, param_dict, debug):
             print(f'imagename is: {imagename}')
             print(f'container name is: {container.name}')
 
-        for file in buildfile_list:
-            # local fs >> container:/home/builder
-            cmd = f'docker cp {file} {container.name}:/home/builder/{file}'
-            # status
-            if not subprocess.getoutput(cmd):
-                stdout_message(f'{file} copied to container {container.name} successfully')
-            else:
-                stdout_message(
-                        f'Problem copying {file} to container {container.name}',
-                        prefix='WARN'
-                    )
-
         # exec rpmbuild script
-        cmd = f'docker exec -i {container.name} sh -c \'cd ~ && bash {buildscript}\''
+        cmd = f'docker exec -i {container.name} sh -c \'cd {_root} && git checkout develop\''
+        stdout_message(subprocess.getoutput(cmd))
+        cmd = f"docker exec -i {container.name} sh -c \'cd /home/builder/git/xlines && git pull\'"
+        stdout_message(subprocess.getoutput(cmd))
+        cmd = f'docker exec -i {container.name} sh -c \'cd /home/builder/git/xlines && sh scripts/{_buildscript} {_version}\''
         stdout_message(subprocess.getoutput(cmd))
 
         if container_running(container.name):
@@ -816,7 +817,7 @@ def docker_init(src, builddir, osimage, param_dict, debug):
     return None
 
 
-def main(setVersion, environment, package_configpath, force=False, debug=False):
+def main(setVersion, environment, package_configpath, force=False, retain=False, debug=False):
     """
     Summary:
         Create build directories, populate contents, update contents
@@ -826,6 +827,7 @@ def main(setVersion, environment, package_configpath, force=False, debug=False):
         :package_configpath (str): full path to json configuration file
         :data (dict): build parameters for rpm build process
         :force (bool): If True, overwrites any pre-existing build artifacts
+        :retain (bool): If True, leave container running; do not clean/ remove
     Returns:
         Success | Failure, TYPE: bool
     """
@@ -841,7 +843,7 @@ def main(setVersion, environment, package_configpath, force=False, debug=False):
     global RPM_SRC
     RPM_SRC = PROJECT_ROOT + '/packaging/rpm'
     global LIB_DIR
-    LIB_DIR = PROJECT_ROOT + '/' + 'core'
+    LIB_DIR = PROJECT_ROOT + '/' + PROJECT
     global CURRENT_VERSION
     CURRENT_VERSION = current_version(PROJECT_BIN, LIB_DIR + '/' 'version.py')
 
@@ -871,30 +873,20 @@ def main(setVersion, environment, package_configpath, force=False, debug=False):
     if debug:
         print(json.dumps(vars, indent=True, sort_keys=True))
 
-    r_struture = builddir_structure(vars, VERSION)
-    r_updates = builddir_content_updates(vars, environment, VERSION, debug)
-
-    # create tar archive
-    target_archive = BUILD_ROOT + '/' + PROJECT_BIN + '-' + VERSION + '.tar.gz'
-    source_dir = BUILD_ROOT + '/' + BUILDDIRNAME
-    r_tarfile = tar_archive(target_archive, source_dir, debug)
-
     # launch docker container and execute final build steps
-    if r_struture and r_updates and r_tarfile:
-        # status
-        msg = yl + BUILD_ROOT + '/' + target_archive + rst
-        stdout_message('tgz archive built: %s' % msg)
+    if vars and VERSION_FILE:
 
         # trigger docker build based on environment:
         container = docker_init(
                 PROJECT_ROOT + '/packaging/docker/' + environment,
                 BUILD_ROOT,
+                VERSION,
                 environment,
                 vars,
                 debug
             )
         if container:
-            return postbuild(PROJECT_ROOT, container, RPM_SRC, SCRIPT_DIR, VERSION_FILE, VERSION)
+            return postbuild(PROJECT_ROOT, container, RPM_SRC, SCRIPT_DIR, VERSION_FILE, VERSION, retain)
     return False
 
 
@@ -906,6 +898,7 @@ def options(parser, help_menu=False):
         TYPE: argparse object, parser argument set
     """
     parser.add_argument("-b", "--build", dest='build', default=False, action='store_true', required=False)
+    parser.add_argument("-c", "--container", dest='container', default=False, action='store_true', required=False)
     parser.add_argument("-D", "--debug", dest='debug', default=False, action='store_true', required=False)
     parser.add_argument("-d", "--distro", dest='distro', default='centos7', nargs='?', type=str, required=False)
     parser.add_argument("-F", "--force", dest='force', default=False, action='store_true', required=False)
@@ -986,8 +979,8 @@ def prebuild(builddir, libsrc, volmnt, parameter_file):
         os.makedirs(volmnt)
 
         root = git_root()
-        src = root + '/core' + '/' + version_module
-        dst = root + '/scripts' + '/' + version_module
+        src = os.path.join(root, PROJECT, version_module)
+        dst = os.path.join(root, 'scripts', version_module)
 
         # deal with leftover build artifacts
         if os.path.exists(dst):
@@ -996,7 +989,7 @@ def prebuild(builddir, libsrc, volmnt, parameter_file):
 
         # import version module
         global __version__
-        from version import __version__
+        from _version import __version__
 
         if r_cf and __version__ and docker_daemon_up():
             return True
@@ -1026,7 +1019,7 @@ def locate_artifact(filext, origin):
     return None
 
 
-def postbuild(root, container, rpm_root, scripts_dir, version_module, version):
+def postbuild(root, container, rpm_root, scripts_dir, version_module, version, persist):
     """
     Summary:
         Post-build clean up
@@ -1036,6 +1029,8 @@ def postbuild(root, container, rpm_root, scripts_dir, version_module, version):
         :script_dir (str): directory where scripts
         :version_module (str): name of module containing version number
         :version (str): current version label (Example: 1.6.8)
+        :persist (bool): When True, retain container build environment intact
+            and running; do not clean and remove container
     Returns:
         Success | Failure, TYPE: bool
     """
@@ -1056,25 +1051,26 @@ def postbuild(root, container, rpm_root, scripts_dir, version_module, version):
         # rpm contents text file
         contents = locate_artifact('.txt', volmnt)
 
-        # stop and rm container
-        cmd = f'docker stop {container.name}'
-        subprocess.getoutput(cmd)
-
-        # status
-        if not container_running(container.name):
-            stdout_message(f'{container.name} successfully halted', prefix='OK')
-            cmd = f'docker rm {container.name}'
+        if persist is False:
+            # stop and rm container
+            cmd = f'docker stop {container.name}'
             subprocess.getoutput(cmd)
+
+            # status
+            if not container_running(container.name):
+                stdout_message(f'{container.name} successfully halted', prefix='OK')
+                cmd = f'docker rm {container.name}'
+                subprocess.getoutput(cmd)
 
         # remove temp version module copied to scripts dir
         if os.path.exists(scripts_dir + '/' + version_module):
             os.remove(scripts_dir + '/' + version_module)
 
         # rewrite version file with 67rrent build version
-        with open(root + '/core/' + version_module, 'w') as f3:
+        with open(os.path.join(root, PROJECT, version_module), 'w') as f3:
             f2 = ['__version__=\"' + version + '\"\n']
             f3.writelines(f2)
-            path = project_dirname + (root + '/core/' + version_module)[len(root):]
+            path = project_dirname + (root + '/' + PROJECT + '/' + version_module)[len(root):]
             stdout_message(
                 '{}: Module {} successfully updated.'.format(inspect.stack()[0][3], yl + path + rst)
                 )
@@ -1234,13 +1230,14 @@ def init_cli():
         return exit_codes['EX_OK']['Code']
 
     elif args.build:
-        libsrc = git_root() + '/' + 'core'
+        libsrc = os.path.join(git_root(), PROJECT)
         if valid_version(args.set) and prebuild(TMPDIR, libsrc, VOLMNT, git_root() + '/' + args.parameter_file):
             package, contents = main(
                         setVersion=args.set,
                         environment=args.distro,
                         package_configpath=git_root() + '/' + args.parameter_file,
                         force=args.force,
+                        retain=args.container,
                         debug=args.debug
                     )
             if package:
@@ -1251,7 +1248,7 @@ def init_cli():
                     display_package_contents(package, contents)
                 else:
                     stdout_message(
-                        message=f'Unable to locate a rpm contents file in {build_root}.',
+                        message=f'Unable to locate a rpm contents file in {VOLMNT}.',
                         prefix='WARN')
                     return False
                 return exit_codes['EX_OK']['Code']
