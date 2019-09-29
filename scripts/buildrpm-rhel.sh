@@ -90,13 +90,13 @@ function export_package(){
 
     package=$(find . -name "python36-xlines-[0-9].[0-9].[0-9]-[0-9].noarch.rpm")
 
-    # prefix package name with python3 version
-    #package=$(echo $package | cut -c 3-30)
-    #p3_package="python36-$package"
-    #mv "$package" "$p3_package"
+    # truncate additional ./ chars
+    package=$(echo $package | cut -c 3-50)
 
-    sudo cp "$package" "$external/$package"
-
+    #sudo cp "$package" "$external/$package"
+    cp "$package" ~/rpmbuild/RPMS/
+    return 0
+    
     if [[ -f "$external/$package" ]]; then
         return 0
     fi
