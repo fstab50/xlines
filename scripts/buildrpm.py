@@ -108,6 +108,7 @@ def help_menu():
 
                          -b, --build
                          -d, --distro  <value>
+                        [-c, --container  ]
                         [-D, --debug  ]
                         [-f, --force  ]
                         [-h, --help   ]
@@ -117,6 +118,9 @@ def help_menu():
         ''' + bd + '''-b''' + rst + ''', ''' + bd + '''--build''' + rst + ''':  Build Operating System package ( *.rpm, Redhat systems )
             When given without the --set-version parameter switch, build ver-
             sion is extracted from the project repository information
+
+        ''' + bd + '''-c''' + rst + ''', ''' + bd + '''--container''' + rst + ''':  Leave container running after rpm build; do not halt
+            or remove.
 
         ''' + bd + '''-d''' + rst + ''', ''' + bd + '''--debug''' + rst + ''': Debug mode, verbose output.
 
@@ -734,7 +738,7 @@ def docker_init(src, builddir, _version, osimage, param_dict, debug):
     imagename = osimage + ':' + param_dict['DockerImage']    # image name
     cname = param_dict['DockerContainer']                    # container id
     _root = param_dict['RepositoryRoot']                     # git repository root
-    _buildscript = param_dict['DockerBuildScript']           # container-resident script to build rpm
+    _buildscript = param_dict['DockerBuildScript'].strip()   # container-resident script to build rpm
     host_mnt = VOLMNT                                        # host volume mount point
     container_mnt = CONTAINER_VOLMNT                         # container volume internal mnt pt
     docker_user = 'builder'
@@ -813,7 +817,7 @@ def docker_init(src, builddir, _version, osimage, param_dict, debug):
     return None
 
 
-def main(setVersion, environment, package_configpath, force=False, debug=False):
+def main(setVersion, environment, package_configpath, force=False, retain=False, debug=False):
     """
     Summary:
         Create build directories, populate contents, update contents
@@ -823,6 +827,7 @@ def main(setVersion, environment, package_configpath, force=False, debug=False):
         :package_configpath (str): full path to json configuration file
         :data (dict): build parameters for rpm build process
         :force (bool): If True, overwrites any pre-existing build artifacts
+        :retain (bool): If True, leave container running; do not clean/ remove
     Returns:
         Success | Failure, TYPE: bool
     """
@@ -881,7 +886,7 @@ def main(setVersion, environment, package_configpath, force=False, debug=False):
                 debug
             )
         if container:
-            return postbuild(PROJECT_ROOT, container, RPM_SRC, SCRIPT_DIR, VERSION_FILE, VERSION)
+            return postbuild(PROJECT_ROOT, container, RPM_SRC, SCRIPT_DIR, VERSION_FILE, VERSION, retain)
     return False
 
 
@@ -893,6 +898,7 @@ def options(parser, help_menu=False):
         TYPE: argparse object, parser argument set
     """
     parser.add_argument("-b", "--build", dest='build', default=False, action='store_true', required=False)
+    parser.add_argument("-c", "--container", dest='container', default=False, action='store_true', required=False)
     parser.add_argument("-D", "--debug", dest='debug', default=False, action='store_true', required=False)
     parser.add_argument("-d", "--distro", dest='distro', default='centos7', nargs='?', type=str, required=False)
     parser.add_argument("-F", "--force", dest='force', default=False, action='store_true', required=False)
@@ -1013,7 +1019,7 @@ def locate_artifact(filext, origin):
     return None
 
 
-def postbuild(root, container, rpm_root, scripts_dir, version_module, version):
+def postbuild(root, container, rpm_root, scripts_dir, version_module, version, persist):
     """
     Summary:
         Post-build clean up
@@ -1023,6 +1029,8 @@ def postbuild(root, container, rpm_root, scripts_dir, version_module, version):
         :script_dir (str): directory where scripts
         :version_module (str): name of module containing version number
         :version (str): current version label (Example: 1.6.8)
+        :persist (bool): When True, retain container build environment intact
+            and running; do not clean and remove container
     Returns:
         Success | Failure, TYPE: bool
     """
@@ -1043,15 +1051,16 @@ def postbuild(root, container, rpm_root, scripts_dir, version_module, version):
         # rpm contents text file
         contents = locate_artifact('.txt', volmnt)
 
-        # stop and rm container
-        cmd = f'docker stop {container.name}'
-        subprocess.getoutput(cmd)
-
-        # status
-        if not container_running(container.name):
-            stdout_message(f'{container.name} successfully halted', prefix='OK')
-            cmd = f'docker rm {container.name}'
+        if persist is False:
+            # stop and rm container
+            cmd = f'docker stop {container.name}'
             subprocess.getoutput(cmd)
+
+            # status
+            if not container_running(container.name):
+                stdout_message(f'{container.name} successfully halted', prefix='OK')
+                cmd = f'docker rm {container.name}'
+                subprocess.getoutput(cmd)
 
         # remove temp version module copied to scripts dir
         if os.path.exists(scripts_dir + '/' + version_module):
@@ -1228,6 +1237,7 @@ def init_cli():
                         environment=args.distro,
                         package_configpath=git_root() + '/' + args.parameter_file,
                         force=args.force,
+                        retain=args.container,
                         debug=args.debug
                     )
             if package:
