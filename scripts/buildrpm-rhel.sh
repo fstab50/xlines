@@ -131,7 +131,8 @@ function precheck(){
         mkdir -p $dir
     fi
 
-    # install python3 dependencies
+    std_message "Installing Python3 libraries & dependencies" "INFO" $LOG_FILE
+    sudo -H $_PIP install -U libtools
 }
 
 function rpm_contents(){
@@ -190,9 +191,6 @@ if lsb_release -sirc | grep -i centos >/dev/null 2>&1; then
 
     std_message "Upgrade pip, setuptools" "INFO" $LOG_FILE
     sudo -H $_PIP install -U pip setuptools
-
-    std_message "Installing Python3 libraries & dependencies" "INFO" $LOG_FILE
-    sudo -H $_PIP install -U libtools
 
     std_message "Coping setuptools lib from /usr/local/lib to /usr/lib/" "INFO" $LOG_FILE
     sudo cp -r /usr/local/lib/python3.*/site-packages/setuptools* /usr/lib/python3.*/site-packages/
