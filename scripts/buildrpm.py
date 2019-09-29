@@ -723,7 +723,7 @@ def docker_daemon_up():
     return False
 
 
-def docker_init(src, builddir, osimage, param_dict, debug):
+def docker_init(src, builddir, _version, osimage, param_dict, debug):
     """
     Summary:
         Creates docker image and container
@@ -796,24 +796,12 @@ def docker_init(src, builddir, osimage, param_dict, debug):
             print(f'imagename is: {imagename}')
             print(f'container name is: {container.name}')
 
-        #for file in buildfile_list:
-        #    # local fs >> container:/home/builder
-        #    cmd = f'docker cp {file} {container.name}:/home/builder/{file}'
-        #    # status
-        #    if not subprocess.getoutput(cmd):
-        #        stdout_message(f'{file} copied to container {container.name} successfully')
-        #    else:
-        #        stdout_message(
-        #                f'Problem copying {file} to container {container.name}',
-        #                prefix='WARN'
-        #            )
-
         # exec rpmbuild script
         cmd = f'docker exec -i {container.name} sh -c \'cd {_root} && git checkout develop\''
         stdout_message(subprocess.getoutput(cmd))
         cmd = f"docker exec -i {container.name} sh -c \'cd /home/builder/git/xlines && git pull\'"
         stdout_message(subprocess.getoutput(cmd))
-        cmd = f'docker exec -i {container.name} sh -c \'cd /home/builder/git/xlines && sh scripts/{_buildscript}\''
+        cmd = f'docker exec -i {container.name} sh -c \'cd /home/builder/git/xlines && sh scripts/{_buildscript} {_version}\''
         stdout_message(subprocess.getoutput(cmd))
 
         if container_running(container.name):
@@ -887,6 +875,7 @@ def main(setVersion, environment, package_configpath, force=False, debug=False):
         container = docker_init(
                 PROJECT_ROOT + '/packaging/docker/' + environment,
                 BUILD_ROOT,
+                VERSION,
                 environment,
                 vars,
                 debug

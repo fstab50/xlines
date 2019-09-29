@@ -13,6 +13,7 @@
 pkg=$(basename $0)                                  # pkg (script) full name
 pkg_root=$(echo $pkg | awk -F '.' '{print $1}')     # pkg without file extention
 pkg_path=$(cd $(dirname $0); pwd -P)                # location of pkg
+VERSION="$1"
 username="builder"
 home_dir="$(echo $HOME)"
 NOW=$(date +'%Y-%m-%d')
@@ -103,12 +104,27 @@ function export_package(){
 }
 
 
+function increment_package_version(){
+    ##
+    ##  Runs version_update script to increment package
+    ##  version -- OR -- hard set package version id
+    ##
+    local _root="$1"
+    local version="$2"
+    local python3bin=$(which python3)
+
+    std_message "Initiating package version update (version $version)"
+    # $python3bin "$_root/scripts/version_update.py --hardset $version"
+    $python3bin "$_root/scripts/version_update.py"
+}
+
+
 function precheck(){
     ##
     ##  Validate and create prerun structures
     ##
     local dir="$1"
-    
+
     if [ ! -f "$dir" ]; then
         mkdir -p $dir
     fi
@@ -143,6 +159,8 @@ RHEL_REQUIRES='python36,python36-pip,python36-setuptools,python36-pygments,bash-
 
 
 precheck "$LOG_DIR"
+
+increment_package_version "$ROOT" "$VERSION"
 
 if lsb_release -sirc | grep -i centos >/dev/null 2>&1; then
 
