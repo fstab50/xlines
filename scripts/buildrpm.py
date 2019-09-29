@@ -730,10 +730,10 @@ def docker_init(src, builddir, osimage, param_dict, debug):
     Returns:
         Container id (Name) | Failure (None)
     """
-    imagename = osimage + ':' + param_dict['DockerImage']        # image name
+    imagename = osimage + ':' + param_dict['DockerImage']    # image name
     cname = param_dict['DockerContainer']                    # container id
     _root = param_dict['RepositoryRoot']                     # git repository root
-    _target = param_dict['MakeTarget']                       # Makefile target to execute
+    _buildscript = param_dict['DockerBuildScript']           # container-resident script to build rpm
     host_mnt = VOLMNT                                        # host volume mount point
     container_mnt = CONTAINER_VOLMNT                         # container volume internal mnt pt
     docker_user = 'builder'
@@ -768,6 +768,7 @@ def docker_init(src, builddir, osimage, param_dict, debug):
                 command=bash_cmd,
                 volumes={host_mnt: {'bind': container_mnt, 'mode': 'rw'}},
                 user=docker_user,
+                security_opt=['label:disable'],
                 detach=True
             )
 
@@ -794,22 +795,24 @@ def docker_init(src, builddir, osimage, param_dict, debug):
             print(f'imagename is: {imagename}')
             print(f'container name is: {container.name}')
 
-        for file in buildfile_list:
-            # local fs >> container:/home/builder
-            cmd = f'docker cp {file} {container.name}:/home/builder/{file}'
-            # status
-            if not subprocess.getoutput(cmd):
-                stdout_message(f'{file} copied to container {container.name} successfully')
-            else:
-                stdout_message(
-                        f'Problem copying {file} to container {container.name}',
-                        prefix='WARN'
-                    )
+        #for file in buildfile_list:
+        #    # local fs >> container:/home/builder
+        #    cmd = f'docker cp {file} {container.name}:/home/builder/{file}'
+        #    # status
+        #    if not subprocess.getoutput(cmd):
+        #        stdout_message(f'{file} copied to container {container.name} successfully')
+        #    else:
+        #        stdout_message(
+        #                f'Problem copying {file} to container {container.name}',
+        #                prefix='WARN'
+        #            )
 
         # exec rpmbuild script
-        cmd = f'docker exec -i {container.name} sh -c \'cd {_root} && git pull\''
+        cmd = f'docker exec -i {container.name} sh -c \'cd {_root} && git checkout develop\''
         stdout_message(subprocess.getoutput(cmd))
-        cmd = f'docker exec -i {container.name} sh -c \'make {_target}\''
+        cmd = f'docker exec -i {container.name} sh -c \'git pull\''
+        stdout_message(subprocess.getoutput(cmd))
+        cmd = f'docker exec -i {container.name} sh -c \'scripts/{_buildscript}\''
         stdout_message(subprocess.getoutput(cmd))
 
         if container_running(container.name):
