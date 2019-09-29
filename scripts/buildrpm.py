@@ -810,9 +810,9 @@ def docker_init(src, builddir, osimage, param_dict, debug):
         # exec rpmbuild script
         cmd = f'docker exec -i {container.name} sh -c \'cd {_root} && git checkout develop\''
         stdout_message(subprocess.getoutput(cmd))
-        cmd = f'docker exec -i {container.name} sh -c \'git pull\''
+        cmd = f"docker exec -i {container.name} sh -c \'cd /home/builder/git/xlines && git pull\'"
         stdout_message(subprocess.getoutput(cmd))
-        cmd = f'docker exec -i {container.name} sh -c \'scripts/{_buildscript}\''
+        cmd = f'docker exec -i {container.name} sh -c \'cd /home/builder/git/xlines && sh scripts/{_buildscript}\''
         stdout_message(subprocess.getoutput(cmd))
 
         if container_running(container.name):
@@ -983,8 +983,8 @@ def prebuild(builddir, libsrc, volmnt, parameter_file):
         os.makedirs(volmnt)
 
         root = git_root()
-        src = os.path.join([root, PROJECT, version_module])
-        dst = os.path.join([root, 'scripts', version_module])
+        src = os.path.join(root, PROJECT, version_module)
+        dst = os.path.join(root, 'scripts', version_module)
 
         # deal with leftover build artifacts
         if os.path.exists(dst):
@@ -993,7 +993,7 @@ def prebuild(builddir, libsrc, volmnt, parameter_file):
 
         # import version module
         global __version__
-        from version import __version__
+        from _version import __version__
 
         if r_cf and __version__ and docker_daemon_up():
             return True
@@ -1068,7 +1068,7 @@ def postbuild(root, container, rpm_root, scripts_dir, version_module, version):
             os.remove(scripts_dir + '/' + version_module)
 
         # rewrite version file with 67rrent build version
-        with open(os.path.join([root, PROJECT, version_module]), 'w') as f3:
+        with open(os.path.join(root, PROJECT, version_module), 'w') as f3:
             f2 = ['__version__=\"' + version + '\"\n']
             f3.writelines(f2)
             path = project_dirname + (root + '/' + PROJECT + '/' + version_module)[len(root):]
@@ -1231,7 +1231,7 @@ def init_cli():
         return exit_codes['EX_OK']['Code']
 
     elif args.build:
-        libsrc = os.path.join([git_root(), PROJECT])
+        libsrc = os.path.join(git_root(), PROJECT)
         if valid_version(args.set) and prebuild(TMPDIR, libsrc, VOLMNT, git_root() + '/' + args.parameter_file):
             package, contents = main(
                         setVersion=args.set,
