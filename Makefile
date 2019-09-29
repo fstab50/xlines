@@ -123,7 +123,8 @@ builddeb: setup-venv clean-version ## Build Debian distribution (.deb) os packag
 buildrpm-rhel: clean setup-venv   ## Build Redhat distribution (.rpm) os package
 	@echo "Building RPM package format of $(PROJECT)";
 	if [ $(VERSION) ]; then cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
-	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py --build --set-version $(VERSION); else \
+	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py --build --set-version $(VERSION); elif [ $(RETAIN) ]; then \
+	. $(VENV_DIR)/bin/activate && $(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py --build --container; else \
 	cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && $(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py --build; fi
 
 
