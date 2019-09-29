@@ -737,7 +737,7 @@ def docker_init(src, builddir, osimage, param_dict, debug):
     host_mnt = VOLMNT                                        # host volume mount point
     container_mnt = CONTAINER_VOLMNT                         # container volume internal mnt pt
     docker_user = 'builder'
-    bash_cmd = '/bin/sleep 30'
+    bash_cmd = '/bin/sleep 60'
 
     try:
 
