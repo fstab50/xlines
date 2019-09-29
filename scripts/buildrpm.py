@@ -673,7 +673,7 @@ def display_package_contents(rpm_path, contents):
     """
     tab = '\t'.expandtabs(2)
     tab4 = '\t'.expandtabs(4)
-    width = 90
+    width = 120
     package = os.path.split(rpm_path)[1]
     path, discard = os.path.split(contents)
     pwd = os.getcwd()
@@ -690,6 +690,7 @@ def display_package_contents(rpm_path, contents):
     print(subheader)
 
     # divider line
+    print('  ', end='')
     list(filter(lambda x: print('-', end=''), range(0, width + 1))), print('\r')
 
     # content
