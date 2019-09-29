@@ -117,7 +117,7 @@ function increment_package_version(){
 
     std_message "Initiating package version update (version $version)" $LOG_FILE
     # $python3bin "$_root/scripts/version_update.py --hardset $version"
-    $python3bin "$_root/scripts/version_update.py"
+    cd $_root && $python3bin "scripts/version_update.py"
 }
 
 
