@@ -60,6 +60,18 @@ function export_package(){
 }
 
 
+function rpm_contents(){
+    ##
+    ##  Displays detailed view of all rpm contents
+    ##
+    local rpmfile="/home/builder/rpmbuild/RPMS/noarch/python??-xlines*.rpm"
+    local contents="/home/builder/rpmbuild/RPMS/rpm-contents.txt"
+
+    rpm -qlpv $rpmfile > "$contents"
+    return 0
+}
+
+
 # --- main --------------------------------------------------------------------
 
 
@@ -117,6 +129,15 @@ if lsb_release -sirc | grep -i centos >/dev/null 2>&1; then
     else
         exit 1
     fi
+
+    # output rpm contents
+    contents="RPMS/rpm-contents.txt"
+    std_message "RPM Contents:" "INFO" $LOG_FILE
+    rpm_contents
+
+    std_message "copy completed rpm to volume mount: $VOLMNT" "INFO" $LOG_FILE
+    cp -rv ~/rpmbuild/RPMS $VOLMNT >> $LOG_FILE
+
 else
     std_message "Not a Redhat-based Linux distribution. Exit" "WARN"
     exit 1
