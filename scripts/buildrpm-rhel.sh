@@ -91,7 +91,7 @@ function export_package(){
 
     cd "$(_git_root)/dist"
 
-    package=$(find . -name "python36-xlines-[0-9].[0-9].[0-100]-[0-9].noarch.rpm")
+    package=$(find . -name "python36-xlines-[0-9].[0-9].*-[0-9].noarch.rpm")
 
     # truncate additional ./ chars
     package=$(echo $package | cut -c 3-50)
