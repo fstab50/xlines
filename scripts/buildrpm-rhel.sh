@@ -93,8 +93,7 @@ function export_package(){
     # truncate additional ./ chars
     package=$(echo $package | cut -c 3-50)
 
-    #sudo cp "$package" "$external/$package"
-    cp "$package" ~/rpmbuild/RPMS/
+    cp "$package" "$external/$package"
     return 0
 
     if [[ -f "$external/$package" ]]; then
@@ -108,7 +107,7 @@ function rpm_contents(){
     ##
     ##  Displays detailed view of all rpm contents
     ##
-    local rpmfile="/home/builder/git/xlines/dist/python??-xlines*.rpm"
+    local rpmfile="/home/builder/git/xlines/dist/python??-xlines*.noarch.rpm"
     local contents="/home/builder/rpmbuild/RPMS/rpm-contents.txt"
 
     rpm -qlpv $rpmfile > "$contents"
@@ -177,7 +176,7 @@ if lsb_release -sirc | grep -i centos >/dev/null 2>&1; then
     rpm_contents
 
     std_message "copy completed rpm to volume mount: $VOLMNT" "INFO" $LOG_FILE
-    cp -rv ~/rpmbuild/RPMS $VOLMNT >> $LOG_FILE
+    cp -rv ~/rpmbuild/RPMS $VOLMNT/ >> $LOG_FILE
 
 else
     std_message "Not a Redhat-based Linux distribution. Exit" "WARN"
