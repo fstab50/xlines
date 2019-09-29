@@ -103,6 +103,17 @@ function export_package(){
 }
 
 
+function precheck(){
+    ##
+    ##  Validate and create prerun structures
+    ##
+    local dir="$1"
+    
+    if [ ! -f "$dir" ]; then
+        mkdir -p $dir
+    fi
+}
+
 function rpm_contents(){
     ##
     ##  Displays detailed view of all rpm contents
@@ -130,6 +141,8 @@ RHEL_REQUIRES='python36,python36-pip,python36-setuptools,python36-pygments,bash-
 . "$ROOT/scripts/colors.sh"
 . "$ROOT/scripts/std_functions.sh"
 
+
+precheck "$LOG_DIR"
 
 if lsb_release -sirc | grep -i centos >/dev/null 2>&1; then
 
