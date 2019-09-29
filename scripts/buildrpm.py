@@ -1248,7 +1248,7 @@ def init_cli():
                     display_package_contents(package, contents)
                 else:
                     stdout_message(
-                        message=f'Unable to locate a rpm contents file in {build_root}.',
+                        message=f'Unable to locate a rpm contents file in {VOLMNT}.',
                         prefix='WARN')
                     return False
                 return exit_codes['EX_OK']['Code']
