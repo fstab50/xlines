@@ -368,7 +368,7 @@ def builddir_structure(param_dict, force):
     # full paths
     rpm_src = root + '/packaging/rpm'
     builddir_path = build_root + '/' + builddir
-    lib_path = root + '/' + 'core'
+    lib_path = root + '/' + PROJECT
 
     try:
 
@@ -849,7 +849,7 @@ def main(setVersion, environment, package_configpath, force=False, debug=False):
     global RPM_SRC
     RPM_SRC = PROJECT_ROOT + '/packaging/rpm'
     global LIB_DIR
-    LIB_DIR = PROJECT_ROOT + '/' + 'core'
+    LIB_DIR = PROJECT_ROOT + '/' + PROJECT
     global CURRENT_VERSION
     CURRENT_VERSION = current_version(PROJECT_BIN, LIB_DIR + '/' 'version.py')
 
@@ -983,8 +983,8 @@ def prebuild(builddir, libsrc, volmnt, parameter_file):
         os.makedirs(volmnt)
 
         root = git_root()
-        src = root + '/core' + '/' + version_module
-        dst = root + '/scripts' + '/' + version_module
+        src = os.path.join([root, PROJECT, version_module])
+        dst = os.path.join([root, 'scripts', version_module])
 
         # deal with leftover build artifacts
         if os.path.exists(dst):
@@ -1068,10 +1068,10 @@ def postbuild(root, container, rpm_root, scripts_dir, version_module, version):
             os.remove(scripts_dir + '/' + version_module)
 
         # rewrite version file with 67rrent build version
-        with open(root + '/core/' + version_module, 'w') as f3:
+        with open(os.path.join([root, PROJECT, version_module]), 'w') as f3:
             f2 = ['__version__=\"' + version + '\"\n']
             f3.writelines(f2)
-            path = project_dirname + (root + '/core/' + version_module)[len(root):]
+            path = project_dirname + (root + '/' + PROJECT + '/' + version_module)[len(root):]
             stdout_message(
                 '{}: Module {} successfully updated.'.format(inspect.stack()[0][3], yl + path + rst)
                 )
@@ -1231,7 +1231,7 @@ def init_cli():
         return exit_codes['EX_OK']['Code']
 
     elif args.build:
-        libsrc = git_root() + '/' + 'core'
+        libsrc = os.path.join([git_root(), PROJECT])
         if valid_version(args.set) and prebuild(TMPDIR, libsrc, VOLMNT, git_root() + '/' + args.parameter_file):
             package, contents = main(
                         setVersion=args.set,
