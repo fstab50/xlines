@@ -115,7 +115,7 @@ function increment_package_version(){
     local version="$2"
     local python3bin=$(which python3)
 
-    std_message "Initiating package version update (version $version)"
+    std_message "Initiating package version update (version $version)" $LOG_FILE
     # $python3bin "$_root/scripts/version_update.py --hardset $version"
     $python3bin "$_root/scripts/version_update.py"
 }
