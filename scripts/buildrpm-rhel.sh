@@ -96,7 +96,7 @@ function export_package(){
     #sudo cp "$package" "$external/$package"
     cp "$package" ~/rpmbuild/RPMS/
     return 0
-    
+
     if [[ -f "$external/$package" ]]; then
         return 0
     fi
@@ -108,7 +108,7 @@ function rpm_contents(){
     ##
     ##  Displays detailed view of all rpm contents
     ##
-    local rpmfile="/home/builder/rpmbuild/RPMS/noarch/python??-xlines*.rpm"
+    local rpmfile="/home/builder/git/xlines/dist/python??-xlines*.rpm"
     local contents="/home/builder/rpmbuild/RPMS/rpm-contents.txt"
 
     rpm -qlpv $rpmfile > "$contents"
@@ -168,11 +168,8 @@ if lsb_release -sirc | grep -i centos >/dev/null 2>&1; then
                                           --python='/usr/bin/python3' \
                                           --post-install=${_POSTINSTALL}
 
-    if export_package; then
-        exit 0
-    else
-        exit 1
-    fi
+    # process completed rpm
+    export_package
 
     # output rpm contents
     contents="RPMS/rpm-contents.txt"
