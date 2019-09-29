@@ -8,6 +8,50 @@
 #   Copyright 2019, Blake Huber
 #
 
+# --- globals --------------------------------------------------------------------------------------
+
+pkg=$(basename $0)                                  # pkg (script) full name
+pkg_root=$(echo $pkg | awk -F '.' '{print $1}')     # pkg without file extention
+pkg_path=$(cd $(dirname $0); pwd -P)                # location of pkg
+username="builder"
+home_dir="$(echo $HOME)"
+NOW=$(date +'%Y-%m-%d')
+BUILDDIR="$HOME/rpmbuild"
+VOLMNT="/mnt/rpm"
+LOG_DIR="$HOME/logs"
+LOG_FILE="$LOG_DIR/$pkg_root.log"
+QUIET="false"
+
+# colors
+brightwhite='\033[38;5;15m'
+cyan=$(tput setaf 6)
+green=$(tput setaf 2)
+red=$(tput setaf 1)
+yellow=$(tput setaf 3)
+BOLD='\u001b[1m'                          # ansi format
+bold='\u001b[1m'                          # ansi format
+underline='\u001b[4m'                     # ansi format
+
+# formatting
+title=$(echo -e ${bold}${brightwhite})    # title color, white + bold
+ul=$(echo -e ${underline})                # std underline
+bd=$(echo -e ${bold})                     # std bold
+wt=$(echo -e ${brightwhite})              # help menu accent 2
+fs=$(echo -e ${yellow})                   # file path color
+reset='\u001b[0m'                         # clear accents; return terminal colors
+
+# exit codes
+E_OK=0                                    # exit code if normal exit conditions
+E_DEPENDENCY=1                            # exit code if missing required ec2cdependency
+E_NOLOG=2                                 # exit code if failure to create log dir, log file
+E_BADSHELL=3                              # exit code if incorrect shell detected
+E_AUTH=4                                  # exit code if authentication failure
+E_USER_CANCEL=7                           # exit code if user cancel
+E_BADARG=8                                # exit code if bad input parameter
+E_NETWORK_ACCESS=9                        # exit code if no network access from current location
+E_EXPIRED_CREDS=10                        # exit code if temporary credentials no longer valid
+E_MISC=11                                 # exit code if miscellaneous (unspecified) error
+
 
 # --- declarations ------------------------------------------------------------
 
@@ -94,29 +138,29 @@ if lsb_release -sirc | grep -i centos >/dev/null 2>&1; then
     cd $ROOT || exit 1
     git pull
 
-    std_message "Dependency check: validate epel package repository installed" "INFO"
+    std_message "Dependency check: validate epel package repository installed" "INFO" $LOG_FILE
 
     if [[ $(${_YUM} repolist 2>/dev/null | grep epel) ]]; then
-        std_message "epel Redhat extras packages repository installed." "OK"
+        std_message "epel Redhat extras packages repository installed." "OK" $LOG_FILE
     else
-        std_message "ERROR: epel Redhat extras packages repository NOT installed. Exit" "WARN"
+        std_message "ERROR: epel Redhat extras packages repository NOT installed. Exit" "WARN" $LOG_FILE
         exit 1
     fi
 
     # strip out sudo path restrictions
     sudo $_SED -i '/env_reset/d' /etc/sudoers
 
-    std_message "Installing packages" "INFO"
+    std_message "Installing packages" "INFO" $LOG_FILE
     sudo $_YUM -y install epel-release which
     sudo $_YUM -y install python36 python36-pip python36-setuptools python36-devel
 
-    std_message "Upgrade pip, setuptools" "INFO"
+    std_message "Upgrade pip, setuptools" "INFO" $LOG_FILE
     sudo -H $_PIP install -U pip setuptools
 
-    std_message "Coping setuptools lib from /usr/local/lib to /usr/lib/" "INFO"
+    std_message "Coping setuptools lib from /usr/local/lib to /usr/lib/" "INFO" $LOG_FILE
     sudo cp -r /usr/local/lib/python3.*/site-packages/setuptools* /usr/lib/python3.*/site-packages/
 
-    std_message "Coping pkg_resources lib from /usr/local/lib to /usr/lib/" "INFO"
+    std_message "Coping pkg_resources lib from /usr/local/lib to /usr/lib/" "INFO" $LOG_FILE
     sudo cp -r /usr/local/lib/python3.*/site-packages/pkg_resources* /usr/lib/python3.*/site-packages/
 
     # python3 build process
