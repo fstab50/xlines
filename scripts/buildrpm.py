@@ -58,7 +58,7 @@ module = os.path.basename(__file__)
 TMPDIR = '/tmp/build'
 VOLMNT = '/tmp/rpm'
 CONTAINER_VOLMNT = '/mnt/rpm'
-DISTRO_LIST = ['centos7', 'amazonlinux', 'redhat7']
+DISTRO_LIST = ['centos7', 'amazonlinux2', 'redhat7']
 
 # docker
 dclient = docker.from_env()
@@ -129,7 +129,7 @@ def help_menu():
             use when building.  Allowable Values:
 
                     -   centos7 (DEFAULT)
-                    -   amazonlinux
+                    -   amazonlinux2
                     -   redhat7
 
         ''' + bd + '''-F''' + rst + ''', ''' + bd + '''--force''' + rst + ''':  When given, overwrites any pre-existing build artifacts.
