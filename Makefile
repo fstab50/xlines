@@ -114,14 +114,14 @@ build: artifacts  ## Build dist artifact and increment version
 .PHONY: builddeb
 builddeb: setup-venv clean-version ## Build Debian distribution (.deb) os package
 	@echo "Building Debian package format of $(PROJECT)";
+	@echo "Building RPM package format of $(PROJECT)";
 	if [ $(VERSION) ]; then . $(VENV_DIR)/bin/activate && \
 	$(PYTHON3_PATH) $(SCRIPT_DIR)/builddeb.py --build --set-version $(VERSION); \
 	else cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && $(PYTHON3_PATH) $(SCRIPT_DIR)/builddeb.py --build; fi
 
 
 .PHONY: buildrpm-rhel
-buildrpm-rhel: clean setup-venv   ## Build Redhat distribution (.rpm) os package
-	@echo "Building RPM package format of $(PROJECT)";
+buildrpm-rhel:  setup-venv   ## Build Redhat distribution (.rpm) os package
 	if [ $(VERSION) ]; then cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
 	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py --build --set-version $(VERSION); elif [ $(RETAIN) ]; then \
 	. $(VENV_DIR)/bin/activate && $(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py --build --container; else \
