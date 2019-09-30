@@ -41,14 +41,15 @@ from shutil import rmtree, which
 import distro
 import docker
 import loggers
-from pyaws.utils import stdout_message, export_json_object
-from pyaws.colors import Colors
+from libtools import stdout_message
+from libtools.io import export_json_object
+from libtools.colors import Colors
 from common import debug_header
 
 try:
-    from pyaws.core.oscodes_unix import exit_codes
+    from libtools.oscodes_unix import exit_codes
 except Exception:
-    from pyaws.core.oscodes_win import exit_codes    # non-specific os-safe codes
+    from libtools.oscodes_win import exit_codes    # non-specific os-safe codes
 
 
 # globals
