@@ -167,7 +167,7 @@ precheck "$LOG_DIR"
 
 increment_package_version "$ROOT" "$VERSION"
 
-if lsb_release -sirc | grep -i centos >/dev/null 2>&1; then
+if lsb_release -sirc | grep -i amazon >/dev/null 2>&1; then
 
     # prerun update
     cd $ROOT || exit 1
