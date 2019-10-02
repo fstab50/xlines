@@ -42,7 +42,7 @@ import distro
 import docker
 import loggers
 from libtools import stdout_message
-from libtools.io import export_json_object
+from libtools.js import export_iterobject
 from libtools.colors import Colors
 from common import debug_header
 
@@ -815,7 +815,7 @@ def docker_init(src, builddir, _version, osimage, param_dict, debug):
         )
 
         if debug:
-            print(f'buildfile_list contains:\n\n\t%s' % export_json_object(buildfile_list))
+            print(f'buildfile_list contains:\n\n\t%s' % export_iterobject(buildfile_list))
             print(f'osimage is: {osimage}')
             print(f'imagename is: {imagename}')
             print(f'container name is: {container.name}')
@@ -860,7 +860,7 @@ def main(setVersion, environment, package_configpath, force=False, retain=False,
     global LIB_DIR
     LIB_DIR = PROJECT_ROOT + '/' + PROJECT
     global CURRENT_VERSION
-    CURRENT_VERSION = current_version(PROJECT_BIN, LIB_DIR + '/' 'version.py')
+    CURRENT_VERSION = current_version(PROJECT_BIN, os.path.join(LIB_DIR, 'version.py'))
 
     # sort out version numbers, forceVersion is overwrite of pre-existing build artifacts
     global VERSION
@@ -944,12 +944,12 @@ def ospackages(pkg_list):
                 logger.info(f'{pkg} binary is already installed - skip')
                 continue
 
-            elif which('yum'):
-                cmd = 'sudo yum install ' + pkg + ' 2>/dev/null'
-                print(subprocess.getoutput(cmd))
-
             elif which('dnf'):
                 cmd = 'sudo dnf install ' + pkg + ' 2>/dev/null'
+                print(subprocess.getoutput(cmd))
+
+            elif which('yum'):
+                cmd = 'sudo yum install ' + pkg + ' 2>/dev/null'
                 print(subprocess.getoutput(cmd))
 
             else:
