@@ -728,6 +728,25 @@ def docker_daemon_up():
     return False
 
 
+def docker_configure_container(container_object, root_dir, buildscript, version):
+    """
+    Execute build commands internal to configure container,
+    then execute rpm package build for a specific os type
+    """
+    def command_exec(index):
+        return {
+            0: f"docker exec -i {container_object.name} sh -c \'cd {root_dir} && git checkout develop\'",
+            1: f"docker exec -i {container_object.name} sh -c \'sleep 4\'",
+            2: f"docker exec -i {container_object.name} sh -c \'cd /home/builder/git/xlines && git pull\'",
+            3: f"docker exec -i {container_object.name} sh -c \'sleep 4\'",
+            4: f"docker exec -i {container_object.name} sh -c \'cd /home/builder/git/xlines && sh scripts/{buildscript} {version}\'"
+        }.get(index, 0)
+
+    for index in range(5):
+        print(subprocess.getoutput(command_exec(index)))
+    return True
+
+
 def docker_init(src, builddir, _version, osimage, param_dict, debug):
     """
     Summary:
@@ -802,12 +821,7 @@ def docker_init(src, builddir, _version, osimage, param_dict, debug):
             print(f'container name is: {container.name}')
 
         # exec rpmbuild script
-        cmd = f'docker exec -i {container.name} sh -c \'cd {_root} && git checkout develop\''
-        stdout_message(subprocess.getoutput(cmd))
-        cmd = f"docker exec -i {container.name} sh -c \'cd /home/builder/git/xlines && git pull\'"
-        stdout_message(subprocess.getoutput(cmd))
-        cmd = f'docker exec -i {container.name} sh -c \'cd /home/builder/git/xlines && sh scripts/{_buildscript} {_version}\''
-        stdout_message(subprocess.getoutput(cmd))
+        docker_configure_container(container, _root, _buildscript, _version)
 
         if container_running(container.name):
             return container
