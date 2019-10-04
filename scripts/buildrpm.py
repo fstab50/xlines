@@ -832,6 +832,31 @@ def docker_init(src, builddir, _version, osimage, param_dict, debug):
     return None
 
 
+def docker_teardown(container_object):
+    """
+        Halt Docker Container, clean/ remove residual artifacts
+
+    Returns
+        Success | Failure, TYPE: bool
+    """
+    try:
+        # stop and rm container
+        cmd = f'docker stop {container_object.name}'
+        subprocess.getoutput(cmd)
+
+        # status
+        if not container_running(container_object.name):
+            stdout_message(f'{container_object.name} successfully halted', prefix='OK')
+            cmd = f'docker rm {container_object.name}'
+            subprocess.getoutput(cmd)
+    except Exception as e:
+        name = container_object.name
+        fx = inspect.stack()[0][5]
+        logger.exception(
+            '{}: Error halting and deleting active container ({}): {}'.format(fx, name, e))
+    return True
+
+
 def main(setVersion, environment, package_configpath, force=False, retain=False, debug=False):
     """
     Summary:
@@ -1078,8 +1103,8 @@ def postbuild(root, container, rpm_root, scripts_dir, version_module, version, p
                 subprocess.getoutput(cmd)
 
         # remove temp version module copied to scripts dir
-        if os.path.exists(scripts_dir + '/' + version_module):
-            os.remove(scripts_dir + '/' + version_module)
+        if os.path.exists(os.path.join(scripts_dir, version_module)):
+            os.remove(os.path.join(scripts_dir, version_module))
 
         # rewrite version file with 67rrent build version
         with open(os.path.join(root, PROJECT, version_module), 'w') as f3:
@@ -1286,6 +1311,5 @@ def init_cli():
             logger.warning('{} Failure in prebuild stage'.format(inspect.stack()[0][3]))
             return exit_codes['E_DEPENDENCY']['Code']
     return True
-
 
 sys.exit(init_cli())
