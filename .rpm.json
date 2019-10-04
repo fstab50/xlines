@@ -22,7 +22,7 @@
     "DockerUser": "builder",
     "RepositoryRoot": "/home/builder/git/xlines",
     "MakeTarget": "buildrpm-rhel",
-    "DockerBuildScript": "buildrpm-rhel.sh",
+    "DockerBuildScript": "buildrpm-rhel7.sh",
     "BashCompletion": "xlines-completion.bash",
     "SpecFile": {
         "Name": "xlines.spec",
