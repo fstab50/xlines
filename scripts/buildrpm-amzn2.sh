@@ -203,15 +203,13 @@ REQUIRES='python3,python3-pip,python3-setuptools,bash-completion,which'
 . "$ROOT/scripts/std_functions.sh"
 
 
+# prerun functions
 precheck "$LOG_DIR"
 parse_parameters $@
-
-echo "From top, VERSION parameter is: $VERSION"
-
 increment_package_version "$ROOT" "$VERSION"
-exit 0
 
 
+# commence rpm package build
 if lsb_release -sirc | grep -i amazon >/dev/null 2>&1; then
 
     # prerun update
