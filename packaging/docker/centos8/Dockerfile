@@ -36,7 +36,7 @@ RUN yum install -y gcc gcc-c++ \
     yum clean all
 
 # python3 components required for build
-#RUN yum -y install python36 python36-pip python36-setuptools python36-devel
+RUN yum -y install python3 python3-pip python3-setuptools python3-devel
 
 # user operations
 ENV USER1 'builder'
