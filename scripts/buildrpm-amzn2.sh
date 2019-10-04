@@ -253,17 +253,18 @@ if lsb_release -sirc | grep -i amazon >/dev/null 2>&1; then
     std_message "RPM Contents:" "INFO" $LOG_FILE
     rpm_contents
 
+    std_message "Setting USER $USER ownership on docker Vol mnt post export of completed artifacts" "INFO" $LOG_FILE
+    sudo chown -R $USER:$USER $VOLMNT
+
     # copy out completed rpm
     std_message "copy completed rpm to volume mount: $VOLMNT" "INFO" $LOG_FILE
-    sudo cp -v /home/builder/git/xlines/dist/*noarch.rpm $VOLMNT/ | sudo tee -a $LOG_FILE
+    cp -v /home/builder/git/xlines/dist/*noarch.rpm $VOLMNT/ | sudo tee -a $LOG_FILE
 
     # copy out complete rpm contents index file
     std_message "copy rpm contents indext file to volume mount: $VOLMNT" "INFO" $LOG_FILE
-    sudo cp -rv ~/rpmbuild/RPMS $VOLMNT/ | sudo tee -a $LOG_FILE
+    cp -rv ~/rpmbuild/RPMS $VOLMNT/ | sudo tee -a $LOG_FILE
 
-    std_message "Setting USER $USER ownership on docker Vol mnt post export of completed artifacts" "INFO" $LOG_FILE
-    sudo chown -R $USER:$USER $VOLMNT
-    sudo chown -R $USER:$USER "$VOLMNT/RPMS"
+    #sudo chown -R $USER:$USER "$VOLMNT/RPMS"
 else
     std_message "Not a Redhat-based Linux distribution. Exit" "WARN" $LOG_FILE
     exit 1
