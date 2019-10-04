@@ -115,9 +115,14 @@ function increment_package_version(){
     local version="$2"
     local python3bin=$(which python3)
 
-    std_message "Initiating package version update (version $version)" $LOG_FILE
-    # $python3bin "$_root/scripts/version_update.py --hardset $version"
-    cd $_root && $python3bin "scripts/version_update.py"
+    std_message "Initiating package version update (version $version)" 'INFO' $LOG_FILE
+    # cd $_root && $python3bin "scripts/version_update.py"
+    if [[ "$version" ]]; then
+        std_message "Hard set version detected; using this version lable" 'INFO' $LOG_FILE
+        cd $_root && $python3bin $_root/scripts/version_update.py --hardset $version
+    else
+        cd $_root && $python3bin $_root/scripts/version_update.py
+    fi
 }
 
 
@@ -219,7 +224,7 @@ if lsb_release -sirc | grep -i amazon >/dev/null 2>&1; then
     sudo cp -rv ~/rpmbuild/RPMS $VOLMNT/ | sudo tee -a $LOG_FILE
 
 else
-    std_message "Not a Redhat-based Linux distribution. Exit" "WARN"
+    std_message "Not a Redhat-based Linux distribution. Exit" "WARN" $LOG_FILE
     exit 1
 fi
 
