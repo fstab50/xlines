@@ -211,7 +211,7 @@ if lsb_release -sirc | grep -i amazon >/dev/null 2>&1; then
     rpm_contents
 
     std_message "copy completed rpm to volume mount: $VOLMNT" "INFO" $LOG_FILE
-    cp -rv ~/rpmbuild/RPMS $VOLMNT/ >> $LOG_FILE
+    sudo cp -rv ~/rpmbuild/RPMS $VOLMNT/ | sudo tee -a $LOG_FILE
 
 else
     std_message "Not a Redhat-based Linux distribution. Exit" "WARN"
