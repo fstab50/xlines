@@ -6,7 +6,7 @@
 
 pkg=$(basename $0)
 container_default='AML2test'
-image='amazonlinux:rpmbuildD'
+image='amazonlinux2:rpmbuildF'
 
 
 function _git_root(){
