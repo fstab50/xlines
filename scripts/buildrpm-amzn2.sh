@@ -261,6 +261,7 @@ if lsb_release -sirc | grep -i amazon >/dev/null 2>&1; then
     std_message "copy rpm contents indext file to volume mount: $VOLMNT" "INFO" $LOG_FILE
     sudo cp -rv ~/rpmbuild/RPMS $VOLMNT/ | sudo tee -a $LOG_FILE
 
+    std_message "Setting USER $USER ownership on docker Vol mnt post export of completed artifacts" "INFO" $LOG_FILE
     sudo chown -R $USER:$USER $VOLMNT
 else
     std_message "Not a Redhat-based Linux distribution. Exit" "WARN" $LOG_FILE

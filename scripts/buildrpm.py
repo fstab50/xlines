@@ -1277,11 +1277,11 @@ def init_cli():
 
     elif args.build:
         libsrc = os.path.join(git_root(), PROJECT)
-        if valid_version(args.set) and prebuild(TMPDIR, libsrc, VOLMNT, git_root() + '/' + args.parameter_file):
+        if valid_version(args.set) and prebuild(TMPDIR, libsrc, VOLMNT, args.parameter_file):
             package, contents = main(
                         setVersion=args.set,
                         environment=args.distro,
-                        package_configpath=git_root() + '/' + args.parameter_file,
+                        package_configpath=args.parameter_file,
                         force=args.force,
                         retain=args.container,
                         debug=args.debug
