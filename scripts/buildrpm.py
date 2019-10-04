@@ -737,9 +737,9 @@ def docker_configure_container(c_object, root_dir, buildscript, version):
         return {
             0: f"docker exec -i {c_object.name} sh -c \'cd {root_dir} && git checkout develop\'",
             1: f"docker exec -i {c_object.name} sh -c \'sleep 4\'",
-            2: f"docker exec -i {c_object.name} sh -c \'cd /home/builder/git/xlines && git pull\'",
+            2: f"docker exec -i {c_object.name} sh -c \'cd {root_dir} && git pull\'",
             3: f"docker exec -i {c_object.name} sh -c \'sleep 4\'",
-            4: f"docker exec -i {c_object.name} sh -c \'cd /home/builder/git/xlines && sh scripts/{buildscript} {version}\'"
+            4: f"docker exec -i {c_object.name} sh -c \'cd {root_dir} && sh scripts/{buildscript} -s {version}\'"
         }.get(index, 0)
 
     for index in range(5):
@@ -751,7 +751,11 @@ def docker_init(src, builddir, _version, osimage, param_dict, debug):
     """
     Summary:
         Creates docker image and container
+
     Args:
+        src (str):
+        :builddir (str): build directory where all docker artifacts reside on local fs
+
     Returns:
         Container id (Name) | Failure (None)
     """
@@ -1239,25 +1243,27 @@ def init_cli():
         return exit_codes['E_DEPENDENCY']['Code']
 
     if args.debug:
+        max_length = 44
         print(debug_header)
+
         stdout_message(
-                message='Set (--set-version):\t{}'.format(args.set),
+                message='Set (--set-version):{}{}'.format('\t'.expandtabs(14), args.set),
                 prefix='DBUG'
             )
         stdout_message(
-                message='Build Flag (--build):\t{}'.format(args.build),
+                message='Build Flag (--build):{}{}'.format('\t'.expandtabs(13), args.build),
                 prefix='DBUG'
             )
         stdout_message(
-                message='Docker Image (--distro):\t{}'.format(args.distro),
+                message='Docker Image (--distro):{}{}'.format('\t'.expandtabs(10), args.distro),
                 prefix='DBUG'
             )
         stdout_message(
-                message='Parameter File (--parameters):\t{}'.format(args.parameter_file),
+                message='Parameter File (--parameters):{}{}'.format('\t'.expandtabs(4), args.parameter_file),
                 prefix='DBUG'
             )
         stdout_message(
-                message='Debug Flag:\t\t{}'.format(args.debug),
+                message='Debug Flag:{}{}'.format('\t'.expandtabs(23), args.debug),
                 prefix='DBUG'
             )
 

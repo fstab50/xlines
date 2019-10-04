@@ -131,9 +131,9 @@ buildrpm-rhel:  setup-venv   ## Build Redhat distribution (.rpm) os package
 .PHONY: buildrpm-amzn
 buildrpm-amzn: setup-venv ## Build Amazon Linux 2 distribution (.rpm) os package
 	if [ $(VERSION) ]; then cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
-	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py --build -d amazonlinux2 -p $(CUR_DIR)/.amzn2.json -s $(VERSION); \
+	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py -b --distro amazonlinux2 -p $(CUR_DIR)/.amzn2.json -s $(VERSION); \
 	else cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
-	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py --build -d amazonlinux2 -p $(CUR_DIR)/.amzn2.json; fi
+	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py -b --distro amazonlinux2 -p $(CUR_DIR)/.amzn2.json; fi
 
 
 .PHONY: testpypi
