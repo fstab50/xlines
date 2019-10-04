@@ -114,11 +114,12 @@ def update_version(force_version=None, debug=False):
     current = current_version(module_path)
     stdout_message('Current project version found: {}'.format(current))
 
-    # next version
     if force_version is None:
+        # increment existing version label
         version_new = increment_version(current)
 
     elif valid_version(force_version):
+        # hard set existing version to force_version value
         version_new = force_version
 
     else:
