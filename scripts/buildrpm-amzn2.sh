@@ -213,7 +213,7 @@ increment_package_version "$ROOT" "$VERSION"
 if lsb_release -sirc | grep -i amazon >/dev/null 2>&1; then
 
     # prerun update
-    cd $ROOT || exit 1
+    cd $ROOT || exit $E_DEPENDENCY
     git pull
 
     std_message "Dependency check: validate epel package repository installed" "INFO" $LOG_FILE
@@ -222,7 +222,7 @@ if lsb_release -sirc | grep -i amazon >/dev/null 2>&1; then
         std_message "epel Redhat extras packages repository installed." "OK" $LOG_FILE
     else
         std_message "ERROR: epel Redhat extras packages repository NOT installed. Exit" "WARN" $LOG_FILE
-        exit 1
+        exit $E_DEPENDENCY
     fi
 
     # strip out sudo path restrictions
