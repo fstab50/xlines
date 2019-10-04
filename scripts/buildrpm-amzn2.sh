@@ -119,7 +119,7 @@ function increment_package_version(){
     # cd $_root && $python3bin "scripts/version_update.py"
     if [[ "$version" ]]; then
         std_message "Hard set version detected; using this version lable" 'INFO' $LOG_FILE
-        cd $_root && $python3bin $_root/scripts/version_update.py --set-version $version
+        cd $_root && $python3bin $_root/scripts/version_update.py --set-version "$version"
     else
         cd $_root && $python3bin $_root/scripts/version_update.py
     fi
