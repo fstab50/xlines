@@ -127,29 +127,27 @@ function increment_package_version(){
 
 
 function parse_parameters(){
-    if [[ ! $@ ]]; then
-        help_menu
-        exit 0
-    else
-        while [ $# -gt 0 ]; do
-            case $1 in
-                -h | --help)
-                    help_menu
-                    shift 1
-                    exit 0
-                    ;;
+    ##
+    ##  Process command line parameters
+    ##
+    while [ $# -gt 0 ]; do
+        case $1 in
+            -h | --help)
+                help_menu
+                shift 1
+                exit 0
+                ;;
 
-                -s | --set-version)
-                    VERSION="$2"
-                    shift 2
-                    ;;
+            -s | --set-version)
+                VERSION="$2"
+                shift 2
+                ;;
 
-                *)
-                    std_error_exit "Unknown parameter ($1). Exiting"
-                    ;;
-            esac
-        done
-    fi
+            *)
+                std_error_exit "Unknown parameter ($1). Exiting"
+                ;;
+        esac
+    done
 
     if [[ $VERSION ]]; then
         std_message "VERSION number passed for hardset:  $VERSION"  'INFO' $LOG_FILE
