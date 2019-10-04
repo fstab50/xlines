@@ -123,9 +123,11 @@ builddeb: setup-venv clean-version ## Build Debian distribution (.deb) os packag
 .PHONY: buildrpm-rhel
 buildrpm-rhel:  setup-venv   ## Build Redhat distribution (.rpm) os package
 	if [ $(VERSION) ]; then cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
-	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py --build --set-version $(VERSION); elif [ $(RETAIN) ]; then \
-	. $(VENV_DIR)/bin/activate && $(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py --build --container; else \
-	cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && $(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py --build; fi
+	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py -b --distro centos7 -p $(CUR_DIR)/.rpm.json -s $(VERSION); \
+	elif [ $(RETAIN) ]; then . $(VENV_DIR)/bin/activate && \
+	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py -b -d centos7 -p $(CUR_DIR)/.rpm.json --container; else \
+	cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
+	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py -b --distro centos7 -p $(CUR_DIR)/.rpm.json; fi
 
 
 .PHONY: buildrpm-amzn
