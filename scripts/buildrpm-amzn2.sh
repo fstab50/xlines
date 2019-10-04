@@ -263,6 +263,7 @@ if lsb_release -sirc | grep -i amazon >/dev/null 2>&1; then
 
     std_message "Setting USER $USER ownership on docker Vol mnt post export of completed artifacts" "INFO" $LOG_FILE
     sudo chown -R $USER:$USER $VOLMNT
+    sudo chown -R $USER:$USER "$VOLMNT/RPMS"
 else
     std_message "Not a Redhat-based Linux distribution. Exit" "WARN" $LOG_FILE
     exit 1
