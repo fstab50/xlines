@@ -211,12 +211,12 @@ if lsb_release -sirc | grep -i amazon >/dev/null 2>&1; then
     rpm_contents
 
     # copy out completed rpm
-    sudo cp -v /home/builder/git/xlines/dist/*noarch.rpm $VOLMNT/ | sudo tee -a $LOG_FILE
     std_message "copy completed rpm to volume mount: $VOLMNT" "INFO" $LOG_FILE
+    sudo cp -v /home/builder/git/xlines/dist/*noarch.rpm $VOLMNT/ | sudo tee -a $LOG_FILE
 
     # copy out complete rpm contents index file
+    std_message "copy rpm contents indext file to volume mount: $VOLMNT" "INFO" $LOG_FILE
     sudo cp -rv ~/rpmbuild/RPMS $VOLMNT/ | sudo tee -a $LOG_FILE
-    std_message "copy completed rpm to volume mount: $VOLMNT" "INFO" $LOG_FILE
 
 else
     std_message "Not a Redhat-based Linux distribution. Exit" "WARN"
