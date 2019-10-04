@@ -126,6 +126,41 @@ function increment_package_version(){
 }
 
 
+function parse_parameters(){
+    if [[ ! $@ ]]; then
+        help_menu
+        exit 0
+    else
+        while [ $# -gt 0 ]; do
+            case $1 in
+                -h | --help)
+                    help_menu
+                    shift 1
+                    exit 0
+                    ;;
+
+                -s | --set-version)
+                    VERSION="$2"
+                    shift 2
+                    ;;
+
+                *)
+                    std_error_exit "Unknown parameter ($1). Exiting"
+                    ;;
+            esac
+        done
+    fi
+
+    if [[ $VERSION ]]; then
+        std_message "VERSION number passed for hardset:  $VERSION"  'INFO' $LOG_FILE
+    else
+        std_message "No VERSION number passed into $pkg; increment existing version label" 'INFO' $LOG_FILE
+    fi
+    #
+    # <-- end function parse_parameters -->
+}
+
+
 function precheck(){
     ##
     ##  Validate and create prerun structures
@@ -169,8 +204,13 @@ REQUIRES='python3,python3-pip,python3-setuptools,bash-completion,which'
 
 
 precheck "$LOG_DIR"
+parse_parameters $@
+
+echo "From top, VERSION parameter is: $VERSION"
 
 increment_package_version "$ROOT" "$VERSION"
+exit 0
+
 
 if lsb_release -sirc | grep -i amazon >/dev/null 2>&1; then
 
