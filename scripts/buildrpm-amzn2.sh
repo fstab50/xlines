@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 #
-#   Document: Build script
-#   Distribution:  Redhat Enterprise Linux, CentOS 7
+#   Document: RPM Build script
+#   Distribution:  Amazon Linux 2
 #   Author: Blake Huber
 #
 #   Copyright 2019, Blake Huber
