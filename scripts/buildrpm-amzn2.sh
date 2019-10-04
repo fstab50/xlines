@@ -175,6 +175,7 @@ function precheck(){
     sudo -H $_PIP install -U libtools
 }
 
+
 function rpm_contents(){
     ##
     ##  Displays detailed view of all rpm contents
@@ -228,7 +229,7 @@ if lsb_release -sirc | grep -i amazon >/dev/null 2>&1; then
     # strip out sudo path restrictions
     sudo $_SED -i '/env_reset/d' /etc/sudoers
 
-    std_message "Installing packages" "INFO" $LOG_FILE
+    std_message "Installing OS packages" "INFO" $LOG_FILE
     sudo $_YUM -y install python3 python3-pip python3-setuptools which
 
     std_message "Upgrade pip, setuptools" "INFO" $LOG_FILE
@@ -264,7 +265,6 @@ if lsb_release -sirc | grep -i amazon >/dev/null 2>&1; then
     std_message "copy rpm contents indext file to volume mount: $VOLMNT" "INFO" $LOG_FILE
     cp -rv ~/rpmbuild/RPMS $VOLMNT/ | sudo tee -a $LOG_FILE
 
-    #sudo chown -R $USER:$USER "$VOLMNT/RPMS"
 else
     std_message "Not a Redhat-based Linux distribution. Exit" "WARN" $LOG_FILE
     exit 1

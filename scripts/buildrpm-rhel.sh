@@ -115,9 +115,49 @@ function increment_package_version(){
     local version="$2"
     local python3bin=$(which python3)
 
-    std_message "Initiating package version update (version $version)" $LOG_FILE
-    # $python3bin "$_root/scripts/version_update.py --hardset $version"
-    cd $_root && $python3bin "scripts/version_update.py"
+    std_message "Initiating package version update (version $version)" 'INFO' $LOG_FILE
+
+    if [[ "$version" ]]; then
+        std_message "Hard set version detected; using this version lable" 'INFO' $LOG_FILE
+        cd $_root && $python3bin $_root/scripts/version_update.py --set-version "$version"
+    else
+        cd $_root && $python3bin $_root/scripts/version_update.py
+    fi
+}
+
+
+function parse_parameters(){
+    if [[ ! $@ ]]; then
+        help_menu
+        exit 0
+    else
+        while [ $# -gt 0 ]; do
+            case $1 in
+                -h | --help)
+                    help_menu
+                    shift 1
+                    exit 0
+                    ;;
+
+                -s | --set-version)
+                    VERSION="$2"
+                    shift 2
+                    ;;
+
+                *)
+                    std_error_exit "Unknown parameter ($1). Exiting"
+                    ;;
+            esac
+        done
+    fi
+
+    if [[ $VERSION ]]; then
+        std_message "VERSION number passed for hardset:  $VERSION"  'INFO' $LOG_FILE
+    else
+        std_message "No VERSION number passed into $pkg; increment existing version label" 'INFO' $LOG_FILE
+    fi
+    #
+    # <-- end function parse_parameters -->
 }
 
 
@@ -134,6 +174,7 @@ function precheck(){
     std_message "Installing Python3 libraries & dependencies" "INFO" $LOG_FILE
     sudo -H $_PIP install -U libtools
 }
+
 
 function rpm_contents(){
     ##
@@ -156,38 +197,42 @@ _YUM=$(which yum)
 _SED=$(which sed)
 _PIP=$(_pip_exec)
 _POSTINSTALL=${ROOT}/packaging/rpm/rpm_postinstall.sh
-RHEL_REQUIRES='python36,python36-pip,python36-setuptools,python36-pygments,bash-completion'
+REQUIRES='python36,python36-pip,python36-setuptools,python36-pygments,bash-completion'
 
 # colors; functions
 . "$ROOT/scripts/colors.sh"
 . "$ROOT/scripts/std_functions.sh"
 
 
+# prerun functions
 precheck "$LOG_DIR"
-
+parse_parameters $@
 increment_package_version "$ROOT" "$VERSION"
 
+
+# commence rpm package build
 if lsb_release -sirc | grep -i centos >/dev/null 2>&1; then
 
     # prerun update
-    cd $ROOT || exit 1
+    cd $ROOT || exit $E_DEPENDENCY
     git pull
 
     std_message "Dependency check: validate epel package repository installed" "INFO" $LOG_FILE
 
-    if [[ $(${_YUM} repolist 2>/dev/null | grep epel) ]]; then
+    if [[ $(sudo ${_YUM} repolist 2>/dev/null | grep epel) ]]; then
         std_message "epel Redhat extras packages repository installed." "OK" $LOG_FILE
     else
         std_message "ERROR: epel Redhat extras packages repository NOT installed. Exit" "WARN" $LOG_FILE
-        exit 1
+        exit $E_DEPENDENCY
     fi
 
     # strip out sudo path restrictions
     sudo $_SED -i '/env_reset/d' /etc/sudoers
 
-    std_message "Installing packages" "INFO" $LOG_FILE
+    std_message "Installing OS packages" "INFO" $LOG_FILE
     sudo $_YUM -y install epel-release which
     sudo $_YUM -y install python36 python36-pip python36-setuptools python36-devel
+
 
     std_message "Upgrade pip, setuptools" "INFO" $LOG_FILE
     sudo -H $_PIP install -U pip setuptools
@@ -199,7 +244,7 @@ if lsb_release -sirc | grep -i centos >/dev/null 2>&1; then
     sudo cp -r /usr/local/lib/python3.*/site-packages/pkg_resources* /usr/lib/python3.*/site-packages/
 
     # python3 build process
-    $_PYTHON3_PATH setup_rpm.py bdist_rpm --requires=${RHEL_REQUIRES} \
+    $_PYTHON3_PATH setup_rpm.py bdist_rpm --requires=${REQUIRES} \
                                           --python='/usr/bin/python3' \
                                           --post-install=${_POSTINSTALL}
 
@@ -211,11 +256,19 @@ if lsb_release -sirc | grep -i centos >/dev/null 2>&1; then
     std_message "RPM Contents:" "INFO" $LOG_FILE
     rpm_contents
 
+    std_message "Setting USER $USER ownership on docker Vol mnt post export of completed artifacts" "INFO" $LOG_FILE
+    sudo chown -R $USER:$USER $VOLMNT
+
+    # copy out completed rpm
     std_message "copy completed rpm to volume mount: $VOLMNT" "INFO" $LOG_FILE
-    cp -rv ~/rpmbuild/RPMS $VOLMNT/ >> $LOG_FILE
+    cp -v /home/builder/git/xlines/dist/*noarch.rpm $VOLMNT/ | sudo tee -a $LOG_FILE
+
+    # copy out complete rpm contents index file
+    std_message "copy rpm contents indext file to volume mount: $VOLMNT" "INFO" $LOG_FILE
+    cp -rv ~/rpmbuild/RPMS $VOLMNT/ | sudo tee -a $LOG_FILE
 
 else
-    std_message "Not a Redhat-based Linux distribution. Exit" "WARN"
+    std_message "Not a Redhat-based Linux distribution. Exit" "WARN" $LOG_FILE
     exit 1
 fi
 
