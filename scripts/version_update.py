@@ -159,9 +159,9 @@ def update_version(force_version=None, debug=False):
         version_new = increment_version(current)
 
     elif identical_version(force_version, current):
-        tab = '\t'.expandtabs(12)
+        tab = '\t'.expandtabs(4)
         msg = 'Force version ({}) is same as current version signature. \n \
-        {}Skipping version update'.format((force_version), tab)
+        {}Skipping version update. End version_update.'.format((force_version), tab)
         stdout_message(msg)
         return True
 
