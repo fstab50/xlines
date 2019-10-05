@@ -73,6 +73,9 @@ function _amazonlinux(){
 # --- main --------------------------------------------------------------------
 
 
+# build and update locate db
+updatedb
+
 # locate pip executable
 _PIP=$(_pip_exec)
 
