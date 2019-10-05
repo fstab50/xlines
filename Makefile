@@ -224,7 +224,7 @@ clean-docs:    ## Remove build artifacts for documentation only
 
 .PHONY: clean-version
 clean-version:    ## Reset version back to committed version number
-	@echo "RESET version to committed version number"; \
+	@echo "RESET version to last committed version number"; \
 	$(GIT) checkout $(VERSION_FILE);
 
 
@@ -239,15 +239,15 @@ clean-pkgbuild: clean-version   ## Remove os packaging build artifacts
 
 .PHONY: clean-containers
 clean-containers:   ## Stop & delete residual docker container artifacts
-	if [[ $(shell which docker 2>/dev/null) ]] && [[ $$(docker ps | grep $(CONTAINER_RHEL7)) ]]; then \
+	if [[ $$(which docker 2>/dev/null) ]] && [[ $$(docker ps | grep $(CONTAINER_RHEL7)) ]]; then \
 	docker stop $(CONTAINER_RHEL7) && docker rm $(CONTAINER_RHEL7); \
 	elif [[ $$(docker ps -a | grep $(CONTAINER_RHEL7)) ]]; then \
 	docker rm $(CONTAINER_RHEL7); fi
-	if [[ $(shell which docker 2>/dev/null) ]] && [[ $$(docker ps | grep $(CONTAINER_AMZN2)) ]]; then \
+	if [[ $$(which docker 2>/dev/null) ]] && [[ $$(docker ps | grep $(CONTAINER_AMZN2)) ]]; then \
 	docker stop $(CONTAINER_AMZN2) && docker rm $(CONTAINER_AMZN2); \
 	elif [[ $$(docker ps -a | grep $(CONTAINER_RHEL7)) ]]; then \
 	docker rm $(CONTAINER_RHEL7); fi
-	if [[ $(shell which docker 2>/dev/null) ]] && [[ $$(docker ps | grep $(CONTAINER_PROD)) ]]; then \
+	if [[ $$(which docker 2>/dev/null) ]] && [[ $$(docker ps | grep $(CONTAINER_PROD)) ]]; then \
 	docker stop $(CONTAINER_PROD) && docker rm $(CONTAINER_PROD); \
 	elif [[ $$(docker ps -a | grep $(CONTAINER_PROD)) ]]; then \
 	docker rm $(CONTAINER_PROD); fi
