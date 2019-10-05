@@ -195,7 +195,7 @@ _YUM=$(which yum)
 _SED=$(which sed)
 _PIP=$(_pip_exec)
 _POSTINSTALL=${ROOT}/packaging/rpm/rpm_postinstall.sh
-REQUIRES='python3,python3-pip,python3-setuptools,bash-completion,which'
+REQUIRES='python3,python3-pip,python3-setuptools,bash-completion,mlocate,which'
 
 # colors; functions
 . "$ROOT/scripts/colors.sh"

@@ -96,27 +96,8 @@ function python_dependencies(){
 }
 
 
-function install_os_dependencies(){
-    ##
-    ##  Validates if deps installed (true) or not (false)
-    ##
-    declare -a packages=("${!1}")
-
-    for pkg in "${packages[@]}"; do
-        logger "$loginfo: Installing os package $pkg"
-        yum install -y $pkg
-    done
-}
-
-
 # --- main --------------------------------------------------------------------
 
-
-# install OS dependencies
-os_packages=(
-    "mlocate"
-)
-install_os_dependencies os_packages[@]
 
 # build and update locate db
 logger "$loginfo: Creating and updating local mlocate databases..."
