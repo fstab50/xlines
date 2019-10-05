@@ -219,7 +219,7 @@ help:   ## Print help index
 .PHONY: clean-docs
 clean-docs:    ## Remove build artifacts for documentation only
 	@echo "Clean docs build directory"
-	cd $(DOC_PATH) && $(VENV_DIR)/bin/activate && $(MAKE) clean || true
+	#cd $(DOC_PATH) && $(VENV_DIR)/bin/activate && $(MAKE) clean || true
 
 
 .PHONY: clean-version
@@ -240,18 +240,19 @@ clean-pkgbuild: clean-version   ## Remove os packaging build artifacts
 .PHONY: clean-containers
 clean-containers:   ## Stop & delete residual docker container artifacts
 	if [[ $$(which docker 2>/dev/null) ]]; then \
-	if[[ $$(docker ps | grep $(CONTAINER_RHEL7)) ]]; then \
-	docker stop $(CONTAINER_RHEL7) && docker rm $(CONTAINER_RHEL7); \
-	elif [[ $$(docker ps -a | grep $(CONTAINER_RHEL7)) ]]; then \
-	docker rm $(CONTAINER_RHEL7); fi
-	if [[ $$(docker ps | grep $(CONTAINER_AMZN2)) ]]; then \
-	docker stop $(CONTAINER_AMZN2) && docker rm $(CONTAINER_AMZN2); \
-	elif [[ $$(docker ps -a | grep $(CONTAINER_RHEL7)) ]]; then \
-	docker rm $(CONTAINER_RHEL7); fi
-	if [[ $$(docker ps | grep $(CONTAINER_PROD)) ]]; then \
-	docker stop $(CONTAINER_PROD) && docker rm $(CONTAINER_PROD); \
-	elif [[ $$(docker ps -a | grep $(CONTAINER_PROD)) ]]; then \
-	docker rm $(CONTAINER_PROD); fi; fi
+		if [[ $$(docker ps | grep $(CONTAINER_RHEL7)) ]]; then \
+		docker stop $(CONTAINER_RHEL7) && docker rm $(CONTAINER_RHEL7); \
+		elif [[ $$(docker ps -a | grep $(CONTAINER_RHEL7)) ]]; then \
+		docker rm $(CONTAINER_RHEL7); fi
+		if [[ $$(docker ps | grep $(CONTAINER_AMZN2)) ]]; then \
+		docker stop $(CONTAINER_AMZN2) && docker rm $(CONTAINER_AMZN2); \
+		elif [[ $$(docker ps -a | grep $(CONTAINER_RHEL7)) ]]; then \
+		docker rm $(CONTAINER_RHEL7); fi
+		if [[ $$(docker ps | grep $(CONTAINER_PROD)) ]]; then \
+		docker stop $(CONTAINER_PROD) && docker rm $(CONTAINER_PROD); \
+		elif [[ $$(docker ps -a | grep $(CONTAINER_PROD)) ]]; then \
+		docker rm $(CONTAINER_PROD); fi;
+	fi
 
 
 .PHONY: clean
