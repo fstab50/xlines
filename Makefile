@@ -141,7 +141,7 @@ builddeb: setup-venv clean-version ## Build Debian distribution (.deb) os packag
 
 
 .PHONY: buildrpm-rhel
-buildrpm-rhel:  setup-venv   ## Build Redhat distribution (.rpm) os package
+buildrpm-rhel: clean-containers setup-venv   ## Build Redhat distribution (.rpm) os package
 	@printf "\n## Begin rpm build for RHEL 7 / Centos 7 ##\n\n";
 	if [ $(VERSION) ]; then cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
 	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py -b --distro centos7 -p $(CUR_DIR)/.rpm.json -s $(VERSION); \
@@ -152,7 +152,7 @@ buildrpm-rhel:  setup-venv   ## Build Redhat distribution (.rpm) os package
 
 
 .PHONY: buildrpm-amzn
-buildrpm-amzn: setup-venv ## Build Amazon Linux 2 distribution (.rpm) os package
+buildrpm-amzn: clean-containers setup-venv  ## Build Amazon Linux 2 distribution (.rpm) os package
 	@printf "\n## Begin rpm build for Amazon Linux 2 ##\n\n";
 	if [ $(VERSION) ]; then cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
 	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py -b -d amazonlinux2 -p $(CUR_DIR)/.amzn2.json -s $(VERSION); \
@@ -240,7 +240,7 @@ clean-pkgbuild: clean-version   ## Remove os packaging build artifacts
 
 
 .PHONY: clean-containers
-clean-containers:   ## Stop & delete residual docker container artifacts
+clean-containers: clean-version  ## Stop & delete residual docker container artifacts
 	@printf "\n## Clean residual docker container artifacts ##\n\n";
 	if [[ $$(which docker 2>/dev/null) ]]; then \
 		if [[ $$(docker ps | grep $(CONTAINER_RHEL7)) ]]; then \
@@ -259,7 +259,7 @@ clean-containers:   ## Stop & delete residual docker container artifacts
 
 
 .PHONY: clean
-clean: clean-docs clean-version clean-containers  ## Remove generic build artifacts
+clean: clean-docs clean-containers  ## Remove generic build artifacts
 	@printf "\n## Clean project directories ##\n\n";
 	rm -rf $(VENV_DIR) || true
 	rm -rf $(CUR_DIR)/dist || true
