@@ -239,18 +239,19 @@ clean-pkgbuild: clean-version   ## Remove os packaging build artifacts
 
 .PHONY: clean-containers
 clean-containers:   ## Stop & delete residual docker container artifacts
-	if [[ $$(which docker 2>/dev/null) ]] && [[ $$(docker ps | grep $(CONTAINER_RHEL7)) ]]; then \
+	if [[ $$(which docker 2>/dev/null) ]]; then \
+	if[[ $$(docker ps | grep $(CONTAINER_RHEL7)) ]]; then \
 	docker stop $(CONTAINER_RHEL7) && docker rm $(CONTAINER_RHEL7); \
 	elif [[ $$(docker ps -a | grep $(CONTAINER_RHEL7)) ]]; then \
 	docker rm $(CONTAINER_RHEL7); fi
-	if [[ $$(which docker 2>/dev/null) ]] && [[ $$(docker ps | grep $(CONTAINER_AMZN2)) ]]; then \
+	if [[ $$(docker ps | grep $(CONTAINER_AMZN2)) ]]; then \
 	docker stop $(CONTAINER_AMZN2) && docker rm $(CONTAINER_AMZN2); \
 	elif [[ $$(docker ps -a | grep $(CONTAINER_RHEL7)) ]]; then \
 	docker rm $(CONTAINER_RHEL7); fi
-	if [[ $$(which docker 2>/dev/null) ]] && [[ $$(docker ps | grep $(CONTAINER_PROD)) ]]; then \
+	if [[ $$(docker ps | grep $(CONTAINER_PROD)) ]]; then \
 	docker stop $(CONTAINER_PROD) && docker rm $(CONTAINER_PROD); \
 	elif [[ $$(docker ps -a | grep $(CONTAINER_PROD)) ]]; then \
-	docker rm $(CONTAINER_PROD); fi
+	docker rm $(CONTAINER_PROD); fi; fi
 
 
 .PHONY: clean
