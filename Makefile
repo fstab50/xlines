@@ -1,6 +1,6 @@
 #---------------------------------------------------------------------------------------#
 #                                                                                       #
-#	 - Makefile, version 1.8.1                                                          #
+#	 - Makefile, version 1.8.8                                                          #
 #	 - PROJECT:  xlines                                                                 #
 # 	 - copyright, Blake Huber.  All rights reserved.                                    #
 #                                                                                       #
@@ -29,6 +29,16 @@ PRE_SCRIPT = $(SCRIPT_DIR)/rpm_preinstall.py
 _POSTINSTALL = $(CUR_DIR)/packaging/rpm/amzn2_postinstall.sh
 YUM_CALL = sudo $(shell which yum)
 PIP3_CALL = $(shell which pip3)
+
+# docker container identifiers
+CONTAINER_PROD = buildxlines
+CONTAINER_AMZN2 = AML2test
+CONTAINER_RHEL7 = xlinesCentOS
+
+# docker scripts
+RUN_AMZN2 = test-amzn2.sh
+RUN_RHEL7 = test-centos7.sh
+RUN_RHEL8 = test-centos8.sh
 
 
 # --- rollup targets  ------------------------------------------------------------------------------
@@ -73,6 +83,16 @@ test: setup-venv  ## Run pytest unittests. Optional Param: PDB, MODULE
 	if [ $(MODULE) ]; then \
 	bash $(CUR_DIR)/scripts/make-test.sh --package-path $(MODULE_PATH) --module $(MODULE); \
 	else bash $(CUR_DIR)/scripts/make-test.sh  --package-path $(MODULE_PATH); fi
+
+
+.PHONY: test-container-amzn
+test-container-amzn:   ## Create & start Amazon Linux 2 test docker container
+	cd $(CUR_DIR)/packaging/docker && bash $(RUN_AMZN2) && cd $(CUR_DIR)
+
+
+.PHONY: test-container-centos
+test-container-centos:   ## Create & start CentOS 7 test docker container
+	cd $(CUR_DIR)/packaging/docker && bash $(RUN_RHEL7) && cd $(CUR_DIR)
 
 
 .PHONY: test-coverage
@@ -217,8 +237,24 @@ clean-pkgbuild: clean-version   ## Remove os packaging build artifacts
 	sudo rm -fr debian/xlines.prerm.debhelper debian/xlines.substvars debian/xlines
 
 
+.PHONY: clean-containers
+clean-containers:   ## Stop & delete residual docker container artifacts
+	if [[ $$(docker ps | grep $(CONTAINER_RHEL7)) ]]; then \
+	docker stop $(CONTAINER_RHEL7) && docker rm $(CONTAINER_RHEL7); \
+	elif [[ $$(docker ps -a | grep $(CONTAINER_RHEL7)) ]]; then \
+	docker rm $(CONTAINER_RHEL7); fi
+	if [[ $$(docker ps | grep $(CONTAINER_AMZN2)) ]]; then \
+	docker stop $(CONTAINER_AMZN2) && docker rm $(CONTAINER_AMZN2); \
+	elif [[ $$(docker ps -a | grep $(CONTAINER_RHEL7)) ]]; then \
+	docker rm $(CONTAINER_RHEL7); fi
+	if [[ $$(docker ps | grep $(CONTAINER_PROD)) ]]; then \
+	docker stop $(CONTAINER_PROD) && docker rm $(CONTAINER_PROD); \
+	elif [[ $$(docker ps -a | grep $(CONTAINER_PROD)) ]]; then \
+	docker rm $(CONTAINER_PROD); fi
+
+
 .PHONY: clean
-clean: clean-docs clean-version ## Remove generic build artifacts
+clean: clean-docs clean-version clean-containers  ## Remove generic build artifacts
 	@echo "Clean project directories"
 	rm -rf $(VENV_DIR) || true
 	rm -rf $(CUR_DIR)/dist || true
