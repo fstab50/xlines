@@ -1,3 +1,5 @@
+distro
+docker
 pandoc
 pkginfo
 pygments

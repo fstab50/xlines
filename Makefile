@@ -1,6 +1,6 @@
 #---------------------------------------------------------------------------------------#
 #                                                                                       #
-#	 - Makefile, version 1.8.1                                                          #
+#	 - Makefile, version 1.8.8                                                          #
 #	 - PROJECT:  xlines                                                                 #
 # 	 - copyright, Blake Huber.  All rights reserved.                                    #
 #                                                                                       #
@@ -11,10 +11,10 @@ PROJECT := xlines
 CUR_DIR = $(shell pwd)
 PYTHON_VERSION := python3
 PYTHON3_PATH := $(shell which $(PYTHON_VERSION))
-GIT := $(shell which git)
+GIT := $(shell which git 2>/dev/null)
 VENV_DIR := $(CUR_DIR)/p3_venv
 PIP_CALL := $(VENV_DIR)/bin/pip
-PANDOC_CALL := $(shell which pandoc)
+PANDOC_CALL := $(shell which pandoc 2>/dev/null)
 ACTIVATE = $(shell . $(VENV_DIR)/bin/activate)
 MAKE = $(shell which make)
 MODULE_PATH := $(CUR_DIR)/$(PROJECT)
@@ -29,6 +29,16 @@ PRE_SCRIPT = $(SCRIPT_DIR)/rpm_preinstall.py
 _POSTINSTALL = $(CUR_DIR)/packaging/rpm/amzn2_postinstall.sh
 YUM_CALL = sudo $(shell which yum)
 PIP3_CALL = $(shell which pip3)
+
+# docker container identifiers
+CONTAINER_PROD = buildxlines
+CONTAINER_AMZN2 = AML2test
+CONTAINER_RHEL7 = xlinesCentOS
+
+# docker scripts
+RUN_AMZN2 = test-amzn2.sh
+RUN_RHEL7 = test-centos7.sh
+RUN_RHEL8 = test-centos8.sh
 
 
 # --- rollup targets  ------------------------------------------------------------------------------
@@ -75,6 +85,16 @@ test: setup-venv  ## Run pytest unittests. Optional Param: PDB, MODULE
 	else bash $(CUR_DIR)/scripts/make-test.sh  --package-path $(MODULE_PATH); fi
 
 
+.PHONY: test-container-amzn
+test-container-amzn:   ## Create & start Amazon Linux 2 test docker container
+	cd $(CUR_DIR)/packaging/docker && bash $(RUN_AMZN2) && cd $(CUR_DIR)
+
+
+.PHONY: test-container-centos
+test-container-centos:   ## Create & start CentOS 7 test docker container
+	cd $(CUR_DIR)/packaging/docker && bash $(RUN_RHEL7) && cd $(CUR_DIR)
+
+
 .PHONY: test-coverage
 test-coverage:  setup-venv  ## Run pytest unittests; generate coverage report
 	bash $(CUR_DIR)/scripts/make-test.sh  --package-path $(MODULE_PATH) --coverage
@@ -113,35 +133,44 @@ build: artifacts  ## Build dist artifact and increment version
 
 .PHONY: builddeb
 builddeb: setup-venv clean-version ## Build Debian distribution (.deb) os package
-	@echo "Building Debian package format of $(PROJECT)";
+	@printf "Building Debian package format of $(PROJECT)";
+	@printf "Building RPM package format of $(PROJECT)";
 	if [ $(VERSION) ]; then . $(VENV_DIR)/bin/activate && \
 	$(PYTHON3_PATH) $(SCRIPT_DIR)/builddeb.py --build --set-version $(VERSION); \
 	else cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && $(PYTHON3_PATH) $(SCRIPT_DIR)/builddeb.py --build; fi
 
 
 .PHONY: buildrpm-rhel
-buildrpm-rhel: clean setup-venv   ## Build Redhat distribution (.rpm) os package
-	@echo "Building RPM package format of $(PROJECT)";
+buildrpm-rhel: clean-containers setup-venv   ## Build Redhat distribution (.rpm) os package
+	@printf "\n## Begin rpm build for RHEL 7 / Centos 7 ##\n\n";
 	if [ $(VERSION) ]; then cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
-	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py --build --set-version $(VERSION); elif [ $(RETAIN) ]; then \
-	. $(VENV_DIR)/bin/activate && $(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py --build --container; else \
-	cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && $(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py --build; fi
+	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py -b --distro centos7 -p $(CUR_DIR)/.rpm.json -s $(VERSION); \
+	elif [ $(RETAIN) ]; then . $(VENV_DIR)/bin/activate && \
+	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py -b -d centos7 -p $(CUR_DIR)/.rpm.json --container; else \
+	cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
+	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py -b --distro centos7 -p $(CUR_DIR)/.rpm.json; fi
 
 
 .PHONY: buildrpm-amzn
-buildrpm-amzn: clean  ## Build Amazon Linux 2 distribution (.rpm) os package
-	bash $(SCRIPT_DIR)/buildrpm-amzn2.sh
+buildrpm-amzn: clean-containers setup-venv  ## Build Amazon Linux 2 distribution (.rpm) os package
+	@printf "\n## Begin rpm build for Amazon Linux 2 ##\n\n";
+	if [ $(VERSION) ]; then cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
+	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py -b -d amazonlinux2 -p $(CUR_DIR)/.amzn2.json -s $(VERSION); \
+	elif [ $(RETAIN) ]; then . $(VENV_DIR)/bin/activate && \
+	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py -b -d amazonlinux2 -p $(CUR_DIR)/.amzn2.json --container; \
+	else cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
+	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py -b -d amazonlinux2 -p $(CUR_DIR)/.amzn2.json; fi
 
 
 .PHONY: testpypi
 testpypi: build     ## Deploy to testpypi without regenerating prebuild artifacts
-	@echo "Deploy $(PROJECT) to test.pypi.org"
+	@printf "Deploy $(PROJECT) to test.pypi.org";
 	. $(VENV_DIR)/bin/activate && twine upload --repository testpypi dist/*
 
 
 .PHONY: pypi
 pypi: clean build    ## Deploy to pypi without regenerating prebuild artifacts
-	@echo "Deploy $(PROJECT) to pypi.org"
+	@printf "Deploy $(PROJECT) to pypi.org";
 	. $(VENV_DIR)/bin/activate && twine upload --repository pypi dist/*
 	rm -f $(CUR_DIR)/README.rst
 
@@ -191,28 +220,47 @@ help:   ## Print help index
 
 .PHONY: clean-docs
 clean-docs:    ## Remove build artifacts for documentation only
-	@echo "Clean docs build directory"
-	cd $(DOC_PATH) && $(VENV_DIR)/bin/activate && $(MAKE) clean || true
+	@printf "\n## Clean docs build directory ##\n\n"
+	#cd $(DOC_PATH) && $(VENV_DIR)/bin/activate && $(MAKE) clean || true
 
 
 .PHONY: clean-version
 clean-version:    ## Reset version back to committed version number
-	@echo "RESET version to committed version number"; \
+	@printf "\n## Reset version to last committed version number ##\n\n"; \
 	$(GIT) checkout $(VERSION_FILE);
 
 
 .PHONY: clean-pkgbuild
 clean-pkgbuild: clean-version   ## Remove os packaging build artifacts
-	@echo "Clean post build package assempbly artifacts"
+	@printf "\n## Clean post build package assempbly artifacts ##\n\n";
 	sudo rm -rf $(CUR_DIR)/.pybuild || true
 	sudo rm -rf $(CUR_DIR)/*.egg* || true
 	sudo rm -fr debian/.debhelper debian/files debian/xlines.postinst.debhelper
 	sudo rm -fr debian/xlines.prerm.debhelper debian/xlines.substvars debian/xlines
 
 
+.PHONY: clean-containers
+clean-containers: clean-version  ## Stop & delete residual docker container artifacts
+	@printf "\n## Clean residual docker container artifacts ##\n\n";
+	if [[ $$(which docker 2>/dev/null) ]]; then \
+		if [[ $$(docker ps | grep $(CONTAINER_RHEL7)) ]]; then \
+		docker stop $(CONTAINER_RHEL7) && docker rm $(CONTAINER_RHEL7); \
+		elif [[ $$(docker ps -a | grep $(CONTAINER_RHEL7)) ]]; then \
+		docker rm $(CONTAINER_RHEL7); fi; \
+		if [[ $$(docker ps | grep $(CONTAINER_AMZN2)) ]]; then \
+		docker stop $(CONTAINER_AMZN2) && docker rm $(CONTAINER_AMZN2); \
+		elif [[ $$(docker ps -a | grep $(CONTAINER_RHEL7)) ]]; then \
+		docker rm $(CONTAINER_RHEL7); fi; \
+		if [[ $$(docker ps | grep $(CONTAINER_PROD)) ]]; then \
+		docker stop $(CONTAINER_PROD) && docker rm $(CONTAINER_PROD); \
+		elif [[ $$(docker ps -a | grep $(CONTAINER_PROD)) ]]; then \
+		docker rm $(CONTAINER_PROD); fi; \
+	fi
+
+
 .PHONY: clean
-clean: clean-docs clean-version ## Remove generic build artifacts
-	@echo "Clean project directories"
+clean: clean-docs clean-containers  ## Remove generic build artifacts
+	@printf "\n## Clean project directories ##\n\n";
 	rm -rf $(VENV_DIR) || true
 	rm -rf $(CUR_DIR)/dist || true
 	rm -rf $(CUR_DIR)/*.egg* || true

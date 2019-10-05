@@ -6,7 +6,7 @@
 
 pkg=$(basename $0)
 container_default='AML2test'
-image='amazonlinux:rpmbuildD'
+image='amazonlinux2:rpmbuildF'
 
 
 function _git_root(){
@@ -58,7 +58,10 @@ docker build  -t  $image .
 
 # create container
 std_message "Creating and running container ($container) -- START" "INFO"
-docker run -it --user='builder' --name=$container -d -v /tmp/rpm:/mnt/rpm $image tail -f /dev/null &
+docker run -it \
+    --user='builder' \
+    --security-opt="label=disable" \
+    --name=$container -d -v /tmp/rpm:/mnt/rpm $image tail -f /dev/null &
 
 if container_started; then
     std_message "Container ${container} started successfully" "OK"

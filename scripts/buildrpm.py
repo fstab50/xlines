@@ -41,14 +41,15 @@ from shutil import rmtree, which
 import distro
 import docker
 import loggers
-from pyaws.utils import stdout_message, export_json_object
-from pyaws.colors import Colors
+from libtools import stdout_message
+from libtools.js import export_iterobject
+from libtools.colors import Colors
 from common import debug_header
 
 try:
-    from pyaws.core.oscodes_unix import exit_codes
+    from libtools.oscodes_unix import exit_codes
 except Exception:
-    from pyaws.core.oscodes_win import exit_codes    # non-specific os-safe codes
+    from libtools.oscodes_win import exit_codes    # non-specific os-safe codes
 
 
 # globals
@@ -57,7 +58,7 @@ module = os.path.basename(__file__)
 TMPDIR = '/tmp/build'
 VOLMNT = '/tmp/rpm'
 CONTAINER_VOLMNT = '/mnt/rpm'
-DISTRO_LIST = ['centos7', 'amazonlinux', 'redhat7']
+DISTRO_LIST = ['centos7', 'amazonlinux2', 'redhat7']
 
 # docker
 dclient = docker.from_env()
@@ -66,7 +67,7 @@ dclient = docker.from_env()
 act = Colors.ORANGE                     # accent highlight (bright orange)
 bd = Colors.BOLD + Colors.WHITE         # title formatting
 bn = Colors.CYAN                        # color for main binary highlighting
-lk = Colors.DARK_BLUE                    # color for filesystem path confirmations
+lk = Colors.DARK_BLUE                   # color for filesystem path confirmations
 red = Colors.RED                        # color for failed operations
 yl = Colors.GOLD3                       # color when copying, creating paths
 rst = Colors.RESET                      # reset all color, formatting
@@ -128,7 +129,7 @@ def help_menu():
             use when building.  Allowable Values:
 
                     -   centos7 (DEFAULT)
-                    -   amazonlinux
+                    -   amazonlinux2
                     -   redhat7
 
         ''' + bd + '''-F''' + rst + ''', ''' + bd + '''--force''' + rst + ''':  When given, overwrites any pre-existing build artifacts.
@@ -309,332 +310,6 @@ def increment_version(current):
     return major + '.' + str(inc_minor)
 
 
-def tar_archive(archive, source_dir, debug):
-    """
-    Summary.
-
-        - Creates .tar.gz compressed archive
-        - Checks that file was created before exit
-
-    Returns:
-        Success | Failure, TYPE: bool
-
-    """
-    try:
-        # rm any python byte-code artifacts
-        clean(source_dir, debug)
-
-        with tarfile.open(archive, "w:gz") as tar:
-            tar.add(source_dir, arcname=os.path.basename(source_dir))
-
-        if os.path.exists(archive):
-            return True
-
-    except OSError:
-        logger.exception(
-            '{}: Unable to create tar archive {}'.format(inspect.stack()[0][3], archive))
-    except Exception as e:
-        logger.exception(
-            '%s: Unknown problem while creating tar archive %s:\n%s' %
-            (inspect.stack()[0][3], archive, str(e)))
-    return False
-
-
-def builddir_structure(param_dict, force):
-    """
-    Summary.
-
-        - Updates path in binary exectuable
-        - Updates
-
-    Args:
-        :root (str): full path to root directory of the git project
-        :builddir (str): name of current build directory which we need to populate
-
-    Vars:
-        :lib_path (str): src path to library modules in project root
-        :builddir_path (str): dst path to root of the current build directory
-         (/<path>/xlines-1.X.X dir)
-
-    Returns:
-        Success | Failure, TYPE: bool
-
-    """
-    root = git_root()
-    build_root = TMPDIR
-    arrow = yl + Colors.BOLD + '-->' + rst
-
-    # files
-    specfile = param_dict['SpecFile']['Name']
-    compfile = param_dict['BashCompletion']
-    builddir = param_dict['SpecFile']['BuildDirName']
-
-    # full paths
-    rpm_src = root + '/packaging/rpm'
-    builddir_path = build_root + '/' + builddir
-    lib_path = root + '/' + PROJECT
-
-    try:
-
-        stdout_message(f'Assembling build directory artifacts in {bn + builddir + rst}')
-
-        # create build directory
-        if os.path.exists(builddir_path):
-            rmtree(builddir_path)
-        os.makedirs(builddir_path)
-        stdout_message(
-            message='Created:\t{}'.format(yl + builddir_path + rst),
-            prefix='OK')
-
-        # place main bin to builddir
-        if not os.path.exists(builddir_path + '/' + PROJECT_BIN):
-            binary_src = root + '/' + PROJECT_BIN
-            binary_dst = builddir_path + '/' + PROJECT_BIN
-            copyfile(binary_src, binary_dst)
-            stdout_message(
-                message='Copied:  {} {} {}'.format(lk + binary_src + rst, arrow, lk + binary_dst + rst),
-                prefix='OK')
-
-        # place library dependencies
-        for libfile in os.listdir(lib_path):
-            if libfile.endswith('.pyc') or libfile.endswith('.pyo'):
-                continue
-            else:
-                lib_src = lib_path + '/' + libfile
-                lib_dst = builddir_path + '/' + libfile
-                copyfile(lib_src, lib_dst)
-                stdout_message(
-                    message='Copied:  {} {} {}'.format(lk + lib_src + rst, arrow, lk + lib_dst + rst),
-                    prefix='OK')
-
-        # place specfile in build_root
-        spec_dst = build_root + '/' + specfile
-        if os.path.exists(spec_dst):
-            os.remove(spec_dst)
-        copyfile(rpm_src + '/' + specfile, spec_dst)
-
-        # verify build spec placement
-        if os.path.exists(spec_dst):
-            stdout_message(
-                message='Copied:  {} {} {}'.format(
-                    lk + rpm_src + '/' + specfile + rst, arrow, lk + spec_dst + rst),
-                prefix='OK')
-
-        # place bash completion artifacts
-        comp_src = root + '/' + 'bash' + '/' + compfile
-        comp_dst = builddir_path + '/' + compfile
-
-        if os.path.exists(comp_src):
-            if os.path.exists(comp_dst):
-                os.remove(comp_dst)
-            copyfile(comp_src, comp_dst)
-
-        # verify build spec placement
-        if os.path.exists(comp_dst):
-            stdout_message(
-                message='Copied:  {} {} {}'.format(
-                    lk + comp_src + rst, arrow, lk + comp_dst + rst),
-                prefix='OK')
-
-    except OSError as e:
-        logger.exception(
-            '{}: Problem creating dirs on local fs'.format(inspect.stack()[0][3]))
-        return False
-    return True
-
-
-def build_package(build_root, builddir):
-    """
-    Summary.
-
-        Creates final os installable package for current build, build version
-
-    Returns:
-        Success | Failure, TYPE: bool
-
-    """
-    try:
-
-        pwd = os.getcwd()
-
-        if os.path.exists(builddir):
-            os.chdir(builddir)
-            cmd = 'rpmbuild -ba SPECS/xlines.spec'
-            stdout_message('Building {}...  '.format(bn + builddir + rst))
-            stdout_message(subprocess.getoutput(cmd))
-            os.chdir(pwd)
-
-        else:
-            logger.warning(
-                'Build directory {} not found. Failed to create .deb package'.format(builddir))
-            os.chdir(pwd)
-            return False
-
-    except OSError as e:
-        logger.exception(
-            '{}: Error during os package creation: {}'.format(inspect.stack()[0][3], e))
-        return False
-    except Exception as e:
-        logger.exception(
-            '{}: Unknown Error during os package creation: {}'.format(inspect.stack()[0][3], e))
-        return False
-    return True
-
-
-def builddir_content_updates(param_dict, osimage, version, debug):
-    """
-    Summary:
-        Updates builddir contents:
-        - main exectuable has path to libraries updated
-        - builddir DEBIAN/control file version is updated to current
-        - updates the version.py file if version != to __version__
-          contained in the file.  This oaccurs if user invokes the -S /
-          --set-version option
-    Args:
-        :root (str): project root full fs path
-        :builddir (str): dirname of the current build directory
-        :binary (str): name of the main exectuable
-        :version (str): version label provided with --set-version parameter. None otherwise
-    Returns:
-        Success | Failure, TYPE: bool
-    """
-    root = git_root()
-    build_root = TMPDIR
-    rpm_src = root + '/packaging/rpm'
-    project_dirname = root.split('/')[-1]
-    major = '.'.join(version.split('.')[:2])
-    minor = version.split('.')[-1]
-
-    # files
-    specfile = param_dict['SpecFile']['Name']
-    builddir = param_dict['SpecFile']['BuildDirName']
-    version_module = param_dict['VersionModule']
-    dockeruser = param_dict['DockerUser']
-    project_url = param_dict['ProjectUrl']
-
-    # full paths
-    builddir_path = build_root + '/' + builddir
-    binary_path = builddir_path + '/' + PROJECT_BIN
-    lib_src = root + PA
-
-    # dependencies
-    deplist = None
-    for dep in param_dict['DependencyList']:
-        if deplist is None:
-            deplist = str(dep)
-        else:
-            deplist = deplist + ', ' + str(dep)
-
-    try:
-
-        stdout_message(
-                'Generating build spec file and build artifacts in %s' %
-                yl + builddir_path + rst
-            )
-
-        # main exec bin
-        with open(binary_path) as f1:
-            f2 = f1.readlines()
-
-            for index, line in enumerate(f2):
-                if line.startswith('pkg_lib='):
-                    newline = 'pkg_lib=' + '\"' + '/usr/local/lib/' + PROJECT + '\"\n'
-                    f2[index] = newline
-
-                elif line.startswith('LOG_DIR='):
-                    logline = 'LOG_DIR=' + '\"' + '/var/log' + '\"\n'
-                    f2[index] = logline
-            f1.close()
-
-        # rewrite bin
-        with open(binary_path, 'w') as f3:
-            f3.writelines(f2)
-            path = binary_path
-            stdout_message('Bin {} successfully updated.'.format(yl + path + rst))
-
-        # rewrite version file with current build ver
-        with open(builddir_path + '/' + version_module, 'w') as f4:
-            f3 = ['__version__=\"' + version + '\"\n']
-            f4.writelines(f3)
-            path = builddir_path + '/' + version_module
-            stdout_message('Module {} successfully updated.'.format(yl + path + rst))
-
-        # rewrite git project version file with current build version in case delta
-        with open(lib_src + '/' + version_module, 'w') as f5:
-            f4 = ['__version__=\"' + version + '\"\n']
-            f5.writelines(f4)
-            path = '../' + project_dirname + (lib_src + '/' + version_module)[len(root):]
-            stdout_message('Module {} successfully updated.'.format(yl + path + rst))
-
-        if os.path.exists(build_root + '/' + specfile):
-            # update specfile - major version
-            for line in fileinput.input([build_root + '/' + specfile], inplace=True):
-                print(line.replace('MAJOR_VERSION', major), end='')
-            stdout_message(f'Updated {specfile} with MAJOR_VERSION', prefix='OK')
-
-            # update specfile - minor version
-            for line in fileinput.input([build_root + '/' + specfile], inplace=True):
-                print(line.replace('MINOR_VERSION', minor), end='')
-            stdout_message(f'Updated {specfile} with MINOR_VERSION', prefix='OK')
-
-            # update specfile - DOCKERUSER
-            for line in fileinput.input([build_root + '/' + specfile], inplace=True):
-                print(line.replace('DOCKERUSER', dockeruser), end='')
-            stdout_message(f'Updated {specfile} with DOCKERUSER ({dockeruser})', prefix='OK')
-
-            # update specfile - Dependencies
-            for line in fileinput.input([build_root + '/' + specfile], inplace=True):
-                print(line.replace('DEPLIST', deplist), end='')
-            stdout_message(f'Updated {specfile} with Dependencies ({deplist})', prefix='OK')
-
-            # update specfile - major version
-            for line in fileinput.input([build_root + '/' + specfile], inplace=True):
-                print(line.replace('PROJECT_URL', project_url), end='')
-            stdout_message(f'Updated {specfile} with PROJECT_URL', prefix='OK')
-
-        else:
-            stdout_message(
-                message=f'{specfile} not found in build directory. Cannot update... halting build.',
-                prefix='WARN')
-            sys.exit(1)
-
-        # rm residual installation files from build directory
-        clean(builddir_path, debug)
-
-    except OSError as e:
-        logger.exception(
-            '%s: Problem while updating builddir contents: %s' %
-            (inspect.stack()[0][3], str(e)))
-        return False
-    return True
-
-
-def cp_dockerfiles(src, dst):
-    """
-    Copy dockerfiles and associated build artifacts to build_root
-    """
-    # place docker build script
-    script_src = src + '/' + dockerscript
-    script_dst = build_root + '/' + dockerscript
-
-    build_list = os.listdir(src)
-    for file in build_list:
-        copyfile(file, dst + '/' + file)
-
-    # cp Dockerfile to build root
-    copyfile(
-            docker_path + '/' + 'Dockerfile',
-            builddir_path + '/' + 'Dockerfile'
-        )
-
-    # verify build spec placement
-    stdout_message(
-        message='Copied: {} {} {}'.format(
-            lk + script_src + rst, arrow, lk + script_dst + rst),
-        prefix='OK')
-    return build_list
-
-
 def container_running(cid, debug=False):
     """
     Summary:
@@ -727,11 +402,34 @@ def docker_daemon_up():
     return False
 
 
+def docker_configure_container(c_object, root_dir, buildscript, version):
+    """
+    Execute build commands internal to configure container,
+    then execute rpm package build for a specific os type
+    """
+    def command_exec(index):
+        return {
+            0: f"docker exec -i {c_object.name} sh -c \'cd {root_dir} && git checkout develop\'",
+            1: f"docker exec -i {c_object.name} sh -c \'sleep 4\'",
+            2: f"docker exec -i {c_object.name} sh -c \'cd {root_dir} && git pull\'",
+            3: f"docker exec -i {c_object.name} sh -c \'sleep 4\'",
+            4: f"docker exec -i {c_object.name} sh -c \'cd {root_dir} && sh scripts/{buildscript} -s {version}\'"
+        }.get(index, 0)
+
+    for index in range(5):
+        print(subprocess.getoutput(command_exec(index)))
+    return True
+
+
 def docker_init(src, builddir, _version, osimage, param_dict, debug):
     """
     Summary:
         Creates docker image and container
+
     Args:
+        src (str):
+        :builddir (str): build directory where all docker artifacts reside on local fs
+
     Returns:
         Container id (Name) | Failure (None)
     """
@@ -795,18 +493,13 @@ def docker_init(src, builddir, _version, osimage, param_dict, debug):
         )
 
         if debug:
-            print(f'buildfile_list contains:\n\n\t%s' % export_json_object(buildfile_list))
+            print(f'buildfile_list contains:\n\n\t%s' % export_iterobject(buildfile_list))
             print(f'osimage is: {osimage}')
             print(f'imagename is: {imagename}')
             print(f'container name is: {container.name}')
 
         # exec rpmbuild script
-        cmd = f'docker exec -i {container.name} sh -c \'cd {_root} && git checkout develop\''
-        stdout_message(subprocess.getoutput(cmd))
-        cmd = f"docker exec -i {container.name} sh -c \'cd /home/builder/git/xlines && git pull\'"
-        stdout_message(subprocess.getoutput(cmd))
-        cmd = f'docker exec -i {container.name} sh -c \'cd /home/builder/git/xlines && sh scripts/{_buildscript} {_version}\''
-        stdout_message(subprocess.getoutput(cmd))
+        docker_configure_container(container, _root, _buildscript, _version)
 
         if container_running(container.name):
             return container
@@ -815,6 +508,31 @@ def docker_init(src, builddir, _version, osimage, param_dict, debug):
             '%s: Problem while updating builddir contents: %s' %
             (inspect.stack()[0][3], str(e)))
     return None
+
+
+def docker_teardown(container_object):
+    """
+        Halt Docker Container, clean/ remove residual artifacts
+
+    Returns
+        Success | Failure, TYPE: bool
+    """
+    try:
+        # stop and rm container
+        cmd = f'docker stop {container_object.name}'
+        subprocess.getoutput(cmd)
+
+        # status
+        if not container_running(container_object.name):
+            stdout_message(f'{container_object.name} successfully halted', prefix='OK')
+            cmd = f'docker rm {container_object.name}'
+            subprocess.getoutput(cmd)
+    except Exception as e:
+        name = container_object.name
+        fx = inspect.stack()[0][5]
+        logger.exception(
+            '{}: Error halting and deleting active container ({}): {}'.format(fx, name, e))
+    return True
 
 
 def main(setVersion, environment, package_configpath, force=False, retain=False, debug=False):
@@ -845,7 +563,7 @@ def main(setVersion, environment, package_configpath, force=False, retain=False,
     global LIB_DIR
     LIB_DIR = PROJECT_ROOT + '/' + PROJECT
     global CURRENT_VERSION
-    CURRENT_VERSION = current_version(PROJECT_BIN, LIB_DIR + '/' 'version.py')
+    CURRENT_VERSION = current_version(PROJECT_BIN, os.path.join(LIB_DIR, 'version.py'))
 
     # sort out version numbers, forceVersion is overwrite of pre-existing build artifacts
     global VERSION
@@ -929,12 +647,12 @@ def ospackages(pkg_list):
                 logger.info(f'{pkg} binary is already installed - skip')
                 continue
 
-            elif which('yum'):
-                cmd = 'sudo yum install ' + pkg + ' 2>/dev/null'
-                print(subprocess.getoutput(cmd))
-
             elif which('dnf'):
                 cmd = 'sudo dnf install ' + pkg + ' 2>/dev/null'
+                print(subprocess.getoutput(cmd))
+
+            elif which('yum'):
+                cmd = 'sudo yum install ' + pkg + ' 2>/dev/null'
                 print(subprocess.getoutput(cmd))
 
             else:
@@ -1063,8 +781,8 @@ def postbuild(root, container, rpm_root, scripts_dir, version_module, version, p
                 subprocess.getoutput(cmd)
 
         # remove temp version module copied to scripts dir
-        if os.path.exists(scripts_dir + '/' + version_module):
-            os.remove(scripts_dir + '/' + version_module)
+        if os.path.exists(os.path.join(scripts_dir, version_module)):
+            os.remove(os.path.join(scripts_dir, version_module))
 
         # rewrite version file with 67rrent build version
         with open(os.path.join(root, PROJECT, version_module), 'w') as f3:
@@ -1199,25 +917,27 @@ def init_cli():
         return exit_codes['E_DEPENDENCY']['Code']
 
     if args.debug:
+        max_length = 44
         print(debug_header)
+
         stdout_message(
-                message='Set (--set-version):\t{}'.format(args.set),
+                message='Set (--set-version):{}{}'.format('\t'.expandtabs(14), args.set),
                 prefix='DBUG'
             )
         stdout_message(
-                message='Build Flag (--build):\t{}'.format(args.build),
+                message='Build Flag (--build):{}{}'.format('\t'.expandtabs(13), args.build),
                 prefix='DBUG'
             )
         stdout_message(
-                message='Docker Image (--distro):\t{}'.format(args.distro),
+                message='Docker Image (--distro):{}{}'.format('\t'.expandtabs(10), args.distro),
                 prefix='DBUG'
             )
         stdout_message(
-                message='Parameter File (--parameters):\t{}'.format(args.parameter_file),
+                message='Parameter File (--parameters):{}{}'.format('\t'.expandtabs(4), args.parameter_file),
                 prefix='DBUG'
             )
         stdout_message(
-                message='Debug Flag:\t\t{}'.format(args.debug),
+                message='Debug Flag:{}{}'.format('\t'.expandtabs(23), args.debug),
                 prefix='DBUG'
             )
 
@@ -1231,11 +951,11 @@ def init_cli():
 
     elif args.build:
         libsrc = os.path.join(git_root(), PROJECT)
-        if valid_version(args.set) and prebuild(TMPDIR, libsrc, VOLMNT, git_root() + '/' + args.parameter_file):
+        if valid_version(args.set) and prebuild(TMPDIR, libsrc, VOLMNT, args.parameter_file):
             package, contents = main(
                         setVersion=args.set,
                         environment=args.distro,
-                        package_configpath=git_root() + '/' + args.parameter_file,
+                        package_configpath=args.parameter_file,
                         force=args.force,
                         retain=args.container,
                         debug=args.debug
@@ -1271,6 +991,5 @@ def init_cli():
             logger.warning('{} Failure in prebuild stage'.format(inspect.stack()[0][3]))
             return exit_codes['E_DEPENDENCY']['Code']
     return True
-
 
 sys.exit(init_cli())

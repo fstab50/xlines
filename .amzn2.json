@@ -7,13 +7,12 @@
     "Release": "MINOR_VERSION",
     "PreInstall": ["rpm-build", "rpmdevtools"],
     "DependencyList": [
-        "bash >= 4.2",
+        "python3",
+        "python3-libs",
+        "python3-pip",
+        "python3-setuptools",
         "bash-completion",
-        "python36",
-        "python36-libs",
-        "python36-pip",
-        "python36-setuptools",
-        "python36-pygments"
+        "which"
     ],
     "LogFiles": [ ],
     "VersionModule": "_version.py",
@@ -22,7 +21,7 @@
     "DockerUser": "builder",
     "RepositoryRoot": "/home/builder/git/xlines",
     "MakeTarget": "buildrpm-rhel",
-    "DockerBuildScript": "buildrpm-rhel7.sh",
+    "DockerBuildScript": "buildrpm-amzn2.sh",
     "BashCompletion": "xlines-completion.bash",
     "SpecFile": {
         "Name": "xlines.spec",

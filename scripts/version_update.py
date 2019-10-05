@@ -44,9 +44,49 @@ def current_version(module_path):
     return f2.split('=')[1].strip()[1:-1]
 
 
+def greater_version(versionA, versionB):
+    """
+    Summary:
+        Compares to version strings with multiple digits and returns greater
+    Returns:
+        greater, TYPE: str
+    """
+    try:
+
+        list_a = versionA.split('.')
+        list_b = versionB.split('.')
+
+    except AttributeError:
+        return versionA or versionB    # either A or B is None
+
+    try:
+
+        for index, digit in enumerate(list_a):
+            if int(digit) > int(list_b[index]):
+                return versionA
+            elif int(digit) < int(list_b[index]):
+                return versionB
+            elif int(digit) == int(list_b[index]):
+                continue
+
+    except ValueError:
+        return versionA or versionB    # either A or B is ''
+    return versionA
+
+
 def locate_version_module(directory):
     files = list(filter(lambda x: x.endswith('.py'), os.listdir(directory)))
     return [f for f in files if 'version' in f][0]
+
+
+def identical_version(new, existing):
+    """
+    Validates if current version signature is same as version
+    provided by build scripts
+    """
+    if new == existing:
+        return True
+    return False
 
 
 def increment_version(current):
@@ -114,15 +154,23 @@ def update_version(force_version=None, debug=False):
     current = current_version(module_path)
     stdout_message('Current project version found: {}'.format(current))
 
-    # next version
     if force_version is None:
+        # increment existing version label
         version_new = increment_version(current)
 
+    elif identical_version(force_version, current):
+        tab = '\t'.expandtabs(4)
+        msg = 'Force version ({}) is same as current version signature. \n \
+        {}Skipping version update. End version_update.'.format((force_version), tab)
+        stdout_message(msg)
+        return True
+
     elif valid_version(force_version):
+        # hard set existing version to force_version value
         version_new = force_version
 
     else:
-        stdout_message('You must enter a valid version (x.y.z)')
+        stdout_message('You must enter a valid version (x.y.z)', prefix='WARN')
         sys.exit(1)
 
     stdout_message('Incremental project version: {}'.format(version_new))

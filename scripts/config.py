@@ -27,7 +27,7 @@ def package_name(artifact):
         f2 = f1.readlines()
     for line in f2:
         if line.startswith('PACKAGE'):
-            return line.split(':')[1]
+            return line.split(':')[1].strip()
     return None
 
 
