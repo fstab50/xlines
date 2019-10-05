@@ -239,7 +239,7 @@ clean-pkgbuild: clean-version   ## Remove os packaging build artifacts
 
 .PHONY: clean-containers
 clean-containers:   ## Stop & delete residual docker container artifacts
-	@echo "\nClean residual docker container artifacts"
+	@echo "## Clean residual docker container artifacts ##"
 	if [[ $$(which docker 2>/dev/null) ]]; then \
 		if [[ $$(docker ps | grep $(CONTAINER_RHEL7)) ]]; then \
 		docker stop $(CONTAINER_RHEL7) && docker rm $(CONTAINER_RHEL7); \
@@ -258,7 +258,7 @@ clean-containers:   ## Stop & delete residual docker container artifacts
 
 .PHONY: clean
 clean: clean-docs clean-version clean-containers  ## Remove generic build artifacts
-	@echo "Clean project directories"
+	@echo "## Clean project directories ##"
 	rm -rf $(VENV_DIR) || true
 	rm -rf $(CUR_DIR)/dist || true
 	rm -rf $(CUR_DIR)/*.egg* || true
