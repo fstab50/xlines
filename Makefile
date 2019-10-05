@@ -133,8 +133,8 @@ build: artifacts  ## Build dist artifact and increment version
 
 .PHONY: builddeb
 builddeb: setup-venv clean-version ## Build Debian distribution (.deb) os package
-	@echo "Building Debian package format of $(PROJECT)";
-	@echo "Building RPM package format of $(PROJECT)";
+	@printf "Building Debian package format of $(PROJECT)";
+	@printf "Building RPM package format of $(PROJECT)";
 	if [ $(VERSION) ]; then . $(VENV_DIR)/bin/activate && \
 	$(PYTHON3_PATH) $(SCRIPT_DIR)/builddeb.py --build --set-version $(VERSION); \
 	else cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && $(PYTHON3_PATH) $(SCRIPT_DIR)/builddeb.py --build; fi
@@ -142,7 +142,7 @@ builddeb: setup-venv clean-version ## Build Debian distribution (.deb) os packag
 
 .PHONY: buildrpm-rhel
 buildrpm-rhel:  setup-venv   ## Build Redhat distribution (.rpm) os package
-	@echo "## Begin rpm build for RHEL 7 / Centos 7 ##";
+	@printf "\n## Begin rpm build for RHEL 7 / Centos 7 ##";
 	if [ $(VERSION) ]; then cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
 	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py -b --distro centos7 -p $(CUR_DIR)/.rpm.json -s $(VERSION); \
 	elif [ $(RETAIN) ]; then . $(VENV_DIR)/bin/activate && \
@@ -153,7 +153,7 @@ buildrpm-rhel:  setup-venv   ## Build Redhat distribution (.rpm) os package
 
 .PHONY: buildrpm-amzn
 buildrpm-amzn: setup-venv ## Build Amazon Linux 2 distribution (.rpm) os package
-	@echo "## Begin rpm build for Amazon Linux 2 ##";
+	@printf "\n## Begin rpm build for Amazon Linux 2 ##";
 	if [ $(VERSION) ]; then cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
 	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py -b -d amazonlinux2 -p $(CUR_DIR)/.amzn2.json -s $(VERSION); \
 	elif [ $(RETAIN) ]; then . $(VENV_DIR)/bin/activate && \
@@ -164,13 +164,13 @@ buildrpm-amzn: setup-venv ## Build Amazon Linux 2 distribution (.rpm) os package
 
 .PHONY: testpypi
 testpypi: build     ## Deploy to testpypi without regenerating prebuild artifacts
-	@echo "Deploy $(PROJECT) to test.pypi.org";
+	@printf "Deploy $(PROJECT) to test.pypi.org";
 	. $(VENV_DIR)/bin/activate && twine upload --repository testpypi dist/*
 
 
 .PHONY: pypi
 pypi: clean build    ## Deploy to pypi without regenerating prebuild artifacts
-	@echo "Deploy $(PROJECT) to pypi.org";
+	@printf "Deploy $(PROJECT) to pypi.org";
 	. $(VENV_DIR)/bin/activate && twine upload --repository pypi dist/*
 	rm -f $(CUR_DIR)/README.rst
 
@@ -220,19 +220,19 @@ help:   ## Print help index
 
 .PHONY: clean-docs
 clean-docs:    ## Remove build artifacts for documentation only
-	@echo "## Clean docs build directory ##"
+	@printf "\n## Clean docs build directory ##"
 	#cd $(DOC_PATH) && $(VENV_DIR)/bin/activate && $(MAKE) clean || true
 
 
 .PHONY: clean-version
 clean-version:    ## Reset version back to committed version number
-	@echo "## Reset version to last committed version number ##"; \
+	@printf "\n## Reset version to last committed version number ##"; \
 	$(GIT) checkout $(VERSION_FILE);
 
 
 .PHONY: clean-pkgbuild
 clean-pkgbuild: clean-version   ## Remove os packaging build artifacts
-	@echo "## Clean post build package assempbly artifacts ##";
+	@printf "\n## Clean post build package assempbly artifacts ##";
 	sudo rm -rf $(CUR_DIR)/.pybuild || true
 	sudo rm -rf $(CUR_DIR)/*.egg* || true
 	sudo rm -fr debian/.debhelper debian/files debian/xlines.postinst.debhelper
@@ -241,7 +241,7 @@ clean-pkgbuild: clean-version   ## Remove os packaging build artifacts
 
 .PHONY: clean-containers
 clean-containers:   ## Stop & delete residual docker container artifacts
-	@echo "## Clean residual docker container artifacts ##";
+	@printf "\n## Clean residual docker container artifacts ##";
 	if [[ $$(which docker 2>/dev/null) ]]; then \
 		if [[ $$(docker ps | grep $(CONTAINER_RHEL7)) ]]; then \
 		docker stop $(CONTAINER_RHEL7) && docker rm $(CONTAINER_RHEL7); \
@@ -260,7 +260,7 @@ clean-containers:   ## Stop & delete residual docker container artifacts
 
 .PHONY: clean
 clean: clean-docs clean-version clean-containers  ## Remove generic build artifacts
-	@echo "## Clean project directories ##";
+	@printf "\n## Clean project directories ##";
 	rm -rf $(VENV_DIR) || true
 	rm -rf $(CUR_DIR)/dist || true
 	rm -rf $(CUR_DIR)/*.egg* || true
