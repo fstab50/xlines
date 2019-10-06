@@ -15,29 +15,25 @@
 ##                                                                          ##
 ##############################################################################
 
-FROM centos:centos7
-MAINTAINER The CentOS Project <cloud-ops@centos.org>
+FROM ubuntu:18.14
+MAINTAINER Cannonical, Inc.
 
-RUN yum -y update; yum clean all
-RUN yum -y groups mark convert
-RUN yum -y groupinstall "Development Tools"
-RUN yum -y install epel-release
-RUN yum -y update; yum clean all
-RUN yum -y install rpm-build rpmdevtools source-highlight highlight pandoc
-RUN yum -y install redhat-lsb
+RUN apt -y update; apt clean all
+RUN apt -y groups mark convert
+RUN apt -y update; apt clean all
+RUN apt -y install source-highlight highlight pandoc
 
-RUN yum install -y gcc gcc-c++ \
+RUN apt install -y gcc gcc-c++ \
                    libtool libtool-ltdl \
                    make cmake \
                    git vim figlet \
                    pkgconfig mlocate \
                    sudo wget \
                    automake autoconf \
-                   yum-utils  && \
-    yum clean all
+    apt clean all
 
 # python3 components required for build
-RUN yum -y install python36 python36-pip python36-setuptools python36-devel
+RUN apt -y install python3 python3-pip python3-setuptools python3-dev
 
 # user operations
 ENV USER1 'builder'
@@ -52,16 +48,12 @@ RUN useradd $USER1 -d /home/$USER1 -u 1000 -m -G users,wheel && \
     echo "%_srcrpmdir %{_topdir}"        >> /home/$USER1/.rpmmacros
 
 # mount volume here to cp completed rpm to on the host
-RUN mkdir /mnt/rpm
-VOLUME /mnt/rpm
+RUN mkdir /mnt/deb
+VOLUME /mnt/deb
 
 # configure sudoers
 RUN sed -i '/Defaults    secure_path/d' /etc/sudoers
 RUN echo "$USER1 ALL=(ALL:ALL) NOPASSWD:ALL" >> /etc/sudoers
-
-# rpmbuild deps
-RUN cd && rpmdev-setuptree
-RUN mv ~/rpmbuild /home/$USER1/
 
 # dotfiles, USER1
 ADD ./bashrc  /home/$USER1/.bashrc
@@ -76,7 +68,7 @@ RUN cd /home/$USER1/git/xlines && git pull && git checkout develop
 
 # bash shell configuration
 ADD ./colors.sh /home/$USER1/.config/bash/colors.sh
-ADD ./motd-centos7.sh /home/$USER1/.config/bash/motd.sh
+ADD ./motd-ubuntu18.sh /home/$USER1/.config/bash/motd.sh
 ADD ./loadavg-flat-layout.sh /home/$USER1/.config/bash/loadavg-flat-layout.sh
 
 # completion actions
@@ -88,11 +80,11 @@ EXPOSE 8080
 
 
 # environment variables
-ENV CONTAINER=rpmbuildD OS=centos DIST=el7
+ENV CONTAINER=debbuildD OS=ubuntu18 DIST=el7
 
 
 # completion update
-RUN yum -y update; yum clean all
+RUN apt -y update; apt clean all
 
 ##
 
