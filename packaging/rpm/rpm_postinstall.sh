@@ -31,26 +31,49 @@ _project='xlines'
 loginfo='[INFO]'
 logwarn='[WARN]'
 
-declare -a os_packages
+declare -a python_packages
+
+python_packages=(
+    'setuptools'
+    'distro'
+)
 
 
 function _pip_exec(){
     ##
     ##  Finds pip executable for python3 regardless of upgrade
     ##
+    logger "$loginfo: Locating Python3 pip executable..."
+
     if [[ $(locate pip3 2>/dev/null | head -n1) ]]; then
         echo "$(locate pip3 2>/dev/null | head -n1)"
+        logger "$loginfo: pip3 executable path found: $_PIP"
         return 0
 
     elif [[ $(locate pip 2>/dev/null | head -n1) ]]; then
         echo "$(locate pip 2>/dev/null | head -n1)"
+        logger "$loginfo: pip executable path found: $_PIP"
         return 0
     fi
+
+    logger "$logwarn: failed to find pip executable path"
     return 1
 }
 
 
-function _redhat_linux(){
+function _python_prerequisites(){
+    ##
+    ##  install Python3 package dependencies
+    ##
+    local pip_bin="$1"
+
+    for pkg in "${python_packages[@]}"; do
+        $pip_bin install -U $pkg
+    done
+}
+
+
+function _redhat_centos(){
     ##
     ##  determines if Redhat Enterprise Linux, Centos
     ##
@@ -74,7 +97,19 @@ function _amazonlinux(){
     ##
     if [[ $(grep -i 'amazon linux' /etc/os-release) ]] && \
          [[ $(grep 'VERSION' /etc/os-release | grep '2') ]]; then
-        logger "$loginfo: Amazon Linux 2 OS type detected."
+        logger "$loginfo: Amazon Linux 2 OS environment detected."
+        return 0
+    fi
+    return 1
+}
+
+
+function _fedoralinux(){
+    ##
+    ##  determines if Amazon Linux
+    ##
+    if [[ $(distro 2>&1 | head -n 1 | grep -i fedora) ]]; then
+        logger "$loginfo: Fedora Linux OS environment detected."
         return 0
     fi
     return 1
@@ -96,6 +131,20 @@ function python_dependencies(){
 }
 
 
+function set_permissions(){
+    ##
+    ##  Set ownership perms on ~/.config directory
+    ##
+    logger "$loginfo: Set USER $USER ownership on .config directory..."
+
+    if [ "$SUDO_USER" ]; then
+        chown -R $SUDO_USER:$SUDO_USER /home/$SUDO_USER/.config
+    else
+        chown -R $USER:$USER /home/$USER/.config
+    fi
+}
+
+
 # --- main --------------------------------------------------------------------
 
 
@@ -104,26 +153,55 @@ logger "$loginfo: Creating and updating local mlocate databases..."
 updatedb
 
 # locate pip executable
-logger "$loginfo: Locating Python3 pip executable..."
 _PIP=$(_pip_exec)
-if [[ $_PIP ]]; then
-    logger "$loginfo: pip executable path found: $_PIP"
-else
-    logger "$logwarn: failed to find pip executable path"
-fi
 
-logger "$loginfo: Set USER $USER ownership on .config directory..."
-if [ "$SUDO_USER" ]; then
-    chown -R $SUDO_USER:$SUDO_USER /home/$SUDO_USER/.config
-else
-    chown -R $USER:$USER /home/$USER/.config
-fi
+# install python dependencies
+_python_prerequisites "$_PIP"
 
-if _amazonlinux && ! python_dependencies $_PIP; then
-    logger "$loginfo: Amazon Linux 2 os detected, but missing Pygments library. Installing..."
-    # install pygments
-    $_PIP install pygments
-fi
+# determine os
+os=$(distro 2>&1 | head -n 1 | awk '{print $2}')
+
+case $os in
+    'Amazon')
+        logger "$loginfo: Amazon Linux os environment detected."
+
+        if ! python_dependencies $_PIP; then
+            logger "$loginfo: Missing Pygments library. Installing via pip3..."
+            # install pygments
+            $_PIP install pygments
+        fi
+        ;;
+
+    'Fedora')
+        logger "$loginfo: Fedora os environment detected."
+
+        if ! python_dependencies $_PIP; then
+            logger "$logwarn: Missing Pygments library. Installing via pip3..."
+            # install pygments
+            $_PIP install pygments
+        fi
+        ;;
+
+    'Redhat' | 'CentOS')
+        logger "$loginfo: Redhat LInux OS environment detected."
+        ;;
+
+    *)
+        if _amazonlinux && ! python_dependencies $_PIP; then
+            logger "$loginfo: Amazon Linux 2 os detected, but missing Pygments library. Installing..."
+            # install pygments
+            $_PIP install pygments
+
+        elif _fedoralinux && ! python_dependencies $_PIP; then
+            logger "$loginfo: Fedora os detected, but missing Pygments library. Installing..."
+            # install pygments
+            $_PIP install pygments
+
+        elif _redhat_centos; then
+            logger "$loginfo: Redhat LInux OS environment detected."
+        fi
+        ;;
+esac
 
 # generate bytecode artifacts
 if which py3compile >/dev/null 2>&1; then
@@ -132,6 +210,9 @@ if which py3compile >/dev/null 2>&1; then
 else
     logger "$loginfo: py3compile not found... skipping bytecode compilation"
 fi
+
+# return user ownership to ~/.config directory
+set_permissions
 
 # <-- end python package postinstall script -->
 
