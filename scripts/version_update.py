@@ -120,6 +120,25 @@ def package_name(artifact):
     return None
 
 
+def pypi_registry(package_name):
+    """
+        Validate package build version vs. pypi version if exists
+
+    Returns:
+        Full version signature if package  ||   None
+        exists in pypi registry
+    """
+    cmd = 'pip3 show {} 2>/dev/null'.format(package_name)
+
+    try:
+        r = subprocess.getoutput(cmd)
+        parsed = r.split('\n')
+        raw = [x for x in parsed if x.startswith('Version')][0]
+        return raw.split(':')[1].strip()
+    except Exception:
+        return None
+
+
 def update_signature(version, path):
     """Updates version number module with new"""
     try:
@@ -156,7 +175,9 @@ def update_version(force_version=None, debug=False):
 
     if force_version is None:
         # increment existing version label
-        version_new = increment_version(current)
+        inc_version = increment_version(current)
+        pypi_version = pypi_registry(PACKAGE)
+        version_new = greater_version(inc_version, pypi_version)
 
     elif identical_version(force_version, current):
         tab = '\t'.expandtabs(4)
