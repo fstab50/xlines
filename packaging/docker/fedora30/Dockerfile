@@ -29,8 +29,7 @@ RUN dnf install -y gcc gcc-c++ \
                    git vim figlet \
                    pkgconfig mlocate \
                    sudo wget \
-                   automake autoconf \
-                   yum-utils  && \
+                   automake autoconf && \
     dnf clean all
 
 

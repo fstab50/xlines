@@ -209,20 +209,11 @@ increment_package_version "$ROOT" "$VERSION"
 
 
 # commence rpm package build
-if lsb_release -sirc | grep -i amazon >/dev/null 2>&1; then
+if lsb_release -sirc | grep -i fedora >/dev/null 2>&1; then
 
     # prerun update
     cd $ROOT || exit $E_DEPENDENCY
     git pull
-
-    std_message "Dependency check: validate epel package repository installed" "INFO" $LOG_FILE
-
-    if [[ $(sudo ${_YUM} repolist 2>/dev/null | grep epel) ]]; then
-        std_message "epel Redhat extras packages repository installed." "OK" $LOG_FILE
-    else
-        std_message "ERROR: epel Redhat extras packages repository NOT installed. Exit" "WARN" $LOG_FILE
-        exit $E_DEPENDENCY
-    fi
 
     # strip out sudo path restrictions
     sudo $_SED -i '/env_reset/d' /etc/sudoers
@@ -264,7 +255,7 @@ if lsb_release -sirc | grep -i amazon >/dev/null 2>&1; then
     cp -rv ~/rpmbuild/RPMS $VOLMNT/ | sudo tee -a $LOG_FILE
 
 else
-    std_message "Not a Redhat-based Linux distribution. Exit" "WARN" $LOG_FILE
+    std_message "Not a Fedora-based Linux distribution. Exit" "WARN" $LOG_FILE
     exit 1
 fi
 
