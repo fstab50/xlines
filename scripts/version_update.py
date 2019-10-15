@@ -124,7 +124,6 @@ def help_menu():
             information contained in the project to build the exact
             version specified by VERSION parameter.
 
-
     '''
     print(menu)
     return True
@@ -233,7 +232,7 @@ def update_version(force_version=None, pypi=False, debug=False):
     if pypi:
         # use version contained in pypi registry
         version_new = pypi_registry(PACKAGE)
-        
+
     elif force_version is None:
         # increment existing version label
         inc_version = increment_version(current)
