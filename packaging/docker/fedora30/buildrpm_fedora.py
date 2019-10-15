@@ -17,6 +17,13 @@ import datetime
 import subprocess
 from shutil import which
 from colors import Colors
+from libtools import stdout_message, logd
+from config import script_config
+
+# global logger
+script_version = '1.0'
+logd.local_config = script_config
+logger = logd.getLogger(script_version)
 
 c = Colors()
 
@@ -78,11 +85,9 @@ def _pip_exec():
     """Finds pip executable for python3 regardless of upgrade"""
     if which('pip3'):
         return which('pip3')
-    elif [[ $(which pip) ]]; then
-        echo "$(which pip)"
-        return 0
-    fi
-    return 1
+    elif which('pip'):
+        return which('pip')
+
 
 
 function export_package(){
