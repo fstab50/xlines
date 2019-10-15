@@ -108,17 +108,17 @@ def help_menu():
 
             $ python3  ''' + act + module + rst + '''   [ --set-version <VERSION> ]
 
-                        [-D, --debug  ]
+                        [-d, --debug  ]
                         [-h, --help   ]
-                        [-f, --pypi  ]
+                        [-p, --pypi  ]
                         [-s, --set-version <value>  ]
-
-        ''' + bd + '''-c''' + rst + ''', ''' + bd + '''--pypi''' + rst + ''':  Use latest package version contained in the pypi
-            registry and increment to arrive at package build version.
 
         ''' + bd + '''-d''' + rst + ''', ''' + bd + '''--debug''' + rst + ''': Debug mode, verbose output.
 
         ''' + bd + '''-h''' + rst + ''', ''' + bd + '''--help''' + rst + ''': Print this help menu
+
+        ''' + bd + '''-p''' + rst + ''', ''' + bd + '''--pypi''' + rst + ''':  Use latest package version contained in the pypi
+        registry and increment to arrive at package build version.
 
         ''' + bd + '''-s''' + rst + ''', ''' + bd + '''--set-version''' + rst + ''' (string):  When given, overrides all version
             information contained in the project to build the exact
@@ -161,7 +161,8 @@ def options(parser, help_menu=True):
 
     """
     parser.add_argument("-d", "--debug", dest='debug', action='store_true', default=False, required=False)
-    parser.add_argument("-h", "--help", dest='help', action='store_true', required=False)
+    parser.add_argument("-h", "--help", dest='help', action='store_true', default=False, required=False)
+    parser.add_argument("-p", "--pypi", dest='pypi', action='store_true', default=False, required=False)
     parser.add_argument("-s", "--set-version", dest='set', default=None, nargs='?', type=str, required=False)
     parser.add_argument("-V", "--version", dest='version', action='store_true', required=False)
     return parser.parse_known_args()
@@ -206,7 +207,7 @@ def update_signature(version, path):
     return False
 
 
-def update_version(force_version=None, debug=False):
+def update_version(force_version=None, pypi=False, debug=False):
     """
     Summary.
         Increments project version by 1 minor increment
@@ -229,7 +230,11 @@ def update_version(force_version=None, debug=False):
     current = current_version(module_path)
     stdout_message('Current project version found: {}'.format(current))
 
-    if force_version is None:
+    if pypi:
+        # use version contained in pypi registry
+        version_new = pypi_registry(PACKAGE)
+        
+    elif force_version is None:
         # increment existing version label
         inc_version = increment_version(current)
         pypi_version = pypi_registry(PACKAGE)
@@ -315,6 +320,6 @@ if __name__ == '__main__':
         help_menu()
         sys.exit(0)
 
-    elif update_version(args.set, args.debug):
+    elif update_version(args.set, args.pypi, args.debug):
         sys.exit(0)
     sys.exit(1)
