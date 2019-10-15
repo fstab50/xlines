@@ -21,7 +21,7 @@ MAINTAINER The Fedora Project <fedoraproject.org>
 RUN dnf -y update; dnf clean all
 RUN dnf -y groupinstall "Development Tools"
 RUN dnf -y update; dnf clean all
-RUN dnf -y install rpm-build rpmdevtools source-highlight highlight
+RUN dnf -y install rpm-build rpmdevtools source-highlight highlight redhat-lsb
 
 RUN dnf install -y gcc gcc-c++ \
                    libtool libtool-ltdl \
@@ -33,46 +33,62 @@ RUN dnf install -y gcc gcc-c++ \
                    yum-utils  && \
     dnf clean all
 
-RUN useradd builder -d /home/builder -u 1000 -m -G users,wheel && \
-    echo "# macros"                      >  /home/builder/.rpmmacros && \
-    echo "%_topdir    /home/builder/rpmbuild" >> /home/builder/.rpmmacros && \
-    echo "%_sourcedir %{_topdir}"        >> /home/builder/.rpmmacros && \
-    echo "%_builddir  %{_topdir}"        >> /home/builder/.rpmmacros && \
-    echo "%_specdir   %{_topdir}"        >> /home/builder/.rpmmacros && \
-    echo "%_rpmdir    %{_topdir}"        >> /home/builder/.rpmmacros && \
-    echo "%_srcrpmdir %{_topdir}"        >> /home/builder/.rpmmacros
+
+# user operations
+ENV USER1 'builder'
+
+
+RUN useradd $USER1 -d /home/$USER1 -u 1000 -m -G users,wheel && \
+    echo "# macros"                      >  /home/$USER1/.rpmmacros && \
+    echo "%_topdir    /home/$USER/rpmbuild" >> /home/$USER1/.rpmmacros && \
+    echo "%_sourcedir %{_topdir}"        >> /home/$USER1/.rpmmacros && \
+    echo "%_builddir  %{_topdir}"        >> /home/$USER1/.rpmmacros && \
+    echo "%_specdir   %{_topdir}"        >> /home/$USER1/.rpmmacros && \
+    echo "%_rpmdir    %{_topdir}"        >> /home/$USER1/.rpmmacros && \
+    echo "%_srcrpmdir %{_topdir}"        >> /home/$USER1/.rpmmacros
 
 # mount volume here to cp completed rpm to on the host
 RUN mkdir /mnt/rpm
 VOLUME /mnt/rpm
 
 # configure sudoers
-RUN sed -i '/secure_path\ =/d' /etc/sudoers
-RUN echo "builder ALL=(ALL:ALL) NOPASSWD:ALL" >> /etc/sudoers
+RUN sed -i '/Defaults    secure_path/d' /etc/sudoers
+RUN echo "$USER1 ALL=(ALL:ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 # rpmbuild deps
 RUN cd && rpmdev-setuptree
-RUN mv ~/rpmbuild /home/builder/
+RUN mv ~/rpmbuild /home/$USER1/
 
-ADD ./bashrc  /home/builder/.bashrc
-ADD ./.rpmmacros /home/builder/.rpmmacros
-ADD ./.gitconfig /home/builder/.gitconfig
+# dotfiles, USER1
+ADD ./bashrc  /home/$USER1/.bashrc
+ADD ./.rpmmacros /home/$USER1/.rpmmacros
+ADD ./.gitconfig /home/$USER1/.gitconfig
+
+# configure home for USER1
+RUN mkdir -p /home/$USER1/.config/bash
+RUN mkdir -p /home/$USER1/git
+RUN cd /home/$USER1/git; git clone 'https://github.com/fstab50/xlines.git'
+RUN cd /home/$USER1/git/xlines && git pull && git checkout develop
+
+# bash shell configuration
+ADD ./colors.sh /home/$USER1/.config/bash/colors.sh
+ADD ./motd-fedora.sh /home/$USER1/.config/bash/motd.sh
+ADD ./loadavg-flat-layout.sh /home/$USER1/.config/bash/loadavg-flat-layout.sh
+
+# completion actions
+RUN chown -R $USER1:$USER1 /home/$USER1
 
 
+# connectivity
 EXPOSE 8080
 
 
-# configure home for builder
-RUN mkdir -p /home/builder/.config/bash
-ADD ./colors.sh /home/builder/.config/bash/colors.sh
-ADD ./motd-fedora30.sh /home/builder/.config/bash/motd.sh
-ADD ./loadavg-flat-layout.sh /home/$USER1/.config/bash/loadavg-flat-layout.sh
-
-# set user ownership
-RUN chown -R builder:builder /home/builder
-
 # environment variables
-ENV CONTAINER=rpmbuild OS=centos DIST=el7
+ENV CONTAINER=rpmbuildD OS=fedora DIST=el7
+
+
+# completion update
+RUN yum -y update; yum clean all
 
 ##
 
