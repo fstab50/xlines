@@ -106,24 +106,27 @@ def help_menu():
 
   ''' + bd + '''OPTIONS''' + rst + '''
 
-            $ python3  ''' + act + module + rst + '''   [ --set-version <VERSION> ]
+        $ python3 ''' + act + module + rst + ''' --update [--set-version <VERSION>]
 
-                        [-d, --debug  ]
-                        [-h, --help   ]
+                         -u, --update
                         [-p, --pypi  ]
                         [-s, --set-version <value>  ]
+                        [-d, --debug  ]
+                        [-h, --help   ]
+
+        ''' + bd + '''-p''' + rst + ''', ''' + bd + '''--pypi''' + rst + ''':  Use latest package version contained in the pypi
+            registry and increment to arrive at package build version.
+
+        ''' + bd + '''-s''' + rst + ''', ''' + bd + '''--set-version''' + rst + ''' (string): When given, overrides all version
+            information contained in the project to build the exact
+            version specified by VERSION parameter.
+
+        ''' + bd + '''-u''' + rst + ''', ''' + bd + '''--update''' + rst + ''': Increment current package version. Can be used
+            with --set-version to update to forced version number.
 
         ''' + bd + '''-d''' + rst + ''', ''' + bd + '''--debug''' + rst + ''': Debug mode, verbose output.
 
         ''' + bd + '''-h''' + rst + ''', ''' + bd + '''--help''' + rst + ''': Print this help menu
-
-        ''' + bd + '''-p''' + rst + ''', ''' + bd + '''--pypi''' + rst + ''':  Use latest package version contained in the pypi
-        registry and increment to arrive at package build version.
-
-        ''' + bd + '''-s''' + rst + ''', ''' + bd + '''--set-version''' + rst + ''' (string):  When given, overrides all version
-            information contained in the project to build the exact
-            version specified by VERSION parameter.
-
     '''
     print(menu)
     return True
@@ -163,6 +166,7 @@ def options(parser, help_menu=True):
     parser.add_argument("-h", "--help", dest='help', action='store_true', default=False, required=False)
     parser.add_argument("-p", "--pypi", dest='pypi', action='store_true', default=False, required=False)
     parser.add_argument("-s", "--set-version", dest='set', default=None, nargs='?', type=str, required=False)
+    parser.add_argument("-u", "--update", dest='update', action='store_true', default=False, required=False)
     parser.add_argument("-V", "--version", dest='version', action='store_true', required=False)
     return parser.parse_known_args()
 
@@ -319,6 +323,7 @@ if __name__ == '__main__':
         help_menu()
         sys.exit(0)
 
-    elif update_version(args.set, args.pypi, args.debug):
+    elif args.update:
+        update_version(args.set, args.pypi, args.debug)
         sys.exit(0)
     sys.exit(1)
