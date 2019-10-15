@@ -210,7 +210,38 @@ def update_signature(version, path):
     return False
 
 
-def update_version(force_version=None, pypi=False, debug=False):
+def update_pypi_version(base_version, package_name, module, debug=False):
+    """
+    Summary.
+        Increments pypi registry project version by
+        1 minor increment
+
+    Args:
+        :force_version (Nonetype): Version signature (x.y.z)
+            if version number is hardset insetead of increment
+
+    Returns:
+        Success | Failure, TYPE: bool
+    """
+    module_path = os.path.join(_root(), package_name, str(module))
+
+    # current version
+    current = current_version(module_path)
+    stdout_message('Current project version found: {}'.format(current))
+
+    if valid_version(base_version):
+        # hard set existing version to force_version value
+        version_new = increment_version(base_version)
+
+    else:
+        stdout_message('You must enter a valid version (x.y.z)', prefix='WARN')
+        sys.exit(1)
+
+    stdout_message('Incremental project version: {}'.format(version_new))
+    return update_signature(version_new, module_path)
+
+
+def update_version(force_version, package_name, module, debug=False):
     """
     Summary.
         Increments project version by 1 minor increment
@@ -223,24 +254,16 @@ def update_version(force_version=None, pypi=False, debug=False):
     Returns:
         Success | Failure, TYPE: bool
     """
-    # prerequisities
-    PACKAGE = package_name(os.path.join(_root(), 'DESCRIPTION.rst'))
-    module = locate_version_module(PACKAGE)
-
-    module_path = os.path.join(_root(), PACKAGE, str(module))
+    module_path = os.path.join(_root(), package_name, str(module))
 
     # current version
     current = current_version(module_path)
     stdout_message('Current project version found: {}'.format(current))
 
-    if pypi:
-        # use version contained in pypi registry
-        version_new = pypi_registry(PACKAGE)
-
-    elif force_version is None:
+    if force_version is None:
         # increment existing version label
         inc_version = increment_version(current)
-        pypi_version = pypi_registry(PACKAGE)
+        pypi_version = pypi_registry(package_name)
         version_new = greater_version(inc_version, pypi_version)
 
     elif identical_version(force_version, current):
@@ -252,7 +275,7 @@ def update_version(force_version=None, pypi=False, debug=False):
 
     elif valid_version(force_version):
         # hard set existing version to force_version value
-        most_recent = greater_version(force_version, pypi_registry(PACKAGE))
+        most_recent = greater_version(force_version, pypi_registry(package_name))
         version_new = greater_version(most_recent, increment_version(current))
 
     else:
@@ -314,6 +337,9 @@ def main():
     Return:
         Success || Failure, TYPE: bool
     """
+    # prerequisities
+    PACKAGE = package_name(os.path.join(_root(), 'DESCRIPTION.rst'))
+    module = locate_version_module(PACKAGE)
     parser = argparse.ArgumentParser(add_help=False)
 
     try:
@@ -328,8 +354,13 @@ def main():
         help_menu()
         return True
 
+    elif args.pypi:
+        # use version contained in pypi registry
+        update_pypi_version(pypi_registry(PACKAGE), PACKAGE, module, args.debug)
+        return True
+
     elif args.update or args.pypi:
-        update_version(args.set, args.pypi, args.debug)
+        update_version(args.set, PACKAGE, module, args.debug)
         return True
 
 
