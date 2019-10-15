@@ -22,7 +22,7 @@
     "DockerUser": "builder",
     "RepositoryRoot": "/home/builder/git/xlines",
     "MakeTarget": "buildrpm-fedora",
-    "DockerBuildScript": "buildrpm-fedora.py",
+    "DockerBuildScript": "build-fedora.sh",
     "BashCompletion": "xlines-completion.bash",
     "SpecFile": {
         "Name": "xlines.spec",
