@@ -14,12 +14,26 @@ import argparse
 import inspect
 import subprocess
 from libtools import stdout_message, logd
+from colors import Colors
 from config import script_config
 
+c = Colors()
+
 # global logger
-script_version = '1.0'
+script_version = '1.1'
+module = os.path.basename(__file__)
 logd.local_config = script_config
 logger = logd.getLogger(script_version)
+
+# formatting
+act = c.ORANGE                  # accent highlight (bright orange)
+bd = c.BOLD + c.WHITE           # title formatting
+bn = c.CYAN                     # color for main binary highlighting
+lk = c.DARK_BLUE                # color for filesystem path confirmations
+red = c.RED                     # color for failed operations
+yl = c.GOLD3                    # color when copying, creating paths
+rst = c.RESET                   # reset all color, formatting
+
 
 try:
     from libtools.oscodes_unix import exit_codes
@@ -72,6 +86,48 @@ def greater_version(versionA, versionB):
     except ValueError:
         return versionA or versionB    # either A or B is ''
     return versionA
+
+
+def help_menu():
+    """
+    Summary.
+
+        Command line parameter options (Help Menu)
+
+    """
+    menu = '''
+                    ''' + bd + module + rst + ''' help contents
+
+  ''' + bd + '''DESCRIPTION''' + rst + '''
+
+        Automates build package version updates. Validates incremental
+        version with pypi registery to ensure consistent version sign-
+        ature progression.
+
+  ''' + bd + '''OPTIONS''' + rst + '''
+
+            $ python3  ''' + act + module + rst + '''   [ --set-version <VERSION> ]
+
+                        [-D, --debug  ]
+                        [-h, --help   ]
+                        [-f, --pypi  ]
+                        [-s, --set-version <value>  ]
+
+        ''' + bd + '''-c''' + rst + ''', ''' + bd + '''--pypi''' + rst + ''':  Use latest package version contained in the pypi
+            registry and increment to arrive at package build version.
+
+        ''' + bd + '''-d''' + rst + ''', ''' + bd + '''--debug''' + rst + ''': Debug mode, verbose output.
+
+        ''' + bd + '''-h''' + rst + ''', ''' + bd + '''--help''' + rst + ''': Print this help menu
+
+        ''' + bd + '''-s''' + rst + ''', ''' + bd + '''--set-version''' + rst + ''' (string):  When given, overrides all version
+            information contained in the project to build the exact
+            version specified by VERSION parameter.
+
+
+    '''
+    print(menu)
+    return True
 
 
 def locate_version_module(directory):
@@ -188,7 +244,8 @@ def update_version(force_version=None, debug=False):
 
     elif valid_version(force_version):
         # hard set existing version to force_version value
-        version_new = force_version
+        most_recent = greater_version(force_version, pypi_registry(PACKAGE))
+        version_new = greater_version(most_recent, increment_version(current))
 
     else:
         stdout_message('You must enter a valid version (x.y.z)', prefix='WARN')
@@ -254,8 +311,8 @@ if __name__ == '__main__':
         stdout_message(str(e), 'ERROR')
         sys.exit(exit_codes['E_BADARG']['Code'])
 
-    if args.help:
-        parser.print_help()
+    if args.help or len(sys.argv) == 1:
+        help_menu()
         sys.exit(0)
 
     elif update_version(args.set, args.debug):
