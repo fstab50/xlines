@@ -323,7 +323,7 @@ if __name__ == '__main__':
         help_menu()
         sys.exit(0)
 
-    elif args.update:
+    elif args.update or args.pypi:
         update_version(args.set, args.pypi, args.debug)
         sys.exit(0)
     sys.exit(1)
