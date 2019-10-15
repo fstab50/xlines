@@ -16,7 +16,7 @@
     ],
     "LogFiles": [ ],
     "VersionModule": "_version.py",
-    "DockerImage": "rpmbuildF",
+    "DockerImage": "rpmbuildD",
     "DockerContainer": "buildxlines",
     "DockerUser": "builder",
     "RepositoryRoot": "/home/builder/git/xlines",
