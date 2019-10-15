@@ -307,8 +307,13 @@ def valid_version(parameter, min=0, max=100):
     return True
 
 
-if __name__ == '__main__':
+def main():
+    """
+        Main execution caller
 
+    Return:
+        Success || Failure, TYPE: bool
+    """
     parser = argparse.ArgumentParser(add_help=False)
 
     try:
@@ -317,13 +322,16 @@ if __name__ == '__main__':
 
     except Exception as e:
         stdout_message(str(e), 'ERROR')
-        sys.exit(exit_codes['E_BADARG']['Code'])
+        return exit_codes['E_BADARG']['Code']
 
     if args.help or len(sys.argv) == 1:
         help_menu()
-        sys.exit(0)
+        return True
 
     elif args.update or args.pypi:
         update_version(args.set, args.pypi, args.debug)
-        sys.exit(0)
-    sys.exit(1)
+        return True
+
+
+if __name__ == '__main__':
+    sys.exit(main())
