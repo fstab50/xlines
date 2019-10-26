@@ -38,7 +38,7 @@ requires = [
 ]
 
 
-_project = 'python37-xlines'
+_project = 'python37-xlines.fc30'
 _root = os.path.abspath(os.path.dirname(__file__))
 _ex_fname = 'exclusions.list'
 _ex_dirs_fname = 'directories.list'

@@ -231,7 +231,7 @@ if lsb_release -sirc | grep -i fedora >/dev/null 2>&1; then
     sudo cp -r /usr/local/lib/python3.*/site-packages/pkg_resources* /usr/lib/python3.*/site-packages/
 
     # python3 build process
-    $_PYTHON3_PATH setup_amzn.py bdist_rpm --requires=${REQUIRES} \
+    $_PYTHON3_PATH setup_fedora.py bdist_rpm --requires=${REQUIRES} \
                                           --python='/usr/bin/python3' \
                                           --post-install=${_POSTINSTALL}
 
