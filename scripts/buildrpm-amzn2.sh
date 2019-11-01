@@ -13,7 +13,6 @@
 pkg=$(basename $0)                                  # pkg (script) full name
 pkg_root=$(echo $pkg | awk -F '.' '{print $1}')     # pkg without file extention
 pkg_path=$(cd $(dirname $0); pwd -P)                # location of pkg
-VERSION="$1"
 username="builder"
 home_dir="$(echo $HOME)"
 NOW=$(date +'%Y-%m-%d')
