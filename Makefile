@@ -280,3 +280,4 @@ clean: clean-docs clean-containers  ## Remove generic build artifacts
 	rm -rf $(CUR_DIR)/docs/__pycache__ || true
 	rm -rf $(CUR_DIR)/.pytest_cache || true
 	rm -rf $(CUR_DIR)/build || true
+	rm -rf $(SCRIPT_DIR)/_version.py || true
