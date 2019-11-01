@@ -43,16 +43,19 @@ function _pip_exec(){
     ##
     ##  Finds pip executable for python3 regardless of upgrade
     ##
+    local _pip
     logger "$loginfo: Locating Python3 pip executable..."
 
-    if [[ $(locate pip3 2>/dev/null | head -n1) ]]; then
-        echo "$(locate pip3 2>/dev/null | head -n1)"
-        logger "$loginfo: pip3 executable path found: $_PIP"
+    if [[ $(/usr/local/bin/pip3 --version 2>/dev/null | grep "python\ 3.[6-9]") ]]; then
+        _pip="/usr/local/bin/pip3"
+        echo "$_pip"
+        logger "$loginfo: pip3 executable path found: $_pip"
         return 0
 
-    elif [[ $(locate pip 2>/dev/null | head -n1) ]]; then
-        echo "$(locate pip 2>/dev/null | head -n1)"
-        logger "$loginfo: pip executable path found: $_PIP"
+    elif [[ $(/usr/local/bin/pip --version 2>/dev/null | grep "python\ 3.[6-9]") ]]; then
+        _pip="/usr/local/bin/pip"
+        echo "$_pip"
+        logger "$loginfo: pip3 executable path found: $_pip"
         return 0
     fi
 
@@ -150,7 +153,6 @@ function set_permissions(){
 
 # build and update locate db
 logger "$loginfo: Creating and updating local mlocate databases..."
-updatedb
 
 # locate pip executable
 _PIP=$(_pip_exec)
