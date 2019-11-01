@@ -552,7 +552,7 @@ def main(setVersion, environment, package_configpath, force=False, retain=False,
     if setVersion:
         VERSION = setVersion
     elif CURRENT_VERSION:
-        VERSION = increment_version(CURRENT_VERSION)
+        VERSION = CURRENT_VERSION
     else:
         stdout_message('Could not determine current {} version'.format(bd + PROJECT + rst))
         sys.exit(exit_codes['E_DEPENDENCY']['Code'])
