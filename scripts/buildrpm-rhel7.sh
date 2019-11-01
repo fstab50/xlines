@@ -204,7 +204,7 @@ REQUIRES='python36,python36-pip,python36-setuptools,python36-pygments,mlocate,ba
 
 # prerun functions
 precheck "$LOG_DIR"
-parse_parameters $@
+parse_parameters "$@"
 increment_package_version "$ROOT" "$VERSION"
 
 
