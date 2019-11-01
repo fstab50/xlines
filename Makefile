@@ -125,10 +125,9 @@ docs: clean setup-venv    ## Generate sphinx documentation
 .PHONY: build
 build: artifacts  ## Build dist artifact and increment version
 	if [ $(VERSION) ]; then . $(VENV_DIR)/bin/activate && \
-	$(PYTHON3_PATH) $(SCRIPT_DIR)/version_update.py $(VERSION); \
-	else . $(VENV_DIR)/bin/activate && \
-	$(PYTHON3_PATH) $(SCRIPT_DIR)/version_update.py; fi && . $(VENV_DIR)/bin/activate && \
-	cd $(CUR_DIR) && $(PYTHON3_PATH) setup.py sdist
+	$(PYTHON3_PATH) $(SCRIPT_DIR)/version_update.py --set-version $(VERSION) --update; \
+	else . $(VENV_DIR)/bin/activate && $(PYTHON3_PATH) $(SCRIPT_DIR)/version_update.py --update; fi; \
+	. $(VENV_DIR)/bin/activate && cd $(CUR_DIR) && $(PYTHON3_PATH) setup.py sdist
 
 
 .PHONY: builddeb
@@ -160,6 +159,17 @@ buildrpm-amzn: clean-containers setup-venv  ## Build Amazon Linux 2 distribution
 	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py -b -d amazonlinux2 -p $(CUR_DIR)/.amzn2.json --container; \
 	else cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
 	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py -b -d amazonlinux2 -p $(CUR_DIR)/.amzn2.json; fi
+
+
+.PHONY: buildrpm-fedora
+buildrpm-fedora: clean-containers setup-venv  ## Build Amazon Linux 2 distribution (.rpm) os package
+	@printf "\n## Begin rpm build for Fedora Linux ##\n\n";
+	if [ $(VERSION) ]; then cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
+	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py -b -d fedora -p $(CUR_DIR)/.fedora.json -s $(VERSION); \
+	elif [ $(RETAIN) ]; then . $(VENV_DIR)/bin/activate && \
+	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py -b -d fedora -p $(CUR_DIR)/.fedora.json --container; \
+	else cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
+	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py -b -d fedora -p $(CUR_DIR)/.fedora.json; fi
 
 
 .PHONY: testpypi
@@ -270,3 +280,4 @@ clean: clean-docs clean-containers  ## Remove generic build artifacts
 	rm -rf $(CUR_DIR)/docs/__pycache__ || true
 	rm -rf $(CUR_DIR)/.pytest_cache || true
 	rm -rf $(CUR_DIR)/build || true
+	rm -rf $(SCRIPT_DIR)/_version.py || true

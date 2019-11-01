@@ -47,9 +47,8 @@ def get_os(detailed=False):
 
         if os_type == 'Linux':
             os_detail = platform.platform()
-            distribution = platform.linux_distribution()[0]
-            HOME = str(Path.home())
             username = os.getenv('USER')
+            HOME = str(Path.home())
         elif os_type == 'Windows':
             os_detail = platform.platform()
             username = os.getenv('username') or os.getenv('USER')
@@ -58,8 +57,8 @@ def get_os(detailed=False):
             logger.warning('Unsupported OS. No information')
             os_type = 'Java'
             os_detail = 'unknown'
-            HOME = os.getenv('HOME')
             username = os.getenv('USER')
+            HOME = os.getenv('HOME')
 
     except OSError as e:
         raise e
@@ -68,15 +67,7 @@ def get_os(detailed=False):
             '%s: problem determining local os environment %s' %
             (inspect.stack()[0][3], str(e))
             )
-    if detailed and os_type == 'Linux':
-        return {
-                'os_type': os_type,
-                'os_detail': os_detail,
-                'linux_distribution': distribution,
-                'username': username,
-                'HOME': HOME
-            }
-    elif detailed:
+    if detailed:
         return {
                 'os_type': os_type,
                 'os_detail': os_detail,

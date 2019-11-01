@@ -563,7 +563,7 @@ def main(setVersion, environment, package_configpath, force=False, retain=False,
     global LIB_DIR
     LIB_DIR = PROJECT_ROOT + '/' + PROJECT
     global CURRENT_VERSION
-    CURRENT_VERSION = current_version(PROJECT_BIN, os.path.join(LIB_DIR, 'version.py'))
+    CURRENT_VERSION = current_version(PROJECT_BIN, os.path.join(LIB_DIR, '_version.py'))
 
     # sort out version numbers, forceVersion is overwrite of pre-existing build artifacts
     global VERSION
@@ -596,7 +596,7 @@ def main(setVersion, environment, package_configpath, force=False, retain=False,
 
         # trigger docker build based on environment:
         container = docker_init(
-                PROJECT_ROOT + '/packaging/docker/' + environment,
+                os.path.join(PROJECT_ROOT, 'packaging/docker', environment),
                 BUILD_ROOT,
                 VERSION,
                 environment,

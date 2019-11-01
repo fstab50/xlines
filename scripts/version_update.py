@@ -14,12 +14,26 @@ import argparse
 import inspect
 import subprocess
 from libtools import stdout_message, logd
+from colors import Colors
 from config import script_config
 
+c = Colors()
+
 # global logger
-script_version = '1.0'
+script_version = '1.1'
+module = os.path.basename(__file__)
 logd.local_config = script_config
 logger = logd.getLogger(script_version)
+
+# formatting
+act = c.ORANGE                  # accent highlight (bright orange)
+bd = c.BOLD + c.WHITE           # title formatting
+bn = c.CYAN                     # color for main binary highlighting
+lk = c.DARK_BLUE                # color for filesystem path confirmations
+red = c.RED                     # color for failed operations
+yl = c.GOLD3                    # color when copying, creating paths
+rst = c.RESET                   # reset all color, formatting
+
 
 try:
     from libtools.oscodes_unix import exit_codes
@@ -74,6 +88,50 @@ def greater_version(versionA, versionB):
     return versionA
 
 
+def help_menu():
+    """
+    Summary.
+
+        Command line parameter options (Help Menu)
+
+    """
+    menu = '''
+                    ''' + bd + module + rst + ''' help contents
+
+  ''' + bd + '''DESCRIPTION''' + rst + '''
+
+        Automates build package version updates. Validates incremental
+        version with pypi registery to ensure consistent version sign-
+        ature progression.
+
+  ''' + bd + '''OPTIONS''' + rst + '''
+
+        $ python3 ''' + act + module + rst + ''' --update [--set-version <VERSION>]
+
+                         -u, --update
+                        [-p, --pypi  ]
+                        [-s, --set-version <value>  ]
+                        [-d, --debug  ]
+                        [-h, --help   ]
+
+        ''' + bd + '''-p''' + rst + ''', ''' + bd + '''--pypi''' + rst + ''':  Use latest package version contained in the pypi
+            registry and increment to arrive at package build version.
+
+        ''' + bd + '''-s''' + rst + ''', ''' + bd + '''--set-version''' + rst + ''' (string): When given, overrides all version
+            information contained in the project to build the exact
+            version specified by VERSION parameter.
+
+        ''' + bd + '''-u''' + rst + ''', ''' + bd + '''--update''' + rst + ''': Increment current package version. Can be used
+            with --set-version to update to forced version number.
+
+        ''' + bd + '''-d''' + rst + ''', ''' + bd + '''--debug''' + rst + ''': Debug mode, verbose output.
+
+        ''' + bd + '''-h''' + rst + ''', ''' + bd + '''--help''' + rst + ''': Print this help menu
+    '''
+    print(menu)
+    return True
+
+
 def locate_version_module(directory):
     files = list(filter(lambda x: x.endswith('.py'), os.listdir(directory)))
     return [f for f in files if 'version' in f][0]
@@ -105,8 +163,10 @@ def options(parser, help_menu=True):
 
     """
     parser.add_argument("-d", "--debug", dest='debug', action='store_true', default=False, required=False)
-    parser.add_argument("-h", "--help", dest='help', action='store_true', required=False)
+    parser.add_argument("-h", "--help", dest='help', action='store_true', default=False, required=False)
+    parser.add_argument("-p", "--pypi", dest='pypi', action='store_true', default=False, required=False)
     parser.add_argument("-s", "--set-version", dest='set', default=None, nargs='?', type=str, required=False)
+    parser.add_argument("-u", "--update", dest='update', action='store_true', default=False, required=False)
     parser.add_argument("-V", "--version", dest='version', action='store_true', required=False)
     return parser.parse_known_args()
 
@@ -120,6 +180,25 @@ def package_name(artifact):
     return None
 
 
+def pypi_registry(package_name):
+    """
+        Validate package build version vs. pypi version if exists
+
+    Returns:
+        Full version signature if package  ||   None
+        exists in pypi registry
+    """
+    cmd = 'pip3 show {} 2>/dev/null'.format(package_name)
+
+    try:
+        r = subprocess.getoutput(cmd)
+        parsed = r.split('\n')
+        raw = [x for x in parsed if x.startswith('Version')][0]
+        return raw.split(':')[1].strip()
+    except Exception:
+        return None
+
+
 def update_signature(version, path):
     """Updates version number module with new"""
     try:
@@ -131,7 +210,38 @@ def update_signature(version, path):
     return False
 
 
-def update_version(force_version=None, debug=False):
+def update_pypi_version(base_version, package_name, module, debug=False):
+    """
+    Summary.
+        Increments pypi registry project version by
+        1 minor increment
+
+    Args:
+        :force_version (Nonetype): Version signature (x.y.z)
+            if version number is hardset insetead of increment
+
+    Returns:
+        Success | Failure, TYPE: bool
+    """
+    module_path = os.path.join(_root(), package_name, str(module))
+
+    # current version
+    current = current_version(module_path)
+    stdout_message('Current project version found: {}'.format(current))
+
+    if valid_version(base_version):
+        # hard set existing version to force_version value
+        version_new = increment_version(base_version)
+
+    else:
+        stdout_message('You must enter a valid version (x.y.z)', prefix='WARN')
+        sys.exit(1)
+
+    stdout_message('Incremental project version: {}'.format(version_new))
+    return update_signature(version_new, module_path)
+
+
+def update_version(force_version, package_name, module, debug=False):
     """
     Summary.
         Increments project version by 1 minor increment
@@ -144,11 +254,7 @@ def update_version(force_version=None, debug=False):
     Returns:
         Success | Failure, TYPE: bool
     """
-    # prerequisities
-    PACKAGE = package_name(os.path.join(_root(), 'DESCRIPTION.rst'))
-    module = locate_version_module(PACKAGE)
-
-    module_path = os.path.join(_root(), PACKAGE, str(module))
+    module_path = os.path.join(_root(), package_name, str(module))
 
     # current version
     current = current_version(module_path)
@@ -156,7 +262,9 @@ def update_version(force_version=None, debug=False):
 
     if force_version is None:
         # increment existing version label
-        version_new = increment_version(current)
+        inc_version = increment_version(current)
+        pypi_version = pypi_registry(package_name)
+        version_new = greater_version(inc_version, pypi_version)
 
     elif identical_version(force_version, current):
         tab = '\t'.expandtabs(4)
@@ -167,7 +275,8 @@ def update_version(force_version=None, debug=False):
 
     elif valid_version(force_version):
         # hard set existing version to force_version value
-        version_new = force_version
+        most_recent = greater_version(force_version, pypi_registry(package_name))
+        version_new = greater_version(most_recent, increment_version(current))
 
     else:
         stdout_message('You must enter a valid version (x.y.z)', prefix='WARN')
@@ -221,8 +330,16 @@ def valid_version(parameter, min=0, max=100):
     return True
 
 
-if __name__ == '__main__':
+def main():
+    """
+        Main execution caller
 
+    Return:
+        Success || Failure, TYPE: bool
+    """
+    # prerequisities
+    PACKAGE = package_name(os.path.join(_root(), 'DESCRIPTION.rst'))
+    module = locate_version_module(PACKAGE)
     parser = argparse.ArgumentParser(add_help=False)
 
     try:
@@ -231,12 +348,21 @@ if __name__ == '__main__':
 
     except Exception as e:
         stdout_message(str(e), 'ERROR')
-        sys.exit(exit_codes['E_BADARG']['Code'])
+        return exit_codes['E_BADARG']['Code']
 
-    if args.help:
-        parser.print_help()
-        sys.exit(0)
+    if args.help or len(sys.argv) == 1:
+        help_menu()
+        return True
 
-    elif update_version(args.set, args.debug):
-        sys.exit(0)
-    sys.exit(1)
+    elif args.pypi:
+        # use version contained in pypi registry
+        update_pypi_version(pypi_registry(PACKAGE), PACKAGE, module, args.debug)
+        return True
+
+    elif args.update or args.pypi:
+        update_version(args.set, PACKAGE, module, args.debug)
+        return True
+
+
+if __name__ == '__main__':
+    sys.exit(main())

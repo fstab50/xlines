@@ -10,6 +10,7 @@
         "python3",
         "python3-libs",
         "python3-pip",
+        "python3-pygments",
         "python3-setuptools",
         "bash-completion",
         "which"
@@ -20,8 +21,8 @@
     "DockerContainer": "buildxlines",
     "DockerUser": "builder",
     "RepositoryRoot": "/home/builder/git/xlines",
-    "MakeTarget": "buildrpm-rhel",
-    "DockerBuildScript": "buildrpm-amzn2.sh",
+    "MakeTarget": "buildrpm-fedora",
+    "DockerBuildScript": "build-fedora.sh",
     "BashCompletion": "xlines-completion.bash",
     "SpecFile": {
         "Name": "xlines.spec",

@@ -5,8 +5,8 @@
 #
 
 pkg=$(basename $0)
-container_default='AML2test'
-image='amazonlinux2:rpmbuildD'
+container_default='testFedora30'
+image='fedora30:rpmbuildD'
 
 
 function _git_root(){
@@ -41,7 +41,7 @@ if [ "$1" ]; then
 elif [ "$(docker ps -a | grep $container_default)" ]; then
     tab='          '
     std_message "Default container $container_default exists.  You must provide a unique name as a parameter
-    \n${tab}$ sh $pkg 'AML2test2'" "FAIL"
+    \n${tab}$ sh $pkg $container_default" "FAIL"
     exit 1
 
 else
@@ -50,7 +50,7 @@ else
 fi
 
 # working directory
-cd "$(_git_root)/packaging/docker/amazonlinux2" || false
+cd "$(_git_root)/packaging/docker/fedora30" || false
 
 # create image
 std_message "Begin image build" "INFO"
@@ -58,10 +58,7 @@ docker build  -t  $image .
 
 # create container
 std_message "Creating and running container ($container) -- START" "INFO"
-docker run -it \
-    --user='builder' \
-    --security-opt="label=disable" \
-    --name=$container -d -v /tmp/rpm:/mnt/rpm $image tail -f /dev/null &
+docker run -it --user='builder' --name=$container -d -v /tmp/rpm:/mnt/rpm $image tail -f /dev/null &
 
 if container_started; then
     std_message "Container ${container} started successfully" "OK"
