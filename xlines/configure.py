@@ -214,8 +214,8 @@ def _configure_add(expath, exdirpath, startpt):
                 # add new extensions to existing
                 exclusions.extend([x if x.startswith('.') else '.' + x for x in add_list])
 
-            # exit loop; write out new exclusions config file
-            _configure_rewrite(expath, exclusions)
+            # exit loop; write out new exclusions config file of unique, ordered elements
+            _configure_rewrite(expath, list(set(exclusions)))
 
     except OSError:
         stdout_message(
