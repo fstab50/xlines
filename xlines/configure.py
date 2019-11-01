@@ -103,6 +103,7 @@ def display_exclusions(expath, exdirpath, offset_spaces=default_width):
     try:
 
         ex = ProcessExclusions(expath)
+        ex.exclusions.sort()                # sort exclusion list
         exclusions = ex.exclusions
 
         stdout_message(message='File types excluded from line counts:', indent=offset_spaces + adj)
@@ -190,6 +191,7 @@ def _configure_add(expath, exdirpath, startpt):
     try:
 
         ex = ProcessExclusions(expath)
+        ex.exclusions.sort()                # sort exclusion list
         exclusions = ex.exclusions
 
         while loop:
