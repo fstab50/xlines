@@ -210,64 +210,46 @@ def read(fname):
     return open(os.path.join(basedir, fname)).read()
 
 
-def masterbranch_version(version_module):
+def pypi_version(modulename):
     """
     Returns version denoted in the master branch of the repository
     """
-    branch = current_branch(git_root())
-    commands = ['git checkout master', 'git checkout {}'.format(branch)]
+    command = 'pip3 search {} | grep -i latest'.format(modulename)
 
     try:
-        # checkout master
-        #stdout_message('Checkout master branch:\n\n%s' % subprocess.getoutput(commands[0]))
-        masterversion = read(version_module).split('=')[1].strip().strip('"')
 
-        # return to working branch
-        stdout_message(
-            'Returning to working branch: checkout %s\n\n%s'.format(branch)
-        )
-        stdout_message(subprocess.getoutput(f'git checkout {branch}'))
+        # query pypi global python lib database
+        version = subprocess.getoutput(command).split(':')[1]
+
     except Exception:
         return None
-    return masterversion
+    return version.strip()
 
 
 def current_version(binary, version_modpath):
     """
-    Summary:
+    Summary.
+
         Returns current binary package version if locally
         installed, master branch __version__ if the binary
         being built is not installed locally
+
     Args:
         :root (str): path to the project root directory
         :binary (str): Name of main project exectuable
+
     Returns:
         current version number of the project, TYPE: str
+
     """
+    try:
 
-    if which(binary):
+        return greater_version(pypi_version(binary), __version__)
 
-        os_type = distro.linux_distribution()[0]
-
-        if os_type == 'Redhat' and which('yum'):
-            cmd = 'yum info ' + binary + ' 2>/dev/null | grep Version'
-
-        elif os_type == 'Redhat' and which('rpm'):
-            cmd = 'rpm -qi ' + binary + ' 2>/dev/null | grep Version'
-
-        elif os_type == 'Ubuntu' and which('apt'):
-            cmd = 'apt show ' + binary + ' 2>/dev/null | grep Version | head -n1'
-
-        try:
-
-            installed_version = subprocess.getoutput(cmd).split(':')[1].strip()
-            return greater_version(installed_version, __version__)
-
-        except Exception:
-            logger.info(
-                '%s: Build binary %s not installed, comparing current branch version to master branch version' %
-                (inspect.stack()[0][3], binary))
-    return greater_version(masterbranch_version(version_modpath), __version__)
+    except Exception:
+        logger.info(
+            '%s: Build binary %s not installed, comparing current branch version to master branch version' %
+            (inspect.stack()[0][3], binary))
 
 
 def greater_version(versionA, versionB):
@@ -703,9 +685,9 @@ def prebuild(builddir, libsrc, volmnt, parameter_file):
         # deal with leftover build artifacts
         if os.path.exists(dst):
             os.remove(dst)
-        r_cf = copyfile(src, dst)
 
-        # import version module
+        # cp version module to scripts dir for import
+        r_cf = copyfile(src, dst)
         global __version__
         from _version import __version__
 
