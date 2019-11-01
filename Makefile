@@ -140,7 +140,7 @@ builddeb: setup-venv clean-version ## Build Debian distribution (.deb) os packag
 
 
 .PHONY: buildrpm-rhel
-buildrpm-rhel: clean-containers setup-venv   ## Build Redhat distribution (.rpm) os package
+buildrpm-rhel: clean setup-venv   ## Build Redhat distribution (.rpm) os package
 	@printf "\n## Begin rpm build for RHEL 7 / Centos 7 ##\n\n";
 	if [ $(VERSION) ]; then cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
 	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py -b --distro centos7 -p $(CUR_DIR)/.rpm.json -s $(VERSION); \
@@ -151,7 +151,7 @@ buildrpm-rhel: clean-containers setup-venv   ## Build Redhat distribution (.rpm)
 
 
 .PHONY: buildrpm-amzn
-buildrpm-amzn: clean-containers setup-venv  ## Build Amazon Linux 2 distribution (.rpm) os package
+buildrpm-amzn: clean setup-venv  ## Build Amazon Linux 2 distribution (.rpm) os package
 	@printf "\n## Begin rpm build for Amazon Linux 2 ##\n\n";
 	if [ $(VERSION) ]; then cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
 	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py -b -d amazonlinux2 -p $(CUR_DIR)/.amzn2.json -s $(VERSION); \

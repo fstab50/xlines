@@ -768,7 +768,7 @@ def postbuild(root, container, rpm_root, scripts_dir, version_module, version, p
 
         # rewrite version file with 67rrent build version
         with open(os.path.join(root, PROJECT, version_module), 'w') as f3:
-            f2 = ["__version__ = \' + version + \'\n"]
+            f2 = ["__version__ = \'" + version + "\'" + '\n']
             f3.writelines(f2)
             path = project_dirname + (root + '/' + PROJECT + '/' + version_module)[len(root):]
             stdout_message(
