@@ -392,9 +392,9 @@ def docker_configure_container(c_object, root_dir, buildscript, version):
     def command_exec(index):
         return {
             0: f"docker exec -i {c_object.name} sh -c \'cd {root_dir} && git checkout develop\'",
-            1: f"docker exec -i {c_object.name} sh -c \'sleep 4\'",
+            1: f"docker exec -i {c_object.name} sh -c \'sleep 1\'",
             2: f"docker exec -i {c_object.name} sh -c \'cd {root_dir} && git pull\'",
-            3: f"docker exec -i {c_object.name} sh -c \'sleep 4\'",
+            3: f"docker exec -i {c_object.name} sh -c \'sleep 2\'",
             4: f"docker exec -i {c_object.name} sh -c \'cd {root_dir} && sh scripts/{buildscript} -s {version}\'"
         }.get(index, 0)
 
