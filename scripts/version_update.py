@@ -20,7 +20,7 @@ from config import script_config
 c = Colors()
 
 # global logger
-script_version = '1.1'
+script_version = '1.2'
 module = os.path.basename(__file__)
 logd.local_config = script_config
 logger = logd.getLogger(script_version)
@@ -114,17 +114,18 @@ def help_menu():
                         [-d, --debug  ]
                         [-h, --help   ]
 
-        ''' + bd + '''-p''' + rst + ''', ''' + bd + '''--pypi''' + rst + ''':  Use latest package version contained in the pypi
-            registry and increment to arrive at package build version.
+        ''' + bd + '''-d''' + rst + ''', ''' + bd + '''--dryrun''' + rst + ''':  Simulate version update without altering the
+            real project version signature. Output useful parameters.
 
         ''' + bd + '''-s''' + rst + ''', ''' + bd + '''--set-version''' + rst + ''' (string): When given, overrides all version
-            information contained in the project to build the exact
-            version specified by VERSION parameter.
+            information contained in the project to hardset the exact
+            version specified by set-version parameter. Must be used
+            with --update option to effect a version label change.
 
         ''' + bd + '''-u''' + rst + ''', ''' + bd + '''--update''' + rst + ''': Increment current package version. Can be used
             with --set-version to update to forced version number.
 
-        ''' + bd + '''-d''' + rst + ''', ''' + bd + '''--debug''' + rst + ''': Debug mode, verbose output.
+        ''' + bd + '''-D''' + rst + ''', ''' + bd + '''--debug''' + rst + ''': Debug mode, verbose output.
 
         ''' + bd + '''-h''' + rst + ''', ''' + bd + '''--help''' + rst + ''': Print this help menu
     '''
@@ -149,7 +150,7 @@ def identical_version(new, existing):
 
 def increment_version(current):
     major = '.'.join(current.split('.')[:2])
-    minor = int(current.split('.')[-1][0]) + 1
+    minor = int(current.split('.')[-1]) + 1
     return '.'.join([major, str(minor)])
 
 
@@ -162,9 +163,9 @@ def options(parser, help_menu=True):
         TYPE: argparse object, parser argument set
 
     """
-    parser.add_argument("-d", "--debug", dest='debug', action='store_true', default=False, required=False)
+    parser.add_argument("-d", "--dryrun", dest='dryrun', action='store_true', default=False, required=False)
+    parser.add_argument("-D", "--debug", dest='debug', action='store_true', default=False, required=False)
     parser.add_argument("-h", "--help", dest='help', action='store_true', default=False, required=False)
-    parser.add_argument("-p", "--pypi", dest='pypi', action='store_true', default=False, required=False)
     parser.add_argument("-s", "--set-version", dest='set', default=None, nargs='?', type=str, required=False)
     parser.add_argument("-u", "--update", dest='update', action='store_true', default=False, required=False)
     parser.add_argument("-V", "--version", dest='version', action='store_true', required=False)
@@ -185,8 +186,9 @@ def pypi_registry(package_name):
         Validate package build version vs. pypi version if exists
 
     Returns:
-        Full version signature if package  ||   None
-        exists in pypi registry
+        Full version signature if package   ||   None
+        exists in pypi registry             ||
+
     """
     cmd = 'pip3 show {} 2>/dev/null'.format(package_name)
 
@@ -210,7 +212,7 @@ def update_signature(version, path):
     return False
 
 
-def update_pypi_version(base_version, package_name, module, debug=False):
+def update_dryrun(package_name, module, debug=False):
     """
     Summary.
         Increments pypi registry project version by
@@ -218,10 +220,11 @@ def update_pypi_version(base_version, package_name, module, debug=False):
 
     Args:
         :force_version (Nonetype): Version signature (x.y.z)
-            if version number is hardset insetead of increment
+          if version number is hardset instead of incremental
 
     Returns:
         Success | Failure, TYPE: bool
+
     """
     module_path = os.path.join(_root(), package_name, str(module))
 
@@ -229,16 +232,21 @@ def update_pypi_version(base_version, package_name, module, debug=False):
     current = current_version(module_path)
     stdout_message('Current project version found: {}'.format(current))
 
-    if valid_version(base_version):
+    pypi = pypi_registry(package_name)
+    stdout_message('Current pypi registry version found: {}'.format(pypi))
+
+    _version = greater_version(current, pypi)
+
+    if valid_version(_version):
         # hard set existing version to force_version value
-        version_new = increment_version(base_version)
+        version_new = increment_version(_version)
 
     else:
         stdout_message('You must enter a valid version (x.y.z)', prefix='WARN')
         sys.exit(1)
 
     stdout_message('Incremental project version: {}'.format(version_new))
-    return update_signature(version_new, module_path)
+    return True
 
 
 def update_version(force_version, package_name, module, debug=False):
@@ -354,12 +362,12 @@ def main():
         help_menu()
         return True
 
-    elif args.pypi:
+    elif args.dryrun:
         # use version contained in pypi registry
-        update_pypi_version(pypi_registry(PACKAGE), PACKAGE, module, args.debug)
+        update_dryrun(PACKAGE, module, args.debug)
         return True
 
-    elif args.update or args.pypi:
+    elif args.update:
         update_version(args.set, PACKAGE, module, args.debug)
         return True
 
