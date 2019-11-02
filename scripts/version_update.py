@@ -20,7 +20,7 @@ from config import script_config
 c = Colors()
 
 # global logger
-script_version = '1.1'
+script_version = '1.2'
 module = os.path.basename(__file__)
 logd.local_config = script_config
 logger = logd.getLogger(script_version)
@@ -118,8 +118,9 @@ def help_menu():
             registry and increment to arrive at package build version.
 
         ''' + bd + '''-s''' + rst + ''', ''' + bd + '''--set-version''' + rst + ''' (string): When given, overrides all version
-            information contained in the project to build the exact
-            version specified by VERSION parameter.
+            information contained in the project to hardset the exact
+            version specified by set-version parameter. Must be used
+            with --update option to effect a version label change.
 
         ''' + bd + '''-u''' + rst + ''', ''' + bd + '''--update''' + rst + ''': Increment current package version. Can be used
             with --set-version to update to forced version number.
@@ -185,8 +186,9 @@ def pypi_registry(package_name):
         Validate package build version vs. pypi version if exists
 
     Returns:
-        Full version signature if package  ||   None
-        exists in pypi registry
+        Full version signature if package   ||   None
+        exists in pypi registry             ||
+
     """
     cmd = 'pip3 show {} 2>/dev/null'.format(package_name)
 
@@ -218,10 +220,11 @@ def update_pypi_version(base_version, package_name, module, debug=False):
 
     Args:
         :force_version (Nonetype): Version signature (x.y.z)
-            if version number is hardset insetead of increment
+          if version number is hardset instead of incremental
 
     Returns:
         Success | Failure, TYPE: bool
+
     """
     module_path = os.path.join(_root(), package_name, str(module))
 
@@ -359,7 +362,7 @@ def main():
         update_pypi_version(pypi_registry(PACKAGE), PACKAGE, module, args.debug)
         return True
 
-    elif args.update or args.pypi:
+    elif args.update:
         update_version(args.set, PACKAGE, module, args.debug)
         return True
 
