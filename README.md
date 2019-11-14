@@ -26,8 +26,8 @@ Count the number of lines of text in a code project (or anything else)
 * [**Installation**](#installation)
     * [Pip Install](#installation)
     * [Ubuntu, Linux Mint, Debian-based Distributions](#debian-distro-install)
-    * [Redhat, CentOS, Fedora](#redhat-distro-install)
-    * [Amazon Linux 2](#amzn2-distro-install)
+    * [Redhat, CentOS](#redhat-distro-install)
+    * [Amazon Linux 2, Fedora](#amzn2-distro-install)
 
 * [**Screenshots**](#screenshots)
 
@@ -152,14 +152,14 @@ $  sudo -H pip3 install xlines
 <a name="debian-distro-install"></a>
 ### Ubuntu, Linux Mint, Debian variants
 
-**xlines** is not yet offered in native Debian Linux package format.
+**xlines** is not yet offered in native Debian Linux package format.  Please use [pip to install **xlines**](#installation)
 
 
 [back to the top](#top)
 
 * * *
 <a name="redhat-distro-install"></a>
-### Redhat, CentOS, Fedora
+### Redhat, CentOS  (Python 3.6)
 
 The easiest way to install **xlines** on redhat-based Linux distributions is via the developer-tools package repository:
 
@@ -227,9 +227,9 @@ The easiest way to install **xlines** on redhat-based Linux distributions is via
 
 * * *
 <a name="amzn2-distro-install"></a>
-### Amazon Linux 2
+### Amazon Linux 2 / Fedora (Python 3.7)
 
-The easiest way to install **xlines** on redhat-based Linux distribution Amazon Linux 2, is via the developer-tools [amzn2.awscloud.center](http://amzn2.awscloud.center) package repository:
+The easiest way to install **xlines** on redhat-based Linux distribution [Amazon Linux 2](https://aws.amazon.com/amazon-linux-2) or [Fedora](http://fedoraproject.org), is via the developer-tools [amzn2.awscloud.center](http://amzn2.awscloud.center) package repository:
 
 
 1. Install the official epel package repository
