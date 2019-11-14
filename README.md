@@ -159,7 +159,7 @@ $  sudo -H pip3 install xlines
 
 * * *
 <a name="redhat-distro-install"></a>
-### Redhat, CentOS
+### Redhat, CentOS  (Python 3.6)
 
 The easiest way to install **xlines** on redhat-based Linux distributions is via the developer-tools package repository:
 
@@ -227,7 +227,7 @@ The easiest way to install **xlines** on redhat-based Linux distributions is via
 
 * * *
 <a name="amzn2-distro-install"></a>
-### Amazon Linux 2 / Modern Fedora Distributions (Python 3.7)
+### Amazon Linux 2 / Fedora (Python 3.7)
 
 The easiest way to install **xlines** on redhat-based Linux distribution [Amazon Linux 2](https://aws.amazon.com/amazon-linux-2) or [Fedora](http://fedoraproject.org), is via the developer-tools [amzn2.awscloud.center](http://amzn2.awscloud.center) package repository:
 
