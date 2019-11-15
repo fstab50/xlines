@@ -161,17 +161,6 @@ buildrpm-amzn: clean setup-venv  ## Build Amazon Linux 2 distribution (.rpm) os 
 	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py -b -d amazonlinux2 -p $(CUR_DIR)/.amzn2.json; fi
 
 
-.PHONY: buildrpm-fedora
-buildrpm-fedora: clean-containers setup-venv  ## Build Amazon Linux 2 distribution (.rpm) os package
-	@printf "\n## Begin rpm build for Fedora Linux ##\n\n";
-	if [ $(VERSION) ]; then cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
-	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py -b -d fedora -p $(CUR_DIR)/.fedora.json -s $(VERSION); \
-	elif [ $(RETAIN) ]; then . $(VENV_DIR)/bin/activate && \
-	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py -b -d fedora -p $(CUR_DIR)/.fedora.json --container; \
-	else cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
-	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py -b -d fedora -p $(CUR_DIR)/.fedora.json; fi
-
-
 .PHONY: testpypi
 testpypi: build     ## Deploy to testpypi without regenerating prebuild artifacts
 	@printf "Deploy $(PROJECT) to test.pypi.org";
