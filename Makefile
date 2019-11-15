@@ -196,6 +196,7 @@ source-install:  clean  setup-venv  ## Install (source: local source). Build art
 .PHONY: update-src-install
 update-src-install:    ## Update Install (source: local source).
 	if [ -e $(VENV_DIR) ]; then \
+	rm -rf $(CUR_DIR)/$(PROJECT)/__pycache__ || true; \
 	cp -rv $(MODULE_PATH) $(VENV_DIR)/lib/python3*/site-packages/; fi
 
 
