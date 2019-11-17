@@ -308,10 +308,9 @@ Single git repository line count:
 ```
 
 <p align="center">
-    <a href="http://images.awspros.world/xlines/xlines-output-branchdiff.png"><img src="./assets/xlines-output-branchdiff-md.png" width="800">
+    <a href="http://images.awspros.world/xlines/xlines-output-branchdiff.png"><img src="./assets/xlines-output-branchdiff-md.png" width="900">
 </p>
 
-[![branchdiff](./assets/xlines-output-branchdiff-md.png)](http://images.awspros.world/xlines/xlines-output-branchdiff.png)
 
 [back to the top](#top)
 
