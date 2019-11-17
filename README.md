@@ -311,6 +311,7 @@ Single git repository line count:
     <a href="http://images.awspros.world/xlines/xlines-output-branchdiff.png"><img src="./assets/xlines-output-branchdiff-md.png" width="400">
 </p>
 
+[![branchdiff](./assets/xlines-output-branchdiff-md.png)](http://images.awspros.world/xlines/xlines-output-branchdiff.png)
 
 [back to the top](#top)
 
