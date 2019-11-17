@@ -212,7 +212,7 @@ def update_signature(version, path):
     return False
 
 
-def update_dryrun(package_name, module, debug=False):
+def update_dryrun(package_name, module, force, debug=False):
     """
     Summary.
         Increments pypi registry project version by
@@ -245,7 +245,7 @@ def update_dryrun(package_name, module, debug=False):
         stdout_message('You must enter a valid version (x.y.z)', prefix='WARN')
         sys.exit(1)
 
-    stdout_message('Incremental project version: {}'.format(version_new))
+    stdout_message('Incremental project version: {}'.format(version_new if force is None else force))
     return True
 
 
@@ -364,7 +364,7 @@ def main():
 
     elif args.dryrun:
         # use version contained in pypi registry
-        update_dryrun(PACKAGE, module, args.debug)
+        update_dryrun(PACKAGE, module, args.set, args.debug)
         return True
 
     elif args.update:
