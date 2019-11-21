@@ -45,7 +45,7 @@ def get_os(detailed=False):
 
         os_type = platform.system()
 
-        if os_type == 'Linux':
+        if os_type == 'Linux' or os_type == 'Darwin':
             os_detail = platform.platform()
             username = os.getenv('USER')
             HOME = str(Path.home())
