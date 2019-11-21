@@ -275,7 +275,8 @@ def sourcefile_content():
 def user_home():
     """Returns os specific home dir for current user"""
     try:
-        if platform.system() == 'Linux':
+        if platform.system() == 'Linux' or platform.system() == 'Darwin':
+            # Linux or BSD Unix (Mac)
             return os.path.expanduser('~')
 
         elif platform.system() == 'Windows':
