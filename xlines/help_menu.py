@@ -16,12 +16,13 @@ c = Colors()
 ACCENT = c.ORANGE               # orange accent highlight color
 bdacct = c.ORANGE + c.BOLD      # bold orange
 bdcy = c.CYAN + c.BOLD          # bold blue
+bdwt = c.BRIGHT_WHITE + c.BOLD  # white bold highlight color
 lbrct = bbc + '[ ' + rst        # left bracket
 rbrct = bbc + ' ]' + rst        # right bracket
 vdiv = bbc + ' | ' + rst
 tab = '\t'.expandtabs(24)
 
-menu_title = '\n' + c.BOLD + tab + PACKAGE + rst + ' help contents'
+menu_title = '\n' + tab + bdwt + PACKAGE + rst + ' help contents'
 
 synopsis_cmd = (
         rst + ACCENT + PACKAGE + rst + ' --sum <values> ' +
@@ -44,13 +45,13 @@ footer = """
   """
 
 
-menu_body = menu_title + c.BOLD + """
+menu_body = menu_title + bdwt + """
 
   DESCRIPTION""" + rst + """
 
             Count lines of text: A utility for all code projects
             Source Code Repo:  """ + url_sc + """
-    """ + c.BOLD + """
+    """ + bdwt + """
   SYNOPSIS""" + rst + """
 
         $ """ + synopsis_cmd + """
@@ -63,7 +64,7 @@ menu_body = menu_title + c.BOLD + """
                        [-m, --multiprocess  ]
                        [-n, --no-whitespace  ]
                        [-V, --version  ]
-    """ + c.BOLD + """
+    """ + bdwt + """
   OPTIONS
         -s, --sum""" + rst + """ (string): Sum the counts of all lines contained
             in filesystem objects referenced in the sum parameter
@@ -85,5 +86,5 @@ menu_body = menu_title + c.BOLD + """
             from total line counts for all objects
     """ + c.BOLD + """
         -V, --version""" + rst + """:  Print package version  and copyright info
-    """ + c.BOLD + """
+    """ + bdwt + """
   LEGEND""" + rst
