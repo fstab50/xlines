@@ -277,7 +277,7 @@ def user_home():
     try:
         if platform.system() == 'Linux' or platform.system() == 'Darwin':
             # Linux or BSD Unix (Mac)
-            return os.path.expanduser('~')
+            return os.path.expanduser('~') or os.environ.get('HOME')
 
         elif platform.system() == 'Windows':
             username = os.getenv('username')
