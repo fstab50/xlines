@@ -295,7 +295,7 @@ function _pathopt(){
             _filedir_en;
             return
         ;;
-        --+([-a-z0-9_]))
+        --+[-a-z0-9_])
             local argtype=$( LC_ALL=C $1 --help 2>&1 | command sed -ne "s|.*$prev\[\{0,1\}=[<[]\{0,1\}\([-A-Za-z0-9_]\{1,\}\).*|\1|p" );
             case ${argtype,,} in
                 *dir*)

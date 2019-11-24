@@ -45,7 +45,7 @@ def get_os(detailed=False):
 
         os_type = platform.system()
 
-        if os_type == 'Linux':
+        if os_type == 'Linux' or os_type == 'Darwin':
             os_detail = platform.platform()
             username = os.getenv('USER')
             HOME = str(Path.home())
@@ -67,14 +67,13 @@ def get_os(detailed=False):
             '%s: problem determining local os environment %s' %
             (inspect.stack()[0][3], str(e))
             )
-    if detailed:
-        return {
+
+    return {
                 'os_type': os_type,
                 'os_detail': os_detail,
                 'username': username,
                 'HOME': HOME
-            }
-    return {'os_type': os_type}
+            } if detailed else {'os_type': os_type}
 
 
 def import_file_object(filename):
@@ -166,8 +165,9 @@ def terminal_size(height=False):
 def user_home():
     """Returns os specific home dir for current user"""
     try:
-        if platform.system() == 'Linux':
-            return os.path.expanduser('~')
+        if platform.system() == 'Linux' or platform.system() == 'Darwin':
+            # Linux or BSD Unix (Mac)
+            return os.path.expanduser('~') or os.environ.get('HOME')
 
         elif platform.system() == 'Windows':
             username = os.getenv('username')
