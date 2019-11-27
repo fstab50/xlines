@@ -8,15 +8,13 @@ Help Menu
 
 from xlines.statics import PACKAGE
 from xlines import Colors
-from xlines.variables import *
+from xlines.variables import acct, bbc, bbl, bcy, bdcy, bdwt, bwt, rst
 
 
 c = Colors()
 
 ACCENT = c.ORANGE               # orange accent highlight color
 bdacct = c.ORANGE + c.BOLD      # bold orange
-bdcy = c.CYAN + c.BOLD          # bold blue
-bdwt = c.BRIGHT_WHITE + c.BOLD  # white bold highlight color
 lbrct = bbc + '[ ' + rst        # left bracket
 rbrct = bbc + ' ]' + rst        # right bracket
 vdiv = bbc + ' | ' + rst
@@ -68,23 +66,23 @@ menu_body = menu_title + bdwt + """
   OPTIONS
         -s, --sum""" + rst + """ (string): Sum the counts of all lines contained
             in filesystem objects referenced in the sum parameter
-    """ + c.BOLD + """
+    """ + bdwt + """
         -c, --configure""" + rst + """:  Configure runtime parameter via the cli
             menu. Change display format, color scheme, etc values
-    """ + c.BOLD + """
+    """ + bdwt + """
         -d, --debug""" + rst + """:  Print out additional  debugging information
-    """ + c.BOLD + """
+    """ + bdwt + """
         -e, --exclusions""" + rst + """:  Print out list of file type extensions
             and directories excluded from line count calculations
-    """ + c.BOLD + """
+    """ + bdwt + """
         -h, --help""" + rst + """: Show this help message, symbol legend, & exit
-    """ + c.BOLD + """
+    """ + bdwt + """
         -m, --multiprocess""" + rst + """:  Use multiple  cpu cores for counting
             lines of text in expansive filesystem directories
-    """ + c.BOLD + """
+    """ + bdwt + """
         -w, --no-whitespace""" + rst + """:  Exclude lines containing whitespace
             from total line counts for all objects
-    """ + c.BOLD + """
+    """ + bdwt + """
         -V, --version""" + rst + """:  Print package version  and copyright info
     """ + bdwt + """
   LEGEND""" + rst
