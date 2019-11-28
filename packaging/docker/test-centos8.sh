@@ -5,8 +5,8 @@
 #
 
 pkg=$(basename $0)
-container_default='AML2test'
-image='amazonlinux2:rpmbuildD'
+container_default='xlinesCentos8'
+image='centos8:rpmbuildD'
 
 
 function _git_root(){
@@ -22,7 +22,7 @@ function container_started(){
     ##  check container status
     ##
     if [[ "$(docker ps | grep $container 2>/dev/null)" ]]; then
-        return 1    # scontainer running
+        return 1    # container running
     else
         return 0    # container stopped
     fi
@@ -44,7 +44,7 @@ if [ "$1" ]; then
 elif [ "$(docker ps -a | grep $container_default)" ]; then
     tab='          '
     std_message "Default container $container_default exists.  You must provide a unique name as a parameter
-    \n${tab}$ sh $pkg 'AML2test2'" "FAIL"
+    \n${tab}$ sh $pkg 'xlinesCentOS'" "FAIL"
     exit 1
 
 else
@@ -53,7 +53,7 @@ else
 fi
 
 # working directory
-cd "$(_git_root)/packaging/docker/amazonlinux2" || false
+cd "$(_git_root)/packaging/docker/centos8" || false
 
 # create image
 std_message "Begin image build" "INFO"
@@ -77,7 +77,6 @@ fi
 # --- closing -----------------------------------------------------------------
 
 
-# permissions
 std_message 'Ensuring host docker volume mnt owned by SUDO_USER (/tmp/rpm)' 'INFO'
 sudo chown -R $USER:$USER /tmp/rpm
 

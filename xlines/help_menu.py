@@ -8,20 +8,19 @@ Help Menu
 
 from xlines.statics import PACKAGE
 from xlines import Colors
-from xlines.variables import *
+from xlines.variables import acct, bbc, bbl, bcy, bdcy, bdwt, bwt, rst
 
 
 c = Colors()
 
 ACCENT = c.ORANGE               # orange accent highlight color
 bdacct = c.ORANGE + c.BOLD      # bold orange
-bdcy = c.CYAN + c.BOLD          # bold blue
 lbrct = bbc + '[ ' + rst        # left bracket
 rbrct = bbc + ' ]' + rst        # right bracket
 vdiv = bbc + ' | ' + rst
 tab = '\t'.expandtabs(24)
 
-menu_title = '\n' + c.BOLD + tab + PACKAGE + rst + ' help contents'
+menu_title = '\n' + tab + bdwt + PACKAGE + rst + ' help contents'
 
 synopsis_cmd = (
         rst + ACCENT + PACKAGE + rst + ' --sum <values> ' +
@@ -44,13 +43,13 @@ footer = """
   """
 
 
-menu_body = menu_title + c.BOLD + """
+menu_body = menu_title + bdwt + """
 
   DESCRIPTION""" + rst + """
 
             Count lines of text: A utility for all code projects
             Source Code Repo:  """ + url_sc + """
-    """ + c.BOLD + """
+    """ + bdwt + """
   SYNOPSIS""" + rst + """
 
         $ """ + synopsis_cmd + """
@@ -63,27 +62,27 @@ menu_body = menu_title + c.BOLD + """
                        [-m, --multiprocess  ]
                        [-n, --no-whitespace  ]
                        [-V, --version  ]
-    """ + c.BOLD + """
+    """ + bdwt + """
   OPTIONS
         -s, --sum""" + rst + """ (string): Sum the counts of all lines contained
             in filesystem objects referenced in the sum parameter
-    """ + c.BOLD + """
+    """ + bdwt + """
         -c, --configure""" + rst + """:  Configure runtime parameter via the cli
             menu. Change display format, color scheme, etc values
-    """ + c.BOLD + """
+    """ + bdwt + """
         -d, --debug""" + rst + """:  Print out additional  debugging information
-    """ + c.BOLD + """
+    """ + bdwt + """
         -e, --exclusions""" + rst + """:  Print out list of file type extensions
             and directories excluded from line count calculations
-    """ + c.BOLD + """
+    """ + bdwt + """
         -h, --help""" + rst + """: Show this help message, symbol legend, & exit
-    """ + c.BOLD + """
+    """ + bdwt + """
         -m, --multiprocess""" + rst + """:  Use multiple  cpu cores for counting
             lines of text in expansive filesystem directories
-    """ + c.BOLD + """
+    """ + bdwt + """
         -w, --no-whitespace""" + rst + """:  Exclude lines containing whitespace
             from total line counts for all objects
-    """ + c.BOLD + """
+    """ + bdwt + """
         -V, --version""" + rst + """:  Print package version  and copyright info
-    """ + c.BOLD + """
+    """ + bdwt + """
   LEGEND""" + rst

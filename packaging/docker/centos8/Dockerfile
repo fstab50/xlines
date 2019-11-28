@@ -87,7 +87,7 @@ EXPOSE 8080
 
 
 # environment variables
-ENV CONTAINER=rpmbuildD OS=centos DIST=el7
+ENV CONTAINER=rpmbuildD OS=centos DIST=el8
 
 
 # completion update
