@@ -29,6 +29,9 @@ function container_started(){
 }
 
 
+# --- main -----------------------------------------------------------------
+
+
 pkg_path=$(cd "$(dirname $0)"; pwd -P)
 source "$(_git_root)/scripts/std_functions.sh"
 source "$(_git_root)/scripts/colors.sh"
@@ -69,6 +72,14 @@ if container_started; then
 else
     std_message "Container ${container} failed to start" "FAIL"
 fi
+
+
+# --- closing -----------------------------------------------------------------
+
+
+# permissions
+std_message 'Ensuring host docker volume mnt owned by SUDO_USER (/tmp/rpm)' 'INFO'
+sudo chown -R $USER:$USER /tmp/rpm
 
 # clean
 std_message 'Cleaning up intermediate image artifacts' 'INFO'
