@@ -318,10 +318,6 @@ The easiest way to install **xlines** on redhat-based Linux distribution [Amazon
 
 ###  git repository line count (Medium complexity project):
 
-```bash
-    $ xlines  --sum  git/branchdiff
-```
-
 <p align="right">
     <a href="http://images.awspros.world/xlines/xlines-awslabs.png"><img src="./assets/awslabs-content.png">
 </p>
