@@ -329,12 +329,8 @@ The easiest way to install **xlines** on redhat-based Linux distribution [Amazon
 
 #### Project 3: Line count, high complexity git repository:
 
-```bash
-    $ xlines  --sum  git/AWSAMPLES/aws-serverless-workshops/
-```
-
-<p align="center">
-    <a href="http://images.awspros.world/xlines/xlines_output_large.png"><img src="./assets/xlines-output-md.png" width="900">
+<p align="right">
+    <a href="http://images.awspros.world/xlines/xlines_output_large.png"><img src="./assets/awslabs-serverless.png">
 </p>
 
 
