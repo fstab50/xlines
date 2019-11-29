@@ -322,14 +322,20 @@ The easiest way to install **xlines** on redhat-based Linux distribution [Amazon
     $ xlines  --sum  git/branchdiff
 ```
 
-<p align="left">
-    <a href=""><img src="./assets/xlines-awslabs-cmd.png">
-</p>
+<p align="left"><a href=""><img src="./assets/xlines-awslabs-cmd.png"></p>
 
 <p align="right">
     <a href="http://images.awspros.world/xlines/xlines-awslabs.png"><img src="./assets/xlines-awslabs_sm.png" width="200">
 </p>
 
+<div>
+    <div align="left">
+        <img src="./assets/xlines-awslabs-cmd.png">
+    </div>
+    <div align="right">
+        <a href="http://images.awspros.world/xlines/xlines-awslabs.png"><img src="./assets/xlines-awslabs_sm.png" width="200">
+    </div>
+</div>
 
 [back to the top](#top)
 
