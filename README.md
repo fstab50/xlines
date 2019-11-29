@@ -301,7 +301,7 @@ The easiest way to install **xlines** on redhat-based Linux distribution [Amazon
 * * *
 ## Screenshots
 
-### Project 1: Line count, low complexity git repository:
+#### Project 1: Line count, low complexity git repository:
 
 ```bash
     $ xlines  --sum  git/branchdiff
@@ -316,7 +316,7 @@ The easiest way to install **xlines** on redhat-based Linux distribution [Amazon
 
 * * *
 
-### Project 2: Line count, medium complexity git repository:
+#### Project 2: Line count, medium complexity git repository:
 
 <p align="right">
     <a href="http://images.awspros.world/xlines/xlines-awslabs.png"><img src="./assets/awslabs-content.png">
@@ -327,7 +327,7 @@ The easiest way to install **xlines** on redhat-based Linux distribution [Amazon
 
 * * *
 
-### Project 3: Line count, high complexity git repository:
+#### Project 3: Line count, high complexity git repository:
 
 ```bash
     $ xlines  --sum  git/AWSAMPLES/aws-serverless-workshops/
