@@ -74,6 +74,14 @@ RUN echo "$USER1 ALL=(ALL:ALL) NOPASSWD:ALL" >> /etc/sudoers
 RUN cd && rpmdev-setuptree
 RUN mv ~/rpmbuild /home/$USER1/
 
+# install developer tools remote yum repository
+RUN cd && wget http://awscloud.center/amzn2/developer-tools.repo
+RUN cd && mv ./developer-tools.repo /etc/yum.repos.d/
+
+
+# --- end root, begin user setup ----------------------------------------------
+
+
 # user USER1
 ADD ./bashrc  /home/$USER1/.bashrc
 ADD ./.rpmmacros /home/$USER1/.rpmmacros
