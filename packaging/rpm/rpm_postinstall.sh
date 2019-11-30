@@ -189,7 +189,6 @@ _python_prerequisites "$_PIP"
 # determine os
 os="$(distro 2>&1 | head -n 1)"
 
-echo "damn os is: $os"
 
 if [ "$(echo $os | grep -i 'Amazon')" ]; then
         logger "$loginfo: Amazon Linux os environment detected."
