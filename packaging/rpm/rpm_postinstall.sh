@@ -52,6 +52,12 @@ function _pip_exec(){
         logger "$loginfo: pip3 executable path found: $_pip"
         return 0
 
+    elif [[ $(/usr/bin/pip3 --version 2>/dev/null | grep "python\ 3.[6-9]") ]]; then
+        _pip="/usr/bin/pip3"
+        echo "$_pip"
+        logger "$loginfo: pip3 executable path found: $_pip"
+        return 0
+
     elif [[ $(/usr/local/bin/pip --version 2>/dev/null | grep "python\ 3.[6-9]") ]]; then
         _pip="/usr/local/bin/pip"
         echo "$_pip"
