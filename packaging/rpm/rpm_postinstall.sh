@@ -154,11 +154,31 @@ function set_permissions(){
 }
 
 
+function sudoers_path(){
+    BIN_PATH=/usr/local/bin
+
+    # update sudoers path
+    if [[ -f /etc/sudoers ]]; then
+
+        var=$(grep secure_path /etc/sudoers)
+        cur_path="$(echo ${var##*=})"
+
+        if [[ -z "$(echo $cur_path | grep $BIN_PATH)" ]]; then
+            # append secure_path (single quotes mandatory)
+            sed -i '/secure_path/d' /etc/sudoers
+        fi
+    fi
+}
+
+
 # --- main --------------------------------------------------------------------
 
 
 # build and update locate db
 logger "$loginfo: Creating and updating local mlocate databases..."
+
+# clear sudoers path to locate executables
+sudoers_path
 
 # locate pip executable
 _PIP=$(_pip_exec)
@@ -167,10 +187,11 @@ _PIP=$(_pip_exec)
 _python_prerequisites "$_PIP"
 
 # determine os
-os=$(distro 2>&1 | head -n 1 | awk '{print $2}')
+os="$(distro 2>&1 | head -n 1)"
 
-case $os in
-    'Amazon')
+echo "damn os is: $os"
+
+if [ "$(echo $os | grep -i 'Amazon')" ]; then
         logger "$loginfo: Amazon Linux os environment detected."
 
         if ! python_dependencies $_PIP; then
@@ -178,23 +199,20 @@ case $os in
             # install pygments
             $_PIP install pygments
         fi
-        ;;
 
-    'Fedora')
-        logger "$loginfo: Fedora os environment detected."
+elif [[ $(echo $os | grep -i 'Fedora') ]]; then
+        echo "$loginfo: Fedora os environment detected."
 
         if ! python_dependencies $_PIP; then
             logger "$logwarn: Missing Pygments library. Installing via pip3..."
             # install pygments
             $_PIP install pygments
         fi
-        ;;
 
-    'Redhat' | 'CentOS')
+elif [ "$(echo $os | grep -i 'Redhat')" ] || [ "$(echo $os | grep -i 'CentOS')" ]; then
         logger "$loginfo: Redhat LInux OS environment detected."
-        ;;
 
-    *)
+else
         if _amazonlinux && ! python_dependencies $_PIP; then
             logger "$loginfo: Amazon Linux 2 os detected, but missing Pygments library. Installing..."
             # install pygments
@@ -208,8 +226,7 @@ case $os in
         elif _redhat_centos; then
             logger "$loginfo: Redhat LInux OS environment detected."
         fi
-        ;;
-esac
+fi
 
 # generate bytecode artifacts
 if which py3compile >/dev/null 2>&1; then
