@@ -57,6 +57,10 @@ RUN useradd $USER1 -d /home/$USER1 -u 1000 -m -G users,wheel && \
     echo "%_srcrpmdir %{_topdir}"        >> /home/$USER1/.rpmmacros
 
 
+# enable logging
+RUN yum -y install rsyslog rsyslog-doc
+RUN systemctl enable rsyslog
+
 # install python3.7 (requires epel)
 RUN yum -y install python3 python3-pip python3-setuptools
 RUN pip3 install -U pip setuptools
