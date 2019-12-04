@@ -208,7 +208,7 @@ fi
 
 # Dependency installation verification
 if _amazonlinux || _fedoralinux ; then
-    logger "$loginfo: Amazon Linux 2 or Fedora detected, but missing Pygments library. Installing..."
+    logger "$loginfo: Amazon Linux 2 or Fedora detected, checking dependencies..."
     # install pygments
     $_PIP install pygments
 fi
