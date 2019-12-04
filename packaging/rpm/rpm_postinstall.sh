@@ -196,42 +196,23 @@ _python_prerequisites "$_PIP"
 os="$(distro 2>&1 | head -n 1)"
 
 
-if [ "$(echo $os | grep -i 'Amazon')" ]; then
-        logger "$loginfo: Amazon Linux os environment detected."
+if [ "$(echo $os | grep -i 'Redhat')" ] || [ "$(echo $os | grep -i 'CentOS')" ]; then
+    logger "$loginfo: Redhat Linux OS environment detected, skipping dependency installation"
 
-        if ! python_dependencies $_PIP; then
-            logger "$loginfo: Missing Pygments library. Installing via pip3..."
-            # install pygments
-            $_PIP install pygments
-        fi
-
-elif [[ $(echo $os | grep -i 'Fedora') ]]; then
-        echo "$loginfo: Fedora os environment detected."
-
-        if ! python_dependencies $_PIP; then
-            logger "$logwarn: Missing Pygments library. Installing via pip3..."
-            # install pygments
-            $_PIP install pygments
-        fi
-
-elif [ "$(echo $os | grep -i 'Redhat')" ] || [ "$(echo $os | grep -i 'CentOS')" ]; then
-        logger "$loginfo: Redhat LInux OS environment detected."
-
-else
-        if _amazonlinux && ! python_dependencies $_PIP; then
-            logger "$loginfo: Amazon Linux 2 os detected, but missing Pygments library. Installing..."
-            # install pygments
-            $_PIP install pygments
-
-        elif _fedoralinux && ! python_dependencies $_PIP; then
-            logger "$loginfo: Fedora os detected, but missing Pygments library. Installing..."
-            # install pygments
-            $_PIP install pygments
-
-        elif _redhat_centos; then
-            logger "$loginfo: Redhat LInux OS environment detected."
-        fi
+elif ! python_dependencies $_PIP; then
+    logger "$loginfo: Missing Pygments library. Installing via pip3..."
+    # install pygments
+    $_PIP install pygments
 fi
+
+
+# Dependency installation verification
+if _amazonlinux || _fedoralinux ; then
+    logger "$loginfo: Amazon Linux 2 or Fedora detected, but missing Pygments library. Installing..."
+    # install pygments
+    $_PIP install pygments
+fi
+
 
 # generate bytecode artifacts
 if which py3compile >/dev/null 2>&1; then
