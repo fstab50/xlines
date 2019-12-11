@@ -22,6 +22,7 @@ SCRIPT_DIR := $(CUR_DIR)/scripts
 DOC_PATH := $(CUR_DIR)/docs
 REQUIREMENT = $(CUR_DIR)/requirements.txt
 VERSION_FILE = $(CUR_DIR)/$(PROJECT)/_version.py
+VERSION_UPDATE_SCRIPT = $(SCRIPT_DIR)/version_update.py
 
 # os package creation
 AML_REQUIRES = 'python3,python3-pip,python3-setuptools,bash-completion,which'
@@ -203,6 +204,11 @@ update-src-install:    ## Update Install (source: local source).
 .PHONY: rebuild-docs
 rebuild-docs:   ## Regenerate sphinx documentation
 	cd $(CUR_DIR)/docs && . $(VENV_DIR)/bin/activate && $(MAKE) html && cd $(CUR_DIR);
+
+
+.PHONY: simulate
+simulate:   ## Simulate a build to show version labels to be applied
+	cd $(CUR_DIR) && $(PYTHON3_PATH) $(VERSION_UPDATE_SCRIPT) --dryrun;
 
 
 .PHONY: upload-images
