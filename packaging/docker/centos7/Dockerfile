@@ -36,6 +36,10 @@ RUN yum install -y gcc gcc-c++ \
                    yum-utils  && \
     yum clean all
 
+# enable logging
+RUN yum -y install rsyslog rsyslog-doc
+RUN systemctl enable rsyslog
+
 # python3 components required for build
 RUN yum -y install python36 python36-pip python36-setuptools python36-devel
 
