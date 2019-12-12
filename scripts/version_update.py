@@ -360,24 +360,24 @@ def main():
 
     if args.help or len(sys.argv) == 1:
         help_menu()
-        return True
+        return 0
 
     elif args.dryrun and args.update:
         stdout_message('Option --dryrun and --update cannot be used together.', prefix='FAIL')
-        return False
+        return 1
 
     elif args.set and not (args.update or args.dryrun):
         stdout_message('--set-version must be used with --update or --dryrun.', prefix='FAIL')
-        return False
+        return 1
 
     elif args.dryrun:
         # use version contained in pypi registry
         update_dryrun(PACKAGE, module, args.set, args.debug)
-        return True
+        return 0
 
     elif args.update:
         update_version(args.set, PACKAGE, module, args.debug)
-        return True
+        return 0
 
 
 if __name__ == '__main__':
