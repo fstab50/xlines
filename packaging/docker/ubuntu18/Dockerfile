@@ -19,7 +19,6 @@ FROM ubuntu:18.10
 MAINTAINER Cannonical, Inc.
 
 RUN apt -y update; apt clean all
-RUN apt -y groups mark convert
 RUN apt -y update; apt clean all
 RUN apt -y install source-highlight highlight pandoc
 
