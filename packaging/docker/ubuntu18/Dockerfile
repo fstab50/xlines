@@ -15,7 +15,7 @@
 ##                                                                          ##
 ##############################################################################
 
-FROM ubuntu:18.14
+FROM ubuntu:18.10
 MAINTAINER Cannonical, Inc.
 
 RUN apt -y update; apt clean all
