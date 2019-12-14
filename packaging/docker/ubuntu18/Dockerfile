@@ -28,7 +28,7 @@ RUN apt install -y gcc \
                    automake autoconf
 
 # python3 components required for build
-RUN apt -y install python3 python3-pip python3-setuptools python3-dev
+RUN apt -y install python3 python3-pip python3-venv python3-setuptools python3-dev
 
 # user operations
 ENV USER1 'builder'
