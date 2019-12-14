@@ -37,8 +37,8 @@ echo  "       $R ARCH   : ${cyan}$ARCH${reset}        "
 echo  "       $R KERNEL : ${cyan}$KERNEL${reset}      "
 echo  "       $R CPU    : ${cyan}$CPU${reset}         "
 echo  "       $R Uptime : ${cyan}$UTIME${reset}       "
-echo -e "${red}"
-echo -e "       "Ubuntu 18.10"   "$ID| figlet -f shadow
+echo -e "${blue}"
+echo -e "       "Ubuntu 18.10" "| figlet -f shadow
 echo  -e "${reset}===============================================================${reset}" | indent02
 echo ""
 
