@@ -1,13 +1,13 @@
 ##############################################################################
 ##                                                                          ##
-##    RPM Build Dockerfile: CentOS 7 Base image                             ##
+##    Debian Build Dockerfile: Ubuntu 18 Base Image                         ##
 ##                                                                          ##
 ##    Purpose:                                                              ##
 ##       Build container for rpm package assembly                           ##
 ##                                                                          ##
 ##    Dependencies:  file list                                              ##
 ##      - bashrc                          - colors.sh                       ##
-##      - .rpmmacros                      - motd-centos.sh                  ##
+##      - motd-centos.sh                                                    ##
 ##      - docker-buildrpm.sh                                                ##
 ##                                                                          ##
 ##    Originally written by:                                                ##
@@ -38,14 +38,7 @@ RUN apt -y install python3 python3-pip python3-setuptools python3-dev
 # user operations
 ENV USER1 'builder'
 
-RUN useradd $USER1 -d /home/$USER1 -u 1000 -m -G users,wheel && \
-    echo "# macros"                      >  /home/$USER1/.rpmmacros && \
-    echo "%_topdir    /home/$USER/rpmbuild" >> /home/$USER1/.rpmmacros && \
-    echo "%_sourcedir %{_topdir}"        >> /home/$USER1/.rpmmacros && \
-    echo "%_builddir  %{_topdir}"        >> /home/$USER1/.rpmmacros && \
-    echo "%_specdir   %{_topdir}"        >> /home/$USER1/.rpmmacros && \
-    echo "%_rpmdir    %{_topdir}"        >> /home/$USER1/.rpmmacros && \
-    echo "%_srcrpmdir %{_topdir}"        >> /home/$USER1/.rpmmacros
+RUN useradd $USER1 -d /home/$USER1 -u 1000 -m -G users,wheel
 
 # mount volume here to cp completed rpm to on the host
 RUN mkdir /mnt/deb
@@ -57,7 +50,6 @@ RUN echo "$USER1 ALL=(ALL:ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 # dotfiles, USER1
 ADD ./bashrc  /home/$USER1/.bashrc
-ADD ./.rpmmacros /home/$USER1/.rpmmacros
 ADD ./.gitconfig /home/$USER1/.gitconfig
 
 # configure home for USER1
