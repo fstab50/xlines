@@ -239,5 +239,4 @@ setup(
         ]
     },
     #options={'bdist_rpm': {'post_install': 'scripts/rpm_postinstall.py'}},
-    zip_safe=False
 )
