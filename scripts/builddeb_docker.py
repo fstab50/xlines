@@ -16,7 +16,7 @@ Summary.
 
 Author:
     Blake Huber
-    Copyright 2017-2019, All Rights Reserved.
+    Copyright 2017-2020, All Rights Reserved.
 
 License:
     General Public License v3

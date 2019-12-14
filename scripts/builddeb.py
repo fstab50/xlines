@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Summary:
-    buildrpm (python3):  xlines binary operating system package (.rpm, Redhat, Redhat-based systems)
+    builddeb (python3):  xlines binary operating system package (.rpm, Redhat, Redhat-based systems)
 
         - Automatic determination of version to be built
         - Build version can optionally be forced to a specific version
@@ -11,11 +11,11 @@ Summary:
     .. code-block:: python
 
         $ cd ../<project dir>
-        $ make buildrpm
+        $ make builddeb
 
 Author:
     Blake Huber
-    Copyright 2017-2018, All Rights Reserved.
+    Copyright 2017-2020, All Rights Reserved.
 
 License:
     General Public License v3
