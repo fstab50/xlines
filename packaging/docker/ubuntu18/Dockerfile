@@ -21,14 +21,16 @@ MAINTAINER Cannonical, Inc.
 RUN apt -y update; apt clean all
 RUN apt -y install source-highlight highlight pandoc
 
-RUN apt install -y gcc \
-                   make cmake \
+RUN apt install -y autoconf automake build-essential \
+                   autotools-dev fakeroot \
+                   dh-make debhelper devscripts \
+                   gcc make cmake \
                    git vim figlet mlocate \
-                   sudo wget \
-                   automake autoconf
+                   sudo wget
 
 # python3 components required for build
 RUN apt -y install python3 python3-pip python3-venv python3-setuptools python3-dev
+RUN apt -y install debhelper
 
 # user operations
 ENV USER1 'builder'
