@@ -33,7 +33,7 @@ RUN apt -y install python3 python3-pip python3-setuptools python3-dev
 # user operations
 ENV USER1 'builder'
 
-RUN useradd $USER1 -d /home/$USER1 -u 1000 -m -G users,wheel
+RUN useradd $USER1 -d /home/$USER1 -u 1000 -m -G users
 
 # mount volume here to cp completed rpm to on the host
 RUN mkdir /mnt/deb
