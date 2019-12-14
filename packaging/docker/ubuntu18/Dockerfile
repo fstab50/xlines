@@ -19,17 +19,13 @@ FROM ubuntu:18.10
 MAINTAINER Cannonical, Inc.
 
 RUN apt -y update; apt clean all
-RUN apt -y update; apt clean all
 RUN apt -y install source-highlight highlight pandoc
 
-RUN apt install -y gcc gcc-c++ \
-                   libtool libtool-ltdl \
+RUN apt install -y gcc \
                    make cmake \
-                   git vim figlet \
-                   pkgconfig mlocate \
+                   git vim figlet mlocate \
                    sudo wget \
-                   automake autoconf \
-    apt clean all
+                   automake autoconf
 
 # python3 components required for build
 RUN apt -y install python3 python3-pip python3-setuptools python3-dev
