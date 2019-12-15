@@ -101,7 +101,7 @@ sudo dpkg-buildpackage -us -uc
 
 
 # globals
-PROJECT = 'xlines'
+PROJECT = 'python3-xlines'
 module = os.path.basename(__file__)
 TMPDIR = '/tmp/build'
 VOLMNT = '/tmp/deb'
