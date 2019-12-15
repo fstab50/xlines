@@ -3,12 +3,12 @@
 ##    Debian Build Dockerfile: Ubuntu 18 Base Image                         ##
 ##                                                                          ##
 ##    Purpose:                                                              ##
-##       Build container for rpm package assembly                           ##
+##       Build container for .deb package assembly                          ##
 ##                                                                          ##
 ##    Dependencies:  file list                                              ##
 ##      - bashrc                          - colors.sh                       ##
-##      - motd-centos.sh                                                    ##
-##      - docker-buildrpm.sh                                                ##
+##      - motd-ubuntu18.sh                - debian-tools.repo               ##
+##      - .gitconfig                      - loadavg-flat-layout.sh          ##
 ##                                                                          ##
 ##    Originally written by:                                                ##
 ##       "Blake Huber" <blakeca00@@gmail.com>                               ##
