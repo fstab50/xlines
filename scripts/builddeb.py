@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """
-Summary:
-    builddeb (python3):  xlines binary operating system package (.rpm, Redhat, Redhat-based systems)
+Summary.
+
+    builddeb (python3):  xlines binary operating system package (.deb, Debian systems)
 
         - Automatic determination of version to be built
         - Build version can optionally be forced to a specific version
-        - Resulting rpm ackage produced in packaging/rpm directory
+        - Resulting .deb package produced in packaging/deb directory
         - To execute build, from the directory of this module, run:
 
     .. code-block:: python
@@ -20,45 +21,93 @@ Author:
 License:
     General Public License v3
     Additional terms may be found in the complete license agreement:
-    https://bitbucket.org/blakeca00/xlinesthon3/src/master/LICENSE.md
+    https://github.com/fstab50/xlines/blob/master/LICENSE
 
 OS Support:
-    - Redhat, CentOS, Fedora, Redhat-based variants
+    - Debian, Ubuntu, Ubuntu variants
 
 Dependencies:
     - Requires python3, developed and tested under python3.6
 """
+
 import argparse
-import inspect
-import json
 import os
 import sys
+import json
+import inspect
+import re
 import subprocess
-import tarfile
+import pdb
 import fileinput
+import tarfile
 from shutil import copy2 as copyfile
-from shutil import rmtree, which
-import distro
+from shutil import copytree, rmtree, which
 import docker
-import loggers
-from libtools import stdout_message
-from libtools.js import export_iterobject
-from libtools.colors import Colors
-from common import debug_header
+from pyaws.utils import stdout_message
+from pyaws import Colors
+from __init__ import logger                 # global logger
+
 
 try:
-    from libtools.oscodes_unix import exit_codes
+    from pyaws.core.oscodes_unix import exit_codes
 except Exception:
-    from libtools.oscodes_win import exit_codes    # non-specific os-safe codes
+    from pyaws.core.oscodes_win import exit_codes    # non-specific os-safe codes
+
+"""
+REFERENCES:
+    - https://wiki.debian.org/Python/Pybuild
+    - https://wiki.debian.org/Python/LibraryStyleGuide
+    - https://packaging.python.org/overview
+
+---
+
+CONTAINER:
+apt install debhelper dh-python python-all python-setuptools python3-all python3-setuptools
+apt install dh-virtualenv python3-venv fakeroot devscripts
+
+----
+
+builddeb script functionality from testing:
+
+# increment version
++1 xlines/_version.py
+
+# make source-install
+install into local venv
+
+# generate bytecode
+
+# copy any components needed (libtools) to _root/
+
+# copy exclusions files into package distribution:
+cp -r _root/config/*.list  _root/xlines/    # end up with xlines/config/directories.list
+                                                          xlines/config/exclusions.list
+
+## rm -f xlines/config/anything that is not *.list
+for i in  list(filter(lambda x: not x.endswith('.list'), os.listdir(_root/ + 'config'))):
+    os.remove(i)
+
+# copy debian distribution archive artifacts to _buildroot (debian dir) as shown in the reference
+# checked into the repo _root/debian:
+copyfile(_root/packaging/deb/debian, _root/)
+
+# substitute any Build-depends packages into the _root/debian/control file --OR--
+copy the entire module folder from venv _root/  (next to debian dir)
+
+# build pkg
+sudo dpkg-buildpackage -us -uc
+
+"""
 
 
 # globals
 PROJECT = 'xlines'
 module = os.path.basename(__file__)
 TMPDIR = '/tmp/build'
-VOLMNT = '/tmp/rpm'
-CONTAINER_VOLMNT = '/mnt/rpm'
-DISTRO_LIST = ['centos7', 'amazonlinux2', 'redhat7']
+VOLMNT = '/tmp/deb'
+CONTAINER_VOLMNT = '/mnt/deb'
+PACKAGE_CONFIG = '.debian.json'
+DISTRO_LIST = ['ubuntu14.04', 'ubuntu16.04', 'ubuntu18.04']
 
 # docker
 dclient = docker.from_env()
@@ -67,14 +116,10 @@ dclient = docker.from_env()
 act = Colors.ORANGE                     # accent highlight (bright orange)
 bd = Colors.BOLD + Colors.WHITE         # title formatting
 bn = Colors.CYAN                        # color for main binary highlighting
-lk = Colors.DARK_BLUE                   # color for filesystem path confirmations
+lk = Colors.DARK_BLUE                    # color for filesystem path confirmations
 red = Colors.RED                        # color for failed operations
 yl = Colors.GOLD3                       # color when copying, creating paths
 rst = Colors.RESET                      # reset all color, formatting
-
-
-# global logger
-logger = loggers.getLogger('1.0')
 
 
 def git_root():
@@ -100,7 +145,7 @@ def help_menu():
 
   ''' + bd + '''DESCRIPTION''' + rst + '''
 
-          Builds an installable package (.rpm) for Redhat, CentOS, and Fedora
+          Builds an installable package (.deb) for Debian, Ubuntu, and Ubuntu
           variants of the Linux Operatining System
 
   ''' + bd + '''OPTIONS''' + rst + '''
@@ -108,78 +153,37 @@ def help_menu():
             $ python3  ''' + act + module + rst + '''  --build  [ --force-version <VERSION> ]
 
                          -b, --build
-                         -d, --distro  <value>
-                        [-c, --container  ]
-                        [-D, --debug  ]
+                        [-d, --debug  ]
                         [-f, --force  ]
                         [-h, --help   ]
-                        [-p, --parameter-file  <value> ]
                         [-s, --set-version  <value> ]
 
-        ''' + bd + '''-b''' + rst + ''', ''' + bd + '''--build''' + rst + ''':  Build Operating System package ( *.rpm, Redhat systems )
-            When given without the --set-version parameter switch, build ver-
+        ''' + bd + '''-b''' + rst + ''', ''' + bd + '''--build''' + rst + ''':  Build Operating System package (.deb, Debian systems)
+            When given without -S (--set-version) parameter switch, build ver-
             sion is extracted from the project repository information
-
-        ''' + bd + '''-c''' + rst + ''', ''' + bd + '''--container''' + rst + ''':  Leave container running after rpm build; do not halt
-            or remove.
-
-        ''' + bd + '''-d''' + rst + ''', ''' + bd + '''--debug''' + rst + ''': Debug mode, verbose output.
-
-        ''' + bd + '''-d''' + rst + ''', ''' + bd + '''--distro''' + rst + '''  <value>:  Specifies the Docker Operating System Image to
-            use when building.  Allowable Values:
-
-                    -   centos7 (DEFAULT)
-                    -   amazonlinux2
-                    -   redhat7
 
         ''' + bd + '''-F''' + rst + ''', ''' + bd + '''--force''' + rst + ''':  When given, overwrites any pre-existing build artifacts.
             DEFAULT: False
 
-        ''' + bd + '''-h''' + rst + ''', ''' + bd + '''--help''' + rst + ''': Print this help menu
-
-        ''' + bd + '''-p''' + rst + ''', ''' + bd + '''--parameter-file''' + rst + ''' <value>: Optional json format configuration file
-            containing all configuration parameters to build rpm package (key,
-            value format)
-
-        ''' + bd + '''-s''' + rst + ''', ''' + bd + '''--set-version''' + rst + ''' (string): When given, overrides all version infor-
+        ''' + bd + '''-s''' + rst + ''', ''' + bd + '''--set-version''' + rst + '''  (string):  When given, overrides all version infor-
             mation contained in the project to build the exact version speci-
             fied by VERSION parameter
 
+        ''' + bd + '''-d''' + rst + ''', ''' + bd + '''--debug''' + rst + ''': Debug mode, verbose output.
 
+        ''' + bd + '''-h''' + rst + ''', ''' + bd + '''--help''' + rst + ''': Print this help menu
     '''
     print(menu)
     return True
 
 
-def clean(directory, debug):
-    """
-    Summary.
-
-        rm residual installation files from build directory
-
-    """
-    bytecode_list = list(
-                        filter(
-                            lambda x: x.endswith('.pyc') or x.endswith('.pyo'), os.listdir(directory)
-                        )
-                    )
-    if debug:
-        stdout_message(
-                message=f'bytecode_list contents: {bytecode_list}',
-                prefix='DEBUG'
-            )
-    for artifact in bytecode_list:
-        os.remove(directory + '/' + artifact)
-        logger.info('Artifact {} cleaned from {}'.format(artifact, directory))
-    return True
-
-
 def current_branch(path):
     """
-    Returns:
+    Returns.
+
         git repository source url, TYPE: str
+
     """
-    cmd = 'git branch'
     pwd = os.getcwd()
     os.chdir(path)
 
@@ -210,46 +214,62 @@ def read(fname):
     return open(os.path.join(basedir, fname)).read()
 
 
-def pypi_version(modulename):
+def masterbranch_version(version_module):
     """
     Returns version denoted in the master branch of the repository
     """
-    command = 'pip3 search {} | grep -i latest'.format(modulename)
+    branch = current_branch(git_root())
+    commands = ['git checkout master', 'git checkout {}'.format(branch)]
 
     try:
+        # checkout master
+        #stdout_message('Checkout master branch:\n\n%s' % subprocess.getoutput(commands[0]))
+        masterversion = read(version_module).split('=')[1].strip().strip('"')
 
-        # query pypi global python lib database
-        version = subprocess.getoutput(command).split(':')[1]
-
+        # return to working branch
+        stdout_message(
+            'Returning to working branch: checkout %s\n\n%s'.format(branch)
+        )
+        stdout_message(subprocess.getoutput(f'git checkout {branch}'))
     except Exception:
         return None
-    return version.strip()
+    return masterversion
 
 
 def current_version(binary, version_modpath):
     """
-    Summary.
-
+    Summary:
         Returns current binary package version if locally
         installed, master branch __version__ if the binary
         being built is not installed locally
-
     Args:
         :root (str): path to the project root directory
         :binary (str): Name of main project exectuable
-
+        :version_modpath (str): path to __version__ module
     Returns:
         current version number of the project, TYPE: str
-
     """
-    try:
+    pkgmgr = 'apt'
+    pkgmgr_bkup = 'apt-cache'
 
-        return greater_version(pypi_version(binary), __version__)
+    if which(binary):
 
-    except Exception:
-        logger.info(
-            '%s: Build binary %s not installed, comparing current branch version to master branch version' %
-            (inspect.stack()[0][3], binary))
+        if which(pkgmgr):
+            cmd = pkgmgr + ' show ' + binary + ' 2>/dev/null | grep Version | head -n1'
+
+        elif which(pkgmgr_bkup):
+            cmd = pkgmgr_bkup + ' policy ' + binary + ' 2>/dev/null | grep Installed'
+
+        try:
+
+            installed_version = subprocess.getoutput(cmd).split(':')[1].strip()
+            return greater_version(installed_version, __version__)
+
+        except Exception:
+            logger.info(
+                '%s: Build binary %s not installed, comparing current branch version to master branch version' %
+                (inspect.stack()[0][3], binary))
+    return greater_version(masterbranch_version(version_modpath), __version__)
 
 
 def greater_version(versionA, versionB):
@@ -292,280 +312,510 @@ def increment_version(current):
     return major + '.' + str(inc_minor)
 
 
-def container_running(cid, debug=False):
+def tar_archive(archive, source_dir):
     """
-    Summary:
-        Verifies if a container is activly running
-    Args:
-        :cid (str): Container name or hex identifier
-        :dclient (object): global docker client
+    Summary.
+
+        - Creates .tar.gz compressed archive
+        - Checks that file was created before exit
+
     Returns:
-        True (running) | False (stopped)
-        TYPE: bool
+        Success | Failure, TYPE: bool
+
     """
-
-    success_msg = f'Container {cid} running'
-
     try:
-        container = dclient.containers.get(cid)
 
-        if container.status == 'running':
-            if debug:
-                stdout_message(success_msg, prefix='OK')
+        with tarfile.open(archive, "w:gz") as tar:
+            tar.add(source_dir, arcname=os.path.basename(source_dir))
+
+        if os.path.exists(archive):
             return True
-    except Exception:
-        if cid in subprocess.getoutput('docker ps'):
-            stdout_message(success_msg, prefix='OK')
-            return True
-        else:
-            stdout_message(f'Container {cid} stopped', prefix='WARN')
+
+    except OSError:
+        logger.exception(
+            '{}: Unable to create tar archive {}'.format(inspect.stack()[0][3], archive))
+    except Exception as e:
+        logger.exception(
+            '%s: Unknown problem while creating tar archive %s:\n%s' %
+            (inspect.stack()[0][3], archive, str(e)))
     return False
 
 
-def display_package_contents(rpm_path, contents):
+def create_builddirectory(path, version, force):
     """
     Summary:
-        Output newly built package contents.
-    Args:
-        :build_root (str):  location of newly built rpm package
-        :version (str):  current version string, format:  '{major}.{minor}.{patch num}'
+        - Creates the deb package binary working directory
+        - Checks if build artifacts preexist; if so, halts
+        - If force is True, continues even if artifacts exist (overwrites)
     Returns:
         Success | Failure, TYPE: bool
     """
-    tab = '\t'.expandtabs(2)
-    tab4 = '\t'.expandtabs(4)
-    width = 120
-    package = os.path.split(rpm_path)[1]
-    path, discard = os.path.split(contents)
-    pwd = os.getcwd()
-    os.chdir('.') if not path else os.chdir(path)
+    try:
+        print('\nversion IS: %s' % version)
 
-    with open(contents) as f1:
-        unformatted = f1.readlines()
+        builddir = PROJECT + '-' + version + '_amd64'
+        print('\nBUILDDIR IS: %s' % builddir)
+        # rm builddir when force if exists
+        if force is True and builddir in os.listdir(path):
+            rmtree(path + '/' + builddir)
 
-    # title header and subheader
-    header = '\n\t\tPackage Contents:  ' + bd + package + rst + '\n'
-    print(header)
-    subheader = tab + 'Permission' + tab + ' Owner/Group' + '\t' + 'ctime' \
-        + '\t'.expandtabs(8) + 'File'
-    print(subheader)
+        elif force is False and builddir in os.listdir(path):
+            stdout_message(
+                'Cannot create build directory {} - preexists. Use --force option to overwrite'.format(builddir),
+                prefix='WARN',
+                severity='WARNING'
+                )
+            return None
 
-    # divider line
-    print('  ', end='')
-    list(filter(lambda x: print('-', end=''), range(0, width + 1))), print('\r')
+        # create build directory
+        os.mkdir(path + '/' + builddir)
 
-    # content
-    for line in unformatted:
-        permissions = [tab + line.split()[0]]
-        raw = tab4 + 'root root'
-        ctime = line.split()[5:8]
-        f_ctime = tab4 + ''.join([x + ' ' for x in ctime])
-        content_path = tab4 + yl + line.split()[-1] + rst
-        fline = permissions[0] + raw + f_ctime + content_path
-        print(fline)
-    print('\n')
-    os.chdir(pwd)
-    return True
+    except OSError as e:
+        logger.exception(
+            '{}: Unable to create build directory {}'.format(inspect.stack()[0][3], builddir)
+            )
+    return builddir
 
 
-def docker_daemon_up():
+def builddir_structure(param_dict, version):
     """
-    Summary:
-        Determines if docker installed and running by
-        evaluating the exit code of docker images cmd
-    Returns:
-        True (running) | False, TYPE: bool
-    """
-    cmd = 'docker images >/dev/null 2>&1; echo $?'
-    if which('docker') and int(subprocess.getoutput(cmd)) == 0:
-        return True
-    else:
-        stdout_message('Docker engine not running or not accessible', prefix='WARN')
-    return False
+    Summary.
 
-
-def docker_configure_container(c_object, root_dir, buildscript, version):
-    """
-    Execute build commands internal to configure container,
-    then execute rpm package build for a specific os type
-    """
-    def command_exec(index):
-        return {
-            0: f"docker exec -i {c_object.name} sh -c \'cd {root_dir} && git checkout develop\'",
-            1: f"docker exec -i {c_object.name} sh -c \'sleep 1\'",
-            2: f"docker exec -i {c_object.name} sh -c \'cd {root_dir} && git pull\'",
-            3: f"docker exec -i {c_object.name} sh -c \'sleep 2\'",
-            4: f"docker exec -i {c_object.name} sh -c \'cd {root_dir} && sh scripts/{buildscript} -s {version}\'"
-        }.get(index, 0)
-
-    for index in range(5):
-        print(subprocess.getoutput(command_exec(index)))
-    return True
-
-
-def docker_init(src, builddir, _version, osimage, param_dict, debug):
-    """
-    Summary:
-        Creates docker image and container
+        - Updates paths in binary exectuable
+        - Updates
 
     Args:
-        src (str):
-        :builddir (str): build directory where all docker artifacts reside on local fs
+        :root (str): full path to root directory of the git project
+        :builddir (str): name of current build directory which we need to populate
+
+    Vars:
+        :lib_path (str): src path to library modules in project root
+        :builddir_path (str): dst path to root of the current build directory
+         (/<path>/xlines-1.X.X dir)
 
     Returns:
-        Container id (Name) | Failure (None)
+        Success | Failure, TYPE: bool
+
     """
-    imagename = osimage + ':' + param_dict['DockerImage']    # image name
-    cname = param_dict['DockerContainer']                    # container id
-    _root = param_dict['RepositoryRoot']                     # git repository root
-    _buildscript = param_dict['DockerBuildScript'].strip()   # container-resident script to build rpm
-    host_mnt = VOLMNT                                        # host volume mount point
-    container_mnt = CONTAINER_VOLMNT                         # container volume internal mnt pt
-    docker_user = 'builder'
-    bash_cmd = '/bin/sleep 300'
+    root = git_root()
+    project_dirname = root.split('/')[-1]
+    core_dir = root + '/' + 'core'
+    build_root = TMPDIR
+
+
+    # files
+    binary = param_dict['Executable']
+    control_file = param_dict['ControlFile']['Name']
+    compfile = param_dict['BashCompletion']
+    builddir = param_dict['ControlFile']['BuildDirName']
+
+    # full paths
+    builddir_path = build_root + '/' + builddir
+    deb_src = root + '/packaging/deb'
+    debian_dir = 'DEBIAN'
+    debian_path = deb_src + '/' + debian_dir
+    binary_path = builddir_path + '/usr/local/bin'
+    lib_path = builddir_path + '/usr/local/lib/' + PROJECT
+    comp_src = root + '/' + 'bash'
+    comp_dst = builddir_path + '/etc/bash_completion.d'
+
+    arrow = yl + Colors.BOLD + '-->' + rst
 
     try:
 
-        # create host mount for container volume
-        if not os.path.exists(host_mnt):
-            os.makedirs(host_mnt)
-            stdout_message(f'Created host mount {host_mnt} for container volume')
+        stdout_message(f'Assembling build directory artifacts in {bn + builddir + rst}')
 
-        # if image rpmbuild not exist, create
-        try:
-
-            image = dclient.images.get(imagename)
-
-            if image:
-                stdout_message('Image already exists. Creating Container...')
-
-        except Exception:
-            # create new docker image
-            os.chdir(src)
-            cmd = 'docker build -t {} . '.format(imagename)
-            subprocess.call([cmd], shell=True, cwd=src)
-            stdout_message('Built image', prefix='OK')
-
-        # start container detached
-        container = dclient.containers.run(
-                name=cname,
-                image=imagename,
-                command=bash_cmd,
-                volumes={host_mnt: {'bind': container_mnt, 'mode': 'rw'}},
-                user=docker_user,
-                security_opt=['label:disable'],
-                detach=True
+        # create build directory
+        if os.path.exists(builddir_path):
+            rmtree(builddir_path)
+        os.makedirs(builddir_path)
+        stdout_message(
+                message='Created:\t{}'.format(yl + builddir_path + rst),
+                prefix='OK'
             )
 
-        # verify container is running
-        if not container_running(cname):
-            stdout_message(f'Container {cname} not started - abort', prefix='WARN')
+        if not os.path.exists(builddir_path + '/' + debian_dir):
+            copytree(debian_path, builddir_path + '/' + debian_dir)
+            # status msg
+            _src_path = '../' + project_dirname + debian_path.split(project_dirname)[1]
+            _dst_path = '../' + project_dirname + (builddir_path + '/' + debian_dir).split(project_dirname)[1]
+            stdout_message(
+                    message='Copied:\t{} {} {}'.format(lk + _src_path + rst, arrow, lk + _dst_path + rst),
+                    prefix='OK'
+                )
+
+        if not os.path.exists(binary_path):
+            os.makedirs(binary_path)
+            _dst_path = '../' + project_dirname + binary_path.split(project_dirname)[1]
+            stdout_message(
+                    message='Created:\t{}'.format(lk + _dst_path + rst),
+                    prefix='OK'
+                )
+
+        if not os.path.exists(binary_path + '/' + PROJECT):
+            binary_src = PROJECT_ROOT + '/' + binary
+            binary_dst = binary_path + '/' + binary
+            copyfile(binary_src, binary_dst)
+            # status msg
+            _src_path = '../' + project_dirname + '/' + os.path.split(binary_src)[1]
+            _dst_path = '../' + project_dirname + '/' + os.path.split(binary_dst)[1]
+            stdout_message(
+                    message='Copied:\t{} {} {}'.format(lk + _src_path + rst, arrow, lk + _dst_path + rst),
+                    prefix='OK'
+                )
+
+        if not os.path.exists(lib_path):
+
+            os.makedirs(lib_path)     # create library dir in builddir
+
+            # status msg branching
+            _dst_path = '../' + project_dirname + lib_path.split(project_dirname)[1]
+            if os.path.exists(lib_path):
+                stdout_message(
+                        message='Created:\t{}'.format(lk + _dst_path + rst),
+                        prefix='OK'
+                    )
+            else:
+                stdout_message(
+                        message='Failed to create:\t{}'.format(lk + _dst_path + rst),
+                        prefix='FAIL'
+                    )
+
+        for libfile in os.listdir(core_dir):
+            if os.path.exists(lib_path + '/' + libfile):
+                stdout_message(f'{libfile} target exists - skip adding to builddir')
+
+            if libfile.endswith('.log'):
+                # log file, do not place in build
+                logger.info(f'{libfile} is log file - skip adding to builddir')
+
+            else:
+                # place lib files in build
+                lib_src = core_dir + '/' + libfile
+                lib_dst = lib_path + '/' + libfile
+                copyfile(lib_src, lib_dst)
+                # status msg
+                _src_path = '../' + project_dirname + lib_src.split(project_dirname)[1]
+                _dst_path = '../' + project_dirname + lib_dst.split(project_dirname)[1]
+                stdout_message(
+                        message='Copied:\t{} {} {}'.format(lk + _src_path + rst, arrow, lk + _dst_path + rst),
+                        prefix='OK'
+                    )
+
+        if not os.path.exists(comp_dst):
+            # create path
+            os.makedirs(comp_dst)
+            _dst_path = '../' + project_dirname + comp_dst.split(project_dirname)[1]
+            stdout_message(
+                    message='Created:\t{}'.format(lk + _dst_path + rst),
+                    prefix='OK'
+                )
+
+            # copy
+            for artifact in list(filter(lambda x: x.endswith('.bash'), os.listdir(comp_src))):
+                copyfile(comp_src + '/' + artifact, comp_dst + '/' + artifact)
+
+    except OSError as e:
+        logger.exception(
+            '{}: Problem creating dirs on local fs'.format(inspect.stack()[0][3]))
+        return False
+    return True
+
+
+def build_package(build_root, builddir):
+    """
+    Summary.
+
+        Creates final os installable package for current build, build version
+
+    Returns:
+        Success | Failure, TYPE: bool
+
+    """
+    try:
+
+        pwd = os.getcwd()
+        os.chdir(build_root)
+
+        if os.path.exists(builddir):
+            cmd = 'dpkg-deb --build ' + builddir + ' 2>/dev/null'
+            stdout_message('Building {}...  '.format(bn + builddir + rst))
+            stdout_message(subprocess.getoutput(cmd))
+            os.chdir(pwd)
+
+        else:
+            logger.warning(
+                'Build directory {} not found. Failed to create .deb package'.format(builddir))
+            os.chdir(pwd)
             return False
 
-        # copy build files to container
-        stdout_message('Begin cp files into container')
+    except OSError as e:
+        logger.exception(
+            '{}: Error during os package creation: {}'.format(inspect.stack()[0][3], e))
+        return False
+    except Exception as e:
+        logger.exception(
+            '{}: Unknown Error during os package creation: {}'.format(inspect.stack()[0][3], e))
+        return False
+    return True
 
-        # copy files from temporary build directory to container
-        os.chdir(builddir)
 
-        buildfile_list = list(
-            filter(
-                lambda x: x.endswith('.tar.gz') or x.endswith('.spec') or x.endswith('.sh'), os.listdir('.')
-            )
-        )
+def builddir_content_updates(param_dict, osimage, version):
+    """
+    Summary.
 
-        if debug:
-            print(f'buildfile_list contains:\n\n\t%s' % export_iterobject(buildfile_list))
-            print(f'osimage is: {osimage}')
-            print(f'imagename is: {imagename}')
-            print(f'container name is: {container.name}')
+        Updates builddir contents:
+        - main exectuable has path to libraries updated
+        - builddir DEBIAN/control file version is updated to current
+        - updates the version.py file if version != to __version__
+          contained in the file.  This occurs if user invokes the -S /
+          --set-version option
 
-        # exec rpmbuild script
-        docker_configure_container(container, _root, _buildscript, _version)
+    Args:
+        :root (str): project root full fs path
+        :builddir (str): dirname of the current build directory
+        :binary (str): name of the main exectuable
+        :version (str): version label provided with --set-version parameter. None otherwise
 
-        if container_running(container.name):
-            return container
+    Returns:
+        Success | Failure, TYPE: bool
+
+    """
+
+    root = git_root()
+    project_dirname = root.split('/')[-1]
+    build_root = TMPDIR
+    debian_dir = 'DEBIAN'
+    control_filename = param_dict['ControlFile']['Name']
+    deb_src = root + '/packaging/deb'
+    major = '.'.join(version.split('.')[:2])
+    minor = version.split('.')[-1]
+
+    # files
+    binary = param_dict['Executable']
+    builddir = param_dict['ControlFile']['BuildDirName']
+    version_module = param_dict['VersionModule']
+    dockeruser = param_dict['DockerUser']
+    issues_url = param_dict['IssuesUrl']
+    project_url = param_dict['ProjectUrl']
+    buildarch = param_dict['ControlFile']['BuildArch']
+
+    # full paths
+    builddir_path = build_root + '/' + builddir
+    debian_path = builddir_path + '/' + debian_dir
+    control_filepath = debian_path + '/' + control_filename
+    binary_path = builddir_path + '/usr/local/bin'
+    lib_src = root + '/' + 'core'
+    lib_dst = builddir_path + '/usr/local/lib/' + PROJECT
+
+    # assemble dependencies
+    deplist = None
+    for dep in param_dict['DependencyList']:
+        if deplist is None:
+            deplist = str(dep)
+        else:
+            deplist = deplist + ', ' + str(dep)
+
+    try:
+        # main exec bin: update pkg_lib path, LOG_DIR
+        with open(binary_path + '/' + binary) as f1:
+            f2 = f1.readlines()
+
+            for index, line in enumerate(f2):
+                if line.startswith('pkg_lib='):
+                    newline = 'pkg_lib=' + '\"' + '/usr/local/lib/' + PROJECT + '\"\n'
+                    f2[index] = newline
+
+                elif line.startswith('LOG_DIR='):
+                    logline = 'LOG_DIR=' + '\"' + '/var/log' + '\"\n'
+                    f2[index] = logline
+            f1.close()
+
+        # rewrite bin
+        with open(binary_path + '/' + binary, 'w') as f3:
+            f3.writelines(f2)
+            path = project_dirname + (binary_path + '/' + binary)[len(root):]
+            stdout_message('Bin {} successfully updated.'.format(yl + path + rst))
+
+        # debian control files
+        with open(control_filepath) as f1:
+            f2 = f1.readlines()
+            for index, line in enumerate(f2):
+                if line.startswith('Version:'):
+                    newline = 'Version: ' + version + '\n'
+                    f2[index] = newline
+            f1.close()
+
+        # rewrite file
+        with open(control_filepath, 'w') as f3:
+            f3.writelines(f2)
+            path = project_dirname + (control_filepath)[len(root):]
+            stdout_message('Control file {} version updated.'.format(yl + path + rst))
+
+        ## rewrite version file with current build version in case delta ##
+
+        # orig source version module
+        with open(lib_src + '/' + version_module, 'w') as f3:
+            f2 = ['__version__=\"' + version + '\"\n']
+            f3.writelines(f2)
+            path = project_dirname + (lib_src + '/' + version_module)[len(root):]
+            stdout_message('Module {} successfully updated.'.format(yl + path + rst))
+
+        # package version module
+        with open(lib_dst + '/' + version_module, 'w') as f3:
+            f2 = ['__version__=\"' + version + '\"\n']
+            f3.writelines(f2)
+            path = project_dirname + (lib_dst + '/' + version_module)[len(root):]
+            stdout_message('Module {} successfully updated.'.format(yl + path + rst))
+
+        ## Debian control file content updates ##
+
+        if os.path.exists(control_filepath):
+            # update specfile - major version
+            for line in fileinput.input([control_filepath], inplace=True):
+                print(line.replace('ISSUES_URL', issues_url), end='')
+            stdout_message(f'Updated {control_filepath} with ISSUES_URL', prefix='OK')
+
+            # update specfile - minor version
+            for line in fileinput.input([control_filepath], inplace=True):
+                print(line.replace('DEPLIST', deplist), end='')
+            stdout_message(
+                'Updated {} with dependcies ({})'.format(yl + control_filepath + rst, deplist),
+                prefix='OK')
+
+            # update specfile - Dependencies
+            for line in fileinput.input([control_filepath], inplace=True):
+                print(line.replace('PROJECT_URL', project_url), end='')
+            stdout_message(
+                'Updated {} with project url ({})'.format(yl + control_filepath + rst, project_url),
+                prefix='OK')
+
+            # update specfile - Dependencies
+            for line in fileinput.input([control_filepath], inplace=True):
+                print(line.replace('BUILD_ARCH', buildarch), end='')
+            stdout_message(
+                'Updated {} with arch ({})'.format(yl + control_filepath + rst, buildarch),
+                prefix='OK')
+
     except OSError as e:
         logger.exception(
             '%s: Problem while updating builddir contents: %s' %
             (inspect.stack()[0][3], str(e)))
-    return None
-
-
-def docker_teardown(container_object):
-    """
-        Halt Docker Container, clean/ remove residual artifacts
-
-    Returns
-        Success | Failure, TYPE: bool
-    """
-    try:
-        # stop and rm container
-        cmd = f'docker stop {container_object.name}'
-        subprocess.getoutput(cmd)
-
-        # status
-        if not container_running(container_object.name):
-            stdout_message(f'{container_object.name} successfully halted', prefix='OK')
-            cmd = f'docker rm {container_object.name}'
-            subprocess.getoutput(cmd)
-    except Exception as e:
-        name = container_object.name
-        fx = inspect.stack()[0][5]
-        logger.exception(
-            '{}: Error halting and deleting active container ({}): {}'.format(fx, name, e))
+        return False
     return True
 
 
-def main(setVersion, environment, package_configpath, force=False, retain=False, debug=False):
+def display_package_contents(build_root, version):
+    """
+    Summary.
+
+        Output newly built package contents.
+
+    Args:
+        :build_root (str):  location of newly built rpm package
+        :version (str):  current version string, format:  '{major}.{minor}.{patch num}'
+
+    Returns:
+        Success | Failure, TYPE: bool
+
+    """
+    pkg_path = None
+
+    for f in os.listdir(build_root):
+        if f.endswith('.deb') and re.search(version, f):
+            pkg_path = build_root + '/' + f
+
+    if pkg_path is None:
+        stdout_message(
+            message=f'Unable to locate a build package in {build_root}. Abort build.',
+            prefix='WARN'
+        )
+        return False
+
+    tab = '\t'.expandtabs(2)
+    width = 80
+    path, package = os.path.split(pkg_path)
+    os.chdir(path)
+    cmd = 'dpkg-deb --contents ' + package
+    r = subprocess.getoutput(cmd)
+    formatted_out = r.splitlines()
+
+    # title header and subheader
+    header = '\n\t\tPackage Contents:  ' + bd + package + rst + '\n'
+    print(header)
+    subheader = tab + 'Permission' + tab + 'Owner/Group' + '\t' + 'ctime' \
+        + '\t'.expandtabs(8) + 'File'
+    print(subheader)
+
+    # divider line
+    list(filter(lambda x: print('-', end=''), range(0, width + 1))), print('\r')
+
+    # content
+    for line in formatted_out:
+        prefix = [tab + x for x in line.split()[:2]]
+        raw = line.split()[2:4]
+        content_path = line.split()[5]
+        fline = ''.join(prefix) + '\t'.join(raw[:4]) + tab + yl + content_path + rst
+        print(fline)
+    return True
+
+
+def locate_deb(origin):
+    """ Finds rpm file object after creation
+    Returns:
+        full path to rpm file | None if not found
+    """
+    for root, dirs, files in os.walk(origin):
+        for file in files:
+            if file.endswith('.deb'):
+                return os.path.abspath(os.path.join(root, file))
+    return None
+
+
+def main(setVersion, environment, force=False, debug=False):
     """
     Summary:
         Create build directories, populate contents, update contents
-    Args:
-        :setVersion (str): version number of rpm created
-        :environment (str):
-        :package_configpath (str): full path to json configuration file
-        :data (dict): build parameters for rpm build process
-        :force (bool): If True, overwrites any pre-existing build artifacts
-        :retain (bool): If True, leave container running; do not clean/ remove
     Returns:
         Success | Failure, TYPE: bool
     """
-    # all globals declared here
     global PROJECT_BIN
     PROJECT_BIN = 'xlines'
     global PROJECT_ROOT
     PROJECT_ROOT = git_root()
     global SCRIPT_DIR
     SCRIPT_DIR = PROJECT_ROOT + '/' + 'scripts'
+    DEBIAN_ROOT = PROJECT_ROOT + '/' + 'packaging/deb'
     global BUILD_ROOT
     BUILD_ROOT = TMPDIR
-    global RPM_SRC
-    RPM_SRC = PROJECT_ROOT + '/packaging/rpm'
     global LIB_DIR
-    LIB_DIR = PROJECT_ROOT + '/' + PROJECT
+    LIB_DIR = PROJECT_ROOT + '/' + 'core'
     global CURRENT_VERSION
-    CURRENT_VERSION = current_version(PROJECT_BIN, os.path.join(LIB_DIR, '_version.py'))
+    CURRENT_VERSION = current_version(PROJECT_BIN, LIB_DIR + '/' 'version.py')
 
-    # sort out version numbers, forceVersion is overwrite of pre-existing build artifacts
+    # sort out version numbers, forceVersion is override      #
+    # for all info contained in project                       #
+
     global VERSION
     if setVersion:
         VERSION = setVersion
+
     elif CURRENT_VERSION:
-        VERSION = CURRENT_VERSION
+        VERSION = increment_version(CURRENT_VERSION)
+
     else:
         stdout_message('Could not determine current {} version'.format(bd + PROJECT + rst))
         sys.exit(exit_codes['E_DEPENDENCY']['Code'])
 
     # log
-    stdout_message(f'Current version of last build: {bd + CURRENT_VERSION + rst}')
-    stdout_message(f'Version to be used for this build: {act + VERSION + rst}')
+    stdout_message(f'Current version of last build: {CURRENT_VERSION}')
+    stdout_message(f'Version to be used for this build: {VERSION}')
 
     # create initial binary working dir
-    BUILDDIRNAME = PROJECT + '-' + '.'.join(VERSION.split('.')[:2])
+    BUILDDIRNAME = create_builddirectory(BUILD_ROOT, VERSION, force)
 
     # sub in current values
-    parameter_obj = ParameterSet(package_configpath, VERSION)
+    parameter_obj = ParameterSet(PROJECT_ROOT + '/' + PACKAGE_CONFIG, VERSION)
     vars = parameter_obj.create()
 
     VERSION_FILE = vars['VersionModule']
@@ -573,36 +823,31 @@ def main(setVersion, environment, package_configpath, force=False, retain=False,
     if debug:
         print(json.dumps(vars, indent=True, sort_keys=True))
 
-    # launch docker container and execute final build steps
-    if vars and VERSION_FILE:
+    if BUILDDIRNAME:
 
-        # trigger docker build based on environment:
-        container = docker_init(
-                os.path.join(PROJECT_ROOT, 'packaging/docker', environment),
-                BUILD_ROOT,
-                VERSION,
-                environment,
-                vars,
-                debug
-            )
-        if container:
-            return postbuild(PROJECT_ROOT, container, RPM_SRC, SCRIPT_DIR, VERSION_FILE, VERSION, retain)
+        r_struture = builddir_structure(vars, VERSION)
+        r_updates = builddir_content_updates(vars, environment, VERSION)
+
+        if r_struture and r_updates and build_package(BUILD_ROOT, BUILDDIRNAME):
+            return postbuild(VERSION, VERSION_FILE, BUILD_ROOT + '/' + BUILDDIRNAME, DEBIAN_ROOT)
+
     return False
 
 
 def options(parser, help_menu=False):
     """
-    Summary:
+    Summary.
+
         parse cli parameter options
+
     Returns:
         TYPE: argparse object, parser argument set
+
     """
     parser.add_argument("-b", "--build", dest='build', default=False, action='store_true', required=False)
-    parser.add_argument("-c", "--container", dest='container', default=False, action='store_true', required=False)
     parser.add_argument("-D", "--debug", dest='debug', default=False, action='store_true', required=False)
-    parser.add_argument("-d", "--distro", dest='distro', default='centos7', nargs='?', type=str, required=False)
+    parser.add_argument("-d", "--distro", dest='distro', default='ubuntu16.04', nargs='?', type=str, required=False)
     parser.add_argument("-F", "--force", dest='force', default=False, action='store_true', required=False)
-    parser.add_argument("-p", "--parameter-file", dest='parameter_file', default='.rpm.json', nargs='?', required=False)
     parser.add_argument("-s", "--set-version", dest='set', default=None, nargs='?', type=str, required=False)
     parser.add_argument("-h", "--help", dest='help', default=False, action='store_true', required=False)
     return parser.parse_args()
@@ -612,7 +857,7 @@ def is_installed(binary):
     """
     Verifies if program installed on Redhat-based Linux system
     """
-    cmd = 'rpm -qa | grep ' + binary
+    cmd = 'dpkg-query -l | grep ' + binary
     return True if subprocess.getoutput(cmd) else False
 
 
@@ -629,12 +874,12 @@ def ospackages(pkg_list):
                 logger.info(f'{pkg} binary is already installed - skip')
                 continue
 
-            elif which('dnf'):
-                cmd = 'sudo dnf install ' + pkg + ' 2>/dev/null'
-                print(subprocess.getoutput(cmd))
-
             elif which('yum'):
                 cmd = 'sudo yum install ' + pkg + ' 2>/dev/null'
+                print(subprocess.getoutput(cmd))
+
+            elif which('dnf'):
+                cmd = 'sudo dnf install ' + pkg + ' 2>/dev/null'
                 print(subprocess.getoutput(cmd))
 
             else:
@@ -648,20 +893,18 @@ def ospackages(pkg_list):
     return True
 
 
-def prebuild(builddir, libsrc, volmnt, parameter_file):
-    """Summary:
-        Prerequisites and dependencies for build execution
-    Returns:
-        Success | Failure, TYPE: bool
+def prebuild(builddir, volmnt, parameter_file):
     """
-    def preclean(dir, artifact=''):
-        """Cleans residual build artifacts by removing """
+    Summary.
+
+        Prerequisites and dependencies for build execution
+
+    """
+    def preclean(dir):
+        """ Cleans residual build artifacts """
         try:
-            if artifact:
-                if os.path.exists(libsrc + '/' + artifact):
-                    rmtree(libsrc + '/' + artifact)    # clean artifact from inside an existing dir
-            elif os.path.exists(dir):
-                rmtree(dir)     # rm entire directory
+            if os.path.exists(dir):
+                rmtree(dir)
         except OSError as e:
             logger.exception(
                 '%s: Error while cleaning residual build artifacts: %s' %
@@ -671,114 +914,94 @@ def prebuild(builddir, libsrc, volmnt, parameter_file):
 
     version_module = json.loads(read(parameter_file))['VersionModule']
 
+    if preclean(builddir) and preclean(volmnt):
+        stdout_message(f'Removed pre-existing build artifacts ({builddir}, {volmnt})')
+    os.makedirs(builddir)
+    os.makedirs(volmnt)
+
+    root = git_root()
+    lib_relpath = 'core'
+    lib_path = root + '/' + lib_relpath
+    sources = [lib_path]
+    illegal = ['__pycache__']
+    module = inspect.stack()[0][3]
+
     try:
 
-        if preclean(builddir) and preclean(volmnt) and preclean(libsrc, '__pycache__'):
-            stdout_message(f'Removed pre-existing build artifacts ({builddir}, {volmnt})')
-        os.makedirs(builddir)
-        os.makedirs(volmnt)
-
-        root = git_root()
-        src = os.path.join(root, PROJECT, version_module)
-        dst = os.path.join(root, 'scripts', version_module)
-
-        # deal with leftover build artifacts
-        if os.path.exists(dst):
-            os.remove(dst)
-
-        # cp version module to scripts dir for import
-        r_cf = copyfile(src, dst)
         global __version__
-        from _version import __version__
+        sys.path.insert(0, os.path.abspath(git_root() + '/' + lib_relpath))
 
-        if r_cf and __version__ and docker_daemon_up():
-            return True
+        from version import __version__
 
+        # normalize path
+        sys.path.pop(0)
+
+    except ImportError as e:
+        logger.exception(
+                message='Problem importing program version module (%s). Error: %s' %
+                (__file__, str(e)),
+                prefix='WARN'
+            )
     except Exception as e:
         logger.exception(
-            '{}: Failure to import __version__ parameter'.format(inspect.stack()[0][3])
+            '{}: Failure to import _version module _version'.format(inspect.stack()[0][3])
         )
-    return False
+        return False
+
+    ## clean up source ##
+    try:
+        for directory in sources:
+            for artifact in os.listdir(directory):
+                if artifact in illegal:
+                    rmtree(directory + '/' + artifact)
+
+    except OSError:
+        logger.exception(
+            '{}: Illegal file object detected, but unable to remove {}'.format(module, archive))
+        return False
+    return True
 
 
-def locate_artifact(filext, origin):
+def postbuild(version, version_module, builddir_path, debian_root):
     """
     Summary.
 
-        Finds rpm file object after creation
-    Args:
-        :filext (str): File extension searching for (".rpm")
-        :origin (str): Starting directory for recursive search
-    Returns:
-        full path to rpm file | None if not found
-    """
-    for root, dirs, files in os.walk(origin):
-        for file in files:
-            if file.endswith(filext):
-                return os.path.abspath(os.path.join(root, file))
-    return None
-
-
-def postbuild(root, container, rpm_root, scripts_dir, version_module, version, persist):
-    """
-    Summary:
         Post-build clean up
-    Args:
-        :container (object): Docker container object
-        :rpm_root (str):  target dir for rpm package files
-        :script_dir (str): directory where scripts
-        :version_module (str): name of module containing version number
-        :version (str): current version label (Example: 1.6.8)
-        :persist (bool): When True, retain container build environment intact
-            and running; do not clean and remove container
+
     Returns:
         Success | Failure, TYPE: bool
+
     """
+    root = git_root()
     project_dirname = root.split('/')[-1]
-    major = '.'.join(version.split('.')[:2])
-    minor = version.split('.')[-1]
-    volmnt = VOLMNT
-    delete = True
+    build_root = os.path.split(builddir_path)[0]
+    package = locate_deb(build_root)
 
     try:
 
-        # cp rpm created to repo
-        package = locate_artifact('.rpm', volmnt)
         if package:
-            copyfile(locate_artifact('.rpm', volmnt), rpm_root)
-            package_path = rpm_root + '/' + os.path.split(package)[1]
+            copyfile(package, debian_root)
+            package_path = debian_root + '/' + os.path.split(package)[1]
 
-        # rpm contents text file
-        contents = locate_artifact('.txt', volmnt)
+        # remove build directory, residual artifacts
+        if os.path.exists(builddir_path):
+            rmtree(builddir_path)
 
-        if persist is False:
-            # stop and rm container
-            cmd = f'docker stop {container.name}'
-            subprocess.getoutput(cmd)
-
-            # status
-            if not container_running(container.name):
-                stdout_message(f'{container.name} successfully halted', prefix='OK')
-                cmd = f'docker rm {container.name}'
-                subprocess.getoutput(cmd)
-
-        # remove temp version module copied to scripts dir
-        if os.path.exists(os.path.join(scripts_dir, version_module)):
-            os.remove(os.path.join(scripts_dir, version_module))
-
-        # rewrite version file with 67rrent build version
-        with open(os.path.join(root, PROJECT, version_module), 'w') as f3:
-            f2 = ["__version__ = \'" + version + "\'" + '\n']
+        # rewrite version file with current build version
+        with open(root + '/core/' + version_module, 'w') as f3:
+            f2 = ['__version__=\"' + version + '\"\n']
             f3.writelines(f2)
-            path = project_dirname + (root + '/' + PROJECT + '/' + version_module)[len(root):]
+            path = project_dirname + (root + '/core/' + version_module)[len(root):]
             stdout_message(
                 '{}: Module {} successfully updated.'.format(inspect.stack()[0][3], yl + path + rst)
                 )
+        if display_package_contents(BUILD_ROOT, VERSION):
+            return package_path
 
     except OSError as e:
         logger.exception('{}: Postbuild clean up failure'.format(inspect.stack()[0][3]))
-        return ''
-    return package_path, contents
+        return False
+    return package_path
 
 
 class ParameterSet():
@@ -800,6 +1023,7 @@ class ParameterSet():
         self.version = version
         self.major = '.'.join(self.version.split('.')[:2])
         self.minor = self.version.split('.')[-1]
+        self.arch = self.parameter_dict['ControlFile']['BuildArch']
 
     def create(self, parameters=None):
         """
@@ -830,7 +1054,7 @@ class ParameterSet():
                 elif k == 'Source':
                     parameters[k] = PROJECT + '-' + self.major + '.' + self.minor + '.tar.gz'
                 elif k == 'BuildDirName':
-                    parameters[k] = PROJECT + '-' + self.major
+                    parameters[k] = PROJECT + '-' + self.version + '_' + self.arch
         return parameters
 
 
@@ -882,7 +1106,7 @@ def valid_version(parameter, min=0, max=100):
 
 
 def init_cli():
-    """Collect parameters and call main."""
+    """Collect parameters and call main """
     try:
         parser = argparse.ArgumentParser(add_help=False)
         args = options(parser)
@@ -891,36 +1115,21 @@ def init_cli():
         stdout_message(str(e), 'ERROR')
         return exit_codes['E_MISC']['Code']
 
-    if not os.path.isfile(args.parameter_file):
-        stdout_message(
-            message='Path to parmeters file not found. Abort',
-            prefix='WARN'
-        )
-        return exit_codes['E_DEPENDENCY']['Code']
-
     if args.debug:
-        max_length = 44
-        print(debug_header)
-
         stdout_message(
-                message='Set (--set-version):{}{}'.format('\t'.expandtabs(14), args.set),
-                prefix='DBUG'
+                message='forceVersion:\t{}'.format(args.fVersion),
+                prefix='DBUG',
+                severity='WARNING'
             )
         stdout_message(
-                message='Build Flag (--build):{}{}'.format('\t'.expandtabs(13), args.build),
-                prefix='DBUG'
+                message='build:\t{}'.format(args.build),
+                prefix='DBUG',
+                severity='WARNING'
             )
         stdout_message(
-                message='Docker Image (--distro):{}{}'.format('\t'.expandtabs(10), args.distro),
-                prefix='DBUG'
-            )
-        stdout_message(
-                message='Parameter File (--parameters):{}{}'.format('\t'.expandtabs(4), args.parameter_file),
-                prefix='DBUG'
-            )
-        stdout_message(
-                message='Debug Flag:{}{}'.format('\t'.expandtabs(23), args.debug),
-                prefix='DBUG'
+                message='debug flag:\t{}'.format(args.debug),
+                prefix='DBUG',
+                severity='WARNING'
             )
 
     if len(sys.argv) == 1:
@@ -932,46 +1141,39 @@ def init_cli():
         return exit_codes['EX_OK']['Code']
 
     elif args.build:
-        libsrc = os.path.join(git_root(), PROJECT)
-        if valid_version(args.set) and prebuild(TMPDIR, libsrc, VOLMNT, args.parameter_file):
-            package, contents = main(
+
+        if valid_version(args.set) and prebuild(TMPDIR, VOLMNT, git_root() + '/' + PACKAGE_CONFIG):
+
+            package = main(
                         setVersion=args.set,
                         environment=args.distro,
-                        package_configpath=args.parameter_file,
                         force=args.force,
-                        retain=args.container,
                         debug=args.debug
                     )
-            if package:
-                stdout_message(f'New package created: {yl + package + rst}')
-                stdout_message(f'RPM build process completed successfully. End', prefix='OK')
 
-                if contents:
-                    display_package_contents(package, contents)
-                else:
-                    stdout_message(
-                        message=f'Unable to locate a rpm contents file in {VOLMNT}.',
-                        prefix='WARN')
-                    return False
+            if package:
+                stdout_message(f'{PROJECT} build package created: {yl + package + rst}')
+                stdout_message(f'Debian build process completed successfully. End', prefix='OK')
                 return exit_codes['EX_OK']['Code']
             else:
                 stdout_message(
-                    '{}: Problem creating rpm installation package. Exit'.format(inspect.stack()[0][3]),
+                    '{}: Problem creating os installation package. Exit'.format(inspect.stack()[0][3]),
                     prefix='WARN',
                     severity='WARNING'
                 )
                 return exit_codes['E_MISC']['Code']
 
         elif not valid_version(args.set):
+
             stdout_message(
                 'You must enter a valid version when using --set-version parameter. Ex: 1.6.3',
                 prefix='WARN',
                 severity='WARNING'
                 )
             return exit_codes['E_DEPENDENCY']['Code']
+
         else:
             logger.warning('{} Failure in prebuild stage'.format(inspect.stack()[0][3]))
             return exit_codes['E_DEPENDENCY']['Code']
     return True
-
 sys.exit(init_cli())
