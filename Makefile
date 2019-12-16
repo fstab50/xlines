@@ -22,7 +22,6 @@ SCRIPT_DIR := $(CUR_DIR)/scripts
 DOC_PATH := $(CUR_DIR)/docs
 REQUIREMENT = $(CUR_DIR)/requirements.txt
 VERSION_FILE = $(CUR_DIR)/$(PROJECT)/_version.py
-VERSION_UPDATE_SCRIPT = $(SCRIPT_DIR)/versionpro.py
 
 # os package creation
 AML_REQUIRES = 'python3,python3-pip,python3-setuptools,bash-completion,which'
