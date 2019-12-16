@@ -3,6 +3,8 @@
 # Create Debian Package:
 
     1. Create directory
+        
+            - python3-xlines_0.7.16_amd64
 
     2. Create Subdirs
             - etc/bash_completion.d
