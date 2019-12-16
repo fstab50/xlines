@@ -341,23 +341,27 @@ def tar_archive(archive, source_dir):
     return False
 
 
-def create_builddirectory(path, version, force):
+def create_builddirectory(param_dict, path, version, force):
     """
-    Summary:
+
         - Creates the deb package binary working directory
         - Checks if build artifacts preexist; if so, halts
         - If force is True, continues even if artifacts exist (overwrites)
+
     Returns:
         Success | Failure, TYPE: bool
+
     """
     try:
         print('\nversion IS: %s' % version)
 
-        builddir = PROJECT + '-' + version + '_amd64'
+        PROJECT = param_dict['Project']
+        builddir = PROJECT + '_' + version + '_amd64'
         print('\nBUILDDIR IS: %s' % builddir)
+
         # rm builddir when force if exists
         if force is True and builddir in os.listdir(path):
-            rmtree(path + '/' + builddir)
+            rmtree(os.path.join([path, builddir]))
 
         elif force is False and builddir in os.listdir(path):
             stdout_message(
@@ -368,7 +372,7 @@ def create_builddirectory(path, version, force):
             return None
 
         # create build directory
-        os.mkdir(path + '/' + builddir)
+        os.mkdir(os.path.join([path, builddir]))
 
     except OSError as e:
         logger.exception(
@@ -377,7 +381,7 @@ def create_builddirectory(path, version, force):
     return builddir
 
 
-def builddir_structure(param_dict, version):
+def builddir_structure(param_dict, builddir, version):
     """
     Summary.
 
@@ -397,9 +401,22 @@ def builddir_structure(param_dict, version):
         Success | Failure, TYPE: bool
 
     """
+    def _mapper(venv_dir):
+        """Identifies path to python modules in virtual env"""
+        for i in (6, 7, 8, 9):
+            path = venv_dir + '/lib/python3.' + str(i) + '/site-packages/'
+            if os.path.exists(path):
+                return path
+
+    def module_search(module):
+        t = []
+        for i in os.listdir(target):
+            if re.search(module, i, re.IGNORECASE):
+                t.append(i)
+        return t
+
     root = git_root()
     project_dirname = root.split('/')[-1]
-    core_dir = root + '/' + 'core'
     build_root = TMPDIR
 
 
@@ -409,13 +426,17 @@ def builddir_structure(param_dict, version):
     compfile = param_dict['BashCompletion']
     builddir = param_dict['ControlFile']['BuildDirName']
 
+    # LIB source files
+    env = os.environ.get('VIRTUAL_ENV') or root
+    lib_src = _mapper(env)
+
     # full paths
     builddir_path = build_root + '/' + builddir
     deb_src = root + '/packaging/deb'
     debian_dir = 'DEBIAN'
     debian_path = deb_src + '/' + debian_dir
     binary_path = builddir_path + '/usr/local/bin'
-    lib_path = builddir_path + '/usr/local/lib/' + PROJECT
+    lib_path = builddir_path + '/usr/local/lib'
     comp_src = root + '/' + 'bash'
     comp_dst = builddir_path + '/etc/bash_completion.d'
 
@@ -423,7 +444,7 @@ def builddir_structure(param_dict, version):
 
     try:
 
-        stdout_message(f'Assembling build directory artifacts in {bn + builddir + rst}')
+        stdout_message(f'Creating build directory subdirectories in {bn + builddir + rst}')
 
         # create build directory
         if os.path.exists(builddir_path):
@@ -434,8 +455,10 @@ def builddir_structure(param_dict, version):
                 prefix='OK'
             )
 
-        if not os.path.exists(builddir_path + '/' + debian_dir):
-            copytree(debian_path, builddir_path + '/' + debian_dir)
+        # binary exec
+        if not os.path.exists(binary_path):
+            os.makedirs(binary_path)
+            copytree(, builddir_path + '/' + debian_dir)
             # status msg
             _src_path = '../' + project_dirname + debian_path.split(project_dirname)[1]
             _dst_path = '../' + project_dirname + (builddir_path + '/' + debian_dir).split(project_dirname)[1]
@@ -444,15 +467,23 @@ def builddir_structure(param_dict, version):
                     prefix='OK'
                 )
 
-        if not os.path.exists(binary_path):
-            os.makedirs(binary_path)
-            _dst_path = '../' + project_dirname + binary_path.split(project_dirname)[1]
+        # library components
+        if not os.path.exists(lib_path):
+            os.makedirs(lib_path)
+
+            for lib in ('pygments'):
+                mod_sources = [os.path.join([lib_src, x]) for x in module_search(lib)]
+                for source in mod_sources:
+                    copytree(source, lib_path)
+
             stdout_message(
-                    message='Created:\t{}'.format(lk + _dst_path + rst),
+                    message='Created:\t{}'.format(lk + lib_path + rst),
                     prefix='OK'
                 )
 
-        if not os.path.exists(binary_path + '/' + PROJECT):
+        # bash completion artifacts
+        if not os.path.exists(comp_dst):
+            os.makedirs(comp_dst)
             binary_src = PROJECT_ROOT + '/' + binary
             binary_dst = binary_path + '/' + binary
             copyfile(binary_src, binary_dst)
@@ -811,21 +842,21 @@ def main(setVersion, environment, force=False, debug=False):
     stdout_message(f'Current version of last build: {CURRENT_VERSION}')
     stdout_message(f'Version to be used for this build: {VERSION}')
 
-    # create initial binary working dir
-    BUILDDIRNAME = create_builddirectory(BUILD_ROOT, VERSION, force)
-
     # sub in current values
     parameter_obj = ParameterSet(PROJECT_ROOT + '/' + PACKAGE_CONFIG, VERSION)
     vars = parameter_obj.create()
 
     VERSION_FILE = vars['VersionModule']
 
+    # create initial binary working dir
+    BUILDDIRNAME = create_builddirectory(vars, BUILD_ROOT, VERSION, force)
+
     if debug:
         print(json.dumps(vars, indent=True, sort_keys=True))
 
     if BUILDDIRNAME:
 
-        r_struture = builddir_structure(vars, VERSION)
+        r_struture = builddir_structure(vars, BUILDDIRNAME, VERSION)
         r_updates = builddir_content_updates(vars, environment, VERSION)
 
         if r_struture and r_updates and build_package(BUILD_ROOT, BUILDDIRNAME):
