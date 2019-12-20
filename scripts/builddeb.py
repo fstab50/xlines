@@ -495,44 +495,6 @@ def builddir_structure(param_dict, builddir, version):
                     prefix='OK'
                 )
 
-        if not os.path.exists(lib_path):
-
-            os.makedirs(lib_path)     # create library dir in builddir
-
-            # status msg branching
-            _dst_path = '../' + project_dirname + lib_path.split(project_dirname)[1]
-            if os.path.exists(lib_path):
-                stdout_message(
-                        message='Created:\t{}'.format(lk + _dst_path + rst),
-                        prefix='OK'
-                    )
-            else:
-                stdout_message(
-                        message='Failed to create:\t{}'.format(lk + _dst_path + rst),
-                        prefix='FAIL'
-                    )
-
-        for libfile in os.listdir(core_dir):
-            if os.path.exists(lib_path + '/' + libfile):
-                stdout_message(f'{libfile} target exists - skip adding to builddir')
-
-            if libfile.endswith('.log'):
-                # log file, do not place in build
-                logger.info(f'{libfile} is log file - skip adding to builddir')
-
-            else:
-                # place lib files in build
-                lib_src = core_dir + '/' + libfile
-                lib_dst = lib_path + '/' + libfile
-                copyfile(lib_src, lib_dst)
-                # status msg
-                _src_path = '../' + project_dirname + lib_src.split(project_dirname)[1]
-                _dst_path = '../' + project_dirname + lib_dst.split(project_dirname)[1]
-                stdout_message(
-                        message='Copied:\t{} {} {}'.format(lk + _src_path + rst, arrow, lk + _dst_path + rst),
-                        prefix='OK'
-                    )
-
         if not os.path.exists(comp_dst):
             # create path
             os.makedirs(comp_dst)
