@@ -131,7 +131,7 @@ build: artifacts  ## Build dist artifact and increment version
 
 
 .PHONY: builddeb
-builddeb: setup-venv clean-version ## Build Debian distribution (.deb) os package
+builddeb: clean-version source-install  ## Build Debian distribution (.deb) os package
 	@printf "Building Debian package format of $(PROJECT)";
 	if [ $(VERSION) ]; then . $(VENV_DIR)/bin/activate && \
 	$(PIP_CALL) install stdeb; \
