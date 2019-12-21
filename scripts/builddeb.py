@@ -126,7 +126,7 @@ lk = Colors.DARK_BLUE                    # color for filesystem path confirmatio
 red = Colors.RED                        # color for failed operations
 yl = Colors.GOLD3                       # color when copying, creating paths
 rst = Colors.RESET                      # reset all color, formatting
-
+arrow = yl + Colors.BOLD + '-->' + rst
 
 def git_root():
     """
@@ -458,8 +458,6 @@ def builddir_structure(param_dict, builddir, version):
     lib_path = builddir_path + '/usr/local/lib'
     comp_src = os.path.join(root, 'bash')
     comp_dst = builddir_path + '/etc/bash_completion.d'
-
-    arrow = yl + Colors.BOLD + '-->' + rst
 
     try:
 
