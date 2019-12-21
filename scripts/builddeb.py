@@ -52,6 +52,11 @@ try:
 except Exception:
     from libtools.oscodes_win import exit_codes    # non-specific os-safe codes
 
+
+global PROJECT_BIN
+PROJECT_BIN = 'xlines'
+
+
 """
 REFERENCES:
     - https://wiki.debian.org/Python/Pybuild
@@ -757,8 +762,6 @@ def main(setVersion, environment, force=False, debug=False):
     Returns:
         Success | Failure, TYPE: bool
     """
-    global PROJECT_BIN
-    PROJECT_BIN = 'xlines'
     global PROJECT_ROOT
     PROJECT_ROOT = git_root()
     global SCRIPT_DIR
