@@ -361,11 +361,11 @@ def create_builddirectory(param_dict, path, version, force):
 
         PROJECT = param_dict['Project']
         builddir = PROJECT + '_' + version + '_amd64'
-        print('\nBUILDDIR IS: %s' % builddir)
+        stdout_message(message='BUILDDIR IS: {}'.format(builddir))
 
         # rm builddir when force if exists
         if force is True and builddir in os.listdir(path):
-            rmtree(os.path.join([path, builddir]))
+            rmtree(os.path.join(path, builddir))
 
         elif force is False and builddir in os.listdir(path):
             stdout_message(
@@ -376,7 +376,7 @@ def create_builddirectory(param_dict, path, version, force):
             return None
 
         # create build directory
-        os.mkdir(os.path.join([path, builddir]))
+        os.mkdir(os.path.join(path, builddir))
 
     except OSError as e:
         logger.exception(
@@ -441,7 +441,7 @@ def builddir_structure(param_dict, builddir, version):
     debian_path = deb_src + '/' + debian_dir
     binary_path = builddir_path + '/usr/local/bin'
     lib_path = builddir_path + '/usr/local/lib'
-    comp_src = os.path.join([root, 'bash'])
+    comp_src = os.path.join(root, 'bash')
     comp_dst = builddir_path + '/etc/bash_completion.d'
 
     arrow = yl + Colors.BOLD + '-->' + rst
@@ -462,8 +462,8 @@ def builddir_structure(param_dict, builddir, version):
         # binary exec
         if not os.path.exists(binary_path):
             os.makedirs(binary_path)
-            _src_path = os.path.join([env, 'bin', 'xlines'])
-            _dst_path = os.path.join([binary_path, 'xlines'])
+            _src_path = os.path.join(env, 'bin', 'xlines')
+            _dst_path = os.path.join(binary_path, 'xlines')
             copyfile(_src_path, _dst_path)
             # status msg
             stdout_message(
@@ -476,7 +476,7 @@ def builddir_structure(param_dict, builddir, version):
             os.makedirs(lib_path)
 
             for lib in module_search('xlines', lib_src):
-                _src = os.path.join([lib_src, lib])
+                _src = os.path.join(lib_src, lib)
                 copytree(_src, lib_path)
 
                 stdout_message(
