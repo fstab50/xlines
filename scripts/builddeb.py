@@ -450,7 +450,7 @@ def builddir_structure(param_dict, builddir, version):
         stdout_message(f'Copying DEBIAN package control file to {bn + builddir + rst}')
 
         _src = os.path.join(deb_src, debian_dir)
-        _dst = builddir_path
+        _dst = os.path.join(builddir_path, debian_dir)
         copytree(_src, _dst)
         # status msg
         stdout_message(
