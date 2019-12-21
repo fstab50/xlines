@@ -1124,7 +1124,7 @@ def init_cli():
 
     elif args.build:
 
-        if valid_version(args.set) and prebuild(os.path.join(TMPDIR, 'build'), VOLMNT, git_root() + '/' + PACKAGE_CONFIG):
+        if valid_version(args.set) and prebuild(TMPDIR, VOLMNT, git_root() + '/' + PACKAGE_CONFIG):
 
             package = main(
                         setVersion=args.set,
