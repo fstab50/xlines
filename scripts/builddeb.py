@@ -476,7 +476,8 @@ def builddir_structure(param_dict, builddir, version):
 
             for lib in module_search('xlines', lib_src):
                 _src = os.path.join(lib_src, lib)
-                copytree(_src, lib_path)
+                _dst = os.path.join(lib_path, lib)
+                copytree(_src, _dst)
 
                 stdout_message(
                         message='Copied:\t{} {} {}'.format(lk + _src + rst, arrow, lk + lib_path + rst),
