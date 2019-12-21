@@ -64,12 +64,6 @@ REFERENCES:
     - https://wiki.debian.org/Python/LibraryStyleGuide
     - https://packaging.python.org/overview
 
----
-
-CONTAINER:
-apt install debhelper dh-python python-all python-setuptools python3-all python3-setuptools
-apt install dh-virtualenv python3-venv fakeroot devscripts
-
 ----
 
 builddeb script functionality from testing:
@@ -467,7 +461,6 @@ def builddir_structure(param_dict, builddir, version):
         _dst = os.path.join(builddir_path, debian_dir)
         copytree(_src, _dst)
         operation_status(_src, _dst)
-        subprocess.getoutput('cp -r {} {}'.format('/home/builder/git/xlines/packaging/deb/DEBIAN', '/tmp/build/' + builddir + '/'))
         stdout_message(f'Creating build directory subdirectories in {bn + builddir + rst}')
 
         # create build directory
