@@ -424,7 +424,6 @@ def builddir_structure(param_dict, builddir, version):
     project_dirname = os.path.split(git_root())[1]
     build_root = TMPDIR
 
-
     # files
     binary = param_dict['Executable']
     control_file = param_dict['ControlFile']['Name']
@@ -1100,7 +1099,7 @@ def init_cli():
 
     if args.debug:
         stdout_message(
-                message='forceVersion:\t{}'.format(args.fVersion),
+                message='forceVersion:\t{}'.format(args.set),
                 prefix='DBUG',
                 severity='WARNING'
             )
