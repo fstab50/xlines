@@ -899,7 +899,7 @@ def prebuild(builddir, volmnt, parameter_file):
     os.makedirs(volmnt)
 
     root = git_root()
-    lib_relpath = 'core'
+    lib_relpath = PROJECT_BIN
     lib_path = root + '/' + lib_relpath
     sources = [lib_path]
     illegal = ['__pycache__']
@@ -911,7 +911,7 @@ def prebuild(builddir, volmnt, parameter_file):
         global __version__
         sys.path.insert(0, os.path.abspath(git_root() + '/' + lib_relpath))
 
-        from version import __version__
+        from _version import __version__
 
         # normalize path
         sys.path.pop(0)
