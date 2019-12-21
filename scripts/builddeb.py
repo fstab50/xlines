@@ -48,9 +48,9 @@ from loggers import logger                 # global logger
 
 
 try:
-    from pyaws.core.oscodes_unix import exit_codes
+    from libtools.oscodes_unix import exit_codes
 except Exception:
-    from pyaws.core.oscodes_win import exit_codes    # non-specific os-safe codes
+    from libtools.oscodes_win import exit_codes    # non-specific os-safe codes
 
 """
 REFERENCES:
