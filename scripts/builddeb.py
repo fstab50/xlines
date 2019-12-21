@@ -386,6 +386,22 @@ def create_builddirectory(param_dict, path, version, force):
     return builddir
 
 
+def operation_status(source, destination):
+    """Validates copy operations complete successfully"""
+    if os.path.exists(destination):
+        stdout_message(
+                message='Copied:\t{} {} {}'.format(lk + _src + rst, arrow, lk + _dst + rst),
+                prefix='OK'
+            )
+        return True
+    else:
+        stdout_message(
+                message='Failure to copy:\t{} to {}'.format(lk + _src + rst, lk + _dst + rst),
+                prefix='WARN'
+            )
+    return False
+
+
 def builddir_structure(param_dict, builddir, version):
     """
     Summary.
@@ -447,16 +463,12 @@ def builddir_structure(param_dict, builddir, version):
 
     try:
 
-        stdout_message(f'Copying DEBIAN package control file to {bn + builddir + rst}')
+        stdout_message(f'Copying DEBIAN package control files to {bn + builddir + rst}')
 
         _src = os.path.join(deb_src, debian_dir)
         _dst = os.path.join(builddir_path, debian_dir)
         copytree(_src, _dst)
-        # status msg
-        stdout_message(
-                message='Copied:\t{} {} {}'.format(lk + _src + rst, arrow, lk + _dst + rst),
-                prefix='OK'
-            )
+        operation_status(_src, _dst)
 
         stdout_message(f'Creating build directory subdirectories in {bn + builddir + rst}')
 
