@@ -56,6 +56,7 @@ except Exception:
 global PROJECT_BIN
 PROJECT_BIN = 'xlines'
 
+c = Colors()
 
 """
 REFERENCES:
@@ -119,6 +120,7 @@ dclient = docker.from_env()
 # formatting
 act = Colors.ORANGE                     # accent highlight (bright orange)
 bd = Colors.BOLD + Colors.WHITE         # title formatting
+bdwt = c.BOLD + c.BRIGHT_WHITE
 bn = Colors.CYAN                        # color for main binary highlighting
 lk = Colors.DARK_BLUE                    # color for filesystem path confirmations
 red = Colors.RED                        # color for failed operations
@@ -353,11 +355,10 @@ def create_builddirectory(param_dict, path, version, force):
         - If force is True, continues even if artifacts exist (overwrites)
 
     Returns:
-        Success | Failure, TYPE: bool
+        builddir, TYPE: str
 
     """
     try:
-        print('\nversion IS: %s' % version)
 
         PROJECT = param_dict['Project']
         builddir = PROJECT + '_' + version + '_amd64'
@@ -789,8 +790,8 @@ def main(setVersion, environment, force=False, debug=False):
         sys.exit(exit_codes['E_DEPENDENCY']['Code'])
 
     # log
-    stdout_message(f'Current version of last build: {CURRENT_VERSION}')
-    stdout_message(f'Version to be used for this build: {VERSION}')
+    stdout_message(f'Current version of last build: {bdwt + CURRENT_VERSION + rst}')
+    stdout_message(f'Version to be used for this build: {bdwt + VERSION + rst}')
 
     # sub in current values
     parameter_obj = ParameterSet(PROJECT_ROOT + '/' + PACKAGE_CONFIG, VERSION)
@@ -1123,7 +1124,7 @@ def init_cli():
 
     elif args.build:
 
-        if valid_version(args.set) and prebuild(TMPDIR, VOLMNT, git_root() + '/' + PACKAGE_CONFIG):
+        if valid_version(args.set) and prebuild(os.path.join(TMPDIR, 'build'), VOLMNT, git_root() + '/' + PACKAGE_CONFIG):
 
             package = main(
                         setVersion=args.set,
