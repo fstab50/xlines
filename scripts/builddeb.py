@@ -803,6 +803,7 @@ def main(setVersion, environment, force=False, debug=False):
     BUILDDIRNAME = create_builddirectory(vars, BUILD_ROOT, VERSION, force)
 
     if debug:
+        print('BUILDDIRNAME returned is: {}'.format(BUILDDIRNAME))
         print(json.dumps(vars, indent=True, sort_keys=True))
 
     if BUILDDIRNAME:
