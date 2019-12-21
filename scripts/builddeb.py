@@ -904,6 +904,7 @@ def prebuild(builddir, volmnt, parameter_file):
     sources = [lib_path]
     illegal = ['__pycache__']
     module = inspect.stack()[0][3]
+    fx = inspect.stack()[0][3]
 
     try:
 
@@ -917,13 +918,11 @@ def prebuild(builddir, volmnt, parameter_file):
 
     except ImportError as e:
         logger.exception(
-                message='Problem importing program version module (%s). Error: %s' %
-                (__file__, str(e)),
-                prefix='WARN'
+                '{}: Problem importing program version module (%s). Error: %s' % (fx, __file__, str(e))
             )
     except Exception as e:
         logger.exception(
-            '{}: Failure to import _version module _version'.format(inspect.stack()[0][3])
+            '{}: Failure to import _version module _version'.format(fx)
         )
         return False
 
