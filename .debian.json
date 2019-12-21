@@ -22,8 +22,8 @@
         "Description":  "",
         "BuildArch": "amd64",
         "License": "GPLv3",
-        "Source": "python3-xlines-MAJOR_VERSION.MINOR_VERSION.tar.gz",
-        "BuildDirName": "python3-xlines-MAJOR_VERSION.MINOR_VERSION",
+        "Source": "python3-xlines_MAJOR_VERSION.MINOR_VERSION.tar.gz",
+        "BuildDirName": "python3-xlines_MAJOR_VERSION.MINOR_VERSION",
         "Directories": [
             {
                 "Dirname": "/usr/local/lib/xlines",
