@@ -428,7 +428,6 @@ def builddir_structure(param_dict, builddir, version):
     binary = param_dict['Executable']
     control_file = param_dict['ControlFile']['Name']
     compfile = param_dict['BashCompletion']
-    builddir = param_dict['ControlFile']['BuildDirName']
 
     # LIB source files
     env = os.environ.get('VIRTUAL_ENV') or root
