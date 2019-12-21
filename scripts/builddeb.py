@@ -390,13 +390,13 @@ def operation_status(source, destination):
     """Validates copy operations complete successfully"""
     if os.path.exists(destination):
         stdout_message(
-                message='Copied:\t{} {} {}'.format(lk + _src + rst, arrow, lk + _dst + rst),
+                message='Copied:\t{} {} {}'.format(lk + source + rst, arrow, lk + destination + rst),
                 prefix='OK'
             )
         return True
     else:
         stdout_message(
-                message='Failure to copy:\t{} to {}'.format(lk + _src + rst, lk + _dst + rst),
+                message='Failure to copy:\t{} to {}'.format(lk + source + rst, lk + destination + rst),
                 prefix='WARN'
             )
     return False
