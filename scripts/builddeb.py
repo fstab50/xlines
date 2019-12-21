@@ -447,6 +447,17 @@ def builddir_structure(param_dict, builddir, version):
 
     try:
 
+        stdout_message(f'Copying DEBIAN package control file to {bn + builddir + rst}')
+
+        _src = os.path.join(deb_src, debian_dir)
+        _dst = builddir_path
+        copytree(_src, _dst)
+        # status msg
+        stdout_message(
+                message='Copied:\t{} {} {}'.format(lk + _src + rst, arrow, lk + _dst + rst),
+                prefix='OK'
+            )
+
         stdout_message(f'Creating build directory subdirectories in {bn + builddir + rst}')
 
         # create build directory
