@@ -408,15 +408,15 @@ def builddir_structure(param_dict, builddir, version):
             if os.path.exists(path):
                 return path
 
-    def module_search(module):
+    def module_search(module, packages_path):
         t = []
-        for i in os.listdir(target):
+        for i in os.listdir(packages_path):
             if re.search(module, i, re.IGNORECASE):
                 t.append(i)
         return t
 
     root = git_root()
-    project_dirname = root.split('/')[-1]
+    project_dirname = os.path.split(git_root())[1]
     build_root = TMPDIR
 
 
@@ -437,7 +437,7 @@ def builddir_structure(param_dict, builddir, version):
     debian_path = deb_src + '/' + debian_dir
     binary_path = builddir_path + '/usr/local/bin'
     lib_path = builddir_path + '/usr/local/lib'
-    comp_src = root + '/' + 'bash'
+    comp_src = os.path.join([root, 'bash'])
     comp_dst = builddir_path + '/etc/bash_completion.d'
 
     arrow = yl + Colors.BOLD + '-->' + rst
@@ -458,10 +458,10 @@ def builddir_structure(param_dict, builddir, version):
         # binary exec
         if not os.path.exists(binary_path):
             os.makedirs(binary_path)
-            copytree(, builddir_path + '/' + debian_dir)
+            _src_path = os.path.join([env, 'bin', 'xlines'])
+            _dst_path = os.path.join([binary_path, 'xlines'])
+            copyfile(_src_path, _dst_path)
             # status msg
-            _src_path = '../' + project_dirname + debian_path.split(project_dirname)[1]
-            _dst_path = '../' + project_dirname + (builddir_path + '/' + debian_dir).split(project_dirname)[1]
             stdout_message(
                     message='Copied:\t{} {} {}'.format(lk + _src_path + rst, arrow, lk + _dst_path + rst),
                     prefix='OK'
@@ -471,42 +471,28 @@ def builddir_structure(param_dict, builddir, version):
         if not os.path.exists(lib_path):
             os.makedirs(lib_path)
 
-            for lib in ('pygments'):
-                mod_sources = [os.path.join([lib_src, x]) for x in module_search(lib)]
-                for source in mod_sources:
-                    copytree(source, lib_path)
+            for lib in module_search('xlines', lib_src):
+                _src = os.path.join([lib_src, lib])
+                copytree(_src, lib_path)
 
-            stdout_message(
-                    message='Created:\t{}'.format(lk + lib_path + rst),
-                    prefix='OK'
-                )
-
-        # bash completion artifacts
-        if not os.path.exists(comp_dst):
-            os.makedirs(comp_dst)
-            binary_src = PROJECT_ROOT + '/' + binary
-            binary_dst = binary_path + '/' + binary
-            copyfile(binary_src, binary_dst)
-            # status msg
-            _src_path = '../' + project_dirname + '/' + os.path.split(binary_src)[1]
-            _dst_path = '../' + project_dirname + '/' + os.path.split(binary_dst)[1]
-            stdout_message(
-                    message='Copied:\t{} {} {}'.format(lk + _src_path + rst, arrow, lk + _dst_path + rst),
-                    prefix='OK'
-                )
+                stdout_message(
+                        message='Copied:\t{} {} {}'.format(lk + _src + rst, arrow, lk + lib_path + rst),
+                        prefix='OK'
+                    )
 
         if not os.path.exists(comp_dst):
             # create path
             os.makedirs(comp_dst)
-            _dst_path = '../' + project_dirname + comp_dst.split(project_dirname)[1]
-            stdout_message(
-                    message='Created:\t{}'.format(lk + _dst_path + rst),
-                    prefix='OK'
-                )
-
             # copy
             for artifact in list(filter(lambda x: x.endswith('.bash'), os.listdir(comp_src))):
-                copyfile(comp_src + '/' + artifact, comp_dst + '/' + artifact)
+                _src = comp_src + '/' + artifact
+                _dst = comp_dst + '/' + artifact
+                copyfile(_src, _dst)
+
+                stdout_message(
+                        message='Copied:\t{} {} {}'.format(lk + _src + rst, arrow, lk + _dst + rst),
+                        prefix='OK'
+                    )
 
     except OSError as e:
         logger.exception(
@@ -819,6 +805,7 @@ def main(setVersion, environment, force=False, debug=False):
     if BUILDDIRNAME:
 
         r_struture = builddir_structure(vars, BUILDDIRNAME, VERSION)
+        sys.exit(0)
         r_updates = builddir_content_updates(vars, environment, VERSION)
 
         if r_struture and r_updates and build_package(BUILD_ROOT, BUILDDIRNAME):
