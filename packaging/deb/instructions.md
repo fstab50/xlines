@@ -2,7 +2,7 @@
 
 # Create Debian Package:
 
-    1. Create directory
+    1. Create target directory
         
             - python3-xlines_0.7.16_amd64
 
@@ -13,10 +13,10 @@
 
     3. Move DEBIAN directory in:
 
-        target/
+        python3-xlines_0.7.16_amd64/
             
-            ... DEBIAN/control
-                DEBIAN/postinst
+                ... DEBIAN/control
+                    DEBIAN/postinst
 
 
     4. Move file artifacts in:
