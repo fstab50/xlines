@@ -498,7 +498,7 @@ def builddir_structure(param_dict, builddir, version):
 
         stdout_message(f'Creating config subdirectory in {bn + lib_dst + rst}')
 
-        os.makedirs(os.path.join(lib_dst, 'config'))
+        os.makedirs(os.path.join(lib_dst, PROJECT_BIN, 'config'))
         source = os.path.join(root, 'config')
 
         for file in list(filter(lambda x: x.endswith('.list'), os.listdir(source))):
