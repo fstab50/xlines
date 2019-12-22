@@ -461,6 +461,7 @@ def builddir_structure(param_dict, builddir, version):
         _dst = os.path.join(builddir_path, debian_dir)
         copytree(_src, _dst)
         operation_status(_src, _dst)
+
         stdout_message(f'Creating build directory subdirectories in {bn + builddir + rst}')
 
         # create build directory

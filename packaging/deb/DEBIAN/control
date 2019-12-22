@@ -1,6 +1,6 @@
 Package: python3-xlines
 Version: VERSION
-Section: python
+Section: python3
 Priority: extra
 Maintainer: Blake Huber <blakeca00@gmail.com>
 Bugs: https://github/fstab50/xlines/issues
