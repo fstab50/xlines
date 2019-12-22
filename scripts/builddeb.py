@@ -503,10 +503,10 @@ def builddir_structure(param_dict, builddir, version):
         stdout_message(f'Creating config subdirectory in {bn + builddir + '/usr/local/lib' + rst}')
 
         os.makedirs(os.path.join(lib_dst, 'config'))
-        targetdir = os.path.join(root, 'config')
+        source = os.path.join(root, 'config')
 
-        for file in list(filter(lambda x: x.endswith('.list'), os.listdir(targetdir))):
-            _src = os.path.join(targetdir, file)
+        for file in list(filter(lambda x: x.endswith('.list'), os.listdir(source))):
+            _src = os.path.join(source, file)
             _dst = os.path.join(lib_dst, 'config', file)
             copyfile(_src, _dst)
 
