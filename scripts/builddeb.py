@@ -551,7 +551,7 @@ def build_package(build_root, builddir):
     return True
 
 
-def builddir_content_updates(param_dict, osimage, version):
+def builddir_content_updates(param_dict, osimage, builddir, version):
     """
     Summary.
 
@@ -583,7 +583,6 @@ def builddir_content_updates(param_dict, osimage, version):
     minor = version.split('.')[-1]
 
     # files
-    builddir = param_dict['ControlFile']['BuildDirName']
     version_module = param_dict['VersionModule']
     dockeruser = param_dict['DockerUser']
     issues_url = param_dict['IssuesUrl']
@@ -755,8 +754,8 @@ def main(setVersion, environment, force=False, debug=False):
     DEBIAN_ROOT = PROJECT_ROOT + '/' + 'packaging/deb'
     global BUILD_ROOT
     BUILD_ROOT = TMPDIR
-    global LIB_DIR
-    LIB_DIR = PROJECT_ROOT + '/' + 'core'
+    global LIB_SRC
+    LIB_SRC = PROJECT_ROOT + '/' + PROJECT_BIN
     global CURRENT_VERSION
     CURRENT_VERSION = current_version(PROJECT_BIN, LIB_DIR + '/' 'version.py')
 
@@ -784,7 +783,7 @@ def main(setVersion, environment, force=False, debug=False):
 
     VERSION_FILE = vars['VersionModule']
 
-    update_version_module(VERSION, os.path.join(lib_src, VERSION_FILE))
+    update_version_module(VERSION, os.path.join(LIB_SRC, VERSION_FILE))
 
     # create initial binary working dir
     BUILDDIRNAME = create_builddirectory(vars, BUILD_ROOT, VERSION, force)
@@ -797,7 +796,7 @@ def main(setVersion, environment, force=False, debug=False):
 
         r_struture = builddir_structure(vars, BUILDDIRNAME, VERSION)
         sys.exit(0)
-        r_updates = builddir_content_updates(vars, environment, VERSION)
+        r_updates = builddir_content_updates(vars, environment, BUILDDIRNAME, VERSION)
 
         if r_struture and r_updates and build_package(BUILD_ROOT, BUILDDIRNAME):
             return postbuild(VERSION, VERSION_FILE, BUILD_ROOT + '/' + BUILDDIRNAME, DEBIAN_ROOT)
