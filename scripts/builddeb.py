@@ -583,7 +583,6 @@ def builddir_content_updates(param_dict, osimage, version):
     minor = version.split('.')[-1]
 
     # files
-    binary = param_dict['Executable']
     builddir = param_dict['ControlFile']['BuildDirName']
     version_module = param_dict['VersionModule']
     dockeruser = param_dict['DockerUser']
@@ -595,9 +594,7 @@ def builddir_content_updates(param_dict, osimage, version):
     builddir_path = build_root + '/' + builddir
     debian_path = builddir_path + '/' + debian_dir
     control_filepath = debian_path + '/' + control_filename
-    binary_path = builddir_path + '/usr/local/bin'
-    lib_src = root + '/' + 'core'
-    lib_dst = builddir_path + '/usr/local/lib/' + PROJECT
+    lib_dst = builddir_path + '/usr/local/lib/' + PROJECT_BIN
 
     # assemble dependencies
     deplist = None
@@ -608,25 +605,6 @@ def builddir_content_updates(param_dict, osimage, version):
             deplist = deplist + ', ' + str(dep)
 
     try:
-        # main exec bin: update pkg_lib path, LOG_DIR
-        with open(binary_path + '/' + binary) as f1:
-            f2 = f1.readlines()
-
-            for index, line in enumerate(f2):
-                if line.startswith('pkg_lib='):
-                    newline = 'pkg_lib=' + '\"' + '/usr/local/lib/' + PROJECT + '\"\n'
-                    f2[index] = newline
-
-                elif line.startswith('LOG_DIR='):
-                    logline = 'LOG_DIR=' + '\"' + '/var/log' + '\"\n'
-                    f2[index] = logline
-            f1.close()
-
-        # rewrite bin
-        with open(binary_path + '/' + binary, 'w') as f3:
-            f3.writelines(f2)
-            path = project_dirname + (binary_path + '/' + binary)[len(root):]
-            stdout_message('Bin {} successfully updated.'.format(yl + path + rst))
 
         # debian control files
         with open(control_filepath) as f1:
@@ -806,6 +784,8 @@ def main(setVersion, environment, force=False, debug=False):
 
     VERSION_FILE = vars['VersionModule']
 
+    update_version_module(VERSION, os.path.join(lib_src, VERSION_FILE))
+
     # create initial binary working dir
     BUILDDIRNAME = create_builddirectory(vars, BUILD_ROOT, VERSION, force)
 
@@ -977,14 +957,6 @@ def postbuild(version, version_module, builddir_path, debian_root):
         if os.path.exists(builddir_path):
             rmtree(builddir_path)
 
-        # rewrite version file with current build version
-        with open(root + '/core/' + version_module, 'w') as f3:
-            f2 = ['__version__=\"' + version + '\"\n']
-            f3.writelines(f2)
-            path = project_dirname + (root + '/core/' + version_module)[len(root):]
-            stdout_message(
-                '{}: Module {} successfully updated.'.format(inspect.stack()[0][3], yl + path + rst)
-                )
         if display_package_contents(BUILD_ROOT, VERSION):
             return package_path
 
@@ -1046,6 +1018,20 @@ class ParameterSet():
                 elif k == 'BuildDirName':
                     parameters[k] = PROJECT + '-' + self.version + '_' + self.arch
         return parameters
+
+
+def update_version_module(version, module):
+    # rewrite version file with current build version
+    with open(module, 'w') as f3:
+        f2 = ['__version__ =\"' + version + '\"\n']
+        f3.writelines(f2)
+
+    fmodule = yl + module + rst
+    fx = inspect.stack()[0][3]
+    stdout_message(
+        '{}: Module {} successfully updated with version {}.'.format(fx, fmodule, version)
+        )
+    return True
 
 
 def valid_version(parameter, min=0, max=100):
