@@ -7,6 +7,10 @@ if which py3compile >/dev/null 2>&1; then
 fi
 
 # copy configuration files to local
-cp /usr/local/lib/xlines/config/*.list /home/$SUDO_USER/.config/xlines/
+if [ $SUDO_USER ]; then
+	cp /usr/local/lib/xlines/config/*.list /home/$SUDO_USER/.config/xlines/
+else
+	cp /usr/local/lib/xlines/config/*.list /home/$USER/.config/xlines/
+fi
 
 # End automatically added section
