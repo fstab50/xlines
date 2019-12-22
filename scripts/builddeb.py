@@ -442,15 +442,6 @@ def builddir_structure(param_dict, builddir, version):
 
     try:
 
-        stdout_message(f'Copying DEBIAN package control files to {bn + builddir + rst}')
-
-        _src = os.path.join(deb_src, debian_dir)
-        _dst = os.path.join(builddir_path, debian_dir)
-        copytree(_src, _dst)
-        operation_status(_src, _dst)
-        sys.exit(0)
-        stdout_message(f'Creating build directory subdirectories in {bn + builddir + rst}')
-
         # create build directory
         if os.path.exists(builddir_path):
             rmtree(builddir_path)
@@ -459,6 +450,15 @@ def builddir_structure(param_dict, builddir, version):
                 message='Created:\t{}'.format(yl + builddir_path + rst),
                 prefix='OK'
             )
+
+        stdout_message(f'Copying DEBIAN package control files to {bn + builddir + rst}')
+
+        _src = os.path.join(deb_src, debian_dir)
+        _dst = os.path.join(builddir_path, debian_dir)
+        copytree(_src, _dst)
+        operation_status(_src, _dst)
+
+        stdout_message(f'Creating build directory subdirectories in {bn + builddir + rst}')
 
         # binary exec
         if not os.path.exists(binary_path):
