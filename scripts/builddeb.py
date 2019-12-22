@@ -446,6 +446,7 @@ def builddir_structure(param_dict, builddir, version):
 
         _src = os.path.join(deb_src, debian_dir)
         _dst = os.path.join(builddir_path, debian_dir)
+        stdoutmessage('Copying {} -->  {}'.format(_src, _dst))
         copytree(_src, _dst)
         operation_status(_src, _dst)
 
@@ -500,7 +501,7 @@ def builddir_structure(param_dict, builddir, version):
                         prefix='OK'
                     )
 
-        stdout_message(f'Creating config subdirectory in {bn + lib_src + rst}')
+        stdout_message(f'Creating config subdirectory in {bn + lib_dst + rst}')
 
         os.makedirs(os.path.join(lib_dst, 'config'))
         source = os.path.join(root, 'config')
