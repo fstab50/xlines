@@ -73,6 +73,8 @@ builddeb script functionality from testing:
 
 # copy DEBIAN dir to archive dir
 
+# copy config directory --> usr/local/lib/xlines directory in archive
+
 # Substitute new version number into control file for VERSION
 
 # build pkg
@@ -434,7 +436,7 @@ def builddir_structure(param_dict, builddir, version):
     debian_dir = 'DEBIAN'
     debian_path = deb_src + '/' + debian_dir
     binary_path = builddir_path + '/usr/local/bin'
-    lib_path = builddir_path + '/usr/local/lib'
+    lib_dst = builddir_path + '/usr/local/lib'
     comp_src = os.path.join(root, 'bash')
     comp_dst = builddir_path + '/etc/bash_completion.d'
 
@@ -471,16 +473,16 @@ def builddir_structure(param_dict, builddir, version):
                 )
 
         # library components
-        if not os.path.exists(lib_path):
-            os.makedirs(lib_path)
+        if not os.path.exists(lib_dst):
+            os.makedirs(lib_dst)
 
             for lib in module_search('xlines', lib_src):
                 _src = os.path.join(lib_src, lib)
-                _dst = os.path.join(lib_path, lib)
+                _dst = os.path.join(lib_dst, lib)
                 copytree(_src, _dst)
 
                 stdout_message(
-                        message='Copied:\t{} {} {}'.format(lk + _src + rst, arrow, lk + lib_path + rst),
+                        message='Copied:\t{} {} {}'.format(lk + _src + rst, arrow, lk + lib_dst + rst),
                         prefix='OK'
                     )
 
@@ -497,6 +499,16 @@ def builddir_structure(param_dict, builddir, version):
                         message='Copied:\t{} {} {}'.format(lk + _src + rst, arrow, lk + _dst + rst),
                         prefix='OK'
                     )
+
+        stdout_message(f'Creating config subdirectory in {bn + builddir + '/usr/local/lib' + rst}')
+
+        os.makedirs(os.path.join(lib_dst, 'config'))
+        targetdir = os.path.join(root, 'config')
+
+        for file in list(filter(lambda x: x.endswith('.list'), os.listdir(targetdir))):
+            _src = os.path.join(targetdir, file)
+            _dst = os.path.join(lib_dst, 'config', file)
+            copyfile(_src, _dst)
 
     except OSError as e:
         logger.exception(
