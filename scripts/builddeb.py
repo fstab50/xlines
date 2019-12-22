@@ -71,10 +71,6 @@ builddeb script functionality from testing:
 # increment version
 +1 xlines/_version.py
 
-# copy DEBIAN dir to archive dir
-
-# copy config directory --> usr/local/lib/xlines directory in archive
-
 # Substitute new version number into control file for VERSION
 
 # build pkg
@@ -507,7 +503,7 @@ def builddir_structure(param_dict, builddir, version):
 
         for file in list(filter(lambda x: x.endswith('.list'), os.listdir(source))):
             _src = os.path.join(source, file)
-            _dst = os.path.join(lib_dst, 'config', file)
+            _dst = os.path.join(lib_dst, PROJECT_BIN, 'config', file)
             copyfile(_src, _dst)
 
     except OSError as e:
