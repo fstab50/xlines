@@ -624,15 +624,15 @@ def builddir_content_updates(param_dict, osimage, builddir, version):
         ## rewrite version file with current build version in case delta ##
 
         # orig source version module
-        with open(lib_src + '/' + version_module, 'w') as f3:
-            f2 = ['__version__ =\"' + version + '\"\n']
+        with open(LIB_SRC + '/' + version_module, 'w') as f3:
+            f2 = ['__version__ = \"' + version + '\"\n']
             f3.writelines(f2)
             path = os.path.join(root, PROJECT_BIN, version_module)
             stdout_message('Module {} successfully updated: {}.'.format(yl + path + rst, version))
 
         # package version module
         with open(lib_dst + '/' + version_module, 'w') as f3:
-            f2 = ['__version__ =\"' + version + '\"\n']
+            f2 = ['__version__ = \"' + version + '\"\n']
             f3.writelines(f2)
             path = os.path.join(lib_dst, version_module)
             stdout_message('Module {} successfully updated: {}.'.format(yl + path + rst, version))
