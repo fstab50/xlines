@@ -625,48 +625,19 @@ def builddir_content_updates(param_dict, osimage, builddir, version):
 
         # orig source version module
         with open(lib_src + '/' + version_module, 'w') as f3:
-            f2 = ['__version__=\"' + version + '\"\n']
+            f2 = ['__version__ =\"' + version + '\"\n']
             f3.writelines(f2)
-            path = project_dirname + (lib_src + '/' + version_module)[len(root):]
-            stdout_message('Module {} successfully updated.'.format(yl + path + rst))
+            path = os.path.join(root, PROJECT_BIN, version_module)
+            stdout_message('Module {} successfully updated: {}.'.format(yl + path + rst, version))
 
         # package version module
         with open(lib_dst + '/' + version_module, 'w') as f3:
-            f2 = ['__version__=\"' + version + '\"\n']
+            f2 = ['__version__ =\"' + version + '\"\n']
             f3.writelines(f2)
-            path = project_dirname + (lib_dst + '/' + version_module)[len(root):]
-            stdout_message('Module {} successfully updated.'.format(yl + path + rst))
+            path = os.path.join(lib_dst, version_module)
+            stdout_message('Module {} successfully updated: {}.'.format(yl + path + rst, version))
 
         sys.exit(0) ## REMOVE ME
-
-        ## Debian control file content updates ##
-
-        if os.path.exists(control_filepath):
-            # update specfile - major version
-            for line in fileinput.input([control_filepath], inplace=True):
-                print(line.replace('ISSUES_URL', issues_url), end='')
-            stdout_message(f'Updated {control_filepath} with ISSUES_URL', prefix='OK')
-
-            # update specfile - minor version
-            for line in fileinput.input([control_filepath], inplace=True):
-                print(line.replace('DEPLIST', deplist), end='')
-            stdout_message(
-                'Updated {} with dependcies ({})'.format(yl + control_filepath + rst, deplist),
-                prefix='OK')
-
-            # update specfile - Dependencies
-            for line in fileinput.input([control_filepath], inplace=True):
-                print(line.replace('PROJECT_URL', project_url), end='')
-            stdout_message(
-                'Updated {} with project url ({})'.format(yl + control_filepath + rst, project_url),
-                prefix='OK')
-
-            # update specfile - Dependencies
-            for line in fileinput.input([control_filepath], inplace=True):
-                print(line.replace('BUILD_ARCH', buildarch), end='')
-            stdout_message(
-                'Updated {} with arch ({})'.format(yl + control_filepath + rst, buildarch),
-                prefix='OK')
 
     except OSError as e:
         logger.exception(
