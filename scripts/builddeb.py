@@ -618,7 +618,11 @@ def builddir_content_updates(param_dict, osimage, builddir, version):
         with open(control_filepath, 'w') as f3:
             f3.writelines(f2)
             path = project_dirname + (control_filepath)[len(root):]
-            stdout_message('Control file {} version updated.'.format(yl + path + rst))
+            stdout_message(
+                'Control file {} version updated: {}.'.format(yl + control_filepath + rst, version)
+            )
+
+        sys.exit(0) ## REMOVE ME
 
         ## rewrite version file with current build version in case delta ##
 
@@ -795,8 +799,8 @@ def main(setVersion, environment, force=False, debug=False):
     if BUILDDIRNAME:
 
         r_struture = builddir_structure(vars, BUILDDIRNAME, VERSION)
-        sys.exit(0)
         r_updates = builddir_content_updates(vars, environment, BUILDDIRNAME, VERSION)
+        sys.exit(0)
 
         if r_struture and r_updates and build_package(BUILD_ROOT, BUILDDIRNAME):
             return postbuild(VERSION, VERSION_FILE, BUILD_ROOT + '/' + BUILDDIRNAME, DEBIAN_ROOT)
