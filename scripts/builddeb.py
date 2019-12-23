@@ -757,7 +757,7 @@ def main(setVersion, environment, force=False, debug=False):
     global LIB_SRC
     LIB_SRC = PROJECT_ROOT + '/' + PROJECT_BIN
     global CURRENT_VERSION
-    CURRENT_VERSION = current_version(PROJECT_BIN, LIB_DIR + '/' 'version.py')
+    CURRENT_VERSION = current_version(PROJECT_BIN, LIB_SRC + '/' 'version.py')
 
     # sort out version numbers, forceVersion is override      #
     # for all info contained in project                       #
