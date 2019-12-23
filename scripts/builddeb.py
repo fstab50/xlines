@@ -621,8 +621,6 @@ def builddir_content_updates(param_dict, osimage, builddir, version):
                 'Control file {} version updated: {}.'.format(yl + control_filepath + rst, version)
             )
 
-        sys.exit(0) ## REMOVE ME
-
         ## rewrite version file with current build version in case delta ##
 
         # orig source version module
@@ -638,6 +636,8 @@ def builddir_content_updates(param_dict, osimage, builddir, version):
             f3.writelines(f2)
             path = project_dirname + (lib_dst + '/' + version_module)[len(root):]
             stdout_message('Module {} successfully updated.'.format(yl + path + rst))
+
+        sys.exit(0) ## REMOVE ME
 
         ## Debian control file content updates ##
 
