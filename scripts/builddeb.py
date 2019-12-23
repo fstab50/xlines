@@ -584,7 +584,6 @@ def builddir_content_updates(param_dict, osimage, builddir, version):
 
     # files
     version_module = param_dict['VersionModule']
-    dockeruser = param_dict['DockerUser']
     issues_url = param_dict['IssuesUrl']
     project_url = param_dict['ProjectUrl']
     buildarch = param_dict['ControlFile']['BuildArch']
