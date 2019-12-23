@@ -637,8 +637,6 @@ def builddir_content_updates(param_dict, osimage, builddir, version):
             path = os.path.join(lib_dst, version_module)
             stdout_message('Module {} successfully updated: {}.'.format(yl + path + rst, version))
 
-        sys.exit(0) ## REMOVE ME
-
     except OSError as e:
         logger.exception(
             '%s: Problem while updating builddir contents: %s' %
