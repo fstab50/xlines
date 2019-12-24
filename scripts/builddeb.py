@@ -90,9 +90,6 @@ CONTAINER_VOLMNT = '/mnt/deb'
 PACKAGE_CONFIG = '.debian.json'
 DISTRO_LIST = ['ubuntu14.04', 'ubuntu16.04', 'ubuntu18.04']
 
-# docker
-dclient = docker.from_env()
-
 # formatting
 act = Colors.ORANGE                     # accent highlight (bright orange)
 bd = Colors.BOLD + Colors.WHITE         # title formatting
