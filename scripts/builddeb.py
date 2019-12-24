@@ -42,7 +42,6 @@ import fileinput
 import tarfile
 from shutil import copy2 as copyfile
 from shutil import copytree, rmtree, which
-import docker
 from libtools import Colors, stdout_message
 from loggers import logger                 # global logger
 
