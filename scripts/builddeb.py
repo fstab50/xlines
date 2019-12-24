@@ -425,6 +425,7 @@ def builddir_structure(param_dict, builddir, version):
     # LIB source files
     env = os.environ.get('VIRTUAL_ENV') or root
     lib_src = _mapper(env)
+    lib_src = os.path.join(root, PROJECT_BIN)
 
     # full paths
     builddir_path = build_root + '/' + builddir
