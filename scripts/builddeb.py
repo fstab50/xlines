@@ -471,7 +471,7 @@ def builddir_structure(param_dict, builddir, version):
 
         for lib in os.listdir(lib_src):
             _src = os.path.join(lib_src, lib)
-            _dst = os.path.join(lib_dst, lib)
+            _dst = os.path.join(lib_dst, PROJECT_BIN, lib)
             copyfile(_src, _dst)
 
             stdout_message(
