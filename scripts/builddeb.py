@@ -469,7 +469,7 @@ def builddir_structure(param_dict, builddir, version):
         if not os.path.exists(lib_dst):
             os.makedirs(lib_dst)
 
-            for lib in module_search('xlines', lib_src):
+            for lib in os.listdir(lib_src):
                 _src = os.path.join(lib_src, lib)
                 _dst = os.path.join(lib_dst, lib)
                 copytree(_src, _dst)
