@@ -469,14 +469,12 @@ def builddir_structure(param_dict, builddir, version):
         if not os.path.exists(lib_dst):
             os.makedirs(lib_dst)
 
-        #for lib in os.listdir(lib_src):
-        #    _src = os.path.join(lib_src, lib)
-        #    _dst = os.path.join(lib_dst, PROJECT_BIN, lib)
-        #    copyfile(_src, _dst)
-        copytree(lib_src, lib_dst + '/' + PROJECT_BIN)
+        _src = lib_src
+        _dst = os.path.join(lib_dst, PROJECT_BIN)
+        copytree(_src, _dst)
 
         stdout_message(
-                message='Copied:\t{} {} {}'.format(lk + _src + rst, arrow, lk + lib_dst + rst),
+                message='Copied:\t{} {} {}'.format(lk + _src + rst, arrow, lk + _dst + rst),
                 prefix='OK'
             )
 
