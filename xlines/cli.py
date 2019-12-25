@@ -292,7 +292,7 @@ def precheck(user_exfiles, user_exdirs, debug):
                 copyfile(_os_dir_fname, user_exdirs)
 
         # debian-style installation paths
-        elif os.path.exits(os.path.join('usr/local/lib/xlines/config', _ex_fname)):
+        elif os.path.exists(os.path.join('usr/local/lib/xlines/config', _ex_fname)):
 
             if not os.path.exists(user_exfiles):
                 copyfile(os.path.join('usr/local/lib/xlines/config', _ex_fname), user_exfiles)
