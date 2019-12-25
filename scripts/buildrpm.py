@@ -555,7 +555,7 @@ def main(setVersion, environment, package_configpath, force=False, retain=False,
         VERSION = CURRENT_VERSION
     else:
         stdout_message('Could not determine current {} version'.format(bd + PROJECT + rst))
-        sys.exit(exit_codes['E_DEPENDENCY']['Code'])
+        sys.exit(exit_codes['EX_DEPENDENCY']['Code'])
 
     # log
     stdout_message(f'Current version of last build: {bd + CURRENT_VERSION + rst}')
@@ -889,14 +889,14 @@ def init_cli():
     except Exception as e:
         help_menu()
         stdout_message(str(e), 'ERROR')
-        return exit_codes['E_MISC']['Code']
+        return exit_codes['EX_MISC']['Code']
 
     if not os.path.isfile(args.parameter_file):
         stdout_message(
             message='Path to parmeters file not found. Abort',
             prefix='WARN'
         )
-        return exit_codes['E_DEPENDENCY']['Code']
+        return exit_codes['EX_DEPENDENCY']['Code']
 
     if args.debug:
         max_length = 44
@@ -960,7 +960,7 @@ def init_cli():
                     prefix='WARN',
                     severity='WARNING'
                 )
-                return exit_codes['E_MISC']['Code']
+                return exit_codes['EX_MISC']['Code']
 
         elif not valid_version(args.set):
             stdout_message(
@@ -968,10 +968,10 @@ def init_cli():
                 prefix='WARN',
                 severity='WARNING'
                 )
-            return exit_codes['E_DEPENDENCY']['Code']
+            return exit_codes['EX_DEPENDENCY']['Code']
         else:
             logger.warning('{} Failure in prebuild stage'.format(inspect.stack()[0][3]))
-            return exit_codes['E_DEPENDENCY']['Code']
+            return exit_codes['EX_DEPENDENCY']['Code']
     return True
 
 sys.exit(init_cli())
