@@ -9,7 +9,7 @@ fi
 if [ $SUDO_USER ]; then
 
 	cp /usr/local/lib/xlines/config/*.list /home/$SUDO_USER/.config/xlines/
-	chown $SUDO_USER:$SUDO_USER  "/home/$SUDO_USER/.config/xlines/*.list"
+	chown $SUDO_USER:$SUDO_USER  /home/$SUDO_USER/.config/xlines/*.list
 
 else
 	cp /usr/local/lib/xlines/config/*.list /home/$USER/.config/xlines/
