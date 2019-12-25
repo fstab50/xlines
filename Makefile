@@ -131,7 +131,7 @@ build: artifacts  ## Build dist artifact and increment version
 
 
 .PHONY: builddeb
-builddeb: clean-version source-install  ## Build Debian distribution (.deb) os package
+builddeb: clean-version clean-builddir source-install  ## Build Debian distribution (.deb) os package
 	@printf "Building Debian package format of $(PROJECT)";
 	if [ $(VERSION) ]; then . $(VENV_DIR)/bin/activate && \
 	$(PYTHON3_PATH) $(SCRIPT_DIR)/builddeb.py --build --set-version $(VERSION); \
@@ -242,6 +242,12 @@ clean-pkgbuild: clean-version   ## Remove os packaging build artifacts
 	sudo rm -rf $(CUR_DIR)/*.egg* || true
 	sudo rm -fr debian/.debhelper debian/files debian/xlines.postinst.debhelper
 	sudo rm -fr debian/xlines.prerm.debhelper debian/xlines.substvars debian/xlines
+
+
+.PHONY clean-builddir
+clean-builddir:   ## Remove os package creation build artifcts
+	@printf "Cleaning build directory of package creation artifacts";
+	cd /tmp &&  rm -fr build && cd $(CUR_DIR)
 
 
 .PHONY: clean-containers
