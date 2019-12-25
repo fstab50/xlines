@@ -355,7 +355,7 @@ def init_cli():
 
     # validate configuration files
     if precheck(ex_files, ex_dirs, args.debug):
-        _ct_threshold = set_hicount_threshold() or local_config['CONFIG']['COUNT_HI_THRESHOLD']
+        _ct_threshold = set_hicount_threshold() or local_config['OUTPUT']['COUNT_HI_THRESHOLD']
 
     if len(sys.argv) == 1 or args.help:
         help_menu()
