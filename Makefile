@@ -244,7 +244,7 @@ clean-pkgbuild: clean-version   ## Remove os packaging build artifacts
 	sudo rm -fr debian/xlines.prerm.debhelper debian/xlines.substvars debian/xlines
 
 
-.PHONY clean-builddir
+.PHONY: clean-builddir
 clean-builddir:   ## Remove os package creation build artifcts
 	@printf "Cleaning build directory of package creation artifacts";
 	cd /tmp &&  rm -fr build && cd $(CUR_DIR)
