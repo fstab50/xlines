@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+# copy configuration files to local
+if [ $SUDO_USER ]; then
+	mkdir /home/$SUDO_USER/.config/xlines
+else
+	mkdir /home/$USER/.config/xlines
+fi
+
+# End automatically added section
