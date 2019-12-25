@@ -1,0 +1,14 @@
+Package: python3-xlines
+Version: VERSION
+Section: python3
+Priority: extra
+Maintainer: Blake Huber <blakeca00@gmail.com>
+Bugs: https://github/fstab50/xlines/issues
+Installed-Size: 182 kB
+Architecture: amd64
+Build-Depends: dpkg (>= 1.16.1), debhelper (>=9)
+Depends:  bash-completion, python3-pygments, python3:any (>= 3.6)
+Download-Size: 48 kB
+Standards-Version: 3.9.6
+Description:  Measure lines of code in programming projects
+Homepage: https://github/fstab50/xlines

@@ -1,0 +1,18 @@
+#!/bin/sh
+
+# Automatically added by dh_python3:
+if which py3compile >/dev/null 2>&1; then
+	py3compile  -p  python3-xlines
+fi
+
+# copy configuration files to local
+if [ $SUDO_USER ]; then
+
+	cp /usr/local/lib/xlines/config/*.list /home/$SUDO_USER/.config/xlines/
+	chown $SUDO_USER:$SUDO_USER  /home/$SUDO_USER/.config/xlines/*.list
+
+else
+	cp /usr/local/lib/xlines/config/*.list /home/$USER/.config/xlines/
+fi
+
+# End automatically added section

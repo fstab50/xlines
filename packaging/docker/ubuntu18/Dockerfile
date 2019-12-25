@@ -1,51 +1,41 @@
 ##############################################################################
 ##                                                                          ##
-##    RPM Build Dockerfile: CentOS 7 Base image                             ##
+##    Debian Build Dockerfile: Ubuntu 18 Base Image                         ##
 ##                                                                          ##
 ##    Purpose:                                                              ##
-##       Build container for rpm package assembly                           ##
+##       Build container for .deb package assembly                          ##
 ##                                                                          ##
 ##    Dependencies:  file list                                              ##
 ##      - bashrc                          - colors.sh                       ##
-##      - .rpmmacros                      - motd-centos.sh                  ##
-##      - docker-buildrpm.sh                                                ##
+##      - motd-ubuntu18.sh                - debian-tools.repo               ##
+##      - .gitconfig                      - loadavg-flat-layout.sh          ##
 ##                                                                          ##
 ##    Originally written by:                                                ##
 ##       "Blake Huber" <blakeca00@@gmail.com>                               ##
 ##                                                                          ##
 ##############################################################################
 
-FROM ubuntu:18.14
+FROM ubuntu:18.10
 MAINTAINER Cannonical, Inc.
 
 RUN apt -y update; apt clean all
-RUN apt -y groups mark convert
-RUN apt -y update; apt clean all
 RUN apt -y install source-highlight highlight pandoc
 
-RUN apt install -y gcc gcc-c++ \
-                   libtool libtool-ltdl \
-                   make cmake \
-                   git vim figlet \
-                   pkgconfig mlocate \
-                   sudo wget \
-                   automake autoconf \
-    apt clean all
+RUN apt install -y autoconf automake build-essential \
+                   autotools-dev fakeroot \
+                   dh-make debhelper devscripts \
+                   gcc make cmake \
+                   git vim figlet mlocate \
+                   sudo wget
 
 # python3 components required for build
-RUN apt -y install python3 python3-pip python3-setuptools python3-dev
+RUN apt -y install python3 python3-pip python3-venv python3-setuptools python3-dev
+RUN apt -y install debhelper
 
 # user operations
 ENV USER1 'builder'
 
-RUN useradd $USER1 -d /home/$USER1 -u 1000 -m -G users,wheel && \
-    echo "# macros"                      >  /home/$USER1/.rpmmacros && \
-    echo "%_topdir    /home/$USER/rpmbuild" >> /home/$USER1/.rpmmacros && \
-    echo "%_sourcedir %{_topdir}"        >> /home/$USER1/.rpmmacros && \
-    echo "%_builddir  %{_topdir}"        >> /home/$USER1/.rpmmacros && \
-    echo "%_specdir   %{_topdir}"        >> /home/$USER1/.rpmmacros && \
-    echo "%_rpmdir    %{_topdir}"        >> /home/$USER1/.rpmmacros && \
-    echo "%_srcrpmdir %{_topdir}"        >> /home/$USER1/.rpmmacros
+RUN useradd $USER1 -d /home/$USER1 -u 1000 -m -G users
 
 # mount volume here to cp completed rpm to on the host
 RUN mkdir /mnt/deb
@@ -57,7 +47,6 @@ RUN echo "$USER1 ALL=(ALL:ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 # dotfiles, USER1
 ADD ./bashrc  /home/$USER1/.bashrc
-ADD ./.rpmmacros /home/$USER1/.rpmmacros
 ADD ./.gitconfig /home/$USER1/.gitconfig
 
 # configure home for USER1

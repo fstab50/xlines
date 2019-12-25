@@ -22,7 +22,6 @@ SCRIPT_DIR := $(CUR_DIR)/scripts
 DOC_PATH := $(CUR_DIR)/docs
 REQUIREMENT = $(CUR_DIR)/requirements.txt
 VERSION_FILE = $(CUR_DIR)/$(PROJECT)/_version.py
-VERSION_UPDATE_SCRIPT = $(SCRIPT_DIR)/versionpro.py
 
 # os package creation
 AML_REQUIRES = 'python3,python3-pip,python3-setuptools,bash-completion,which'
@@ -126,18 +125,18 @@ docs: clean setup-venv    ## Generate sphinx documentation
 .PHONY: build
 build: artifacts  ## Build dist artifact and increment version
 	if [ $(VERSION) ]; then . $(VENV_DIR)/bin/activate && \
-	$(PYTHON3_PATH) $(SCRIPT_DIR)/versionpro.py --set-version $(VERSION) --update; \
-	else . $(VENV_DIR)/bin/activate && $(PYTHON3_PATH) $(SCRIPT_DIR)/versionpro.py --update; fi; \
+	versionpro --set-version $(VERSION) --update; \
+	else . $(VENV_DIR)/bin/activate && versionpro --update; fi; \
 	. $(VENV_DIR)/bin/activate && cd $(CUR_DIR) && $(PYTHON3_PATH) setup.py sdist
 
 
 .PHONY: builddeb
-builddeb: setup-venv clean-version ## Build Debian distribution (.deb) os package
+builddeb: clean-version clean-builddir source-install  ## Build Debian distribution (.deb) os package
 	@printf "Building Debian package format of $(PROJECT)";
-	@printf "Building RPM package format of $(PROJECT)";
 	if [ $(VERSION) ]; then . $(VENV_DIR)/bin/activate && \
 	$(PYTHON3_PATH) $(SCRIPT_DIR)/builddeb.py --build --set-version $(VERSION); \
-	else cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && $(PYTHON3_PATH) $(SCRIPT_DIR)/builddeb.py --build; fi
+	else cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
+	$(PYTHON3_PATH) $(SCRIPT_DIR)/builddeb.py --build; fi
 
 
 .PHONY: buildrpm-rhel
@@ -208,7 +207,7 @@ rebuild-docs:   ## Regenerate sphinx documentation
 
 .PHONY: simulate
 simulate:   ## Simulate a build to show version labels to be applied
-	cd $(CUR_DIR) && $(PYTHON3_PATH) $(VERSION_UPDATE_SCRIPT) --dryrun;
+	cd $(CUR_DIR) && versionpro --dryrun;
 
 
 .PHONY: upload-images
@@ -243,6 +242,12 @@ clean-pkgbuild: clean-version   ## Remove os packaging build artifacts
 	sudo rm -rf $(CUR_DIR)/*.egg* || true
 	sudo rm -fr debian/.debhelper debian/files debian/xlines.postinst.debhelper
 	sudo rm -fr debian/xlines.prerm.debhelper debian/xlines.substvars debian/xlines
+
+
+.PHONY: clean-builddir
+clean-builddir:   ## Remove os package creation build artifcts
+	@printf "Cleaning build directory of package creation artifacts";
+	cd /tmp &&  rm -fr build && cd $(CUR_DIR)
 
 
 .PHONY: clean-containers

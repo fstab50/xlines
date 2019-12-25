@@ -252,9 +252,14 @@ def precheck(user_exfiles, user_exdirs, debug):
             lang = '{}export LANG=$LANG.UTF-8{}'.format(yl, rst)
         return lang
 
+    # local user configuration:  excluded file types
     _os_configdir = os.path.join(modules_location(), 'config')
-    _os_ex_fname = os.path.join(_os_configdir, local_config['EXCLUSIONS']['EX_FILENAME'])
-    _os_dir_fname = os.path.join(_os_configdir, local_config['EXCLUSIONS']['EX_DIR_FILENAME'])
+    _ex_fname = local_config['EXCLUSIONS']['EX_FILENAME']
+    _os_ex_fname = os.path.join(_os_configdir, _ex_fname)
+
+    # local user configuration:  excluded directories
+    _dir_fname = local_config['EXCLUSIONS']['EX_DIR_FILENAME']
+    _os_dir_fname = os.path.join(_os_configdir, _dir_fname)
     _config_dir = local_config['CONFIG']['CONFIG_DIR']
     _language = set_environment()
     _environment_setup = 'fail' if 'UTF-8' in _language else 'success'
@@ -285,6 +290,15 @@ def precheck(user_exfiles, user_exdirs, debug):
 
             if not os.path.exists(user_exdirs):
                 copyfile(_os_dir_fname, user_exdirs)
+
+        # debian-style installation paths
+        elif os.path.exists(os.path.join('usr/local/lib/xlines/config', _ex_fname)):
+
+            if not os.path.exists(user_exfiles):
+                copyfile(os.path.join('usr/local/lib/xlines/config', _ex_fname), user_exfiles)
+
+            if not os.path.exists(user_exdirs):
+                copyfile(os.path.join('usr/local/lib/xlines/config', _dir_fname), user_exdirs)
 
     except OSError:
         fx = inspect.stack()[0][3]
@@ -341,7 +355,7 @@ def init_cli():
 
     # validate configuration files
     if precheck(ex_files, ex_dirs, args.debug):
-        _ct_threshold = set_hicount_threshold() or local_config['CONFIG']['COUNT_HI_THRESHOLD']
+        _ct_threshold = set_hicount_threshold() or local_config['OUTPUT']['COUNT_HI_THRESHOLD']
 
     if len(sys.argv) == 1 or args.help:
         help_menu()

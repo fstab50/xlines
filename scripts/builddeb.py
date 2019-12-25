@@ -16,7 +16,7 @@ Summary.
 
 Author:
     Blake Huber
-    Copyright 2017-2019, All Rights Reserved.
+    Copyright 2017-2020, All Rights Reserved.
 
 License:
     General Public License v3
@@ -42,28 +42,26 @@ import fileinput
 import tarfile
 from shutil import copy2 as copyfile
 from shutil import copytree, rmtree, which
-import docker
-from pyaws.utils import stdout_message
-from pyaws import Colors
-from __init__ import logger                 # global logger
+from libtools import Colors, stdout_message
+from loggers import logger                 # global logger
 
 
 try:
-    from pyaws.core.oscodes_unix import exit_codes
+    from libtools.oscodes_unix import exit_codes
 except Exception:
-    from pyaws.core.oscodes_win import exit_codes    # non-specific os-safe codes
+    from libtools.oscodes_win import exit_codes    # non-specific os-safe codes
+
+
+global PROJECT_BIN
+PROJECT_BIN = 'xlines'
+
+c = Colors()
 
 """
 REFERENCES:
     - https://wiki.debian.org/Python/Pybuild
     - https://wiki.debian.org/Python/LibraryStyleGuide
     - https://packaging.python.org/overview
-
----
-
-CONTAINER:
-apt install debhelper dh-python python-all python-setuptools python3-all python3-setuptools
-apt install dh-virtualenv python3-venv fakeroot devscripts
 
 ----
 
@@ -72,36 +70,19 @@ builddeb script functionality from testing:
 # increment version
 +1 xlines/_version.py
 
-# make source-install
-install into local venv
-
-# generate bytecode
-
-# copy any components needed (libtools) to _root/
-
-# copy exclusions files into package distribution:
-cp -r _root/config/*.list  _root/xlines/    # end up with xlines/config/directories.list
-                                                          xlines/config/exclusions.list
-
-## rm -f xlines/config/anything that is not *.list
-for i in  list(filter(lambda x: not x.endswith('.list'), os.listdir(_root/ + 'config'))):
-    os.remove(i)
-
-# copy debian distribution archive artifacts to _buildroot (debian dir) as shown in the reference
-# checked into the repo _root/debian:
-copyfile(_root/packaging/deb/debian, _root/)
-
-# substitute any Build-depends packages into the _root/debian/control file --OR--
-copy the entire module folder from venv _root/  (next to debian dir)
+# Substitute new version number into control file for VERSION
 
 # build pkg
+dpkg-deb --build <archive dir>
+OR
 sudo dpkg-buildpackage -us -uc
+
 
 """
 
 
 # globals
-PROJECT = 'xlines'
+PROJECT = 'python3-xlines'
 module = os.path.basename(__file__)
 TMPDIR = '/tmp/build'
 VOLMNT = '/tmp/deb'
@@ -109,18 +90,16 @@ CONTAINER_VOLMNT = '/mnt/deb'
 PACKAGE_CONFIG = '.debian.json'
 DISTRO_LIST = ['ubuntu14.04', 'ubuntu16.04', 'ubuntu18.04']
 
-# docker
-dclient = docker.from_env()
-
 # formatting
 act = Colors.ORANGE                     # accent highlight (bright orange)
 bd = Colors.BOLD + Colors.WHITE         # title formatting
+bdwt = c.BOLD + c.BRIGHT_WHITE
 bn = Colors.CYAN                        # color for main binary highlighting
 lk = Colors.DARK_BLUE                    # color for filesystem path confirmations
 red = Colors.RED                        # color for failed operations
 yl = Colors.GOLD3                       # color when copying, creating paths
 rst = Colors.RESET                      # reset all color, formatting
-
+arrow = yl + Colors.BOLD + '-->' + rst
 
 def git_root():
     """
@@ -341,23 +320,26 @@ def tar_archive(archive, source_dir):
     return False
 
 
-def create_builddirectory(path, version, force):
+def create_builddirectory(param_dict, path, version, force):
     """
-    Summary:
+
         - Creates the deb package binary working directory
         - Checks if build artifacts preexist; if so, halts
         - If force is True, continues even if artifacts exist (overwrites)
+
     Returns:
-        Success | Failure, TYPE: bool
+        builddir, TYPE: str
+
     """
     try:
-        print('\nversion IS: %s' % version)
 
-        builddir = PROJECT + '-' + version + '_amd64'
-        print('\nBUILDDIR IS: %s' % builddir)
+        PROJECT = param_dict['Project']
+        builddir = PROJECT + '_' + version + '_amd64'
+        stdout_message(message='BUILDDIR IS: {}'.format(builddir))
+
         # rm builddir when force if exists
         if force is True and builddir in os.listdir(path):
-            rmtree(path + '/' + builddir)
+            rmtree(os.path.join(path, builddir))
 
         elif force is False and builddir in os.listdir(path):
             stdout_message(
@@ -368,7 +350,7 @@ def create_builddirectory(path, version, force):
             return None
 
         # create build directory
-        os.mkdir(path + '/' + builddir)
+        os.mkdir(os.path.join(path, builddir))
 
     except OSError as e:
         logger.exception(
@@ -377,7 +359,23 @@ def create_builddirectory(path, version, force):
     return builddir
 
 
-def builddir_structure(param_dict, version):
+def operation_status(source, destination):
+    """Validates copy operations complete successfully"""
+    if os.path.exists(destination):
+        stdout_message(
+                message='Copied:\t{} {} {}'.format(lk + source + rst, arrow, lk + destination + rst),
+                prefix='OK'
+            )
+        return True
+    else:
+        stdout_message(
+                message='Failure to copy:\t{} to {}'.format(lk + source + rst, lk + destination + rst),
+                prefix='WARN'
+            )
+    return False
+
+
+def builddir_structure(param_dict, builddir, version):
     """
     Summary.
 
@@ -397,17 +395,33 @@ def builddir_structure(param_dict, version):
         Success | Failure, TYPE: bool
 
     """
-    root = git_root()
-    project_dirname = root.split('/')[-1]
-    core_dir = root + '/' + 'core'
-    build_root = TMPDIR
+    def _mapper(venv_dir):
+        """Identifies path to python modules in virtual env"""
+        for i in (6, 7, 8, 9):
+            path = venv_dir + '/lib/python3.' + str(i) + '/site-packages/'
+            if os.path.exists(path):
+                return path
 
+    def module_search(module, packages_path):
+        t = []
+        for i in os.listdir(packages_path):
+            if re.search(module, i, re.IGNORECASE):
+                t.append(i)
+        return t
+
+    root = git_root()
+    project_dirname = os.path.split(git_root())[1]
+    build_root = TMPDIR
 
     # files
     binary = param_dict['Executable']
     control_file = param_dict['ControlFile']['Name']
     compfile = param_dict['BashCompletion']
-    builddir = param_dict['ControlFile']['BuildDirName']
+
+    # LIB source files
+    env = os.environ.get('VIRTUAL_ENV') or root
+    lib_src = _mapper(env)
+    lib_src = os.path.join(root, PROJECT_BIN)
 
     # full paths
     builddir_path = build_root + '/' + builddir
@@ -415,15 +429,11 @@ def builddir_structure(param_dict, version):
     debian_dir = 'DEBIAN'
     debian_path = deb_src + '/' + debian_dir
     binary_path = builddir_path + '/usr/local/bin'
-    lib_path = builddir_path + '/usr/local/lib/' + PROJECT
-    comp_src = root + '/' + 'bash'
+    lib_dst = builddir_path + '/usr/local/lib'
+    comp_src = os.path.join(root, 'bash')
     comp_dst = builddir_path + '/etc/bash_completion.d'
 
-    arrow = yl + Colors.BOLD + '-->' + rst
-
     try:
-
-        stdout_message(f'Assembling build directory artifacts in {bn + builddir + rst}')
 
         # create build directory
         if os.path.exists(builddir_path):
@@ -434,86 +444,63 @@ def builddir_structure(param_dict, version):
                 prefix='OK'
             )
 
-        if not os.path.exists(builddir_path + '/' + debian_dir):
-            copytree(debian_path, builddir_path + '/' + debian_dir)
-            # status msg
-            _src_path = '../' + project_dirname + debian_path.split(project_dirname)[1]
-            _dst_path = '../' + project_dirname + (builddir_path + '/' + debian_dir).split(project_dirname)[1]
-            stdout_message(
-                    message='Copied:\t{} {} {}'.format(lk + _src_path + rst, arrow, lk + _dst_path + rst),
-                    prefix='OK'
-                )
+        stdout_message(f'Copying DEBIAN package control files to {bn + builddir + rst}')
 
+        _src = os.path.join(deb_src, debian_dir)
+        _dst = os.path.join(builddir_path, debian_dir)
+        copytree(_src, _dst)
+        operation_status(_src, _dst)
+
+        stdout_message(f'Creating build directory subdirectories in {bn + builddir + rst}')
+
+        # binary exec
         if not os.path.exists(binary_path):
             os.makedirs(binary_path)
-            _dst_path = '../' + project_dirname + binary_path.split(project_dirname)[1]
-            stdout_message(
-                    message='Created:\t{}'.format(lk + _dst_path + rst),
-                    prefix='OK'
-                )
-
-        if not os.path.exists(binary_path + '/' + PROJECT):
-            binary_src = PROJECT_ROOT + '/' + binary
-            binary_dst = binary_path + '/' + binary
-            copyfile(binary_src, binary_dst)
+            _src_path = os.path.join(env, 'bin', 'xlines')
+            _dst_path = os.path.join(binary_path, 'xlines')
+            copyfile(_src_path, _dst_path)
             # status msg
-            _src_path = '../' + project_dirname + '/' + os.path.split(binary_src)[1]
-            _dst_path = '../' + project_dirname + '/' + os.path.split(binary_dst)[1]
             stdout_message(
                     message='Copied:\t{} {} {}'.format(lk + _src_path + rst, arrow, lk + _dst_path + rst),
                     prefix='OK'
                 )
 
-        if not os.path.exists(lib_path):
+        # library components
+        if not os.path.exists(lib_dst):
+            os.makedirs(lib_dst)
 
-            os.makedirs(lib_path)     # create library dir in builddir
+        _src = lib_src
+        _dst = os.path.join(lib_dst, PROJECT_BIN)
+        copytree(_src, _dst)
 
-            # status msg branching
-            _dst_path = '../' + project_dirname + lib_path.split(project_dirname)[1]
-            if os.path.exists(lib_path):
-                stdout_message(
-                        message='Created:\t{}'.format(lk + _dst_path + rst),
-                        prefix='OK'
-                    )
-            else:
-                stdout_message(
-                        message='Failed to create:\t{}'.format(lk + _dst_path + rst),
-                        prefix='FAIL'
-                    )
-
-        for libfile in os.listdir(core_dir):
-            if os.path.exists(lib_path + '/' + libfile):
-                stdout_message(f'{libfile} target exists - skip adding to builddir')
-
-            if libfile.endswith('.log'):
-                # log file, do not place in build
-                logger.info(f'{libfile} is log file - skip adding to builddir')
-
-            else:
-                # place lib files in build
-                lib_src = core_dir + '/' + libfile
-                lib_dst = lib_path + '/' + libfile
-                copyfile(lib_src, lib_dst)
-                # status msg
-                _src_path = '../' + project_dirname + lib_src.split(project_dirname)[1]
-                _dst_path = '../' + project_dirname + lib_dst.split(project_dirname)[1]
-                stdout_message(
-                        message='Copied:\t{} {} {}'.format(lk + _src_path + rst, arrow, lk + _dst_path + rst),
-                        prefix='OK'
-                    )
+        stdout_message(
+                message='Copied:\t{} {} {}'.format(lk + _src + rst, arrow, lk + _dst + rst),
+                prefix='OK'
+            )
 
         if not os.path.exists(comp_dst):
             # create path
             os.makedirs(comp_dst)
-            _dst_path = '../' + project_dirname + comp_dst.split(project_dirname)[1]
-            stdout_message(
-                    message='Created:\t{}'.format(lk + _dst_path + rst),
-                    prefix='OK'
-                )
-
             # copy
             for artifact in list(filter(lambda x: x.endswith('.bash'), os.listdir(comp_src))):
-                copyfile(comp_src + '/' + artifact, comp_dst + '/' + artifact)
+                _src = comp_src + '/' + artifact
+                _dst = comp_dst + '/' + artifact
+                copyfile(_src, _dst)
+
+                stdout_message(
+                        message='Copied:\t{} {} {}'.format(lk + _src + rst, arrow, lk + _dst + rst),
+                        prefix='OK'
+                    )
+
+        stdout_message(f'Creating config subdirectory in {bn + lib_dst + rst}')
+
+        os.makedirs(os.path.join(lib_dst, PROJECT_BIN, 'config'))
+        source = os.path.join(root, 'config')
+
+        for file in list(filter(lambda x: x.endswith('.list'), os.listdir(source))):
+            _src = os.path.join(source, file)
+            _dst = os.path.join(lib_dst, PROJECT_BIN, 'config', file)
+            copyfile(_src, _dst)
 
     except OSError as e:
         logger.exception(
@@ -560,7 +547,7 @@ def build_package(build_root, builddir):
     return True
 
 
-def builddir_content_updates(param_dict, osimage, version):
+def builddir_content_updates(param_dict, osimage, builddir, version):
     """
     Summary.
 
@@ -592,10 +579,7 @@ def builddir_content_updates(param_dict, osimage, version):
     minor = version.split('.')[-1]
 
     # files
-    binary = param_dict['Executable']
-    builddir = param_dict['ControlFile']['BuildDirName']
     version_module = param_dict['VersionModule']
-    dockeruser = param_dict['DockerUser']
     issues_url = param_dict['IssuesUrl']
     project_url = param_dict['ProjectUrl']
     buildarch = param_dict['ControlFile']['BuildArch']
@@ -604,9 +588,7 @@ def builddir_content_updates(param_dict, osimage, version):
     builddir_path = build_root + '/' + builddir
     debian_path = builddir_path + '/' + debian_dir
     control_filepath = debian_path + '/' + control_filename
-    binary_path = builddir_path + '/usr/local/bin'
-    lib_src = root + '/' + 'core'
-    lib_dst = builddir_path + '/usr/local/lib/' + PROJECT
+    lib_dst = builddir_path + '/usr/local/lib/' + PROJECT_BIN
 
     # assemble dependencies
     deplist = None
@@ -617,25 +599,6 @@ def builddir_content_updates(param_dict, osimage, version):
             deplist = deplist + ', ' + str(dep)
 
     try:
-        # main exec bin: update pkg_lib path, LOG_DIR
-        with open(binary_path + '/' + binary) as f1:
-            f2 = f1.readlines()
-
-            for index, line in enumerate(f2):
-                if line.startswith('pkg_lib='):
-                    newline = 'pkg_lib=' + '\"' + '/usr/local/lib/' + PROJECT + '\"\n'
-                    f2[index] = newline
-
-                elif line.startswith('LOG_DIR='):
-                    logline = 'LOG_DIR=' + '\"' + '/var/log' + '\"\n'
-                    f2[index] = logline
-            f1.close()
-
-        # rewrite bin
-        with open(binary_path + '/' + binary, 'w') as f3:
-            f3.writelines(f2)
-            path = project_dirname + (binary_path + '/' + binary)[len(root):]
-            stdout_message('Bin {} successfully updated.'.format(yl + path + rst))
 
         # debian control files
         with open(control_filepath) as f1:
@@ -650,52 +613,25 @@ def builddir_content_updates(param_dict, osimage, version):
         with open(control_filepath, 'w') as f3:
             f3.writelines(f2)
             path = project_dirname + (control_filepath)[len(root):]
-            stdout_message('Control file {} version updated.'.format(yl + path + rst))
+            stdout_message(
+                'Control file {} version updated: {}.'.format(yl + control_filepath + rst, version)
+            )
 
         ## rewrite version file with current build version in case delta ##
 
         # orig source version module
-        with open(lib_src + '/' + version_module, 'w') as f3:
-            f2 = ['__version__=\"' + version + '\"\n']
+        with open(LIB_SRC + '/' + version_module, 'w') as f3:
+            f2 = ['__version__ = \"' + version + '\"\n']
             f3.writelines(f2)
-            path = project_dirname + (lib_src + '/' + version_module)[len(root):]
-            stdout_message('Module {} successfully updated.'.format(yl + path + rst))
+            path = os.path.join(root, PROJECT_BIN, version_module)
+            stdout_message('Module {} successfully updated: {}.'.format(yl + path + rst, version))
 
         # package version module
         with open(lib_dst + '/' + version_module, 'w') as f3:
-            f2 = ['__version__=\"' + version + '\"\n']
+            f2 = ['__version__ = \"' + version + '\"\n']
             f3.writelines(f2)
-            path = project_dirname + (lib_dst + '/' + version_module)[len(root):]
-            stdout_message('Module {} successfully updated.'.format(yl + path + rst))
-
-        ## Debian control file content updates ##
-
-        if os.path.exists(control_filepath):
-            # update specfile - major version
-            for line in fileinput.input([control_filepath], inplace=True):
-                print(line.replace('ISSUES_URL', issues_url), end='')
-            stdout_message(f'Updated {control_filepath} with ISSUES_URL', prefix='OK')
-
-            # update specfile - minor version
-            for line in fileinput.input([control_filepath], inplace=True):
-                print(line.replace('DEPLIST', deplist), end='')
-            stdout_message(
-                'Updated {} with dependcies ({})'.format(yl + control_filepath + rst, deplist),
-                prefix='OK')
-
-            # update specfile - Dependencies
-            for line in fileinput.input([control_filepath], inplace=True):
-                print(line.replace('PROJECT_URL', project_url), end='')
-            stdout_message(
-                'Updated {} with project url ({})'.format(yl + control_filepath + rst, project_url),
-                prefix='OK')
-
-            # update specfile - Dependencies
-            for line in fileinput.input([control_filepath], inplace=True):
-                print(line.replace('BUILD_ARCH', buildarch), end='')
-            stdout_message(
-                'Updated {} with arch ({})'.format(yl + control_filepath + rst, buildarch),
-                prefix='OK')
+            path = os.path.join(lib_dst, version_module)
+            stdout_message('Module {} successfully updated: {}.'.format(yl + path + rst, version))
 
     except OSError as e:
         logger.exception(
@@ -779,8 +715,6 @@ def main(setVersion, environment, force=False, debug=False):
     Returns:
         Success | Failure, TYPE: bool
     """
-    global PROJECT_BIN
-    PROJECT_BIN = 'xlines'
     global PROJECT_ROOT
     PROJECT_ROOT = git_root()
     global SCRIPT_DIR
@@ -788,10 +722,10 @@ def main(setVersion, environment, force=False, debug=False):
     DEBIAN_ROOT = PROJECT_ROOT + '/' + 'packaging/deb'
     global BUILD_ROOT
     BUILD_ROOT = TMPDIR
-    global LIB_DIR
-    LIB_DIR = PROJECT_ROOT + '/' + 'core'
+    global LIB_SRC
+    LIB_SRC = PROJECT_ROOT + '/' + PROJECT_BIN
     global CURRENT_VERSION
-    CURRENT_VERSION = current_version(PROJECT_BIN, LIB_DIR + '/' 'version.py')
+    CURRENT_VERSION = current_version(PROJECT_BIN, LIB_SRC + '/' 'version.py')
 
     # sort out version numbers, forceVersion is override      #
     # for all info contained in project                       #
@@ -808,11 +742,8 @@ def main(setVersion, environment, force=False, debug=False):
         sys.exit(exit_codes['E_DEPENDENCY']['Code'])
 
     # log
-    stdout_message(f'Current version of last build: {CURRENT_VERSION}')
-    stdout_message(f'Version to be used for this build: {VERSION}')
-
-    # create initial binary working dir
-    BUILDDIRNAME = create_builddirectory(BUILD_ROOT, VERSION, force)
+    stdout_message(f'Current version of last build: {bdwt + CURRENT_VERSION + rst}')
+    stdout_message(f'Version to be used for this build: {bdwt + VERSION + rst}')
 
     # sub in current values
     parameter_obj = ParameterSet(PROJECT_ROOT + '/' + PACKAGE_CONFIG, VERSION)
@@ -820,13 +751,20 @@ def main(setVersion, environment, force=False, debug=False):
 
     VERSION_FILE = vars['VersionModule']
 
+    update_version_module(VERSION, os.path.join(LIB_SRC, VERSION_FILE))
+
+    # create initial binary working dir
+    BUILDDIRNAME = create_builddirectory(vars, BUILD_ROOT, VERSION, force)
+
     if debug:
+        print('BUILDDIRNAME returned is: {}'.format(BUILDDIRNAME))
         print(json.dumps(vars, indent=True, sort_keys=True))
 
     if BUILDDIRNAME:
 
-        r_struture = builddir_structure(vars, VERSION)
-        r_updates = builddir_content_updates(vars, environment, VERSION)
+        r_struture = builddir_structure(vars, BUILDDIRNAME, VERSION)
+        r_updates = builddir_content_updates(vars, environment, BUILDDIRNAME, VERSION)
+        sys.exit(0)
 
         if r_struture and r_updates and build_package(BUILD_ROOT, BUILDDIRNAME):
             return postbuild(VERSION, VERSION_FILE, BUILD_ROOT + '/' + BUILDDIRNAME, DEBIAN_ROOT)
@@ -920,31 +858,30 @@ def prebuild(builddir, volmnt, parameter_file):
     os.makedirs(volmnt)
 
     root = git_root()
-    lib_relpath = 'core'
+    lib_relpath = PROJECT_BIN
     lib_path = root + '/' + lib_relpath
     sources = [lib_path]
     illegal = ['__pycache__']
     module = inspect.stack()[0][3]
+    fx = inspect.stack()[0][3]
 
     try:
 
         global __version__
         sys.path.insert(0, os.path.abspath(git_root() + '/' + lib_relpath))
 
-        from version import __version__
+        from _version import __version__
 
         # normalize path
         sys.path.pop(0)
 
     except ImportError as e:
         logger.exception(
-                message='Problem importing program version module (%s). Error: %s' %
-                (__file__, str(e)),
-                prefix='WARN'
+                '{}: Problem importing program version module (%s). Error: %s' % (fx, __file__, str(e))
             )
     except Exception as e:
         logger.exception(
-            '{}: Failure to import _version module _version'.format(inspect.stack()[0][3])
+            '{}: Failure to import _version module _version'.format(fx)
         )
         return False
 
@@ -987,14 +924,6 @@ def postbuild(version, version_module, builddir_path, debian_root):
         if os.path.exists(builddir_path):
             rmtree(builddir_path)
 
-        # rewrite version file with current build version
-        with open(root + '/core/' + version_module, 'w') as f3:
-            f2 = ['__version__=\"' + version + '\"\n']
-            f3.writelines(f2)
-            path = project_dirname + (root + '/core/' + version_module)[len(root):]
-            stdout_message(
-                '{}: Module {} successfully updated.'.format(inspect.stack()[0][3], yl + path + rst)
-                )
         if display_package_contents(BUILD_ROOT, VERSION):
             return package_path
 
@@ -1058,6 +987,20 @@ class ParameterSet():
         return parameters
 
 
+def update_version_module(version, module):
+    # rewrite version file with current build version
+    with open(module, 'w') as f3:
+        f2 = ['__version__ =\"' + version + '\"\n']
+        f3.writelines(f2)
+
+    fmodule = yl + module + rst
+    fx = inspect.stack()[0][3]
+    stdout_message(
+        '{}: Module {} successfully updated with version {}.'.format(fx, fmodule, version)
+        )
+    return True
+
+
 def valid_version(parameter, min=0, max=100):
     """
     Summary.
@@ -1117,7 +1060,7 @@ def init_cli():
 
     if args.debug:
         stdout_message(
-                message='forceVersion:\t{}'.format(args.fVersion),
+                message='forceVersion:\t{}'.format(args.set),
                 prefix='DBUG',
                 severity='WARNING'
             )

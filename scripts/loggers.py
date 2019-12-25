@@ -20,3 +20,6 @@ def getLogger(*args, **kwargs):
         logger.addHandler(handler)
         logger.setLevel(logging.DEBUG)
     return logger
+
+
+logger = getLogger('buildscript 1.0')
