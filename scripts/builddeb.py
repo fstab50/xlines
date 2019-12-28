@@ -588,7 +588,7 @@ def builddir_content_updates(param_dict, osimage, builddir, version):
     builddir_path = build_root + '/' + builddir
     debian_path = builddir_path + '/' + debian_dir
     control_filepath = debian_path + '/' + control_filename
-    lib_dst = builddir_path + '/usr/local/lib/' + PROJECT_BIN
+    lib_dst = builddir_path + '/usr/local/lib/python3/dist-packages/' + PROJECT_BIN
 
     # assemble dependencies
     deplist = None
