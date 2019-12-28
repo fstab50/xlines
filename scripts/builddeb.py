@@ -429,7 +429,7 @@ def builddir_structure(param_dict, builddir, version):
     debian_dir = 'DEBIAN'
     debian_path = deb_src + '/' + debian_dir
     binary_path = builddir_path + '/usr/local/bin'
-    lib_dst = builddir_path + '/usr/local/lib'
+    lib_dst = builddir_path + '/usr/local/lib/python3/dist-packages'
     comp_src = os.path.join(root, 'bash')
     comp_dst = builddir_path + '/etc/bash_completion.d'
 
