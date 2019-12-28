@@ -764,7 +764,6 @@ def main(setVersion, environment, force=False, debug=False):
 
         r_struture = builddir_structure(vars, BUILDDIRNAME, VERSION)
         r_updates = builddir_content_updates(vars, environment, BUILDDIRNAME, VERSION)
-        sys.exit(0)
 
         if r_struture and r_updates and build_package(BUILD_ROOT, BUILDDIRNAME):
             return postbuild(VERSION, VERSION_FILE, BUILD_ROOT + '/' + BUILDDIRNAME, DEBIAN_ROOT)
