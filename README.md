@@ -150,9 +150,63 @@ $  sudo -H pip3 install xlines
 
 * * *
 <a name="debian-distro-install"></a>
-### Ubuntu, Linux Mint, Debian variants
+### Ubuntu, Linux Mint, Debian variants  (Python 3.6)
 
-**xlines** is not yet offered in native Debian Linux package format.  Please use [pip to install **xlines**](#installation)
+The easiest way to install **xlines** on debian-based Linux distributions is via the debian-tools package repository:
+
+
+1. Open a command line terminal.
+
+    [![deb-install0](./assets/deb-install-0.png)](http://images.awspros.world/xlines/deb-install-0.png)
+
+2. Download and install the repository definition file
+
+    ```
+    $ sudo apt install wget
+    ```
+
+    ```
+    $ wget http://awscloud.center/deb/debian-tools.list
+    ```
+
+    [![deb-install1](./assets/deb-install-1.png)](http://images.awspros.world/xlines/deb-install-1.png)
+
+    ```
+    $ sudo chown 0:0 debian-tools.list && sudo mv debian-tools.list /etc/apt/sources.list.d/
+    ```
+
+3. Install the package repository public key on your local machine
+
+    ```
+    $ wget -qO - http://awscloud.center/keys/public.key | sudo apt-key add -
+    ```
+
+    [![deb-install2](./assets/deb-install-2.png)](http://images.awspros.world/xlines/deb-install-2.png)
+
+4. Update the local package repository cache
+
+    ```
+    $ sudo apt update
+    ```
+
+5. Install **xlines** os package
+
+    ```
+    $ sudo apt install python3-xlines
+    ```
+
+    Answer "y":
+
+    [![deb-install3](./assets/deb-install-3.png)](http://images.awspros.world/xlines/deb-install-3.png)
+
+
+6. Verify Installation
+
+    ```
+    $ apt show python3-xlines
+    ```
+
+    [![rpm-install4](./assets/rpm-install-4.png)](http://images.awspros.world/xlines/rpm-install-4.png)
 
 
 [back to the top](#top)

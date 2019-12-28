@@ -30,16 +30,16 @@ BOLD=`tput bold`
 UNBOLD=`tput sgr0`
 
 echo ""
-echo -e "${reset}===============================================================${reset}" | indent02
+echo "${reset}===============================================================${reset}" | indent02
 echo ""
 echo  "       $W HOST   : ${BOLD}${blue}Docker $HOSTNAME${reset}${UNBOLD} "
 echo  "       $R ARCH   : ${cyan}$ARCH${reset}        "
 echo  "       $R KERNEL : ${cyan}$KERNEL${reset}      "
 echo  "       $R CPU    : ${cyan}$CPU${reset}         "
 echo  "       $R Uptime : ${cyan}$UTIME${reset}       "
-echo -e "${blue}"
-echo -e "       "Ubuntu 18.10" "| figlet -f shadow
-echo  -e "${reset}===============================================================${reset}" | indent02
+echo "${blue}"
+echo "       "Ubuntu 18.10" "| figlet -f shadow
+echo "${reset}===============================================================${reset}" | indent02
 echo ""
 
 
