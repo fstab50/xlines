@@ -197,7 +197,7 @@ The easiest way to install **xlines** on debian-based Linux distributions is via
 
     Answer "y":
 
-    [![rpm-install3](./assets/rpm-install-3.png)](http://images.awspros.world/xlines/rpm-install-3.png)
+    [![deb-install3](./assets/deb-install-3.png)](http://images.awspros.world/xlines/deb-install-3.png)
 
 
 6. Verify Installation
