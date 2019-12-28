@@ -420,7 +420,7 @@ def builddir_structure(param_dict, builddir, version):
 
     # LIB source files
     env = os.environ.get('VIRTUAL_ENV') or root
-    lib_src = _mapper(env)
+    #lib_src = _mapper(env)
     lib_src = os.path.join(root, PROJECT_BIN)
 
     # full paths
@@ -429,7 +429,7 @@ def builddir_structure(param_dict, builddir, version):
     debian_dir = 'DEBIAN'
     debian_path = deb_src + '/' + debian_dir
     binary_path = builddir_path + '/usr/local/bin'
-    lib_dst = builddir_path + '/usr/local/lib'
+    lib_dst = builddir_path + '/usr/local/lib/python3.6/dist-packages'
     comp_src = os.path.join(root, 'bash')
     comp_dst = builddir_path + '/etc/bash_completion.d'
 
@@ -456,7 +456,7 @@ def builddir_structure(param_dict, builddir, version):
         # binary exec
         if not os.path.exists(binary_path):
             os.makedirs(binary_path)
-            _src_path = os.path.join(env, 'bin', 'xlines')
+            _src_path = os.path.join(deb_src, 'bin', 'xlines')
             _dst_path = os.path.join(binary_path, 'xlines')
             copyfile(_src_path, _dst_path)
             # status msg
@@ -588,7 +588,7 @@ def builddir_content_updates(param_dict, osimage, builddir, version):
     builddir_path = build_root + '/' + builddir
     debian_path = builddir_path + '/' + debian_dir
     control_filepath = debian_path + '/' + control_filename
-    lib_dst = builddir_path + '/usr/local/lib/' + PROJECT_BIN
+    lib_dst = builddir_path + '/usr/local/lib/python3.6/dist-packages/' + PROJECT_BIN
 
     # assemble dependencies
     deplist = None
@@ -764,7 +764,6 @@ def main(setVersion, environment, force=False, debug=False):
 
         r_struture = builddir_structure(vars, BUILDDIRNAME, VERSION)
         r_updates = builddir_content_updates(vars, environment, BUILDDIRNAME, VERSION)
-        sys.exit(0)
 
         if r_struture and r_updates and build_package(BUILD_ROOT, BUILDDIRNAME):
             return postbuild(VERSION, VERSION_FILE, BUILD_ROOT + '/' + BUILDDIRNAME, DEBIAN_ROOT)
