@@ -253,8 +253,7 @@ The easiest way to install **xlines** on redhat-based Linux distributions is via
     $ sudo yum update -y
     ```
 
-
-4. Install **xlines** os package
+4. Install the **python3-xlines** os package
 
     ```
     $ sudo yum install python36-xlines
