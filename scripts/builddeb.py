@@ -420,7 +420,7 @@ def builddir_structure(param_dict, builddir, version):
 
     # LIB source files
     env = os.environ.get('VIRTUAL_ENV') or root
-    lib_src = _mapper(env)
+    #lib_src = _mapper(env)
     lib_src = os.path.join(root, PROJECT_BIN)
 
     # full paths
@@ -456,7 +456,7 @@ def builddir_structure(param_dict, builddir, version):
         # binary exec
         if not os.path.exists(binary_path):
             os.makedirs(binary_path)
-            _src_path = os.path.join(env, 'bin', 'xlines')
+            _src_path = os.path.join(deb_src, 'bin', 'xlines')
             _dst_path = os.path.join(binary_path, 'xlines')
             copyfile(_src_path, _dst_path)
             # status msg
