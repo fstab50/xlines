@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 
 # copy configuration files to local
-if [ $SUDO_USER ] && [ ! -f "/home/$SUDO_USER/.config/xlines" ]; then
+if [ $SUDO_USER ] && [ ! -d "/home/$SUDO_USER/.config/xlines" ]; then
 
 	mkdir "/home/$SUDO_USER/.config/xlines"
 	chown -R $SUDO_USER:$SUDO_USER  "/home/$SUDO_USER/.config/xlines"
 
-elif [ ! -f "/home/$USER/.config/xlines" ]; then
+elif [ ! -d "/home/$USER/.config/xlines" ]; then
 
 	mkdir "/home/$USER/.config/xlines"
-	
+
 fi
 
 # End automatically added section
