@@ -428,8 +428,8 @@ def builddir_structure(param_dict, builddir, version):
     deb_src = root + '/packaging/deb'
     debian_dir = 'DEBIAN'
     debian_path = deb_src + '/' + debian_dir
-    binary_path = builddir_path + '/usr/local/bin'
-    lib_dst = builddir_path + '/usr/local/lib/python3.6/dist-packages'
+    binary_path = builddir_path + '/usr/bin'
+    lib_dst = builddir_path + '/usr/lib/python3/dist-packages'
     comp_src = os.path.join(root, 'bash')
     comp_dst = builddir_path + '/etc/bash_completion.d'
 
@@ -588,7 +588,7 @@ def builddir_content_updates(param_dict, osimage, builddir, version):
     builddir_path = build_root + '/' + builddir
     debian_path = builddir_path + '/' + debian_dir
     control_filepath = debian_path + '/' + control_filename
-    lib_dst = builddir_path + '/usr/local/lib/python3.6/dist-packages/' + PROJECT_BIN
+    lib_dst = builddir_path + '/usr/lib/python3/dist-packages/' + PROJECT_BIN
 
     # assemble dependencies
     deplist = None
