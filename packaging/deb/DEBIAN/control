@@ -7,8 +7,8 @@ Bugs: https://github/fstab50/xlines/issues
 Installed-Size: 182 kB
 Architecture: amd64
 Build-Depends: dpkg (>= 1.16.1), debhelper (>=9), python3
-Pre-Depends: dpkg (>= 1.16.1), python3.6-minimal | python3.7-minimal, ${misc:Pre-Depends}
-Depends:  bash-completion, python3-pygments, ${python3:Depends}, ${misc:Depends}
+Pre-Depends: dpkg (>= 1.16.1), python3.6-minimal | python3.7-minimal
+Depends:  bash-completion, python3-pygments, python3:any (>= 3.6)
 Download-Size: 48 kB
 Standards-Version: 3.9.6
 Description:  Measure lines of code in programming projects
