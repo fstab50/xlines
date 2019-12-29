@@ -133,7 +133,7 @@ build: artifacts  ## Build dist artifact and increment version
 .PHONY: builddeb
 builddeb: clean-version clean-builddir source-install  ## Build Debian distribution (.deb) os package
 	@printf "Building Debian package format of $(PROJECT)";
-	if [ $(VERSION) ]; then . $(VENV_DIR)/bin/activate && \
+	if [ $(VERSION) ]; then cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
 	$(PYTHON3_PATH) $(SCRIPT_DIR)/builddeb.py --build --set-version $(VERSION); \
 	else cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
 	$(PYTHON3_PATH) $(SCRIPT_DIR)/builddeb.py --build; fi
@@ -282,3 +282,4 @@ clean: clean-docs clean-containers  ## Remove generic build artifacts
 	rm -rf $(CUR_DIR)/.pytest_cache || true
 	rm -rf $(CUR_DIR)/build || true
 	rm -rf $(SCRIPT_DIR)/_version.py || true
+	rm -rf $(SCRIPT_DIR)/__pycache__ || true
