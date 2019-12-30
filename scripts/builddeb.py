@@ -52,37 +52,9 @@ except Exception:
     from libtools.oscodes_win import exit_codes    # non-specific os-safe codes
 
 
-global PROJECT_BIN
-PROJECT_BIN = 'xlines'
-
-c = Colors()
-
-"""
-REFERENCES:
-    - https://wiki.debian.org/Python/Pybuild
-    - https://wiki.debian.org/Python/LibraryStyleGuide
-    - https://packaging.python.org/overview
-
-----
-
-builddeb script functionality from testing:
-
-# increment version
-+1 xlines/_version.py
-
-# Substitute new version number into control file for VERSION
-
-# build pkg
-dpkg-deb --build <archive dir>
-OR
-sudo dpkg-buildpackage -us -uc
-
-
-"""
-
-
 # globals
 PROJECT = 'python3-xlines'
+PROJECT_BIN = 'xlines'
 module = os.path.basename(__file__)
 TMPDIR = '/tmp/build'
 VOLMNT = '/tmp/deb'
@@ -90,16 +62,20 @@ CONTAINER_VOLMNT = '/mnt/deb'
 PACKAGE_CONFIG = '.debian.json'
 DISTRO_LIST = ['ubuntu14.04', 'ubuntu16.04', 'ubuntu18.04']
 
+
+c = Colors()
+
 # formatting
-act = Colors.ORANGE                     # accent highlight (bright orange)
-bd = Colors.BOLD + Colors.WHITE         # title formatting
-bdwt = c.BOLD + c.BRIGHT_WHITE
-bn = Colors.CYAN                        # color for main binary highlighting
-lk = Colors.DARK_BLUE                    # color for filesystem path confirmations
-red = Colors.RED                        # color for failed operations
-yl = Colors.GOLD3                       # color when copying, creating paths
-rst = Colors.RESET                      # reset all color, formatting
-arrow = yl + Colors.BOLD + '-->' + rst
+act = c.ORANGE                          # accent highlight (bright orange)
+bd = c.BOLD + c.WHITE                   # title formatting
+bdwt = c.BOLD + c.BRIGHT_WHITE          # bold, bright white accent highlight
+bn = c.CYAN                             # color for main binary highlighting
+lk = c.DARK_BLUE                        # color for filesystem path confirmations
+red = c.RED                             # color for failed operations
+yl = c.GOLD3                            # color when copying, creating paths
+rst = c.RESET                           # reset all color, formatting
+arrow = yl + c.BOLD + '-->' + rst       # bold, yellow arrow pointing left to right
+
 
 def git_root():
     """
@@ -492,7 +468,7 @@ def builddir_structure(param_dict, builddir, version):
                         prefix='OK'
                     )
 
-        stdout_message(f'Creating config subdirectory in {bn + lib_dst + rst}')
+        stdout_message(f'Creating config subdirectory in {lk + lib_dst + rst}')
 
         os.makedirs(os.path.join(lib_dst, PROJECT_BIN, 'config'))
         source = os.path.join(root, 'config')
@@ -1086,15 +1062,16 @@ def init_cli():
 
         if valid_version(args.set) and prebuild(TMPDIR, VOLMNT, git_root() + '/' + PACKAGE_CONFIG):
 
-            package = main(
+            package_path = main(
                         setVersion=args.set,
                         environment=args.distro,
                         force=args.force,
                         debug=args.debug
                     )
 
-            if package:
-                stdout_message(f'{PROJECT} build package created: {yl + package + rst}')
+            if package_path:
+                path, package = os.path.split(package_path)
+                stdout_message(f'{PROJECT} build package created: {lk + path + rst}/{bn + package + rst}')
                 stdout_message(f'Debian build process completed successfully. End', prefix='OK')
                 return exit_codes['EX_OK']['Code']
             else:

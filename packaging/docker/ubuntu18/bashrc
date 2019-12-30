@@ -105,6 +105,7 @@ complete -C aws_completer aws
 # --------------------------------------------------------------------------------
 
 # User Aliases - bash
+alias ls='ls --color=auto'
 alias v="ls -lh"
 alias va="ls -lhd .*"
 alias vs='ls -lhSr'
@@ -138,4 +139,3 @@ alias more='less'
 
 # Use "highlight" in place of "cat"
 alias lcat="highlight $1 --out-format xterm256 --line-numbers --quiet --force --style solarized-light"
-
