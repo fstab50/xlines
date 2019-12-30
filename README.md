@@ -150,7 +150,7 @@ $  sudo -H pip3 install xlines
 
 * * *
 <a name="debian-distro-install"></a>
-### Ubuntu, Linux Mint, Debian variants  (Python 3.6)
+### Ubuntu, Linux Mint, Debian variants  (Python 3.6, 3.7)
 
 The easiest way to install **xlines** on debian-based Linux distributions is via the debian-tools package repository:
 
