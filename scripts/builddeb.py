@@ -468,7 +468,7 @@ def builddir_structure(param_dict, builddir, version):
                         prefix='OK'
                     )
 
-        stdout_message(f'Creating config subdirectory in {bn + lib_dst + rst}')
+        stdout_message(f'Creating config subdirectory in {lk + lib_dst + rst}')
 
         os.makedirs(os.path.join(lib_dst, PROJECT_BIN, 'config'))
         source = os.path.join(root, 'config')
@@ -1071,7 +1071,7 @@ def init_cli():
 
             if package_path:
                 path, package = os.path.split(package_path)
-                stdout_message(f'{PROJECT} build package created: {yl + path + rst}/{bn + package + rst}')
+                stdout_message(f'{PROJECT} build package created: {lk + path + rst}/{bn + package + rst}')
                 stdout_message(f'Debian build process completed successfully. End', prefix='OK')
                 return exit_codes['EX_OK']['Code']
             else:
