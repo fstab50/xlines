@@ -7,12 +7,16 @@ fi
 
 # copy configuration files to local
 if [ $SUDO_USER ]; then
-
+    
+    printf -- '\n%s\n' "Copying /usr/lib/python3/dist-packags/xlines/config files to local .config directory"
 	cp /usr/lib/python3/dist-packages/xlines/config/*.list  /home/$SUDO_USER/.config/xlines/
 	chown $SUDO_USER:$SUDO_USER  /home/$SUDO_USER/.config/xlines/*.list
 
 else
+    printf -- '\n%s\n' "Copying /usr/lib/python3/dist-packags/xlines/config files to root local home directory"
 	cp /usr/lib/python3/dist-packages/xlines/config/*.list  /home/$USER/.config/xlines/
 fi
 
-# End automatically added section
+exit 0
+
+# <-- end post install script -->

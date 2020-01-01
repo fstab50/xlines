@@ -12,4 +12,6 @@ elif [ ! -d "/home/$USER/.config/xlines" ]; then
 
 fi
 
-# End automatically added section
+exit 0
+
+# <-- end preinstall -->
