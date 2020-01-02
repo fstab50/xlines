@@ -3,11 +3,14 @@
 # copy configuration files to local
 if [ $SUDO_USER ] && [ ! -d "/home/$SUDO_USER/.config/xlines" ]; then
 
+	printf -- '\n%s\n\n' "Creating ~/.config/xlines directory."
 	mkdir "/home/$SUDO_USER/.config/xlines"
+	printf -- '\n%s\n' "Setting ownership of ~/.config/xlines to local user $SUDO_USER."
 	chown -R $SUDO_USER:$SUDO_USER  "/home/$SUDO_USER/.config/xlines"
 
 elif [ ! -d "/home/$USER/.config/xlines" ]; then
 
+	printf -- '\n%s\n\n' "Creating ~/.config/xlines directory."
 	mkdir "/home/$USER/.config/xlines"
 
 fi
