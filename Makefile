@@ -223,6 +223,16 @@ help:   ## Print help index
 	@printf "\u001b[37;1m%-7s\u001b[37;1m%-3s\033[0m %-6s\u001b[44;1m%-9s\u001b[37;0m%-15s\n\n" " " "  make" "deploy-[test|prod] " "VERSION=x.y" " to deploy specific version"
 
 
+.PHONY: debian-help
+debian-help:  ## print help menu options for the debian package creation script
+	$(PYTHON3_PATH) $(SCRIPT_DIR)/builddeb.py
+
+
+.PHONY: rpm-help
+rpm-help:  ## print help menu options for the redhat rpm package creation script
+	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py
+
+
 .PHONY: clean-docs
 clean-docs:    ## Remove build artifacts for documentation only
 	@printf "\n## Clean docs build directory ##\n\n"
