@@ -78,7 +78,7 @@ fi
 
 
 std_message 'Ensuring host docker volume mnt owned by SUDO_USER (/tmp/rpm)' 'INFO'
-sudo chown -R $SUDO_USER:$SUDO_USER /tmp/rpm
+sudo chown -R $USER:$USER /tmp/rpm
 
 # clean
 std_message 'Cleaning up intermediate image artifacts' 'INFO'
