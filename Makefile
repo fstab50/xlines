@@ -139,7 +139,7 @@ builddeb: clean-version clean-builddir source-install  ## Build Debian distribut
 	$(PYTHON3_PATH) $(SCRIPT_DIR)/builddeb.py --build; fi
 
 
-.PHONY: buildrpm-rhel
+.PHONY: buildrpm-rhel7
 buildrpm-rhel: clean setup-venv   ## Build Redhat distribution (.rpm) os package
 	@printf "\n## Begin rpm build for RHEL 7 / Centos 7 ##\n\n";
 	if [ $(VERSION) ]; then cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
@@ -148,6 +148,17 @@ buildrpm-rhel: clean setup-venv   ## Build Redhat distribution (.rpm) os package
 	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py -b -d centos7 -p $(CUR_DIR)/.rpm.json --container; else \
 	cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
 	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py -b --distro centos7 -p $(CUR_DIR)/.rpm.json; fi
+
+
+.PHONY: buildrpm-rhel8
+buildrpm-rhel8: clean setup-venv  ## Build Amazon Linux 2 distribution (.rpm) os package
+	@printf "\n## Begin rpm build for Redhat 8 / CentOS 8 ##\n\n";
+	if [ $(VERSION) ]; then cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
+	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py -b -d centos8 -p $(CUR_DIR)/.centos8.json -s $(VERSION); \
+	elif [ $(RETAIN) ]; then . $(VENV_DIR)/bin/activate && \
+	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py -b -d centos8 -p $(CUR_DIR)/.centos8.json --container; \
+	else cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
+	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py -b -d centos8 -p $(CUR_DIR)/.centos8.json; fi
 
 
 .PHONY: buildrpm-amzn
