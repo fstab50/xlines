@@ -140,7 +140,7 @@ builddeb: clean-version clean-builddir source-install  ## Build Debian distribut
 
 
 .PHONY: buildrpm-rhel7
-buildrpm-rhel: clean setup-venv   ## Build Redhat distribution (.rpm) os package
+buildrpm-rhel7: clean setup-venv   ## Build Redhat distribution (.rpm) os package
 	@printf "\n## Begin rpm build for RHEL 7 / Centos 7 ##\n\n";
 	if [ $(VERSION) ]; then cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
 	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py -b --distro centos7 -p $(CUR_DIR)/.rpm.json -s $(VERSION); \
