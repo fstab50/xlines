@@ -375,7 +375,7 @@ function _xlines_completions(){
     numoptions=0
     numargs="${#COMP_WORDS[@]}"
 
-    options=' --help --exclusions --configure --version'
+    options=' --help --list-exclusions --configure --version'
     commands=' --debug --multiprocess --sum --no-whitespace'
 
 
@@ -440,8 +440,8 @@ function _xlines_completions(){
             return 0
             ;;
 
-        '--e'*)
-            COMPREPLY=( $(compgen -W '--exclusions' -- ${cur}) )
+        '--l'*)
+            COMPREPLY=( $(compgen -W '--list-exclusions' -- ${cur}) )
             return 0
             ;;
 
@@ -474,7 +474,7 @@ function _xlines_completions(){
 
     case "${prev}" in
 
-        '--help' | '--exclusions' | '--version')
+        '--help' | '--list-exclusions' | '--version')
             return 0
             ;;
 
