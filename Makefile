@@ -134,7 +134,7 @@ build: artifacts  ## Build dist artifact and increment version
 builddeb: clean-version clean-builddir source-install  ## Build Debian distribution (.deb) os package
 	@printf "Building Debian package format of $(PROJECT)";
 	if [ $(VERSION) ]; then cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
-	$(PYTHON3_PATH) $(SCRIPT_DIR)/builddeb.py --build --force-set $(VERSION); \
+	$(PYTHON3_PATH) $(SCRIPT_DIR)/builddeb.py --build --set-version $(VERSION); \
 	else cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
 	$(PYTHON3_PATH) $(SCRIPT_DIR)/builddeb.py --build; fi
 
