@@ -193,10 +193,11 @@ def options(parser, help_menu=False):
         TYPE: argparse object, parser argument set
 
     """
-    parser.add_argument("-e", "--exclusions", dest='exclusions', action='store_true', required=False)
     parser.add_argument("-C", "--configure", dest='configure', action='store_true', required=False)
     parser.add_argument("-d", "--debug", dest='debug', action='store_true', default=False, required=False)
+    parser.add_argument("-e", "--exclude", dest='exclude', nargs='*', default=[], required=False)
     parser.add_argument("-h", "--help", dest='help', action='store_true', required=False)
+    parser.add_argument("-l", "--list-exclusions", dest='exclusions', action='store_true', required=False)
     parser.add_argument("-m", "--multiprocess", dest='multiprocess', default=False, action='store_true', required=False)
     parser.add_argument("-s", "--sum", dest='sum', nargs='*', default=os.getcwd(), required=False)
     parser.add_argument("-n", "--no-whitespace", dest='whitespace', action='store_false', default=True, required=False)
@@ -337,6 +338,18 @@ class RelpathProcessing():
             return './' + path
 
 
+def remove_excluded(exclude_list, path_list):
+    """Removes excluded paths from master path list"""
+    rm = []
+
+    if not exclude_list:
+        return path_list
+
+    for i in exclude_list:
+        rm.extend([x for x in path_list if i in x])
+    return sorted(list(set(path_list) - set(rm)))
+
+
 def init_cli():
     ex_files = local_config['EXCLUSIONS']['EX_EXT_PATH']
     ex_dirs = local_config['EXCLUSIONS']['EX_DIR_PATH']
@@ -394,6 +407,7 @@ def init_cli():
         if args.multiprocess:
             # --- run with concurrency --
             width, paths = longest_path(container, ex)
+            paths = remove_excluded(args.exclude, paths)
             multiprocessing_main(paths, width, _ct_threshold, args.whitespace, ex, args.debug)
 
         elif not args.multiprocess:
@@ -402,10 +416,10 @@ def init_cli():
             tcount, tobjects = 0, 0
             width, paths = longest_path(container, ex)
 
+            paths = remove_excluded(args.exclude, paths)
+
             print_header(width)
             count_width = local_config['OUTPUT']['COUNT_COLUMN_WIDTH']
-
-            #for i in container:
 
             for path in paths:
 

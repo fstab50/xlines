@@ -375,11 +375,12 @@ function _xlines_completions(){
     numoptions=0
     numargs="${#COMP_WORDS[@]}"
 
-    options=' --help --exclusions --configure --version'
+    options=' --help --exclude --list-exclusions --configure --version'
     commands=' --debug --multiprocess --sum --no-whitespace'
 
 
-    if [[ "$(echo "${COMP_WORDS[@]}" | grep '\-\-sum' 2>/dev/null)" ]]; then
+    if [[ "$(echo "${COMP_WORDS[@]}" | grep '\-\-sum' 2>/dev/null)" ]] || \
+       [[ "$(echo "${COMP_WORDS[@]}" | grep '\-\-exclude' 2>/dev/null)" ]] ; then
         case "${cur}" in
             '-' | '--')
                 ##
@@ -387,7 +388,7 @@ function _xlines_completions(){
                 ##  not already present on the command line
                 ##
                 declare -a horsemen
-                horsemen=(  '--multiprocess' '--no-whitespace' '--sum' '--debug' )
+                horsemen=(  '--exclude' '--multiprocess' '--no-whitespace' '--sum' '--debug' )
                 subcommands=$(_parse_compwords COMP_WORDS[@] horsemen[@])
                 numargs=$(_numargs "$subcommands")
 
@@ -401,6 +402,11 @@ function _xlines_completions(){
 
             '--d'*)
                 COMPREPLY=( $(compgen -W '--debug' -- ${cur}) )
+                return 0
+                ;;
+
+            '--e'*)
+                COMPREPLY=( $(compgen -W '--exclude' -- ${cur}) )
                 return 0
                 ;;
 
@@ -441,7 +447,12 @@ function _xlines_completions(){
             ;;
 
         '--e'*)
-            COMPREPLY=( $(compgen -W '--exclusions' -- ${cur}) )
+            COMPREPLY=( $(compgen -W '--exclude' -- ${cur}) )
+            return 0
+            ;;
+
+        '--l'*)
+            COMPREPLY=( $(compgen -W '--list-exclusions' -- ${cur}) )
             return 0
             ;;
 
@@ -474,7 +485,7 @@ function _xlines_completions(){
 
     case "${prev}" in
 
-        '--help' | '--exclusions' | '--version')
+        '--help' | '--list-exclusions' | '--version')
             return 0
             ;;
 
@@ -482,7 +493,7 @@ function _xlines_completions(){
             return 0
             ;;
 
-        '--sum')
+        '--sum' | '--exclude')
             _pathopt
             return 0
             ;;
@@ -493,7 +504,7 @@ function _xlines_completions(){
             ##  not already present on the command line
             ##
             declare -a horsemen
-            horsemen=(  '--multiprocess' '--no-whitespace' '--sum' '--debug' )
+            horsemen=(  '--exclude' '--multiprocess' '--no-whitespace' '--sum' '--debug' )
             subcommands=$(_parse_compwords COMP_WORDS[@] horsemen[@])
             numargs=$(_numargs "$subcommands")
 

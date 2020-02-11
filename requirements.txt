@@ -7,4 +7,4 @@ libtools
 setuptools
 twine
 ipdb
-versionpro==0.3.2
+versionpro

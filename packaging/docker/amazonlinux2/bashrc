@@ -165,6 +165,7 @@ complete -C aws_completer aws
 # --------------------------------------------------------------------------------
 
 # User Aliases - bash
+alias ls="ls --color=auto"
 alias v="ls -lh"
 alias va="ls -lhd .*"
 alias vs='ls -lhSr'

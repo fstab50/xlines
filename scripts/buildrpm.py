@@ -877,6 +877,8 @@ def valid_version(parameter, min=0, max=100):
                     return False
 
     except ValueError as e:
+        fx = inspect.stack()[0][3]
+        stdout_message(f'{fx}: Invalid version number supplied: {e}')
         return False
     return True
 

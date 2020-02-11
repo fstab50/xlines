@@ -83,7 +83,7 @@ function _python_prerequisites(){
     local pip_bin="$1"
 
     for pkg in "${python_packages[@]}"; do
-        $pip_bin install -U $pkg
+        $pip_bin install -U $pkg 2>/dev/null
     done
 }
 
@@ -202,7 +202,7 @@ if [ "$(echo $os | grep -i 'Redhat')" ] || [ "$(echo $os | grep -i 'CentOS')" ];
 elif ! python_dependencies $_PIP; then
     logger "$loginfo: Missing Pygments library. Installing via pip3..."
     # install pygments
-    $_PIP install pygments
+    $_PIP install pygments 2>/dev/null
 fi
 
 
@@ -210,7 +210,7 @@ fi
 if _amazonlinux || _fedoralinux ; then
     logger "$loginfo: Amazon Linux 2 or Fedora detected, checking dependencies..."
     # install pygments
-    $_PIP install pygments
+    $_PIP install pygments 2>/dev/null
 fi
 
 

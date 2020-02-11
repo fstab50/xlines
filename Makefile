@@ -125,7 +125,7 @@ docs: clean setup-venv    ## Generate sphinx documentation
 .PHONY: build
 build: artifacts  ## Build dist artifact and increment version
 	if [ $(VERSION) ]; then . $(VENV_DIR)/bin/activate && \
-	versionpro --set-version $(VERSION) --update; \
+	versionpro --force-set $(VERSION) --update; \
 	else . $(VENV_DIR)/bin/activate && versionpro --update; fi; \
 	. $(VENV_DIR)/bin/activate && cd $(CUR_DIR) && $(PYTHON3_PATH) setup.py sdist
 
@@ -134,13 +134,13 @@ build: artifacts  ## Build dist artifact and increment version
 builddeb: clean-version clean-builddir source-install  ## Build Debian distribution (.deb) os package
 	@printf "Building Debian package format of $(PROJECT)";
 	if [ $(VERSION) ]; then cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
-	$(PYTHON3_PATH) $(SCRIPT_DIR)/builddeb.py --build --set-version $(VERSION); \
+	$(PYTHON3_PATH) $(SCRIPT_DIR)/builddeb.py --build --force-set $(VERSION); \
 	else cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
 	$(PYTHON3_PATH) $(SCRIPT_DIR)/builddeb.py --build; fi
 
 
-.PHONY: buildrpm-rhel
-buildrpm-rhel: clean setup-venv   ## Build Redhat distribution (.rpm) os package
+.PHONY: buildrpm-rhel7
+buildrpm-rhel7: clean setup-venv   ## Build Redhat distribution (.rpm) os package
 	@printf "\n## Begin rpm build for RHEL 7 / Centos 7 ##\n\n";
 	if [ $(VERSION) ]; then cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
 	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py -b --distro centos7 -p $(CUR_DIR)/.rpm.json -s $(VERSION); \
@@ -148,6 +148,17 @@ buildrpm-rhel: clean setup-venv   ## Build Redhat distribution (.rpm) os package
 	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py -b -d centos7 -p $(CUR_DIR)/.rpm.json --container; else \
 	cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
 	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py -b --distro centos7 -p $(CUR_DIR)/.rpm.json; fi
+
+
+.PHONY: buildrpm-rhel8
+buildrpm-rhel8: clean setup-venv  ## Build Amazon Linux 2 distribution (.rpm) os package
+	@printf "\n## Begin rpm build for Redhat 8 / CentOS 8 ##\n\n";
+	if [ $(VERSION) ]; then cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
+	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py -b -d centos8 -p $(CUR_DIR)/.centos8.json -s $(VERSION); \
+	elif [ $(RETAIN) ]; then . $(VENV_DIR)/bin/activate && \
+	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py -b -d centos8 -p $(CUR_DIR)/.centos8.json --container; \
+	else cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
+	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py -b -d centos8 -p $(CUR_DIR)/.centos8.json; fi
 
 
 .PHONY: buildrpm-amzn

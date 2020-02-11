@@ -72,7 +72,9 @@ menu_body = menu_title + bdwt + """
     """ + bdwt + """
         -d, --debug""" + rst + """:  Print out additional  debugging information
     """ + bdwt + """
-        -e, --exclusions""" + rst + """:  Print out list of file type extensions
+        -e, --exclude""" + rst + """: Objects to be excluded from the line count
+    """ + bdwt + """
+        -l, --list-exclusions""" + rst + """: Print list of file type extensions
             and directories excluded from line count calculations
     """ + bdwt + """
         -h, --help""" + rst + """: Show this help message, symbol legend, & exit
