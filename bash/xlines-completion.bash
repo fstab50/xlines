@@ -492,12 +492,12 @@ function _xlines_completions(){
             return 0
             ;;
 
-        '--sum')
+        '--sum' | '--exclude')
             _pathopt
             return 0
             ;;
 
-        '--exclude' | '--multiprocess' | '--no-whitespace' | '--debug')
+        '--multiprocess' | '--no-whitespace' | '--debug')
             ##
             ##  Return compreply with any of the 5 comp_words that
             ##  not already present on the command line
