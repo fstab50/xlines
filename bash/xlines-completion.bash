@@ -375,7 +375,7 @@ function _xlines_completions(){
     numoptions=0
     numargs="${#COMP_WORDS[@]}"
 
-    options=' --help --list-exclusions --configure --version'
+    options=' --help --exclude --list-exclusions --configure --version'
     commands=' --debug --multiprocess --sum --no-whitespace'
 
 
@@ -387,7 +387,7 @@ function _xlines_completions(){
                 ##  not already present on the command line
                 ##
                 declare -a horsemen
-                horsemen=(  '--multiprocess' '--no-whitespace' '--sum' '--debug' )
+                horsemen=(  '--exclude' '--multiprocess' '--no-whitespace' '--sum' '--debug' )
                 subcommands=$(_parse_compwords COMP_WORDS[@] horsemen[@])
                 numargs=$(_numargs "$subcommands")
 
@@ -401,6 +401,11 @@ function _xlines_completions(){
 
             '--d'*)
                 COMPREPLY=( $(compgen -W '--debug' -- ${cur}) )
+                return 0
+                ;;
+
+            '--e'*)
+                COMPREPLY=( $(compgen -W '--exclude' -- ${cur}) )
                 return 0
                 ;;
 
@@ -437,6 +442,11 @@ function _xlines_completions(){
 
         '--d'*)
             COMPREPLY=( $(compgen -W '--debug' -- ${cur}) )
+            return 0
+            ;;
+
+        '--e'*)
+            COMPREPLY=( $(compgen -W '--exclude' -- ${cur}) )
             return 0
             ;;
 
@@ -487,13 +497,13 @@ function _xlines_completions(){
             return 0
             ;;
 
-        '--multiprocess' | '--no-whitespace' | '--debug')
+        '--exclude' | '--multiprocess' | '--no-whitespace' | '--debug')
             ##
             ##  Return compreply with any of the 5 comp_words that
             ##  not already present on the command line
             ##
             declare -a horsemen
-            horsemen=(  '--multiprocess' '--no-whitespace' '--sum' '--debug' )
+            horsemen=(  '--exclude' '--multiprocess' '--no-whitespace' '--sum' '--debug' )
             subcommands=$(_parse_compwords COMP_WORDS[@] horsemen[@])
             numargs=$(_numargs "$subcommands")
 
