@@ -379,7 +379,8 @@ function _xlines_completions(){
     commands=' --debug --multiprocess --sum --no-whitespace'
 
 
-    if [[ "$(echo "${COMP_WORDS[@]}" | grep '\-\-sum' 2>/dev/null)" ]]; then
+    if [[ "$(echo "${COMP_WORDS[@]}" | grep '\-\-sum' 2>/dev/null)" ]] || \
+       [[ "$(echo "${COMP_WORDS[@]}" | grep '\-\-exclude' 2>/dev/null)" ]] ; then
         case "${cur}" in
             '-' | '--')
                 ##
