@@ -347,9 +347,7 @@ def remove_excluded(exclude_list, path_list):
 
     for i in exclude_list:
         rm.extend([x for x in path_list if i in x])
-        path_list = list(set(path_list) - set(rm))
-    return sorted(list(set(path_list)))
-
+    return sorted(list(set(path_list) - set(rm)))
 
 
 def init_cli():
