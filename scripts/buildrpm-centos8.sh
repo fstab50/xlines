@@ -194,7 +194,7 @@ _YUM=$(which yum)
 _SED=$(which sed)
 _PIP=$(_pip_exec)
 _POSTINSTALL=${ROOT}/packaging/rpm/rpm_postinstall.sh
-REQUIRES='python3,python3-pip,python3-setuptools,bash-completion,mlocate,which'
+REQUIRES='python3,python3-pip,python3-setuptools,python3-pygments,bash-completion,mlocate,which'
 
 # colors; functions
 . "$ROOT/scripts/colors.sh"
@@ -255,8 +255,14 @@ if lsb_release -sirc | grep -i centos >/dev/null 2>&1; then
     sudo chown -R $USER:$USER $VOLMNT
 
     # copy out completed rpm
+    std_message "Rename completed rpm" "INFO" $LOG_FILE
+    package=$(echo *.noarch.rpm)
+    front=${package%%.noarch*}
+    new_name="${front}.el8.noarch.rpm"
+    mv /home/builder/git/xlines/dist/*noarch.rpm /home/builder/git/xlines/dist/$new_name
+
     std_message "copy completed rpm to volume mount: $VOLMNT" "INFO" $LOG_FILE
-    cp -v /home/builder/git/xlines/dist/*noarch.rpm $VOLMNT/ | sudo tee -a $LOG_FILE
+    cp -v /home/builder/git/xlines/dist/$new_name $VOLMNT/ | sudo tee -a $LOG_FILE
 
     # copy out complete rpm contents index file
     std_message "copy rpm contents indext file to volume mount: $VOLMNT" "INFO" $LOG_FILE
