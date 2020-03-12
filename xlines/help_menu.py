@@ -55,10 +55,11 @@ menu_body = menu_title + bdwt + """
         $ """ + synopsis_cmd + """
 
                         -s, --sum
-                       [-e, --exclusions ]
                        [-c, --configure  ]
                        [-d, --debug  ]
+                       [-e, --exclude <value>  ]
                        [-h, --help   ]
+                       [-l, --list-exclusions ]
                        [-m, --multiprocess  ]
                        [-n, --no-whitespace  ]
                        [-V, --version  ]
