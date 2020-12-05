@@ -409,7 +409,7 @@ All works contained herein copyrighted via below author unless work is explicitl
 $ xlines --version
 ```
 
-[![help](./assets/version-copyright.png)](https://s3.us-east-2.amazonaws.com/http-imagestore/xlines/version-copyright.png)
+[![help](./assets/version-copyright.png)](https://images.awspros.world/xlines/version-copyright.png)
 
 
 [back to the top](#top)
