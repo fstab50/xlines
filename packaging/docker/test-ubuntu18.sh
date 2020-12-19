@@ -6,7 +6,7 @@
 
 pkg=$(basename $0)
 container_default='xlinesUbuntu18'
-image='ubuntu18.10:rpmbuildD'
+image='ubuntu:18.10'
 
 
 function _git_root(){
