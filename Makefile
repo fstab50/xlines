@@ -39,6 +39,7 @@ CONTAINER_RHEL7 = xlinesCentOS
 RUN_AMZN2 = test-amzn2.sh
 RUN_RHEL7 = test-centos7.sh
 RUN_RHEL8 = test-centos8.sh
+RUN_U18 = test-ubuntu18.sh
 
 
 # --- rollup targets  ------------------------------------------------------------------------------
@@ -93,6 +94,11 @@ test-container-amzn:   ## Create & start Amazon Linux 2 test docker container
 .PHONY: test-container-centos
 test-container-centos:   ## Create & start CentOS 7 test docker container
 	cd $(CUR_DIR)/packaging/docker && bash $(RUN_RHEL7) && cd $(CUR_DIR)
+
+
+.PHONY: test-container-ubuntu18
+test-container-centos:   ## Create & start CentOS 7 test docker container
+	cd $(CUR_DIR)/packaging/docker && bash $(RUN_U18) && cd $(CUR_DIR)
 
 
 .PHONY: test-coverage
