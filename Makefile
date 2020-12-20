@@ -97,7 +97,7 @@ test-container-centos:   ## Create & start CentOS 7 test docker container
 
 
 .PHONY: test-container-ubuntu18
-test-container-ubuntu18:   ## Create & start CentOS 7 test docker container
+test-container-ubuntu:   ## Create & start CentOS 7 test docker container
 	cd $(CUR_DIR)/packaging/docker && bash $(RUN_U18) && cd $(CUR_DIR)
 
 
