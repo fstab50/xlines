@@ -35,7 +35,7 @@ RUN apt -y install debhelper
 # user operations
 ENV USER1 'builder'
 
-RUN useradd $USER1 -d /home/$USER1 -u 1000 -m -G users
+RUN useradd $USER1 -d /home/$USER1 -u 1036 -m -G users
 
 # mount volume here to cp completed rpm to on the host
 RUN mkdir /mnt/deb
@@ -73,7 +73,7 @@ ENV CONTAINER=debbuildD OS=ubuntu18 DIST=el7
 
 
 # completion update
-RUN apt -y update; apt clean all
+RUN apt -y update; apt -y upgrade; apt clean all
 
 ##
 
