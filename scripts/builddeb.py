@@ -1031,7 +1031,7 @@ def init_cli():
     except Exception as e:
         help_menu()
         stdout_message(str(e), 'ERROR')
-        return exit_codes['E_MISC']['Code']
+        return exit_codes['EX_MISC']['Code']
 
     if args.debug:
         stdout_message(
@@ -1080,7 +1080,7 @@ def init_cli():
                     prefix='WARN',
                     severity='WARNING'
                 )
-                return exit_codes['E_MISC']['Code']
+                return exit_codes['EX_MISC']['Code']
 
         elif not valid_version(args.set):
 
