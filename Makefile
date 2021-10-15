@@ -142,7 +142,8 @@ builddeb: clean-version clean-builddir source-install  ## Build Debian distribut
 	if [ $(VERSION) ]; then cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
 	$(PYTHON3_PATH) $(SCRIPT_DIR)/builddeb.py --build --set-version $(VERSION); \
 	else cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
-	$(PYTHON3_PATH) $(SCRIPT_DIR)/builddeb.py --build; fi
+	$(PYTHON3_PATH) $(SCRIPT_DIR)/builddeb.py --build; fi;
+	rm -rf $(CUR_DIR)/$(PROJECT)/config || true
 
 
 .PHONY: buildrpm-rhel7
