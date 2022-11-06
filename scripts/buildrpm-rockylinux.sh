@@ -90,7 +90,7 @@ function export_package(){
 
     cd "$(_git_root)/dist"
 
-    package=$(find . -name "python37-xlines-[0-9].[0-9].*-[0-9].noarch.rpm")
+    package=$(find . -name "python38-xlines-[0-9].[0-9].*-[0-9].noarch.rpm")
 
     # truncate additional ./ chars
     package=$(echo $package | cut -c 3-50)
@@ -227,10 +227,10 @@ if lsb_release -sirc | grep -i centos >/dev/null 2>&1; then
     sudo $_SED -i '/env_reset/d' /etc/sudoers
 
     std_message "Installing OS packages" "INFO" $LOG_FILE
-    sudo $_YUM -y install python3 python3-pip python3-setuptools which
+    sudo $_YUM -y install python38 python38-pip python38-setuptools which
 
     std_message "Upgrade pip, setuptools" "INFO" $LOG_FILE
-    sudo -H $_PIP install -U pip setuptools
+    sudo -H $_PIP install -U pip==22.2.2 setuptools
 
     std_message "Coping setuptools lib from /usr/local/lib to /usr/lib/" "INFO" $LOG_FILE
     sudo cp -r /usr/local/lib/python3.*/site-packages/setuptools* /usr/lib/python3.*/site-packages/
