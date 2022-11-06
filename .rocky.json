@@ -1,0 +1,55 @@
+{
+    "Package": "rpm",
+    "Project": "xlines",
+    "ProjectUrl": "https://github.com/fstab50/xlines",
+    "Description": "Utility for counting lines in code projects",
+    "Version": "MAJOR_VERSION",
+    "Release": "MINOR_VERSION",
+    "PreInstall": ["rpm-build", "rpmdevtools"],
+    "DependencyList": [
+        "python3",
+        "python3-libs",
+        "python3-pip",
+        "python3-setuptools",
+        "bash-completion",
+        "which"
+    ],
+    "LogFiles": [ ],
+    "VersionModule": "_version.py",
+    "DockerImage": "rpmbuildE",
+    "DockerContainer": "buildxlines",
+    "DockerUser": "builder",
+    "RepositoryRoot": "/home/builder/git/xlines",
+    "MakeTarget": "buildrpm-rocky",
+    "DockerBuildScript": "buildrpm-rockyLinux9.sh",
+    "BashCompletion": "xlines-completion.bash",
+    "SpecFile": {
+        "Name": "xlines.spec",
+        "Summary": "Utility for illustrating the status of a git working branch",
+        "Group":  "Development Tools",
+        "BuildArch": "noarch",
+        "License": "MIT",
+        "Source": "xlines-MAJOR_VERSION.MINOR_VERSION.tar.gz",
+        "BuildDirName": "xlines-MAJOR_VERSION",
+        "Directories": [
+            {
+                "Dirname": "/usr/local/lib/xlines",
+                "Permissions": "0755"
+            },
+            {
+                "Dirname": "/usr/local/bin",
+                "Permissions": "0755"
+            }
+        ],
+        "Files": [
+            {
+                "filename": "xlines",
+                "SourceLocation": "rpmbuild/SOURCES/xlines-MAJOR_VERSION/xlines",
+                "location": "/usr/local/bin/xlines",
+                "Permissions": "0755"
+
+            }
+        ],
+        "BuildComment": "RPM Package built by CI/CD automtation"
+    }
+}
