@@ -13,7 +13,7 @@ KERNEL=`uname -r`
 CPU=$(cat /proc/cpuinfo | grep 'model name' | tail -1 | cut -c 14-60)
 ARCH=`uname -m`
 UTIME=`uptime | sed -e 's/ [0-9:]* up />/' -e 's/,.*//'`
-ID=`grep VERSION_ID /etc/os-release | awk -F '=' '{print $2}' | cut -c 2-3 | rev | cut -c 2-3 | rev`
+ID=`grep VERSION_ID /etc/os-release | awk -F '=' '{print $2}' | cut -c 2-5 | rev | cut -c 2-5 | rev`
 
 # set colors
 red=$(tput setaf 1)
@@ -30,7 +30,7 @@ BOLD=`tput bold`
 UNBOLD=`tput sgr0`
 
 echo ""
-echo -e "${reset}======================================================================${reset}" | indent02
+echo -e "${reset}=================================================================${reset}" | indent02
 echo ""
 echo  "       $W HOST   : ${BOLD}${blue}Docker $HOSTNAME${reset}${UNBOLD} "
 echo  "       $R ARCH   : ${cyan}$ARCH${reset}        "
@@ -38,8 +38,8 @@ echo  "       $R KERNEL : ${cyan}$KERNEL${reset}      "
 echo  "       $R CPU    : ${cyan}$CPU${reset}         "
 echo  "       $R Uptime : ${cyan}$UTIME${reset}       "
 echo -e "${green}"
-echo -e "       "Rocky Linux"   "$ID| figlet -f shadow
-echo  -e "${reset}======================================================================${reset}" | indent02
+echo -e "       "Rocky Linux"   "$ID| figlet -f small
+echo  -e "${reset}=================================================================${reset}" | indent02
 echo ""
 
 

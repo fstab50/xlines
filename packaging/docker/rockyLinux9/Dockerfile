@@ -15,7 +15,7 @@
 ##                                                                          ##
 ##############################################################################
 
-FROM rockylinux:rockylinux
+FROM rockylinux/rockylinux:latest
 MAINTAINER The Rocky Linux Project <community@rockylinux.org>
 
 RUN yum -y update; yum clean all
