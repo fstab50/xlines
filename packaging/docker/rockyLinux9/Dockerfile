@@ -1,6 +1,6 @@
 ##############################################################################
 ##                                                                          ##
-##    RPM Build Dockerfile: CentOS 8 Base image                             ##
+##    RPM Build Dockerfile: Rocky Linux 9 Base image                        ##
 ##                                                                          ##
 ##    Purpose:                                                              ##
 ##       Build container for rpm package assembly                           ##
@@ -15,8 +15,8 @@
 ##                                                                          ##
 ##############################################################################
 
-FROM centos:centos8
-MAINTAINER The CentOS Project <cloud-ops@centos.org>
+FROM rockylinux:rockylinux
+MAINTAINER The Rocky Linux Project <community@rockylinux.org>
 
 RUN yum -y update; yum clean all
 RUN yum -y groupinstall "Development Tools"
@@ -87,7 +87,7 @@ RUN cd /home/$USER1/git/xlines && git pull && git checkout develop
 
 # bash shell configuration
 ADD ./colors.sh /home/$USER1/.config/bash/colors.sh
-ADD ./motd-centos7.sh /home/$USER1/.config/bash/motd.sh
+ADD ./motd-rockylinux9.sh /home/$USER1/.config/bash/motd.sh
 ADD ./loadavg-flat-layout.sh /home/$USER1/.config/bash/loadavg-flat-layout.sh
 
 # completion actions
