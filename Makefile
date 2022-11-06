@@ -37,8 +37,8 @@ CONTAINER_RHEL7 = xlinesCentOS
 
 # docker scripts
 RUN_AMZN2 = test-amzn2.sh
-RUN_RHEL7 = test-centos7.sh
 RUN_RHEL8 = test-centos8.sh
+RUN_ROCKY = test-rockyLinux9.sh
 RUN_U18 = test-ubuntu18.sh
 
 
@@ -93,7 +93,12 @@ test-container-amzn:   ## Create & start Amazon Linux 2 test docker container
 
 .PHONY: test-container-centos
 test-container-centos:   ## Create & start CentOS 7 test docker container
-	cd $(CUR_DIR)/packaging/docker && bash $(RUN_RHEL7) && cd $(CUR_DIR)
+	cd $(CUR_DIR)/packaging/docker && bash $(RUN_RHEL8) && cd $(CUR_DIR)
+
+
+.PHONY: test-container-rocky
+test-container-rocky:   ## Create & start CentOS 7 test docker container
+	cd $(CUR_DIR)/packaging/docker && bash $(RUN_ROCKY) && cd $(CUR_DIR)
 
 
 .PHONY: test-container-ubuntu
