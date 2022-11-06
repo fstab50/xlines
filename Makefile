@@ -173,6 +173,17 @@ buildrpm-rhel8: clean setup-venv  ## Build Amazon Linux 2 distribution (.rpm) os
 	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py -b -d centos8 -p $(CUR_DIR)/.centos8.json; fi
 
 
+.PHONY: buildrpm-rocky
+buildrpm-rocky: clean setup-venv  ## Build Amazon Linux 2 distribution (.rpm) os package
+	@printf "\n## Begin rpm build for Redhat 8 / CentOS 8 ##\n\n";
+	if [ $(VERSION) ]; then cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
+	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py -b -d centos8 -p $(CUR_DIR)/.rocky.json -s $(VERSION); \
+	elif [ $(RETAIN) ]; then . $(VENV_DIR)/bin/activate && \
+	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py -b -d centos8 -p $(CUR_DIR)/.rocky.json --container; \
+	else cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
+	$(PYTHON3_PATH) $(SCRIPT_DIR)/buildrpm.py -b -d centos8 -p $(CUR_DIR)/.rocky.json; fi
+
+
 .PHONY: buildrpm-amzn
 buildrpm-amzn: clean setup-venv  ## Build Amazon Linux 2 distribution (.rpm) os package
 	@printf "\n## Begin rpm build for Amazon Linux 2 ##\n\n";
