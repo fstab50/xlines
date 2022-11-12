@@ -21,7 +21,7 @@
     "DockerUser": "builder",
     "RepositoryRoot": "/home/builder/git/xlines",
     "MakeTarget": "buildrpm-rocky",
-    "DockerBuildScript": "buildrpm-rockyLinux9.sh",
+    "DockerBuildScript": "buildrpm-rockylinux.sh",
     "BashCompletion": "xlines-completion.bash",
     "SpecFile": {
         "Name": "xlines.spec",
