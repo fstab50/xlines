@@ -3,7 +3,7 @@
 ##    RPM Build Dockerfile: Rocky Linux 9 Base image                        ##
 ##                                                                          ##
 ##    Purpose:                                                              ##
-##       Build container for rpm package assembly                           ##
+##       Build container for rpm package assembly (Python 3.11 version)     ##
 ##                                                                          ##
 ##    Dependencies:  file list                                              ##
 ##      - bashrc                          - colors.sh                       ##
@@ -32,7 +32,7 @@ RUN yum install -y gcc gcc-c++ \
                    pkgconfig mlocate \
                    sudo wget \
                    automake autoconf \
-                   yum-utils  && \
+                   yum-utils && \
     yum clean all
 
 # enable logging
@@ -40,7 +40,7 @@ RUN yum -y install rsyslog rsyslog-doc
 RUN systemctl enable rsyslog
 
 # python3 components required for build
-RUN yum -y install python3 python3-pip python3-setuptools python3-devel
+RUN yum -y install python3 python3-pip python3-setuptools python3-devel python3.11-tkinter
 
 # user operations
 ENV USER1 'builder'
