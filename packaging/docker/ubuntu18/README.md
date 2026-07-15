@@ -8,6 +8,6 @@
 * * *
 ## Environment Type
 
-    * CentOS (RHEL), Version 7 
+    * Ubuntu 22 by Cannonical 
 
 * * *
