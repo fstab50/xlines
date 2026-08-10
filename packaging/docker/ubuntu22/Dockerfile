@@ -15,7 +15,7 @@
 ##                                                                          ##
 ##############################################################################
 
-FROM ubuntu:18.10
+FROM ubuntu:22.04
 MAINTAINER Cannonical, Inc.
 
 RUN apt -y update; apt clean all
@@ -57,7 +57,7 @@ RUN cd /home/$USER1/git/xlines && git pull && git checkout develop
 
 # bash shell configuration
 ADD ./colors.sh /home/$USER1/.config/bash/colors.sh
-ADD ./motd-ubuntu18.sh /home/$USER1/.config/bash/motd.sh
+ADD ./motd-ubuntu22.sh /home/$USER1/.config/bash/motd.sh
 ADD ./loadavg-flat-layout.sh /home/$USER1/.config/bash/loadavg-flat-layout.sh
 
 # completion actions
@@ -69,7 +69,7 @@ EXPOSE 8080
 
 
 # environment variables
-ENV CONTAINER=debbuildD OS=ubuntu18 DIST=el7
+ENV CONTAINER=debbuildE OS=ubuntu22 DIST=Debian
 
 
 # completion update
